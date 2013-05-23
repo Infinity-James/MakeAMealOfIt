@@ -6,10 +6,15 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "SlideOutNavigationController.h"
+#import "YummlyRequest.h"
+
+#pragma mark - App Delegate Public Interface
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
-@property (strong, nonatomic) UIWindow *window;
+@property (strong, nonatomic)	SlideOutNavigationController	*slideOutVC;
+@property (strong, nonatomic)	UIWindow						*window;
+@property (strong, nonatomic)	YummlyRequest					*yummlyRequest;
 
 @end

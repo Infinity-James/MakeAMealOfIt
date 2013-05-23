@@ -1,0 +1,65 @@
+{
+    "attribution"					:
+	{
+        "html"						: "Recipe search powered by <a href='http://www.yummly.com/recipes'><img alt='Yummly' src='http://static.yummly.com/api-logo.png'/></a>",
+        "logo"						: "http://static.yummly.com/api-logo.png",
+        "text"						: "Recipe search powered by Yummly",
+        "url"						: "http://www.yummly.com/recipes/"
+    },
+	
+    "criteria"						:
+	{
+        "allowedIngredients"		:
+		[
+        ],
+        "excludedIngredients"		:
+		[
+        ],
+        "facetFields"				:
+		[
+        ],
+        "maxResults"				: 1,
+        "requirePictures"			: 0,
+        "resultsToSkip"				: 0,
+        "terms"						:
+		[
+        ]
+    },
+    
+	"facetCounts"					:
+	{
+    },
+	
+    "matches"						:
+	[
+		{
+			"attributes"			:
+			{
+			},
+				 
+			"flavors"				: "<null>",
+	 
+			"id"					: "Crispy-roasted-chickpeas-_garbanzo-beans_-308444",
+	 
+			"ingredients"			:
+			[
+				"olive oil",
+				"spice",
+				"salt",
+				"garbanzo beans"
+			],
+				 
+			"rating"				: 5,
+			"recipeName"			: "Crispy Roasted Chickpeas [Garbanzo Beans]",
+			"smallImageUrls"		:
+			[
+				"http://i.yummly.com/Crispy-roasted-chickpeas-_garbanzo-beans_-308444.s.jpg"
+			],
+				 
+			"sourceDisplayName"		: "Steamy Kitchen",
+			"totalTimeInSeconds"	: "<null>"
+		}
+	],
+	
+    "totalMatchCount"				: 701357
+}
