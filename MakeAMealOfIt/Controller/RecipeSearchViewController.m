@@ -82,6 +82,11 @@
 {
 	NSArray *constraints;
 	
+	CGFloat toolbarHeight				= 44.0f;
+	
+	if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
+		toolbarHeight					= 32.0f;
+	
 	//	add the table view to cover the whole main view except for the toolbar
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[scrollView]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
@@ -89,7 +94,7 @@
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[toolbar]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
 	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[toolbar(==44)][scrollView]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[toolbar(height)][scrollView]|" options:kNilOptions metrics:@{@"height": @(toolbarHeight)} views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
 }
 

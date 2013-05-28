@@ -192,7 +192,7 @@
 	return @{	UITextAttributeFont				: [UIFont fontWithName:@"Optima" size:24.0f],
 				UITextAttributeTextColor		: [UIColor colorWithRed:0.910f green:0.914f blue:0.824f alpha:1.000f],
 				UITextAttributeTextShadowColor	: [UIColor colorWithRed:0.224f green:0.173f blue:0.114f alpha:1.000f],
-				UITextAttributeTextShadowOffset	: [NSValue valueWithUIOffset:UIOffsetMake(0, -1)]};
+				UITextAttributeTextShadowOffset	: [NSValue valueWithUIOffset:UIOffsetMake(0.0f, -1.0f)]};
 }
 
 #pragma mark - Theme Methods: Page Appearance
@@ -237,6 +237,44 @@
 - (UIColor *)progressBarTrackTintColour
 {
 	return kYummlyColourShadow;
+}
+
+#pragma mark - Theme Methods: Search Bar Appearance
+
+/**
+ *
+ */
+- (UIImage *)backgroundImageForSearchBar
+{
+	return [UIImage imageNamed:@"toolbar_default_yummly"];
+}
+
+/**
+ *
+ *
+ *	@param
+ */
+- (UIImage *)backgroundImageForSearchFieldForState:(UIControlState)controlState
+{
+	return nil;
+}
+
+/**
+ *
+ *
+ *	@param
+ */
+- (UIImage *)imageForSearchIconForState:(UIControlState)controlState
+{
+	return [UIImage imageNamed:@"searchbaricon_default_search"];
+}
+
+/**
+ *
+ */
+- (UIOffset)offsetForSearchBarText
+{
+	return UIOffsetMake(0.0f, 0.0f);
 }
 
 #pragma mark - Theme Methods: Stepper Appearance
@@ -338,7 +376,7 @@
  */
 - (NSDictionary *)tableViewCellTextDictionary
 {
-	return @{	UITextAttributeFont				: [UIFont fontWithName:@"AvenirNext-Regular" size:18.0f],
+	return @{	UITextAttributeFont				: [UIFont fontWithName:@"AvenirNext-Regular" size:14.0f],
 				UITextAttributeTextColor		: kYummlyColourMain,
 				UITextAttributeTextShadowColor	: kYummlyColourShadow,
 				UITextAttributeTextShadowOffset	: [NSValue valueWithUIOffset:UIOffsetMake(0.0f, 1.0f)]};

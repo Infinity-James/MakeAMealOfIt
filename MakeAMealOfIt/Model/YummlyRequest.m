@@ -181,6 +181,22 @@ NSString *const kYummlyMinimumKey			= @"min";
 	if (self = [super init])
 	{
 		[self initialiseArrays];
+		[self addObserver:self forKeyPath:@"desiredCourses" options:kNilOptions context:nil];
+		[self addObserver:self forKeyPath:@"desiredCuisines" options:kNilOptions context:nil];
+		[self addObserver:self forKeyPath:@"desiredHolidays" options:kNilOptions context:nil];
+		[self addObserver:self forKeyPath:@"desiredIngredients" options:kNilOptions context:nil];
+		[self addObserver:self forKeyPath:@"excludedCourses" options:kNilOptions context:nil];
+		[self addObserver:self forKeyPath:@"excludedCuisines" options:kNilOptions context:nil];
+		[self addObserver:self forKeyPath:@"excludedHolidays" options:kNilOptions context:nil];
+		[self addObserver:self forKeyPath:@"desiredIngredients" options:kNilOptions context:nil];
+		[self addObserver:self forKeyPath:@"flavourDictionary" options:kNilOptions context:nil];
+		[self addObserver:self forKeyPath:@"requiredAllergies" options:kNilOptions context:nil];
+		[self addObserver:self forKeyPath:@"requiredDiets" options:kNilOptions context:nil];
+		[self addObserver:self forKeyPath:@"maximumCookTime" options:kNilOptions context:nil];
+		[self addObserver:self forKeyPath:@"numberOfResults" options:kNilOptions context:nil];
+		[self addObserver:self forKeyPath:@"requirePictures" options:kNilOptions context:nil];
+		[self addObserver:self forKeyPath:@"searchPhrase" options:kNilOptions context:nil];
+		[self addObserver:self forKeyPath:@"startIndexForResults" options:kNilOptions context:nil];
 	}
 	
 	return self;
@@ -202,6 +218,24 @@ NSString *const kYummlyMinimumKey			= @"min";
 	self.flavourDictionary				= [[NSMutableDictionary alloc] init];
 	self.requiredAllergies				= [[NSMutableArray alloc] init];
 	self.requiredDiets					= [[NSMutableArray alloc] init];
+}
+
+#pragma mark - NSKeyValueObserving Methods
+
+/**
+ *	receive this messsage message when the value at the specified key path relative to the given object has changed
+ *
+ *	@param	keyPath						key path, relative to object, to the value that has changed
+ *	@param	object						source object of the key path
+ *	@param	change						dictionary that describing changes made to the value of the property at the key path
+ *	@param	context						value provided when receiver registered to receive key-value observation notifications
+ */
+- (void)observeValueForKeyPath:(NSString *)keyPath
+					  ofObject:(id)object
+						change:(NSDictionary *)change
+					   context:(void *)context
+{
+	[[NSNotificationCenter defaultCenter] postNotification:kNotificationYummlyRequestChanged];
 }
 
 #pragma mark - Remove Desires

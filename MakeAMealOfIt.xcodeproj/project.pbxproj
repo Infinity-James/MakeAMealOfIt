@@ -28,12 +28,18 @@
 		1A6D1181174B552B00E0B000 /* SegmentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6D1180174B552B00E0B000 /* SegmentView.m */; };
 		1A6D1185174B55E900E0B000 /* UtilityMethodsCG.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6D1184174B55E900E0B000 /* UtilityMethodsCG.m */; };
 		1A6D1189174B6ACE00E0B000 /* ParameterPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6D1188174B6ACE00E0B000 /* ParameterPageViewController.m */; };
+		1A70C0B317535F55004FEEF6 /* YummlyMetadata.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A70C0B217535F55004FEEF6 /* YummlyMetadata.m */; };
+		1A70C0B61754D45A004FEEF6 /* searchbaricon_default_search@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A70C0B51754D45A004FEEF6 /* searchbaricon_default_search@2x.png */; };
+		1A70C0B91754FAAE004FEEF6 /* RecipeDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A70C0B81754FAAE004FEEF6 /* RecipeDetailsViewController.m */; };
+		1A70C0BC175500FF004FEEF6 /* RecipeDetailsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A70C0BB175500FF004FEEF6 /* RecipeDetailsView.m */; };
 		1A8EC532174CC77600553857 /* ExtraOptionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A8EC531174CC77600553857 /* ExtraOptionsViewController.m */; };
 		1A8EC534174E24D800553857 /* barbuttonitem_back@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A8EC533174E24D800553857 /* barbuttonitem_back@2x.png */; };
 		1A8EC53A174E6DCD00553857 /* icon~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A8EC536174E6DCD00553857 /* icon~ipad.png */; };
 		1A8EC53B174E6DCD00553857 /* icon~ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A8EC537174E6DCD00553857 /* icon~ipad@2x.png */; };
 		1A8EC53C174E6DCD00553857 /* icon~iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A8EC538174E6DCD00553857 /* icon~iphone.png */; };
 		1A8EC53D174E6DCD00553857 /* icon~iphone@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A8EC539174E6DCD00553857 /* icon~iphone@2x.png */; };
+		1A8EC544174F4CCA00553857 /* RecipeCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A8EC543174F4CCA00553857 /* RecipeCollectionViewCell.m */; };
+		1A8EC547174F756A00553857 /* TextBackingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A8EC546174F756A00553857 /* TextBackingView.m */; };
 		1A9C84A61742348A006B8664 /* RecipesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9C84A51742348A006B8664 /* RecipesViewController.m */; };
 		1A9C84AE174236C9006B8664 /* SlideOutNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9C84AC174236C9006B8664 /* SlideOutNavigationController.m */; };
 		1A9C84B417423DFD006B8664 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9C84B317423DFD006B8664 /* MainViewController.m */; };
@@ -47,11 +53,9 @@
 		1AD55FFD171AF33200AE5FED /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AD55FFC171AF33200AE5FED /* Default@2x.png */; };
 		1AD55FFF171AF33200AE5FED /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AD55FFE171AF33200AE5FED /* Default-568h@2x.png */; };
 		1AEE005717424E2E00B6FC43 /* CupboardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEE005617424E2E00B6FC43 /* CupboardViewController.m */; };
-		1AEE005A1742562C00B6FC43 /* FridgeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEE00591742562C00B6FC43 /* FridgeViewController.m */; };
 		1AEE005D17425BC100B6FC43 /* YummlyAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEE005C17425BC100B6FC43 /* YummlyAPI.m */; };
 		1AEE006117427E2F00B6FC43 /* YummlyRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEE006017427E2F00B6FC43 /* YummlyRequest.m */; };
 		1AEE00641743ADCF00B6FC43 /* YummlyRequest.json in Resources */ = {isa = PBXBuildFile; fileRef = 1AEE00631743ADCF00B6FC43 /* YummlyRequest.json */; };
-		1AEE00671743F42000B6FC43 /* RecipeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEE00661743F42000B6FC43 /* RecipeCell.m */; };
 		1AEE006F1745314F00B6FC43 /* RecipeSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEE006E1745314F00B6FC43 /* RecipeSearchViewController.m */; };
 		1AEE007517453D8700B6FC43 /* DefaultTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEE007217453D8700B6FC43 /* DefaultTheme.m */; };
 		1AEE007617453D8700B6FC43 /* ThemeManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEE007417453D8700B6FC43 /* ThemeManager.m */; };
@@ -138,6 +142,13 @@
 		1A6D1186174B55F400E0B000 /* Defines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Defines.h; path = Utilities/Defines.h; sourceTree = "<group>"; };
 		1A6D1187174B6ACE00E0B000 /* ParameterPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParameterPageViewController.h; path = Controller/ParameterPageViewController.h; sourceTree = "<group>"; };
 		1A6D1188174B6ACE00E0B000 /* ParameterPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ParameterPageViewController.m; path = Controller/ParameterPageViewController.m; sourceTree = "<group>"; };
+		1A70C0B117535F55004FEEF6 /* YummlyMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YummlyMetadata.h; path = Model/YummlyMetadata.h; sourceTree = "<group>"; };
+		1A70C0B217535F55004FEEF6 /* YummlyMetadata.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YummlyMetadata.m; path = Model/YummlyMetadata.m; sourceTree = "<group>"; };
+		1A70C0B51754D45A004FEEF6 /* searchbaricon_default_search@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "searchbaricon_default_search@2x.png"; sourceTree = "<group>"; };
+		1A70C0B71754FAAE004FEEF6 /* RecipeDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecipeDetailsViewController.h; path = Controller/RecipeDetailsViewController.h; sourceTree = "<group>"; };
+		1A70C0B81754FAAE004FEEF6 /* RecipeDetailsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecipeDetailsViewController.m; path = Controller/RecipeDetailsViewController.m; sourceTree = "<group>"; };
+		1A70C0BA175500FF004FEEF6 /* RecipeDetailsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecipeDetailsView.h; path = View/RecipeDetailsView.h; sourceTree = "<group>"; };
+		1A70C0BB175500FF004FEEF6 /* RecipeDetailsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecipeDetailsView.m; path = View/RecipeDetailsView.m; sourceTree = "<group>"; };
 		1A8EC530174CC77600553857 /* ExtraOptionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExtraOptionsViewController.h; path = Controller/ExtraOptionsViewController.h; sourceTree = "<group>"; };
 		1A8EC531174CC77600553857 /* ExtraOptionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ExtraOptionsViewController.m; path = Controller/ExtraOptionsViewController.m; sourceTree = "<group>"; };
 		1A8EC533174E24D800553857 /* barbuttonitem_back@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "barbuttonitem_back@2x.png"; sourceTree = "<group>"; };
@@ -145,6 +156,10 @@
 		1A8EC537174E6DCD00553857 /* icon~ipad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon~ipad@2x.png"; sourceTree = "<group>"; };
 		1A8EC538174E6DCD00553857 /* icon~iphone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon~iphone.png"; sourceTree = "<group>"; };
 		1A8EC539174E6DCD00553857 /* icon~iphone@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon~iphone@2x.png"; sourceTree = "<group>"; };
+		1A8EC542174F4CCA00553857 /* RecipeCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecipeCollectionViewCell.h; path = View/RecipeCollectionViewCell.h; sourceTree = "<group>"; };
+		1A8EC543174F4CCA00553857 /* RecipeCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecipeCollectionViewCell.m; path = View/RecipeCollectionViewCell.m; sourceTree = "<group>"; };
+		1A8EC545174F756A00553857 /* TextBackingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextBackingView.h; path = View/TextBackingView.h; sourceTree = "<group>"; };
+		1A8EC546174F756A00553857 /* TextBackingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TextBackingView.m; path = View/TextBackingView.m; sourceTree = "<group>"; };
 		1A9C84A41742348A006B8664 /* RecipesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecipesViewController.h; path = Controller/RecipesViewController.h; sourceTree = "<group>"; };
 		1A9C84A51742348A006B8664 /* RecipesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecipesViewController.m; path = Controller/RecipesViewController.m; sourceTree = "<group>"; };
 		1A9C84A8174236C9006B8664 /* CentreViewControllerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CentreViewControllerProtocol.h; path = Controller/CentreViewControllerProtocol.h; sourceTree = "<group>"; };
@@ -167,15 +182,11 @@
 		1AD55FFE171AF33200AE5FED /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		1AEE005517424E2E00B6FC43 /* CupboardViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CupboardViewController.h; path = Controller/CupboardViewController.h; sourceTree = "<group>"; };
 		1AEE005617424E2E00B6FC43 /* CupboardViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CupboardViewController.m; path = Controller/CupboardViewController.m; sourceTree = "<group>"; };
-		1AEE00581742562C00B6FC43 /* FridgeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FridgeViewController.h; path = Controller/FridgeViewController.h; sourceTree = "<group>"; };
-		1AEE00591742562C00B6FC43 /* FridgeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FridgeViewController.m; path = Controller/FridgeViewController.m; sourceTree = "<group>"; };
 		1AEE005B17425BC100B6FC43 /* YummlyAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YummlyAPI.h; sourceTree = "<group>"; };
 		1AEE005C17425BC100B6FC43 /* YummlyAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YummlyAPI.m; sourceTree = "<group>"; };
 		1AEE005F17427E2F00B6FC43 /* YummlyRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YummlyRequest.h; path = Model/YummlyRequest.h; sourceTree = "<group>"; };
 		1AEE006017427E2F00B6FC43 /* YummlyRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YummlyRequest.m; path = Model/YummlyRequest.m; sourceTree = "<group>"; };
 		1AEE00631743ADCF00B6FC43 /* YummlyRequest.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = YummlyRequest.json; path = Model/YummlyRequest.json; sourceTree = "<group>"; };
-		1AEE00651743F42000B6FC43 /* RecipeCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecipeCell.h; path = View/RecipeCell.h; sourceTree = "<group>"; };
-		1AEE00661743F42000B6FC43 /* RecipeCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecipeCell.m; path = View/RecipeCell.m; sourceTree = "<group>"; };
 		1AEE006D1745314F00B6FC43 /* RecipeSearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecipeSearchViewController.h; path = Controller/RecipeSearchViewController.h; sourceTree = "<group>"; };
 		1AEE006E1745314F00B6FC43 /* RecipeSearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecipeSearchViewController.m; path = Controller/RecipeSearchViewController.m; sourceTree = "<group>"; };
 		1AEE007117453D8700B6FC43 /* DefaultTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultTheme.h; sourceTree = "<group>"; };
@@ -290,6 +301,14 @@
 			name = "Yummly API";
 			sourceTree = "<group>";
 		};
+		1A70C0B41754D45A004FEEF6 /* Search Bar */ = {
+			isa = PBXGroup;
+			children = (
+				1A70C0B51754D45A004FEEF6 /* searchbaricon_default_search@2x.png */,
+			);
+			path = "Search Bar";
+			sourceTree = "<group>";
+		};
 		1A8EC535174E6DCD00553857 /* Images */ = {
 			isa = PBXGroup;
 			children = (
@@ -301,26 +320,59 @@
 			path = Images;
 			sourceTree = "<group>";
 		};
-		1A9C84A71742368B006B8664 /* View Controller */ = {
+		1A8EC53E174E72FE00553857 /* Other Controller */ = {
+			isa = PBXGroup;
+			children = (
+				1A9C84AB174236C9006B8664 /* SlideOutNavigationController.h */,
+				1A9C84AC174236C9006B8664 /* SlideOutNavigationController.m */,
+			);
+			name = "Other Controller";
+			sourceTree = "<group>";
+		};
+		1A8EC53F174E733600553857 /* Right View Controller */ = {
 			isa = PBXGroup;
 			children = (
 				1A8EC530174CC77600553857 /* ExtraOptionsViewController.h */,
 				1A8EC531174CC77600553857 /* ExtraOptionsViewController.m */,
-				1A9C84A8174236C9006B8664 /* CentreViewControllerProtocol.h */,
-				1AEE005517424E2E00B6FC43 /* CupboardViewController.h */,
-				1AEE005617424E2E00B6FC43 /* CupboardViewController.m */,
-				1AEE00581742562C00B6FC43 /* FridgeViewController.h */,
-				1AEE00591742562C00B6FC43 /* FridgeViewController.m */,
-				1A9C84B217423DF4006B8664 /* MainViewController.h */,
-				1A9C84B317423DFD006B8664 /* MainViewController.m */,
 				1A6D1187174B6ACE00E0B000 /* ParameterPageViewController.h */,
 				1A6D1188174B6ACE00E0B000 /* ParameterPageViewController.m */,
 				1A6D1176174A2C3800E0B000 /* RecipeSearchParametersViewController.h */,
 				1A6D1177174A2C3800E0B000 /* RecipeSearchParametersViewController.m */,
+			);
+			name = "Right View Controller";
+			sourceTree = "<group>";
+		};
+		1A8EC540174E734A00553857 /* Centre View Controller */ = {
+			isa = PBXGroup;
+			children = (
+				1A70C0B71754FAAE004FEEF6 /* RecipeDetailsViewController.h */,
+				1A70C0B81754FAAE004FEEF6 /* RecipeDetailsViewController.m */,
+				1A9C84A8174236C9006B8664 /* CentreViewControllerProtocol.h */,
 				1AEE006D1745314F00B6FC43 /* RecipeSearchViewController.h */,
 				1AEE006E1745314F00B6FC43 /* RecipeSearchViewController.m */,
 				1A9C84A41742348A006B8664 /* RecipesViewController.h */,
 				1A9C84A51742348A006B8664 /* RecipesViewController.m */,
+			);
+			name = "Centre View Controller";
+			sourceTree = "<group>";
+		};
+		1A8EC541174E735D00553857 /* Left View Controller */ = {
+			isa = PBXGroup;
+			children = (
+				1AEE005517424E2E00B6FC43 /* CupboardViewController.h */,
+				1AEE005617424E2E00B6FC43 /* CupboardViewController.m */,
+			);
+			name = "Left View Controller";
+			sourceTree = "<group>";
+		};
+		1A9C84A71742368B006B8664 /* View Controller */ = {
+			isa = PBXGroup;
+			children = (
+				1A8EC540174E734A00553857 /* Centre View Controller */,
+				1A8EC541174E735D00553857 /* Left View Controller */,
+				1A9C84B217423DF4006B8664 /* MainViewController.h */,
+				1A9C84B317423DFD006B8664 /* MainViewController.m */,
+				1A8EC53F174E733600553857 /* Right View Controller */,
 			);
 			name = "View Controller";
 			sourceTree = "<group>";
@@ -394,8 +446,7 @@
 		1AD56006171AF36200AE5FED /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				1A9C84AB174236C9006B8664 /* SlideOutNavigationController.h */,
-				1A9C84AC174236C9006B8664 /* SlideOutNavigationController.m */,
+				1A8EC53E174E72FE00553857 /* Other Controller */,
 				1A9C84A71742368B006B8664 /* View Controller */,
 			);
 			name = Controllers;
@@ -417,6 +468,8 @@
 			children = (
 				1AEE005F17427E2F00B6FC43 /* YummlyRequest.h */,
 				1AEE006017427E2F00B6FC43 /* YummlyRequest.m */,
+				1A70C0B117535F55004FEEF6 /* YummlyMetadata.h */,
+				1A70C0B217535F55004FEEF6 /* YummlyMetadata.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -424,8 +477,8 @@
 		1AEE00681743F42400B6FC43 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				1AEE00651743F42000B6FC43 /* RecipeCell.h */,
-				1AEE00661743F42000B6FC43 /* RecipeCell.m */,
+				1A8EC542174F4CCA00553857 /* RecipeCollectionViewCell.h */,
+				1A8EC543174F4CCA00553857 /* RecipeCollectionViewCell.m */,
 				1AEE00DE17460EA500B6FC43 /* RecipeSearchView.h */,
 				1AEE00DF17460EA500B6FC43 /* RecipeSearchView.m */,
 				1A6D1179174B4A4200E0B000 /* RotaryWheel.h */,
@@ -434,6 +487,10 @@
 				1A6D117C174B4A4200E0B000 /* Sector.m */,
 				1A6D117F174B552B00E0B000 /* SegmentView.h */,
 				1A6D1180174B552B00E0B000 /* SegmentView.m */,
+				1A8EC545174F756A00553857 /* TextBackingView.h */,
+				1A8EC546174F756A00553857 /* TextBackingView.m */,
+				1A70C0BA175500FF004FEEF6 /* RecipeDetailsView.h */,
+				1A70C0BB175500FF004FEEF6 /* RecipeDetailsView.m */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -590,6 +647,7 @@
 		1AEE00E11746252900B6FC43 /* Yummly */ = {
 			isa = PBXGroup;
 			children = (
+				1A70C0B41754D45A004FEEF6 /* Search Bar */,
 				1A6D115A174A12BC00E0B000 /* Bar Button Items */,
 				1A6D1151174A05D500E0B000 /* Button */,
 				1AEE00EC1746813400B6FC43 /* Bar Button */,
@@ -757,6 +815,7 @@
 				1A8EC53B174E6DCD00553857 /* icon~ipad@2x.png in Resources */,
 				1A8EC53C174E6DCD00553857 /* icon~iphone.png in Resources */,
 				1A8EC53D174E6DCD00553857 /* icon~iphone@2x.png in Resources */,
+				1A70C0B61754D45A004FEEF6 /* searchbaricon_default_search@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -773,10 +832,8 @@
 				1A9C84AE174236C9006B8664 /* SlideOutNavigationController.m in Sources */,
 				1A9C84B417423DFD006B8664 /* MainViewController.m in Sources */,
 				1AEE005717424E2E00B6FC43 /* CupboardViewController.m in Sources */,
-				1AEE005A1742562C00B6FC43 /* FridgeViewController.m in Sources */,
 				1AEE005D17425BC100B6FC43 /* YummlyAPI.m in Sources */,
 				1AEE006117427E2F00B6FC43 /* YummlyRequest.m in Sources */,
-				1AEE00671743F42000B6FC43 /* RecipeCell.m in Sources */,
 				1AEE006F1745314F00B6FC43 /* RecipeSearchViewController.m in Sources */,
 				1AEE007517453D8700B6FC43 /* DefaultTheme.m in Sources */,
 				1AEE007617453D8700B6FC43 /* ThemeManager.m in Sources */,
@@ -790,6 +847,11 @@
 				1A6D1185174B55E900E0B000 /* UtilityMethodsCG.m in Sources */,
 				1A6D1189174B6ACE00E0B000 /* ParameterPageViewController.m in Sources */,
 				1A8EC532174CC77600553857 /* ExtraOptionsViewController.m in Sources */,
+				1A8EC544174F4CCA00553857 /* RecipeCollectionViewCell.m in Sources */,
+				1A8EC547174F756A00553857 /* TextBackingView.m in Sources */,
+				1A70C0B317535F55004FEEF6 /* YummlyMetadata.m in Sources */,
+				1A70C0B91754FAAE004FEEF6 /* RecipeDetailsViewController.m in Sources */,
+				1A70C0BC175500FF004FEEF6 /* RecipeDetailsView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

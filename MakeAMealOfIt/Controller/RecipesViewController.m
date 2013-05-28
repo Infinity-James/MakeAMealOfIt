@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
-#import "RecipeCell.h"
+#import "RecipeCollectionViewCell.h"
 #import "RecipesViewController.h"
 #import "YummlyAPI.h"
 #import "YummlyRequest.h"
@@ -17,13 +17,13 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 
 #pragma mark - Recipes View Controller Private Class Extension
 
-@interface RecipesViewController () <UITableViewDataSource, UITableViewDelegate> {}
+@interface RecipesViewController () <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout> {}
 
 #pragma mark - Private Properties
 
 @property (nonatomic, strong)	UIBarButtonItem			*leftButton;
+@property (nonatomic, strong)	UICollectionView		*recipesCollectionView;
 @property (nonatomic, strong)	UIBarButtonItem			*rightButton;
-@property (nonatomic, strong)	UITableView				*tableView;
 @property (nonatomic, strong)	UIToolbar				*toolbar;
 @property (nonatomic, strong)	NSDictionary			*viewsDictionary;
 
@@ -41,7 +41,7 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 #pragma mark - Action & Selector Methods
 
 /**
- *
+ *	called when the button in the toolbar for the left panel is tapped
  */
 - (void)leftButtonTapped
 {
@@ -56,7 +56,7 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 }
 
 /**
- *
+ *	called when the button in the toolbar for the right panel is tapped
  */
 - (void)rightButtonTapped
 {
@@ -68,6 +68,36 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 		case kButtonNotInUse:	self.movingViewBlock(MovingViewLeft);				break;
 		default:																	break;
 	}
+}
+
+#pragma mark - Autolayout Methods
+
+/**
+ *	called when the view controller’s view needs to update its constraints
+ */
+- (void)updateViewConstraints
+{
+	[super updateViewConstraints];
+	
+	//	remove all constraints
+	[self.view removeConstraints:self.view.constraints];
+	
+	NSArray *constraints;
+	
+	//	add the collection view to cover the whole main view except for the toolbar
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[collectionView]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
+	[self.view addConstraints:constraints];
+	
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[toolbar]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
+	[self.view addConstraints:constraints];
+	
+	CGFloat toolbarHeight				= 44.0f;
+	
+	if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
+		toolbarHeight					= 32.0f;
+	
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[toolbar(height)][collectionView]|" options:kNilOptions metrics:@{@"height": @(toolbarHeight)} views:self.viewsDictionary];
+	[self.view addConstraints:constraints];
 }
 
 #pragma mark - CentreViewControllerProtocol Methods
@@ -88,35 +118,39 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 	return self.rightButton.tag;
 }
 
+/**
+ *	sets the tag of the left bar button item
+ */
 - (void)setLeftButtonTag:(NSUInteger)tag
 {
 	self.leftButton.tag					= tag;
 }
 
+/**
+ *	sets the tag of the right bar button item
+ */
 - (void)setRightButtonTag:(NSUInteger)tag
 {
 	self.rightButton.tag				= tag;
 }
-
-#pragma mark - Convenience & Helper Methods
 
 #pragma mark - Initialisation
 
 /**
  *	adds toolbar items to our toolbar
  */
-- (void)addToolbarItems
+- (void)addToolbarItemsAnimated:(BOOL)animate
 {
 	if (self.backButton)
 		self.leftButton					= self.backButton;
 	else
-		self.leftButton					= [[UIBarButtonItem alloc] initWithTitle:@"Cupboard" style:UIBarButtonItemStyleBordered target:self action:@selector(leftButtonTapped)];
+		self.leftButton					= [[UIBarButtonItem alloc] initWithTitle:@"Left" style:UIBarButtonItemStyleBordered target:self action:@selector(leftButtonTapped)];
 	
 	UIBarButtonItem *flexibleSpace		= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
 	
-	self.rightButton					= [[UIBarButtonItem alloc] initWithTitle:@"Fridge" style:UIBarButtonItemStyleBordered target:self action:@selector(rightButtonTapped)];
+	self.rightButton					= [[UIBarButtonItem alloc] initWithTitle:@"Right" style:UIBarButtonItemStyleBordered target:self action:@selector(rightButtonTapped)];
 	
-	self.toolbar.items					= @[self.leftButton, flexibleSpace, self.rightButton];
+	[self.toolbar setItems:@[self.leftButton, flexibleSpace, self.rightButton] animated:animate];
 }
 
 /**
@@ -126,7 +160,6 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 {
 	if (self = [super init])
 	{
-		
 	}
 	
 	return self;
@@ -135,45 +168,48 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 #pragma mark - Setter & Getter Methods
 
 /**
+ *	the main view that will show the recipes in an elegant way
+ */
+- (UICollectionView *)recipesCollectionView
+{
+	if (!_recipesCollectionView)
+	{
+		UICollectionViewFlowLayout *layout	= [[UICollectionViewFlowLayout alloc] init];
+		layout.sectionInset				= UIEdgeInsetsMake(20.0f, 20.0f, 20.0f, 20.0f);
+		_recipesCollectionView			= [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
+		_recipesCollectionView.backgroundColor	= [UIColor whiteColor];
+		_recipesCollectionView.dataSource		= self;
+		_recipesCollectionView.delegate	= self;
+		
+		[_recipesCollectionView registerClass:[RecipeCollectionViewCell class] forCellWithReuseIdentifier:kCellIdentifier];
+		
+		_recipesCollectionView.translatesAutoresizingMaskIntoConstraints	= NO;
+		[self.view addSubview:_recipesCollectionView];
+	}
+	
+	return _recipesCollectionView;
+}
+
+/**
+ *	the setter for the back button declared by the centre view protocol and used to transition to previous controller
  *
- *
- *	@param
+ *	@param	backButton					back button which would have been set by 
  */
 - (void)setBackButton:(UIBarButtonItem *)backButton
 {
 	_backButton							= backButton;
-	[self addToolbarItems];
+	[self addToolbarItemsAnimated:YES];
 }
 
 /**
+ *	sets the recipes array that we are displaying
  *
- *
- *	@param
+ *	@param	recipes						the returned array of recipes from a search
  */
 - (void)setRecipes:(NSArray *)recipes
 {
 	_recipes							= recipes;
-	[self.tableView reloadData];
-	NSLog(@"Recipes: %@", recipes);
-}
-/**
- *	this is hte main table view for this view controller
- */
-- (UITableView *)tableView
-{
-	if (!_tableView)
-	{
-		_tableView						= [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
-		_tableView.dataSource			= self;
-		_tableView.delegate				= self;
-		[self.view addSubview:_tableView];
-		
-		[_tableView registerClass:[RecipeCell class] forCellReuseIdentifier:kCellIdentifier];
-		
-		_tableView.translatesAutoresizingMaskIntoConstraints	= NO;
-	}
-	
-	return _tableView;
+	[self.recipesCollectionView reloadData];
 }
 
 /**
@@ -196,53 +232,41 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
  */
 - (NSDictionary *)viewsDictionary
 {
-	return @{	@"tableView"	: self.tableView,
-				@"toolbar"		: self.toolbar};
+	return @{	@"collectionView"	: self.recipesCollectionView,
+				@"toolbar"			: self.toolbar};
 }
 
-#pragma mark - UITableViewDataSource Methods
+#pragma mark - UICollectionViewDataSource Methods
 
 /**
- *	as the data source, we must define how many sections we want the table view to have
+ *	as the data source we return the cell that corresponds to the specified item in the collection view
  *
- *	@param	tableView					the table view for which are defining the sections number
+ *	@param	collectionView				object representing the collection view requesting this information
+ *	@param	indexPath					index path that specifies the location of the item
  */
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView
+				  cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-	return 1;
-}
-
-/**
- *	create and return the cells for each row of the table view
- *
- *	@param	tableView					the table view for which we are creating cells
- *	@param	indexPath					the index path of the row we are creating a cell for
- */
-- (UITableViewCell *)tableView:(UITableView *)tableView
-		 cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-	RecipeCell *cell					= [tableView dequeueReusableCellWithIdentifier:kCellIdentifier forIndexPath:indexPath];
+	RecipeCollectionViewCell *cell		= [collectionView dequeueReusableCellWithReuseIdentifier:kCellIdentifier forIndexPath:indexPath];
 	
-	cell.recipeNameLabel.text			= self.recipes[indexPath.row][kYummlyMatchRecipeNameKey];
-	cell.recipeNameLabel.font			= [UIFont fontWithName:@"AvenirNext-Medium" size:14.0f];
-	cell.recipeAuthorLabel.text			= self.recipes[indexPath.row][kYummlyMatchSourceDisplayNameKey];
-	cell.recipeAuthorLabel.font			= [UIFont fontWithName:@"AvenirNext-Medium" size:10.0f];
-	
-	cell.accessoryType					= UITableViewCellAccessoryDisclosureIndicator;
+	cell.recipeDetails.mainLabel.text	= self.recipes[indexPath.row][kYummlyMatchRecipeNameKey];
+	cell.recipeDetails.detailLabel.text	= self.recipes[indexPath.row][kYummlyMatchSourceDisplayNameKey];
+	cell.thumbnailView.image			= nil;
 	
 	//	on separate thread we pull the image for this cell
 	dispatch_async(dispatch_queue_create("Thumbnail URL Fetcher", NULL),
 	^{
 		NSString *thumbnailURLString	= ((NSArray *)self.recipes[indexPath.row][kYummlyMatchSmallImageURLsArrayKey]).lastObject;
+		thumbnailURLString				= [thumbnailURLString stringByReplacingOccurrencesOfString:@".s." withString:@".l."];
 		NSURL *thumbnailURL				= [[NSURL alloc] initWithString:thumbnailURLString];
-		
+					   
 		__block NSData *thumbnailData;
-		
+					   
 		dispatch_sync(dispatch_queue_create("Thumbnail Data Fetcher", NULL),
 		^{
 			thumbnailData				= [[NSData alloc] initWithContentsOfURL:thumbnailURL];
 			UIImage *thumbnail			= [[UIImage alloc] initWithData:thumbnailData];
-			
+										 
 			dispatch_sync(dispatch_get_main_queue(),
 			^{
 				cell.thumbnailView.image= thumbnail;
@@ -254,91 +278,86 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 }
 
 /**
- *	define how many rows for each section there are in this table view
+ *	as the data source we return number of items in the specified section
  *
- *	@param	tableView					the table view for which we are creating cells
- *	@param	section						the particular section for which we must define the rows
+ *	@param	collectionView				object representing the collection view requesting this information
+ *	@param	section						index identifying section in collection view
  */
-- (NSInteger)tableView:(UITableView *)tableView
- numberOfRowsInSection:(NSInteger)section
+- (NSInteger)collectionView:(UICollectionView *)collectionView
+	 numberOfItemsInSection:(NSInteger)section
 {
 	return self.recipes.count;
 }
 
-#pragma mark - UITableViewDelegate Methods
-
 /**
- *	asks data source to commit the insertion or deletion of a specified row in the receiver
+ *	returns number of sections in collection view
  *
- *	@param	tableView					table view object requesting the insertion or deletion
- *	@param	editingStyle				cell editing style corresponding to a insertion or deletion requested
- *	@param	indexPath					index path locating the row in tableview requesting edit
+ *	@param	collectionView				object representing the collection view requesting this information
  */
--  (void)tableView:(UITableView *)				tableView
-commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
- forRowAtIndexPath:(NSIndexPath *)				indexPath
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
-	if (editingStyle == UITableViewCellEditingStyleDelete)
-	{
-		[tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationLeft];
-	}
+	return 1;
 }
 
+#pragma mark - UICollectionViewDelegate Methods
+
+
+
 /**
- *	handle the fact that a cell was just selected
+ *	called when the item at the specified index path was deselected
  *
- *	@param	tableView					the table view containing selected cell
- *	@param	indexPath					the index path of the cell that was selected
+ *	@param	collectionview				collection view object that is notifying us of the selection change
+ *	@param	indexPath					index path of the cell that was deselected
  */
-- (void)	  tableView:(UITableView *)tableView
-didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)	collectionView:(UICollectionView *)collectionView
+didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-	[self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+	
 }
 
+
 /**
- *	define the height of the cell
+ *	called when the item at the specified index path was selected
  *
- *	@param	tableView					the view which owns the cell for which we need to define the height
- *	@param	indexPath					index path of the cell
+ *	@param	collectionview				collection view object that is notifying us of the selection change
+ *	@param	indexPath					index path of the cell that was selected
  */
-- (CGFloat)	  tableView:(UITableView *)tableView
-heightForRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)  collectionView:(UICollectionView *)collectionView
+didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-	return 80.0f;
+	
 }
 
-#pragma mark - NSLayoutConstraint Methods
+#pragma mark - UICollectionViewDelegateFlowLayout Methods
 
 /**
- *	adds the constraints for the table view and the toolbar
+ *
+ *
+ *	@param
+ *	@param
  */
-- (void)addConstraintsForTableView
+- (CGFloat)				  collectionView:(UICollectionView *)collectionView
+								  layout:(UICollectionViewLayout *)collectionViewLayout
+minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 {
-	NSArray *constraints;
-	
-	//	add the table view to cover the whole main view except for the toolbar
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[tableView]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
-	[self.view addConstraints:constraints];
-	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[toolbar]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
-	[self.view addConstraints:constraints];
-	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[toolbar(==44)][tableView]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
-	[self.view addConstraints:constraints];
+	return 5.0f;
 }
 
 /**
- *	called when the view controller’s view needs to update its constraints
+ *	returns the size of the specified item’s cell
+ *
+ *	@param	collectionView				collection view object displaying the flow layout
+ *	@param	collectionViewLayout		layout object requesting the information
+ *	@param	indexPath					index path of the item
  */
-- (void)updateViewConstraints
+- (CGSize)collectionView:(UICollectionView *)collectionView
+				  layout:(UICollectionViewLayout *)collectionViewLayout
+  sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-	[super updateViewConstraints];
-	
-	//	remove all constraints
-	[self.view removeConstraints:self.view.constraints];
-	
-	[self addConstraintsForTableView];
+	if (isFiveInchDevice)
+		return CGSizeMake(250.0f, 250.0f);
+	else
+		return CGSizeMake(210.0f, 210.0f);
 }
 
 #pragma mark - View Lifecycle
@@ -357,7 +376,8 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
-	[self addToolbarItems];
+	self.view.backgroundColor	= [UIColor whiteColor];
+	[self addToolbarItemsAnimated:NO];
 }
 
 /**

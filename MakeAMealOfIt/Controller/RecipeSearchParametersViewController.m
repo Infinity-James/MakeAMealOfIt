@@ -8,12 +8,7 @@
 
 #import "ParameterPageViewController.h"
 #import "RecipeSearchParametersViewController.h"
-
-#pragma mark - Constants & Static Variables
-
-static NSString *const kOptionsDietKey		= @"Diet";
-static NSString *const kOptionsHolidayKey	= @"Holiday";
-static NSString *const kOptionsIngredientKey= @"Ingredient";
+#import "YummlyMetadata.h"
 
 #pragma mark - Recipe Search Parameters VC Private Class Extension
 
@@ -92,29 +87,7 @@ static NSString *const kOptionsIngredientKey= @"Ingredient";
 {
 	return [self.optionsDictionary.allKeys sortedArrayUsingComparator:^NSComparisonResult(NSString *keyA, NSString *keyB)
 	{
-		if (((NSArray *)self.optionsDictionary[keyA]).count > ((NSArray *)self.optionsDictionary[keyB]).count)
-			return NSOrderedDescending;
-		else if (((NSArray *)self.optionsDictionary[keyA]).count < ((NSArray *)self.optionsDictionary[keyB]).count)
-			return NSOrderedAscending;
-		
-		return NSOrderedSame;
-	}];
-}
-
-/**
- *	returns the options dictionary's values as a sorted array
- */
-- (NSArray *)optionsAsArray
-{
-	return [self.optionsDictionary.allValues sortedArrayUsingComparator:^NSComparisonResult(NSArray *arrayA, NSArray *arrayB)
-	{
-		if (arrayA.count > arrayB.count)
-			return NSOrderedDescending;
-		
-		else if (arrayA.count < arrayB.count)
-			return NSOrderedAscending;
-
-		return NSOrderedSame;
+		return [keyA compare:keyB];
 	}];
 }
 
@@ -142,12 +115,9 @@ static NSString *const kOptionsIngredientKey= @"Ingredient";
 {
 	if (!_optionsDictionary)
 	{
-		_optionsDictionary				= @{kOptionsDietKey			: @[@"Option A", @"Option B", @"Option C", @"Option D",
-																		@"Option E", @"Option F", @"Option G", @"Option H", @"Option I"],
-											kOptionsHolidayKey		: @[@"Option A", @"Option B", @"Option C", @"Option D",
-																		@"Option E", @"Option F", @"Option G", @"Option H", @"Option I"],
-											kOptionsIngredientKey	: @[@"Option A", @"Option B", @"Option C", @"Option D",
-																		@"Option E", @"Option F", @"Option G", @"Option H", @"Option I"]};
+		NSMutableDictionary *allMetadata= [[YummlyMetadata allMetadata] mutableCopy];
+		[allMetadata removeObjectForKey:kYummlyMetadataIngredients];
+		_optionsDictionary				= allMetadata;
 	}
 	
 	return _optionsDictionary;
@@ -167,10 +137,9 @@ static NSString *const kOptionsIngredientKey= @"Ingredient";
 		_pageViewController.dataSource	= self;
 		_pageViewController.delegate	= self;
 		ParameterPageViewController *firstPage		= [[ParameterPageViewController alloc] init];
-		self.currentPageIndex			= 0;
-		firstPage.index					= self.currentPageIndex;
-		firstPage.optionLabel.text		= [self keysAsArray][firstPage.index];
-		firstPage.options				= [self optionsAsArray][self.currentPageIndex];
+		firstPage.index					= 0;
+		firstPage.optionLabel.text		= [[self keysAsArray][firstPage.index] capitalizedString];
+		firstPage.options				= self.optionsDictionary[[self keysAsArray][self.currentPageIndex]];
 		[_pageViewController setViewControllers:@[firstPage] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
 		
 		self.view.gestureRecognizers	= _pageViewController.gestureRecognizers;
@@ -211,10 +180,9 @@ static NSString *const kOptionsIngredientKey= @"Ingredient";
 	
 	//	create the view controller to return
 	ParameterPageViewController *nextPage	= [[ParameterPageViewController alloc] init];
-	self.currentPageIndex					= currentPage.index + 1;
-	nextPage.index							= self.currentPageIndex;
-	nextPage.optionLabel.text				= [self keysAsArray][self.currentPageIndex];
-	nextPage.options						= [self optionsAsArray][self.currentPageIndex];
+	nextPage.index							= currentPage.index + 1;
+	nextPage.optionLabel.text				= [[self keysAsArray][nextPage.index] capitalizedString];
+	nextPage.options						= self.optionsDictionary[[self keysAsArray][nextPage.index]];
 	
 	return nextPage;
 }
@@ -236,10 +204,9 @@ static NSString *const kOptionsIngredientKey= @"Ingredient";
 	
 	//	create the view controller to return
 	ParameterPageViewController *previousPage	= [[ParameterPageViewController alloc] init];
-	self.currentPageIndex						= currentPage.index - 1;
-	previousPage.index							= self.currentPageIndex;
-	previousPage.optionLabel.text				= [self keysAsArray][self.currentPageIndex];
-	previousPage.options						= [self optionsAsArray][self.currentPageIndex];
+	previousPage.index							= currentPage.index - 1;
+	previousPage.optionLabel.text				= [[self keysAsArray][previousPage.index] capitalizedString];
+	previousPage.options						= self.optionsDictionary[[self keysAsArray][previousPage.index]];
 	
 	return previousPage;
 }
@@ -261,7 +228,10 @@ static NSString *const kOptionsIngredientKey= @"Ingredient";
  */
 - (NSInteger)presentationIndexForPageViewController:(UIPageViewController *)pageViewController
 {
-	return self.currentPageIndex;
+	if ([pageViewController isKindOfClass:[ParameterPageViewController class]])
+		return ((ParameterPageViewController *)pageViewController).index;
+	else
+		return 0;
 }
 
 #pragma mark - View Lifecycle

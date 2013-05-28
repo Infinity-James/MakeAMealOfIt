@@ -13,9 +13,10 @@
 
 @interface RecipeSearchView () <UITextFieldDelegate> {}
 
-@property (nonatomic, strong)	UIButton								*searchButton;
-@property (nonatomic, strong)	UITextField								*searchPhraseField;
-@property (nonatomic, strong)	NSDictionary							*viewsDictionary;
+@property (nonatomic, strong)	UIButton		*searchButton;
+@property (nonatomic, assign)	BOOL			searchLoading;
+@property (nonatomic, strong)	UITextField		*searchPhraseField;
+@property (nonatomic, strong)	NSDictionary	*viewsDictionary;
 
 @end
 
@@ -26,15 +27,25 @@
 #pragma mark - Action & Selector Methods
 
 /**
- *
+ *	the user wants to execute the search
  */
 - (void)searchButtonTapped
 {
+	//	if the keyboard is still up we take it down
+	[self.searchPhraseField resignFirstResponder];
+	
+	//	set the yummly request's 
 	appDelegate.yummlyRequest.searchPhrase	= self.searchPhraseField.text;
+	
+	if (!self.searchLoading)
+		self.searchLoading				= YES;
+	else
+		return;
 	
 	[appDelegate.yummlyRequest executeSearchRecipesCallWithCompletionHandler:^(BOOL success, NSDictionary *results)
 	{
 		[self.delegate performSelectorOnMainThread:@selector(searchExecutedForResults:) withObject:results waitUntilDone:NO];
+		self.searchLoading				= NO;
 	}];
 }
 
@@ -92,7 +103,7 @@
  */
 - (NSArray *)foods
 {
-	return @[@"Pizza", @"Lasagne", @"Risotto", @"Cottage Pie", @"Cookie", @"Brownie", @"Flapjack", @"Dougnut", @"Barbeque"];
+	return @[@"Barbeque", @"Brownie", @"Cookie", @"Cottage Pie", @"Doughnut", @"Flapjack", @"Lasagne", @"Pizza", @"Risotto", @"Soup"];
 }
 
 /**

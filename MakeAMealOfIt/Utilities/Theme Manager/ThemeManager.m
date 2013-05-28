@@ -66,6 +66,9 @@ static id<Theme> _theme					= nil;
 	//	use progress view proxy to customise them all
 	[self customiseProgressBar:[UIProgressView appearance] withTheme:nil];
 	
+	//	use search bar proxy to customise all search bars
+	[self customiseSearchBar:[UISearchBar appearance] withTheme:nil];
+	
 	//	use the uistepper proxy to customise all uisteppers
 	[self customiseStepper:[UIStepper appearance] withTheme:nil];
 	
@@ -88,6 +91,7 @@ static id<Theme> _theme					= nil;
  *	customises a specific bar button item
  *
  *	@param	barButton					the bar button item to customise
+ *	@param	theme						the theme to use to customise the bar button item 
  */
 + (void)customiseBarButtonItem:(UIBarButtonItem *)barButton withTheme:(id<Theme>)theme
 {
@@ -135,6 +139,7 @@ static id<Theme> _theme					= nil;
  *	customises a uibutton with the set theme
  *
  *	@param	button						the uibutton to customise
+ *	@param	theme						the theme to use to customise the button 
  */
 + (void)customiseButton:(UIButton *)button withTheme:(id<Theme>)theme
 {
@@ -158,7 +163,8 @@ static id<Theme> _theme					= nil;
 /**
  *	customises a specific uilabel
  *
- *	@param	label					the label to customise
+ *	@param	label						the label to customise
+ *	@param	theme						the theme to use to customise the label
  */
 + (void)customiseLabel:(UILabel *)label withTheme:(id<Theme>)theme
 {
@@ -177,6 +183,7 @@ static id<Theme> _theme					= nil;
  *	customises a specific navigation bar
  *
  *	@param	navigationBar				the navigation bar to customise
+ *	@param	theme						the theme to use to customise the navigation bar 
  */
 + (void)customiseNavigationBar:(UINavigationBar *)navigationBar withTheme:(id<Theme>)theme
 {
@@ -195,6 +202,7 @@ static id<Theme> _theme					= nil;
  *	customises a uipagecontrol
  *
  *	@param	pageControl					the page control to customise
+ *	@param	theme						the theme to use to customise the page control
  */
 + (void)customisePageControl:(UIPageControl *)pageControl withTheme:(id<Theme>)theme
 {
@@ -211,6 +219,7 @@ static id<Theme> _theme					= nil;
  *	customises a progress view
  *
  *	@param	progressBar					the progress bar to customise
+ *	@param	theme						the theme to use to customise the progress bar
  */
 + (void)customiseProgressBar:(UIProgressView *)progressBar withTheme:(id<Theme>)theme
 {
@@ -228,9 +237,29 @@ static id<Theme> _theme					= nil;
 }
 
 /**
+ *	customises a uisearchbar
+ *
+ *	@param	searchBar					the uistepper to customise
+ *	@param	theme						the theme to use to customise the search bar
+ */
++ (void)customiseSearchBar:(UISearchBar *)searchBar withTheme:(id<Theme>)theme
+{
+	//	if no theme is passed in get the chosen theme
+	if (!theme)
+		theme							= self.sharedTheme;
+	
+	//	customise the whole of the search bar
+	searchBar.backgroundImage			= [theme backgroundImageForSearchBar];
+	[searchBar setSearchFieldBackgroundImage:[theme backgroundImageForSearchFieldForState:UIControlStateNormal] forState:UIControlStateNormal];
+	[searchBar setImage:[theme imageForSearchIconForState:UIControlStateNormal] forSearchBarIcon:UISearchBarIconSearch state:UIControlStateNormal];
+	[searchBar setSearchTextPositionAdjustment:[theme offsetForSearchBarText]];
+}
+
+/**
  *	customises a uistepper
  *
  *	@param	stepper						the uistepper to customise
+ *	@param	theme						the theme to use to customise the stepper
  */
 + (void)customiseStepper:(UIStepper *)stepper withTheme:(id<Theme>)theme
 {
@@ -257,6 +286,7 @@ static id<Theme> _theme					= nil;
  *	customises a uiswitch
  *
  *	@param	switchControl				the uiswitch to customise
+ *	@param	theme						the theme to use to customise the switch
  */
 + (void)customiseSwitch:(UISwitch *)switchControl withTheme:(id<Theme>)theme
 {
@@ -276,6 +306,7 @@ static id<Theme> _theme					= nil;
  *	customises a uitabbar
  *
  *	@param	tabBar						the tab bar to customise
+ *	@param	theme						the theme to use to customise the tab bar
  */
 + (void)customiseTabBar:(UITabBar *)tabBar withTheme:(id<Theme>)theme
 {
@@ -289,9 +320,10 @@ static id<Theme> _theme					= nil;
 }
 
 /**
- *	customises a uitabbar
+ *	customises a uitabbaritem
  *
- *	@param	tabBar						the tab bar to customise
+ *	@param	tabBarItem					the tab bar item to customise
+ *	@param	theme						the theme to use to customise the tab bar item
  */
 + (void)customiseTabBarItem:(UITabBarItem *)tabBarItem withTheme:(id<Theme>)theme
 {
@@ -303,9 +335,10 @@ static id<Theme> _theme					= nil;
 }
 
 /**
- *	customises a uiswitch
+ *	customises a uitableviewcell
  *
- *	@param	switchControl				the uiswitch to customise
+ *	@param	switchControl				the table view cell to customise
+ *	@param	theme						the theme to use to customise the table view cell
  */
 + (void)customiseTableViewCell:(UITableViewCell *)tableViewCell withTheme:(id<Theme>)theme
 {
@@ -324,6 +357,7 @@ static id<Theme> _theme					= nil;
  *	customise a uitextfield
  *
  *	@param	textField					the uitextfield to customise
+ *	@param	theme						the theme to use to customise the text field
  */
 + (void)customiseTextField:(UITextField *)textField withTheme:(id<Theme>)theme
 {
@@ -340,6 +374,7 @@ static id<Theme> _theme					= nil;
  *	customises a uitoolbar
  *
  *	@param	toolbar						the uitoolbar to customise
+ *	@param	theme						the theme to use to customise the toolbar
  */
 + (void)customiseToolbar:(UIToolbar *)toolbar withTheme:(id<Theme>)theme
 {
@@ -356,6 +391,7 @@ static id<Theme> _theme					= nil;
  *	customise a specific view
  *
  *	@param	view						the view to customise
+ *	@param	theme						the theme to use to customise the view
  */
 + (void)customiseView:(UIView *)view withTheme:(id<Theme>)theme
 {

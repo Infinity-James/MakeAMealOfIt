@@ -13,4 +13,5 @@
 	#import <UIKit/UIKit.h>
 	#import "Defines.h"
 	#import "ThemeManager.h"
+	#import "UtilityMethodsCG.h"
 #endif

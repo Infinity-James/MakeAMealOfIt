@@ -171,7 +171,6 @@ static NSString *const kRightVCKey		= @"Right";
 		{
 			self.centreViewController.view.frame		= CGRectMake(self.view.bounds.size.width, 0.0f,
 																	 self.view.bounds.size.width, self.view.bounds.size.height);
-			//[self resetMainView];
 		}
 	}
 					 completion:^(BOOL finished)
@@ -181,7 +180,6 @@ static NSString *const kRightVCKey		= @"Right";
 		[childView removeFromSuperview];
 		self.centreViewController						= viewController;
 		if (forwards)									self.centreViewController.backButton = self.backButton;
-		NSLog(@"Left Controller: %@\nRight Controller: %@\nCentre Controller: %@", self.leftViewControllerClass, self.rightViewControllerClass, self.centreViewController);
 	}];
 }
 
@@ -415,6 +413,9 @@ static NSString *const kRightVCKey		= @"Right";
 		
 		_leftViewController.view.tag		= kLeftViewTag;
 		
+		if ([_leftViewController respondsToSelector:@selector(setDelegate:)])
+			[_leftViewController performSelector:@selector(setDelegate:) withObject:self.centreViewController];
+		
 		[self.view addSubview:_leftViewController.view];
 		[self addChildViewController:_leftViewController];
 		[_leftViewController didMoveToParentViewController:self];
@@ -622,7 +623,7 @@ static NSString *const kRightVCKey		= @"Right";
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 	   shouldReceiveTouch:(UITouch *)touch
 {
-	return self.canTrackTouches;
+	return YES;//self.canTrackTouches;
 }
 
 /**

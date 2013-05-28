@@ -58,6 +58,13 @@
 - (UIColor *)progressBarTintColour;
 - (UIColor *)progressBarTrackTintColour;
 
+#pragma mark - Search Bar Appearance
+
+- (UIImage *)backgroundImageForSearchBar;
+- (UIImage *)backgroundImageForSearchFieldForState:(UIControlState)controlState;
+- (UIImage *)imageForSearchIconForState:(UIControlState)controlState;
+- (UIOffset)offsetForSearchBarText;
+
 #pragma mark - Stepper Appearance
 
 - (UIImage *)imageForStepperDecrement;
@@ -126,6 +133,8 @@
 				   withTheme:(id<Theme>)theme;
 + (void)customiseProgressBar:(UIProgressView *)progressBar
 				   withTheme:(id<Theme>)theme;
++ (void)customiseSearchBar:(UISearchBar *)searchBar
+				 withTheme:(id<Theme>)theme;
 + (void)customiseStepper:(UIStepper *)stepper
 			   withTheme:(id<Theme>)theme;
 + (void)customiseTableViewCell:(UITableViewCell *)tableViewCell

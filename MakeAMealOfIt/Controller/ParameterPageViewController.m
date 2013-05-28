@@ -91,6 +91,7 @@
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 								duration:(NSTimeInterval)duration
 {
+	//	self.selectionWheel.drawnWheel		= NO;
 	[self.view setNeedsUpdateConstraints];
 }
 

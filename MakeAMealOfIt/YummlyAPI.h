@@ -70,6 +70,7 @@ typedef void(^YummlyRequestCompletionBlock)(BOOL success, NSDictionary *results)
 					   withCompletionHandler:(YummlyRequestCompletionBlock)getRecipeCallCompleted;
 + (void)asynchronousSearchRecipesCallWithParameters:(NSString *)searchParameters
 							   andCompletionHandler:(YummlyRequestCompletionBlock)searchRecipesCallCompleted;
++ (NSArray *)metadataKeys;
 + (NSArray *)synchronousGetMetadataForKey:(NSString *)metadataKey;
 
 @end
