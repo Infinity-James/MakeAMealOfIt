@@ -23,8 +23,6 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 
 #pragma mark - Private Properties
 
-@property (nonatomic, strong)	UIBarButtonItem				*cupboardButton;
-@property (nonatomic, strong)	UIBarButtonItem				*fridgeButton;
 @property (nonatomic, strong)	UITableView					*ingredientsTableView;
 @property (nonatomic, copy)		LeftControllerDataModified	modifiedIngredients;
 @property (nonatomic, strong)	RecipeSearchView			*recipeSearchView;
@@ -38,11 +36,6 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 
 @implementation RecipeSearchViewController {}
 
-#pragma mark - Synthesis Properties
-
-@synthesize backButton					= _backButton;
-@synthesize movingViewBlock				= _movingViewBlock;
-
 #pragma mark - Action & Selector Methods
 
 /**
@@ -51,15 +44,7 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 - (void)leftButtonTapped
 {
 	[self.recipeSearchView resignFirstResponder];
-	
-	if (!self.movingViewBlock)			return;
-	
-	switch (self.leftButtonTag)
-	{
-		case kButtonInUse:		self.movingViewBlock(MovingViewOriginalPosition);	break;
-		case kButtonNotInUse:	self.movingViewBlock(MovingViewRight);				break;
-		default:																	break;
-	}
+	[super leftButtonTapped];
 }
 
 /**
@@ -68,15 +53,7 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 - (void)rightButtonTapped
 {
 	[self.recipeSearchView resignFirstResponder];
-	
-	if (!self.movingViewBlock)			return;
-	
-	switch (self.rightButtonTag)
-	{
-		case kButtonInUse:		self.movingViewBlock(MovingViewOriginalPosition);	break;
-		case kButtonNotInUse:	self.movingViewBlock(MovingViewLeft);				break;
-		default:																	break;
-	}
+	[super rightButtonTapped];
 }
 
 #pragma mark - Autolayout Methods
@@ -140,50 +117,14 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 	return YES;
 }
 
-#pragma mark - CentreViewControllerProtocol Methods
-
-/**
- *	returns the left button tag
- */
-- (NSUInteger)leftButtonTag
-{
-	return self.cupboardButton.tag;
-}
-
-/**
- *	returns right button tag
- */
-- (NSUInteger)rightButtonTag
-{
-	return self.fridgeButton.tag;
-}
-
-/**
- *	sets the tag of the button to the left of the toolbar
- */
-- (void)setLeftButtonTag:(NSUInteger)tag
-{
-	self.cupboardButton.tag				= tag;
-}
-
-/**
- *	sets the tag of the button to the right of the toolbar
- */
-- (void)setRightButtonTag:(NSUInteger)tag
-{
-	self.fridgeButton.tag				= tag;
-}
-
-#pragma mark - Convenience & Helper Methods
-
 #pragma mark - Initialisation
 
 /**
  *	adds toolbar items to our toolbar
  */
-- (void)addToolbarItems
+- (void)addToolbarItemsAnimated:(BOOL)animate
 {
-	self.cupboardButton					= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_hamburger"]
+	self.leftButton						= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_hamburger"]
 															   style:UIBarButtonItemStyleBordered target:self action:@selector(leftButtonTapped)];
 	
 	UIBarButtonItem *flexibleSpace		= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
@@ -196,23 +137,10 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 	[title sizeToFit];
 	UIBarButtonItem *titleItem			= [[UIBarButtonItem alloc] initWithCustomView:title];
 	
-	self.fridgeButton					= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_allergies"]
+	self.rightButton					= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_allergies"]
 															 style:UIBarButtonItemStyleBordered target:self action:@selector(rightButtonTapped)];
 	
-	self.toolbar.items					= @[self.cupboardButton, flexibleSpace, titleItem, flexibleSpace, self.fridgeButton];
-}
-
-/**
- *	called to initialise a class instance
- */
-- (id)init
-{
-	if (self = [super init])
-	{
-		
-	}
-	
-	return self;
+	[self.toolbar setItems:@[self.leftButton, flexibleSpace, titleItem, flexibleSpace, self.rightButton] animated:animate];
 }
 
 #pragma mark - Left Controller Delegate Methods
@@ -340,23 +268,6 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 }
 
 /**
- *	a toolbar to keep at the top of the view
- */
-- (UIToolbar *)toolbar
-{
-	if (!_toolbar)
-	{
-		_toolbar						= [[UIToolbar alloc] init];
-		_toolbar.clipsToBounds			= NO;
-		[ThemeManager customiseToolbar:_toolbar withTheme:nil];
-		_toolbar.translatesAutoresizingMaskIntoConstraints		= NO;
-		[self.view addSubview:_toolbar];
-	}
-	
-	return _toolbar;
-}
-
-/**
  *	this is the dictionary of view to apply constraint to
  */
 - (NSDictionary *)viewsDictionary
@@ -451,35 +362,6 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 }
 
 #pragma mark - View Lifecycle
-
-/**
- *	sent to the view controller when the app receives a memory warning
- */
-- (void)didReceiveMemoryWarning
-{
-	[super didReceiveMemoryWarning];
-}
-
-/**
- *	called once this controller's view has been loaded into memory
- */
-- (void)viewDidLoad
-{
-	[super viewDidLoad];
-	[self addToolbarItems];
-	self.view.backgroundColor			= [UIColor whiteColor];
-}
-
-/**
- *	notifies the view controller that its view is about to be added to a view hierarchy
- *
- *	@param	animated					whether the view needs to be added to the window with an animation
- */
-- (void)viewWillAppear:(BOOL)animated
-{
-	[super viewWillAppear:animated];
-	[self.view setNeedsUpdateConstraints];
-}
 
 /**
  *	notifies the view controller that its view is about to layout its subviews

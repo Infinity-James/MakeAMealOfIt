@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
-#import "CentreViewControllerProtocol.h"
+#import "UICentreViewController.h"
 
 #pragma mark - Recipes View Controller Public Interface
 
-@interface RecipesViewController : UIViewController <CentreViewControllerProtocol>
+@interface RecipesViewController : UICentreViewController {}
 
 @property (nonatomic, strong)	NSArray					*recipes;
 

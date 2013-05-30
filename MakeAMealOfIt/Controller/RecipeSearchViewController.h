@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
-#import "CentreViewControllerProtocol.h"
+#import "UICentreViewController.h"
 #import "LeftControllerDelegate.h"
 
 #pragma mark - Recipe Search View Controller Public Interface
 
-@interface RecipeSearchViewController : UIViewController <CentreViewControllerProtocol, LeftControllerDelegate> {}
+@interface RecipeSearchViewController : UICentreViewController {}
 
 @end

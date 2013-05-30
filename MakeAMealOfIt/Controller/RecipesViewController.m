@@ -24,9 +24,7 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 
 #pragma mark - Private Properties
 
-@property (nonatomic, strong)	UIBarButtonItem			*leftButton;
 @property (nonatomic, strong)	UICollectionView		*recipesCollectionView;
-@property (nonatomic, strong)	UIBarButtonItem			*rightButton;
 @property (nonatomic, strong)	NSCache					*thumbnailCache;
 @property (nonatomic, strong)	UIToolbar				*toolbar;
 @property (nonatomic, strong)	NSDictionary			*viewsDictionary;
@@ -36,43 +34,6 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 #pragma mark - Recipes View Controller Implementation
 
 @implementation RecipesViewController {}
-
-#pragma mark - Synthesise Properties
-
-@synthesize backButton					= _backButton;
-@synthesize movingViewBlock				= _movingViewBlock;
-
-#pragma mark - Action & Selector Methods
-
-/**
- *	called when the button in the toolbar for the left panel is tapped
- */
-- (void)leftButtonTapped
-{
-	if (!self.movingViewBlock)			return;
-	
-	switch (self.leftButtonTag)
-	{
-		case kButtonInUse:		self.movingViewBlock(MovingViewOriginalPosition);	break;
-		case kButtonNotInUse:	self.movingViewBlock(MovingViewRight);				break;
-		default:																	break;
-	}
-}
-
-/**
- *	called when the button in the toolbar for the right panel is tapped
- */
-- (void)rightButtonTapped
-{
-	if (!self.movingViewBlock)			return;
-	
-	switch (self.rightButtonTag)
-	{
-		case kButtonInUse:		self.movingViewBlock(MovingViewOriginalPosition);	break;
-		case kButtonNotInUse:	self.movingViewBlock(MovingViewLeft);				break;
-		default:																	break;
-	}
-}
 
 #pragma mark - Autolayout Methods
 
@@ -95,47 +56,10 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[toolbar]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
 	
-	CGFloat toolbarHeight				= 44.0f;
-	
-	if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
-		toolbarHeight					= 32.0f;
+	CGFloat toolbarHeight				= self.toolbarHeight;
 	
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[toolbar(height)][collectionView]|" options:kNilOptions metrics:@{@"height": @(toolbarHeight)} views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
-}
-
-#pragma mark - CentreViewControllerProtocol Methods
-
-/**
- *	returns the left button tag
- */
-- (NSUInteger)leftButtonTag
-{
-	return self.leftButton.tag;
-}
-
-/**
- *	returns right button tag
- */
-- (NSUInteger)rightButtonTag
-{
-	return self.rightButton.tag;
-}
-
-/**
- *	sets the tag of the left bar button item
- */
-- (void)setLeftButtonTag:(NSUInteger)tag
-{
-	self.leftButton.tag					= tag;
-}
-
-/**
- *	sets the tag of the right bar button item
- */
-- (void)setRightButtonTag:(NSUInteger)tag
-{
-	self.rightButton.tag				= tag;
 }
 
 #pragma mark - Initialisation
@@ -195,17 +119,6 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 }
 
 /**
- *	the setter for the back button declared by the centre view protocol and used to transition to previous controller
- *
- *	@param	backButton					back button which would have been set by 
- */
-- (void)setBackButton:(UIBarButtonItem *)backButton
-{
-	_backButton							= backButton;
-	[self addToolbarItemsAnimated:YES];
-}
-
-/**
  *	sets the recipes array that we are displaying
  *
  *	@param	recipes						the returned array of recipes from a search
@@ -227,21 +140,6 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 	}
 	
 	return _thumbnailCache;
-}
-
-/**
- *	a toolbar to keep at the top of the view
- */
-- (UIToolbar *)toolbar
-{
-	if (!_toolbar)
-	{
-		_toolbar						= [[UIToolbar alloc] init];
-		_toolbar.translatesAutoresizingMaskIntoConstraints		= NO;
-		[self.view addSubview:_toolbar];
-	}
-	
-	return _toolbar;
 }
 
 /**
@@ -398,46 +296,6 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 		return CGSizeMake(250.0f, 250.0f);
 	else
 		return CGSizeMake(210.0f, 210.0f);
-}
-
-#pragma mark - View Lifecycle
-
-/**
- *	sent to the view controller when the app receives a memory warning
- */
-- (void)didReceiveMemoryWarning
-{
-	[super didReceiveMemoryWarning];
-}
-
-/**
- *	called once this controller's view has been loaded into memory
- */
-- (void)viewDidLoad
-{
-	[super viewDidLoad];
-	self.view.backgroundColor	= [UIColor whiteColor];
-	[self addToolbarItemsAnimated:NO];
-}
-
-/**
- *	notifies the view controller that its view is about to be added to a view hierarchy
- *
- *	@param	animated					whether the view needs to be added to the window with an animation
- */
-- (void)viewWillAppear:(BOOL)animated
-{
-	[super viewWillAppear:animated];
-	[self.view setNeedsUpdateConstraints];
-}
-
-/**
- *	notifies the view controller that its view is about to layout its subviews
- */
-- (void)viewWillLayoutSubviews
-{
-	[super viewWillLayoutSubviews];
-	[self.view setNeedsUpdateConstraints];
 }
 
 @end
