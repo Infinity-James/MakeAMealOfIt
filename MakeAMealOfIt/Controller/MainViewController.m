@@ -180,7 +180,8 @@ static NSString *const kRightVCKey		= @"Right";
 			[self resetMainView];
 		[childView removeFromSuperview];
 		self.centreViewController						= viewController;
-		if (forwards)									self.centreViewController.backButton = self.backButton;
+		if (forwards || self.pastViewControllerDictionaries.count)
+			self.centreViewController.backButton = self.backButton;
 	}];
 }
 
@@ -261,13 +262,13 @@ static NSString *const kRightVCKey		= @"Right";
 	//	if the velocity is right we check if we can show the left panel
 	if (velocity.x > 0)
 	{
-		if (!self.showingRightPanel)
+		if (!self.showingRightPanel && self.leftViewControllerClass)
 			childView					= self.leftPanelView;
 	}
 	
 	//	otherwise the velocity is left and we check if we can show the right panel
 	else
-		if (!self.showingLeftPanel)
+		if (!self.showingLeftPanel && self.rightViewControllerClass)
 			childView					= self.rightPanelView;
 	
 	//	put child view in back and keep centre view in front
@@ -286,8 +287,17 @@ static NSString *const kRightVCKey		= @"Right";
 	CGPoint translation					= [panGesture translationInView:panGesture.view];
 	
 	//	if the velocity is right we react accordingly and same for left
-	if (velocity.x > 0);
-	else;
+	if (velocity.x > 0)
+	{
+	}
+	else
+	{
+		if (!self.rightViewControllerClass && !self.showingLeftPanel)
+		{
+			[self movePanelToOriginalPosition];
+			return;
+		}
+	}
 	
 	//	check if we're now more than half way, and if so we are officially showing the panel
 	self.showPanel						= abs(panGesture.view.center.x - self.centreViewController.view.bounds.size.width / 2) >

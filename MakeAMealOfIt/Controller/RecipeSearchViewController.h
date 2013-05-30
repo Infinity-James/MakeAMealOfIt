@@ -11,6 +11,6 @@
 
 #pragma mark - Recipe Search View Controller Public Interface
 
-@interface RecipeSearchViewController : UICentreViewController {}
+@interface RecipeSearchViewController : UICentreViewController <LeftControllerDelegate> {}
 
 @end
