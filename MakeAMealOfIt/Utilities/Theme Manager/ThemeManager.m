@@ -76,7 +76,7 @@ static id<Theme> _theme					= nil;
 	[self customiseSwitch:[UISwitch appearance] withTheme:nil];
 	
 	//	customise all uitableviewcells
-	[self customiseTableViewCell:[UITableViewCell appearance] withTheme:nil];
+	//	[self customiseTableViewCell:[UITableViewCell appearance] withTheme:nil];
 	
 	//	set uitextfield proxy to customise them all
 	[self customiseTextField:[UITextField appearance] withTheme:nil];
@@ -346,11 +346,16 @@ static id<Theme> _theme					= nil;
 	if (!theme)
 		theme							= self.sharedTheme;
 	
+	BOOL isSelected						= tableViewCell.isSelected;
+	
+	//	set the general appearance
+	tableViewCell.backgroundColor		= [theme backgroundColourForTableViewCellSelected:isSelected];
+	
 	//	customise the table view cell's text properties
-	tableViewCell.textLabel.font		= theme.tableViewCellTextDictionary[UITextAttributeFont];
-	tableViewCell.textLabel.textColor	= theme.tableViewCellTextDictionary[UITextAttributeTextColor];
-	tableViewCell.textLabel.shadowColor	= theme.tableViewCellTextDictionary[UITextAttributeTextShadowColor];
-	tableViewCell.textLabel.shadowOffset= ((NSValue *)theme.tableViewCellTextDictionary[UITextAttributeTextShadowOffset]).CGSizeValue;
+	tableViewCell.textLabel.font		= [theme tableViewCellTextDictionarySelected:isSelected][UITextAttributeFont];
+	tableViewCell.textLabel.textColor	= [theme tableViewCellTextDictionarySelected:isSelected][UITextAttributeTextColor];
+	tableViewCell.textLabel.shadowColor	= [theme tableViewCellTextDictionarySelected:isSelected][UITextAttributeTextShadowColor];
+	tableViewCell.textLabel.shadowOffset= ((NSValue *)[theme tableViewCellTextDictionarySelected:isSelected][UITextAttributeTextShadowOffset]).CGSizeValue;
 }
 
 /**

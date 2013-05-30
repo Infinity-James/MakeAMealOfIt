@@ -107,7 +107,7 @@
 }
 
 /**
- *
+ *	this button when tapped will execute the search
  */
 - (UIButton *)searchButton
 {

@@ -22,6 +22,20 @@
 
 @implementation RecipeDetailsView {}
 
+#pragma mark - Initialisation
+/**
+ *	called to initialise a class instance
+ */
+- (instancetype)initWithRecipeDictionary:(NSDictionary *)recipeDictionary
+{
+	if (self = [super init])
+	{
+		
+	}
+	
+	return self;
+}
+
 #pragma mark - Setter & Getter Methods
 
 /**

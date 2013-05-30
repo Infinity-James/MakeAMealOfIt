@@ -413,8 +413,8 @@ static NSString *const kRightVCKey		= @"Right";
 		
 		_leftViewController.view.tag		= kLeftViewTag;
 		
-		if ([_leftViewController respondsToSelector:@selector(setDelegate:)])
-			[_leftViewController performSelector:@selector(setDelegate:) withObject:self.centreViewController];
+		if ([_leftViewController respondsToSelector:@selector(setLeftDelegate:)])
+			[_leftViewController performSelector:@selector(setLeftDelegate:) withObject:self.centreViewController];
 		
 		[self.view addSubview:_leftViewController.view];
 		[self addChildViewController:_leftViewController];

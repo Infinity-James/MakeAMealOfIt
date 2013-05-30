@@ -149,6 +149,7 @@
 		1A70C0B81754FAAE004FEEF6 /* RecipeDetailsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecipeDetailsViewController.m; path = Controller/RecipeDetailsViewController.m; sourceTree = "<group>"; };
 		1A70C0BA175500FF004FEEF6 /* RecipeDetailsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecipeDetailsView.h; path = View/RecipeDetailsView.h; sourceTree = "<group>"; };
 		1A70C0BB175500FF004FEEF6 /* RecipeDetailsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecipeDetailsView.m; path = View/RecipeDetailsView.m; sourceTree = "<group>"; };
+		1A70C0C01755DF45004FEEF6 /* LeftControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LeftControllerDelegate.h; path = Controller/LeftControllerDelegate.h; sourceTree = "<group>"; };
 		1A8EC530174CC77600553857 /* ExtraOptionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExtraOptionsViewController.h; path = Controller/ExtraOptionsViewController.h; sourceTree = "<group>"; };
 		1A8EC531174CC77600553857 /* ExtraOptionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ExtraOptionsViewController.m; path = Controller/ExtraOptionsViewController.m; sourceTree = "<group>"; };
 		1A8EC533174E24D800553857 /* barbuttonitem_back@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "barbuttonitem_back@2x.png"; sourceTree = "<group>"; };
@@ -359,6 +360,7 @@
 		1A8EC541174E735D00553857 /* Left View Controller */ = {
 			isa = PBXGroup;
 			children = (
+				1A70C0C01755DF45004FEEF6 /* LeftControllerDelegate.h */,
 				1AEE005517424E2E00B6FC43 /* CupboardViewController.h */,
 				1AEE005617424E2E00B6FC43 /* CupboardViewController.m */,
 			);

@@ -6,8 +6,14 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
+#import "LeftControllerDelegate.h"
+
 #pragma mark - Cupboard View Controller Public Interface
 
 @interface CupboardViewController : UIViewController {}
+
+#pragma mark - Public Properties
+
+@property (nonatomic, weak)		id <LeftControllerDelegate>		leftDelegate;
 
 @end

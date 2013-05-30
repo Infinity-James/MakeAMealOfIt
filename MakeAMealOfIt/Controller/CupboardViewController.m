@@ -28,6 +28,7 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 @property (nonatomic, strong)	NSArray						*searchBarConstraints;
 @property (nonatomic, strong)	UISearchDisplayController	*searchDisplay;
 @property (nonatomic, strong)	NSArray						*sectionTitles;
+@property (nonatomic, strong)	NSMutableArray				*selectedIndices;
 @property (nonatomic, strong)	UITableView					*tableView;
 @property (nonatomic, strong)	NSDictionary				*viewsDictionary;
 
@@ -47,7 +48,7 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 	NSArray *constraints;
 	NSLayoutConstraint *constraint;
 	
-	//	add the table view to cover the whole main view except for the toolbar
+	//	add the table view to cover the whole main view except for the search bar
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[tableView]-(Panel)-|" options:kNilOptions metrics:@{@"Panel": @(kPanelWidth)} views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
 	
@@ -74,6 +75,55 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 #pragma mark - Convenience & Helper Methods
 
 /**
+ *	returns an index path for a specified ingredient dictionary
+ *
+ *	@param	ingredientDictionary		the ingredient dictionary to find the index path for in a table view
+ *	@param	tableView					the table view we want the index path to refer to
+ */
+- (NSIndexPath *)indexPathForIngredientDictionary:(NSDictionary *)ingredientDictionary
+									  inTableView:(UITableView *)tableView
+{
+	NSString *ingredient				= ingredientDictionary[kYummlyMetadataDescriptionKey];
+	
+	if (tableView == self.tableView)
+	{
+		for (NSUInteger sectionTitleIndex = 0; sectionTitleIndex < self.sectionTitles.count; sectionTitleIndex++)
+			for (NSUInteger ingredientIndex = 0; ingredientIndex < ((NSArray *)self.ingredientsForTableView[self.sectionTitles[sectionTitleIndex]]).count; ingredientIndex++)
+				if ([self.ingredientsForTableView[self.sectionTitles[sectionTitleIndex]][ingredientIndex] isEqualToString:ingredient])
+					return [NSIndexPath indexPathForRow:ingredientIndex inSection:sectionTitleIndex];
+	}
+	
+	else if (tableView == self.searchDisplay.searchResultsTableView)
+		for (NSUInteger index = 0; index < self.filteredIngredients.count; index++)
+			if ([self.filteredIngredients[index] isEqualToString:ingredient])
+				return [NSIndexPath indexPathForRow:index inSection:1];
+	
+	return nil;
+}
+
+/**
+ *	returns an ingredient dictionary for an index path in a table view
+ *
+ *	@param	indexPath					the index path of the item in the table view
+ *	@param	tableView					the table view that the index path refers to
+ */
+- (NSDictionary *)ingredientDictionaryForIndexPath:(NSIndexPath *)indexPath
+									   inTableView:(UITableView *)tableView
+{
+	NSString *ingredient;
+	if (tableView == self.tableView)
+		ingredient						= self.ingredientsForTableView[self.sectionTitles[indexPath.section]][indexPath.row];
+	else if (tableView == self.searchDisplay.searchResultsTableView)
+		ingredient						= self.filteredIngredients[indexPath.row];
+	
+	for (NSDictionary *ingredientDictionary in self.ingredientsMetadata)
+		if ([ingredientDictionary[kYummlyMetadataDescriptionKey] isEqualToString:ingredient])
+			return ingredientDictionary;
+	
+	return nil;
+}
+
+/**
  *	filters the contents of the table view according to the search of the user
  *
  *	@param	searchText
@@ -85,8 +135,8 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 	[self.filteredIngredients removeAllObjects];
 	
 	//	define the predicate according to the search of the user
-	NSPredicate *predicate			= [NSPredicate predicateWithFormat:@"SELF contains[c] %@", searchText];
-	self.filteredIngredients		= [[self.ingredientsArray filteredArrayUsingPredicate:predicate] mutableCopy];
+	NSPredicate *predicate				= [NSPredicate predicateWithFormat:@"SELF contains[c] %@", searchText];
+	self.filteredIngredients			= [[self.ingredientsArray filteredArrayUsingPredicate:predicate] mutableCopy];
 }
 
 /**
@@ -131,6 +181,70 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 		
 		self.ingredientsForTableView[firstCharacter]	= ingredients;
 	}
+}
+
+#pragma mark - Left Delegate Methods
+
+/**
+ *	called when an index path was selected or deselected in a table view
+ *
+ *	@param	tableView					the table view that the index path is inside of
+ *	@param	isSelected					whether the index path item was selected or deselected
+ *	@param	indexPath					index path representing the item that was selected or deselected
+ */
+- (void)   tableView:(UITableView *)tableView
+			selected:(BOOL)isSelected
+		   indexPath:(NSIndexPath *)indexPath
+{
+	//	asynchronously update the left controller with the selected ingredient dictionary
+	dispatch_async(dispatch_queue_create("Updating Selections", NULL),
+	^{
+		NSDictionary *ingredientDictionary	= [self ingredientDictionaryForIndexPath:indexPath inTableView:tableView];
+		[self tableView:tableView selected:isSelected ingredientDictionary:ingredientDictionary];
+	});
+}
+
+/**
+ *	called when a particular ingredient dictionary was selected in the table view
+ *
+ *	@param	tableView					the table view object wherein the ingredient dictionary was selected
+ *	@param	isSelected					whether the ingredient dictionary was selected or deselected
+ *	@param	ingredientDictionary		the ingredient dictionary that was either selected or deselected
+ */
+- (void)   tableView:(UITableView *)tableView
+			selected:(BOOL)isSelected
+ingredientDictionary:(NSDictionary *)ingredientDictionary
+{
+	//	first get every selected index path and get the corresponding ingredient dictionary
+	NSMutableArray *allSelections		= [[NSMutableArray alloc] init];
+	for (NSIndexPath *selectedIndexPath in [self.tableView indexPathsForSelectedRows])
+		[allSelections addObject:[self ingredientDictionaryForIndexPath:selectedIndexPath inTableView:tableView]];
+	
+	NSArray *addedSelections;
+	NSArray *removedSelections;
+	
+	//	update the array appropriately according to whether it is selected or not
+	if (!isSelected)
+	{
+		addedSelections					= @[];
+		removedSelections				= @[ingredientDictionary];
+	}
+	else
+	{
+		addedSelections					= @[ingredientDictionary];
+		removedSelections				= @[];
+	}
+	
+	//	make a dictionary with the updates to send to the left view controller
+	NSDictionary *updates				= @{kAddedSelections	: addedSelections,
+											kAllSelections		: allSelections,
+											kRemovedSelections	: removedSelections};
+	
+	//	make sure this is performed on the main thread
+	dispatch_async(dispatch_get_main_queue(),
+	^{
+		[self.leftDelegate leftController:self updatedWithSelections:updates];
+	});
 }
 
 #pragma mark - Setter & Getter Methods
@@ -185,7 +299,7 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 }
 
 /**
- *
+ *	the search display controller handling the searches of our table view
  */
 - (UISearchDisplayController *)searchDisplay
 {
@@ -205,6 +319,17 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 - (NSArray *)sectionTitles
 {
 	return [self.ingredientsForTableView.allKeys sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+}
+
+/**
+ *	an array holding all of the indices of the selected rows in our table view
+ */
+- (NSMutableArray *)selectedIndices
+{
+	if (!_selectedIndices)
+		_selectedIndices				= [[NSMutableArray alloc] init];
+	
+	return _selectedIndices;
 }
 
 /**
@@ -235,6 +360,35 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 }
 
 /**
+ *	called when our left controller delegate is set
+ *
+ *	@param	leftDelegate			an nsobject adhering to our left controller delegate protocol
+ */
+- (void)setLeftDelegate:(id<LeftControllerDelegate>)leftDelegate
+{
+	_leftDelegate					= leftDelegate;
+	
+	//	get a weak pointer to our self to be used in the block
+	__weak CupboardViewController *weakSelf	= self;
+	
+	//	if a valid left delegate was set we send it the block to execute if it modifies any of our data
+	if (_leftDelegate)
+		[_leftDelegate blockToExecuteWhenDataModified:^(NSDictionary *modifiedIngredient)
+		{
+			dispatch_async(dispatch_queue_create("Modifying Selections", NULL),
+			^{
+				NSIndexPath *indexPath		= [weakSelf indexPathForIngredientDictionary:modifiedIngredient inTableView:weakSelf.tableView];
+				
+				dispatch_async(dispatch_get_main_queue(),
+				^{
+					[weakSelf.tableView deselectRowAtIndexPath:indexPath animated:YES];
+					[weakSelf tableView:weakSelf.tableView didDeselectRowAtIndexPath:indexPath];
+				});
+			});
+		}];
+}
+
+/**
  *	this is the main table view for this view controller
  */
 - (UITableView *)tableView
@@ -242,6 +396,7 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 	if (!_tableView)
 	{
 		_tableView						= [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+		_tableView.allowsMultipleSelection	= YES;
 		_tableView.dataSource			= self;
 		_tableView.delegate				= self;
 		[self.view addSubview:_tableView];
@@ -349,7 +504,8 @@ shouldReloadTableForSearchString:(NSString *)searchString
 	else
 		cell.textLabel.text				= [self.ingredientsForTableView[self.sectionTitles[indexPath.section]][indexPath.row] capitalizedString];
 	
-	[ThemeManager customiseTableViewCell:cell withTheme:nil];
+	cell.textLabel.backgroundColor		= [UIColor clearColor];
+	cell.selectionStyle					= UITableViewCellSelectionStyleNone;
 	
 	return cell;
 }
@@ -369,17 +525,60 @@ shouldReloadTableForSearchString:(NSString *)searchString
 	return ((NSArray *)self.ingredientsForTableView[self.sectionTitles[section]]).count;
 }
 
+/**
+ *	tells the delegate the table view is about to draw a cell for a particular row
+ *
+ *	@param	tableView					table-view object informing the delegate of this impending event
+ *	@param	cell						table-view cell object that table view is going to use when drawing the row
+ *	@param	indexPath					index path locating the row in table view
+ */
+- (void)tableView:(UITableView *)tableView
+  willDisplayCell:(UITableViewCell *)cell
+forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	//	background colour has to be set here
+	[ThemeManager customiseTableViewCell:cell withTheme:nil];
+}
+
 #pragma mark - UITableViewDelegate Methods
 
 /**
- *	handle the fact that a cell was just selected
+ *	tells the delegate that the specified row is now deselected
  *
- *	@param	tableView					the table view containing selected cell
+ *	@param	tableView					table-view object informing the delegate about the row deselection
  *	@param	indexPath					the index path of the cell that was selected
+ */
+- (void)		tableView:(UITableView *)tableView
+didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	UITableViewCell *cell				= [tableView cellForRowAtIndexPath:indexPath];
+	
+	[UIView animateWithDuration:0.5f animations:
+	 ^{
+		 [ThemeManager customiseTableViewCell:cell withTheme:nil];
+	 }];
+	
+	[self tableView:tableView selected:NO indexPath:indexPath];
+}
+
+/**
+ *	tells the delegate that the specified row is now selected
+ *
+ *	@param	tableView					table-view object informing the delegate about the new row selection
+ *	@param	indexPath					index path locating the new selected row in table view
  */
 - (void)	  tableView:(UITableView *)tableView
 didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+	UITableViewCell *cell				= [tableView cellForRowAtIndexPath:indexPath];
+	
+	[UIView animateWithDuration:0.5f animations:
+	^{
+		cell.backgroundColor				= kYummlyColourMain;
+		cell.textLabel.textColor			= [UIColor whiteColor];
+	}];
+	
+	[self tableView:tableView selected:YES indexPath:indexPath];
 }
 
 /**

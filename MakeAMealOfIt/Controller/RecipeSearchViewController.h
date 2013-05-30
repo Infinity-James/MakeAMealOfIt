@@ -7,9 +7,10 @@
 //
 
 #import "CentreViewControllerProtocol.h"
+#import "LeftControllerDelegate.h"
 
 #pragma mark - Recipe Search View Controller Public Interface
 
-@interface RecipeSearchViewController : UIViewController <CentreViewControllerProtocol> {}
+@interface RecipeSearchViewController : UIViewController <CentreViewControllerProtocol, LeftControllerDelegate> {}
 
 @end

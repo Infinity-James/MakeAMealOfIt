@@ -235,7 +235,7 @@ NSString *const kYummlyMinimumKey			= @"min";
 						change:(NSDictionary *)change
 					   context:(void *)context
 {
-	[[NSNotificationCenter defaultCenter] postNotification:kNotificationYummlyRequestChanged];
+	[[NSNotificationCenter defaultCenter] postNotificationName:kNotificationYummlyRequestChanged object:nil];
 }
 
 #pragma mark - Remove Desires
@@ -671,12 +671,10 @@ NSString *const kYummlyMinimumKey			= @"min";
 		[searchParameters appendFormat:@"maxResult=%u&", self.numberOfResults];
 	if (self.requirePictures)
 		[searchParameters appendString:@"requirePictures=true&"];
-	if (self.searchPhrase)
-		[searchParameters appendFormat:@"q=%@&", self.searchPhrase];
 	if (self.startIndexForResults)
 		[searchParameters appendFormat:@"start=%u", self.startIndexForResults];
-	else
-		[searchParameters deleteCharactersInRange:NSMakeRange(searchParameters.length - 1, 1)];
+
+	[searchParameters appendFormat:@"q=%@&", self.searchPhrase ? self.searchPhrase : @""];
 	
 	return searchParameters;
 }

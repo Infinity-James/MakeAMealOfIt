@@ -372,14 +372,31 @@
 #pragma mark - Theme Methods: Table View Cell Appearance
 
 /**
+ *
+ */
+- (UIColor *)backgroundColourForTableViewCellSelected:(BOOL)isSelected
+{
+	if (isSelected)
+		return kYummlyColourMain;
+	else
+		return [UIColor whiteColor];
+}
+
+/**
  *	returns a dictionary of properties for the table view cell
  */
-- (NSDictionary *)tableViewCellTextDictionary
+- (NSDictionary *)tableViewCellTextDictionarySelected:(BOOL)isSelected
 {
-	return @{	UITextAttributeFont				: [UIFont fontWithName:@"AvenirNext-Regular" size:14.0f],
-				UITextAttributeTextColor		: kYummlyColourMain,
-				UITextAttributeTextShadowColor	: kYummlyColourShadow,
-				UITextAttributeTextShadowOffset	: [NSValue valueWithUIOffset:UIOffsetMake(0.0f, 1.0f)]};
+	if (isSelected)
+		return @{	UITextAttributeFont				: [UIFont fontWithName:@"AvenirNext-Regular" size:14.0f],
+					UITextAttributeTextColor		: [UIColor whiteColor],
+					UITextAttributeTextShadowColor	: kYummlyColourShadow,
+					UITextAttributeTextShadowOffset	: [NSValue valueWithUIOffset:UIOffsetMake(0.0f, 1.0f)]};
+	else
+		return @{	UITextAttributeFont				: [UIFont fontWithName:@"AvenirNext-Regular" size:14.0f],
+					UITextAttributeTextColor		: kYummlyColourMain,
+					UITextAttributeTextShadowColor	: kYummlyColourShadow,
+					UITextAttributeTextShadowOffset	: [NSValue valueWithUIOffset:UIOffsetMake(0.0f, 1.0f)]};
 }
 
 #pragma mark - Theme Methods: Text Field Apperance

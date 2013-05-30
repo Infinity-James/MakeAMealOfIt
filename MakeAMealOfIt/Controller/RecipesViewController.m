@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
+#import <QuartzCore/QuartzCore.h>
 #import "RecipeCollectionViewCell.h"
 #import "RecipesViewController.h"
 #import "YummlyAPI.h"
@@ -249,11 +250,17 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 {
 	RecipeCollectionViewCell *cell		= [collectionView dequeueReusableCellWithReuseIdentifier:kCellIdentifier forIndexPath:indexPath];
 	
+	if (!self.recipes.count)
+	{
+		cell.recipeDetails.mainLabel.text	= @"No Results Found";
+		return cell;
+	}
+	
 	cell.recipeDetails.mainLabel.text	= self.recipes[indexPath.row][kYummlyMatchRecipeNameKey];
 	cell.recipeDetails.detailLabel.text	= self.recipes[indexPath.row][kYummlyMatchSourceDisplayNameKey];
 	cell.thumbnailView.image			= nil;
 	
-	//	on separate thread we pull the image for this cell
+	//	on a separate asynchronous thread we get the url for the image for this cell
 	dispatch_async(dispatch_queue_create("Thumbnail URL Fetcher", NULL),
 	^{
 		NSString *thumbnailURLString	= ((NSArray *)self.recipes[indexPath.row][kYummlyMatchSmallImageURLsArrayKey]).lastObject;
@@ -261,15 +268,22 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 		NSURL *thumbnailURL				= [[NSURL alloc] initWithString:thumbnailURLString];
 					   
 		__block NSData *thumbnailData;
-					   
+					  
+		//	on a separate thread we synchronously (for chronology) use the url to get the image data and then create an image with it 
 		dispatch_sync(dispatch_queue_create("Thumbnail Data Fetcher", NULL),
 		^{
 			thumbnailData				= [[NSData alloc] initWithContentsOfURL:thumbnailURL];
 			UIImage *thumbnail			= [[UIImage alloc] initWithData:thumbnailData];
 										 
+			//	synchronously update imgae views on main thread so it happens chronologically
 			dispatch_sync(dispatch_get_main_queue(),
 			^{
-				cell.thumbnailView.image= thumbnail;
+				//	only update the cell if it is visible
+				if ([collectionView.visibleCells containsObject:cell])
+				{
+					[cell.thumbnailView.layer removeAllAnimations];
+					[RecipesViewController animateSettingImageView:cell.thumbnailView withImage:thumbnail];
+				}
 			});
 		});
 	});
@@ -286,7 +300,11 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 - (NSInteger)collectionView:(UICollectionView *)collectionView
 	 numberOfItemsInSection:(NSInteger)section
 {
-	return self.recipes.count;
+	if (self.recipes.count)
+		return self.recipes.count;
+	
+	//	if there are no recipes we want to use a cell to the the user that there were no results
+	return 1;
 }
 
 /**
@@ -358,6 +376,27 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 		return CGSizeMake(250.0f, 250.0f);
 	else
 		return CGSizeMake(210.0f, 210.0f);
+}
+
+#pragma mark - Utility Methods
+
+/**
+ *	animates the setting of an image in an image view
+ *
+ *	@param	imageView					the image view whose image we will set and animate
+ *	@param	image						the image we want to animate into the image view
+ */
++ (void)animateSettingImageView:(UIImageView *)imageView
+					  withImage:(UIImage *)image
+{
+	imageView.image						= image;
+	
+	CATransition *transition			= [CATransition animation];
+	transition.duration					= 0.3f;
+	transition.timingFunction			= [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+	transition.type						= kCATransitionFade;
+	
+	[imageView.layer addAnimation:transition forKey:nil];
 }
 
 #pragma mark - View Lifecycle

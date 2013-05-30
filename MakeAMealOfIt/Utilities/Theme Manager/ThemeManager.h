@@ -94,11 +94,12 @@
 
 #pragma mark - Table View Cell Appearance
 
+- (UIColor *)backgroundColourForTableViewCellSelected:(BOOL)isSelected;
 - (NSArray *)coloursForGradient;
 - (Class)gradientLayer;
 - (NSArray *)locationsOfColours;
 - (NSUInteger)numberOfColoursInGradient;
-- (NSDictionary *)tableViewCellTextDictionary;
+- (NSDictionary *)tableViewCellTextDictionarySelected:(BOOL)isSelected;
 
 #pragma mark - Text Field Appearance
 
