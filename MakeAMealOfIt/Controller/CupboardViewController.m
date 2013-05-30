@@ -146,6 +146,7 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 {
 	_searchDisplay.searchResultsDataSource	= self;
 	_searchDisplay.searchResultsDelegate	= self;
+	_searchDisplay.searchResultsTableView.allowsMultipleSelection	= YES;
 	[_searchDisplay.searchResultsTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kCellIdentifier];
 }
 
@@ -217,7 +218,7 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 {
 	//	first get every selected index path and get the corresponding ingredient dictionary
 	NSMutableArray *allSelections		= [[NSMutableArray alloc] init];
-	for (NSIndexPath *selectedIndexPath in [self.tableView indexPathsForSelectedRows])
+	for (NSIndexPath *selectedIndexPath in [tableView indexPathsForSelectedRows])
 		[allSelections addObject:[self ingredientDictionaryForIndexPath:selectedIndexPath inTableView:tableView]];
 	
 	NSArray *addedSelections;

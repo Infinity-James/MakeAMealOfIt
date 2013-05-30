@@ -8,6 +8,7 @@
 
 #import "RecipeDetailsViewController.h"
 #import "RecipeDetailsView.h"
+#import "YummlyAPI.h"
 
 #pragma mark - Recipe Details VC Private Class Extension
 
@@ -17,8 +18,6 @@
 
 @property (nonatomic, strong)	RecipeDetailsView		*recipeDetailsView;
 @property (nonatomic, strong)	UIScrollView			*scrollView;
-@property (nonatomic, strong)	UIToolbar				*toolbar;
-@property (nonatomic, strong)	NSDictionary			*viewsDictionary;
 
 
 @end
@@ -39,7 +38,19 @@
 	//	remove all constraints
 	[self.view removeConstraints:self.view.constraints];
 	
+	NSArray *constraints;
 	
+	//	add the collection view to cover the whole main view except for the toolbar
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[scrollView]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
+	[self.view addConstraints:constraints];
+	
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[toolbar]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
+	[self.view addConstraints:constraints];
+	
+	CGFloat toolbarHeight				= self.toolbarHeight;
+	
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[toolbar(height)][scrollView]|" options:kNilOptions metrics:@{@"height": @(toolbarHeight)} views:self.viewsDictionary];
+	[self.view addConstraints:constraints];
 }
 
 #pragma mark - Autorotation
@@ -69,19 +80,73 @@
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 								duration:(NSTimeInterval)duration
 {
-	//[self.pageViewController.presentedViewController.view performSelector:@selector(setNeedsUpdateConstraints)];
+}
+
+#pragma mark - CentreViewControllerProtocol Methods
+
+/**
+ *	returns the left button tag
+ */
+- (NSUInteger)leftButtonTag
+{
+	return self.leftButton.tag;
+}
+
+/**
+ *	returns right button tag
+ */
+- (NSUInteger)rightButtonTag
+{
+	return self.rightButton.tag;
+}
+
+/**
+ *	sets the tag of the button to the left of the toolbar
+ */
+- (void)setLeftButtonTag:(NSUInteger)tag
+{
+	self.leftButton.tag					= tag;
+}
+
+/**
+ *	sets the tag of the button to the right of the toolbar
+ */
+- (void)setRightButtonTag:(NSUInteger)tag
+{
+	self.rightButton.tag				= tag;
 }
 
 #pragma mark - Initialisation
 
 /**
+ *	adds toolbar items to our toolbar
+ */
+- (void)addToolbarItemsAnimated:(BOOL)animate
+{
+	if (self.backButton)
+		self.leftButton					= self.backButton;
+	else
+		self.leftButton					= [[UIBarButtonItem alloc] initWithTitle:@"Left" style:UIBarButtonItemStyleBordered target:self action:@selector(leftButtonTapped)];
+	
+	UIBarButtonItem *flexibleSpace		= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+	
+	self.rightButton					= [[UIBarButtonItem alloc] initWithTitle:@"Right" style:UIBarButtonItemStyleBordered target:self action:@selector(rightButtonTapped)];
+	
+	[self.toolbar setItems:@[self.leftButton, flexibleSpace, self.rightButton] animated:animate];
+}
+
+/**
  *	called to initialise a class instance
  */
-- (instancetype)init
+- (instancetype)initWithRecipeID:(NSString *)recipeID
 {
 	if (self = [super init])
 	{
-		
+		[YummlyAPI asynchronousGetRecipeCallForRecipeID:recipeID withCompletionHandler:^(BOOL success, NSDictionary *results)
+		{
+			self.recipeDetailsView		= nil;
+			[self.view performSelectorOnMainThread:@selector(setNeedsUpdateConstraints) withObject:nil waitUntilDone:NO];
+		}];
 	}
 	
 	return self;
@@ -124,28 +189,12 @@
 }
 
 /**
- *	a toolbar to keep at the top of the view
- */
-- (UIToolbar *)toolbar
-{
-	if (!_toolbar)
-	{
-		_toolbar						= [[UIToolbar alloc] init];
-		_toolbar.clipsToBounds			= NO;
-		[ThemeManager customiseToolbar:_toolbar withTheme:nil];
-		_toolbar.translatesAutoresizingMaskIntoConstraints		= NO;
-		[self.view addSubview:_toolbar];
-	}
-	
-	return _toolbar;
-}
-
-/**
  *	this is the dictionary of view to apply constraint to
  */
 - (NSDictionary *)viewsDictionary
 {
-	return @{	@"scrollView"	: self.scrollView};
+	return @{	@"scrollView"	: self.scrollView,
+				@"toolbar"		: self.toolbar};
 }
 
 @end

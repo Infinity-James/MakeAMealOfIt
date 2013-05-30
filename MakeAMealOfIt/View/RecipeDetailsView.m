@@ -14,6 +14,7 @@
 
 #pragma mark - Private Properties
 
+@property (nonatomic, strong)	NSDictionary			*recipeDictionary;
 @property (nonatomic, strong)	UIImageView				*recipeImageView;
 
 @end
@@ -30,13 +31,24 @@
 {
 	if (self = [super init])
 	{
-		
+		self.recipeDictionary			= recipeDictionary;
 	}
 	
 	return self;
 }
 
 #pragma mark - Setter & Getter Methods
+
+/**
+ *
+ */
+- (NSDictionary *)recipeDictionary
+{
+	if (!_recipeDictionary)
+		_recipeDictionary				= @{};
+	
+	return _recipeDictionary;
+}
 
 /**
  *	the image view holding the main image for the recipe being represented

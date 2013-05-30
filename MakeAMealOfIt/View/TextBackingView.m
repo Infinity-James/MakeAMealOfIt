@@ -123,7 +123,7 @@
 	CGContextRef context				= UIGraphicsGetCurrentContext();
 	
 	UIColor *endColour					= kYummlyColourShadowWithAlpha(0.5f);
-	UIColor *startColour				= kYummlyColourMainWithAlpha(0.1f);
+	UIColor *startColour				= kYummlyColourMainWithAlpha(0.0f);
 	
 	//	----	fiil the rect with a background colour first of all	----
 	

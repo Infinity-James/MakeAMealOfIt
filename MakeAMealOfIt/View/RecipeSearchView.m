@@ -42,6 +42,7 @@
 	else
 		return;
 	
+	//	executes the search request
 	[appDelegate.yummlyRequest executeSearchRecipesCallWithCompletionHandler:^(BOOL success, NSDictionary *results)
 	{
 		[self.delegate performSelectorOnMainThread:@selector(searchExecutedForResults:) withObject:results waitUntilDone:NO];

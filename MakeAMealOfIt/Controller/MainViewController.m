@@ -8,6 +8,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 #import "MainViewController.h"
+#import "LeftControllerDelegate.h"
 
 #pragma mark - View Controller Tags
 
@@ -413,7 +414,8 @@ static NSString *const kRightVCKey		= @"Right";
 		
 		_leftViewController.view.tag		= kLeftViewTag;
 		
-		if ([_leftViewController respondsToSelector:@selector(setLeftDelegate:)])
+		if ([_leftViewController respondsToSelector:@selector(setLeftDelegate:)] &&
+			[self.centreViewController conformsToProtocol:@protocol(LeftControllerDelegate)])
 			[_leftViewController performSelector:@selector(setLeftDelegate:) withObject:self.centreViewController];
 		
 		[self.view addSubview:_leftViewController.view];

@@ -45,6 +45,8 @@
 	NSLayoutConstraint *constraint;
 	NSArray *constraints;
 	
+	NSDictionary *layoutMetrics			= @{@"margin": @14.0f};
+	
 	constraint							= [NSLayoutConstraint constraintWithItem:self.recipeDetails
 													attribute:NSLayoutAttributeHeight
 													relatedBy:NSLayoutRelationEqual
@@ -54,29 +56,29 @@
 													 constant:0.0f];
 	[self.contentView addConstraint:constraint];
 	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:[recipeDetails]|"
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:[recipeDetails]-(margin)-|"
 																options:NSLayoutFormatAlignAllCenterX
-																metrics:nil
+																metrics:layoutMetrics
 																  views:self.viewsDictionary];
 	[self.contentView addConstraints:constraints];
 	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[recipeDetails]|"
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(margin)-[recipeDetails]-(margin)-|"
 																options:kNilOptions
-																metrics:nil
+																metrics:layoutMetrics
 																  views:self.viewsDictionary];
 	[self.contentView addConstraints:constraints];
 	
 	[self.contentView addConstraint:constraint];
 	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[thumbnail]-|"
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(margin)-[thumbnail]-(margin)-|"
 																options:NSLayoutFormatAlignAllCenterX
-																metrics:nil
+																metrics:layoutMetrics
 																  views:self.viewsDictionary];
 	[self.contentView addConstraints:constraints];
 	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[thumbnail]-|"
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(margin)-[thumbnail]-(margin)-|"
 																options:kNilOptions
-																metrics:nil
+																metrics:layoutMetrics
 																  views:self.viewsDictionary];
 	[self.contentView addConstraints:constraints];
 }
