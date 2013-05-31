@@ -158,7 +158,7 @@
 	if (!_recipeDetailsView)
 	{
 		_recipeDetailsView				= [[RecipeDetailsView alloc] initWithRecipe:[[Recipe alloc] initWithRecipeID:self.recipeID]];
-		CGRectMake(0.0f, 0.0f, self.view.bounds.size.width, 500.0f);
+		_recipeDetailsView.frame		= CGRectMake(0.0f, 0.0f, self.view.bounds.size.width, 500.0f);
 	}
 	
 	return _recipeDetailsView;

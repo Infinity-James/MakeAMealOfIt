@@ -43,6 +43,7 @@
 	
 	//	remove all constraints
 	[self removeConstraints:self.constraints];
+	[self.recipeImageView removeConstraints:self.recipeImageView.constraints];
 	
 	NSArray *constraints;
 	NSLayoutConstraint *constraint;
