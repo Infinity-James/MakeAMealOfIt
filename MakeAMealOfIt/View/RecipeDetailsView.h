@@ -6,12 +6,14 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
+#import "Recipe.h"
+
 #pragma mark - Recipe Details View Public Interface
 
-@interface RecipeDetailsView : UIView {}
+@interface RecipeDetailsView : UIView  <RecipeDelegate> {}
 
 #pragma mark - Public Methods
 
-- (instancetype)initWithRecipeDictionary:(NSDictionary *)recipeDictionary;
+- (instancetype)initWithRecipe:(Recipe *)recipe;
 
 @end

@@ -17,8 +17,8 @@
 #pragma mark - Private Properties
 
 @property (nonatomic, strong)	RecipeDetailsView		*recipeDetailsView;
+@property (nonatomic, strong)	NSString				*recipeID;
 @property (nonatomic, strong)	UIScrollView			*scrollView;
-
 
 @end
 
@@ -142,11 +142,7 @@
 {
 	if (self = [super init])
 	{
-		[YummlyAPI asynchronousGetRecipeCallForRecipeID:recipeID withCompletionHandler:^(BOOL success, NSDictionary *results)
-		{
-			self.recipeDetailsView		= nil;
-			[self.view performSelectorOnMainThread:@selector(setNeedsUpdateConstraints) withObject:nil waitUntilDone:NO];
-		}];
+		self.recipeID					= recipeID;
 	}
 	
 	return self;
@@ -161,7 +157,7 @@
 {
 	if (!_recipeDetailsView)
 	{
-		_recipeDetailsView				= [[RecipeDetailsView alloc] initWithRecipeDictionary:nil];
+		_recipeDetailsView				= [[RecipeDetailsView alloc] initWithRecipe:[[Recipe alloc] initWithRecipeID:self.recipeID]];
 		CGRectMake(0.0f, 0.0f, self.view.bounds.size.width, 500.0f);
 	}
 	

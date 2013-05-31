@@ -16,5 +16,4 @@
 
 - (instancetype)initWithRecipeID:(NSString *)recipeID;
 
-
 @end
