@@ -24,13 +24,28 @@
 		
 	if (animate)
 	{
+		[self.layer removeAllAnimations];
 		CATransition *transition		= [CATransition animation];
-		transition.duration				= 0.3f;
+		transition.duration				= 0.5f;
 		transition.timingFunction		= [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
 		transition.type					= kCATransitionFade;
 		
 		[self.layer addAnimation:transition forKey:nil];
 	}
+}
+
+#pragma mark - Shadows
+
+/**
+ *	adds a shadow to this image view
+ */
+- (void)addShadow
+{
+	self.layer.shadowColor				= kShadowColour.CGColor;
+	self.layer.shadowOffset				= kShadowOffset;
+	self.layer.shadowOpacity			= 1.0f;
+	self.layer.shadowRadius				= kShadowBlur;
+	self.clipsToBounds					= NO;
 }
 
 @end

@@ -10,6 +10,7 @@
 
 @interface UIImageView (Animation)
 
+- (void)addShadow;
 - (void)setImage:(UIImage *)image animated:(BOOL)animate;
 
 @end

@@ -173,6 +173,7 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 	cell.recipeDetails.mainLabel.text	= self.recipes[indexPath.row][kYummlyMatchRecipeNameKey];
 	cell.recipeDetails.detailLabel.text	= self.recipes[indexPath.row][kYummlyMatchSourceDisplayNameKey];
 	cell.thumbnailView.image			= nil;
+	[cell.thumbnailView stopAnimating];
 	
 	NSString *smallThumbnailURLString	= ((NSArray *)self.recipes[indexPath.row][kYummlyMatchSmallImageURLsArrayKey]).lastObject;
 	UIImage *cachedThumbnail				= [self.thumbnailCache objectForKey:smallThumbnailURLString];
@@ -197,7 +198,6 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 				//	synchronously update imgae views on main thread so it happens chronologically
 				dispatch_sync(dispatch_get_main_queue(),
 				^{
-					[cell.thumbnailView.layer removeAllAnimations];
 					[cell.thumbnailView setImage:thumbnail animated:YES];
 				});
 			});

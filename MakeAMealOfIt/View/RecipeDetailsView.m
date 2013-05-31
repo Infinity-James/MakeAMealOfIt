@@ -7,6 +7,7 @@
 //
 
 #import "RecipeDetailsView.h"
+#import "UIImageView+Animation.h"
 
 #pragma mark - Recipe Details View Private Class Extension
 
@@ -14,9 +15,10 @@
 
 #pragma mark - Private Properties
 
-@property (nonatomic, strong)	Recipe				*recipe;
-@property (nonatomic, strong)	UIImageView			*recipeImageView;
-@property (nonatomic, strong)	NSDictionary		*viewsDictionary;
+@property (nonatomic, strong)	UIActivityIndicatorView		*activityIndicatorView;
+@property (nonatomic, strong)	Recipe						*recipe;
+@property (nonatomic, strong)	UIImageView					*recipeImageView;
+@property (nonatomic, strong)	NSDictionary				*viewsDictionary;
 
 @end
 
@@ -48,13 +50,29 @@
 	NSArray *constraints;
 	NSLayoutConstraint *constraint;
 	
-	//	add the recipe image view to span the view horizontally
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[recipeImageView]-|"
-																options:kNilOptions metrics:nil views:self.viewsDictionary];
-	[self addConstraints:constraints];
+	//	add the recipe image view and set the width and height
+	constraint							= [NSLayoutConstraint constraintWithItem:self.recipeImageView
+													attribute:NSLayoutAttributeWidth
+													relatedBy:NSLayoutRelationEqual
+													   toItem:nil
+													attribute:NSLayoutAttributeNotAnAttribute
+												   multiplier:1.0f
+													 constant:200.0f];
+	[self.recipeImageView addConstraint:constraint];
+
+	constraint							= [NSLayoutConstraint constraintWithItem:self.recipeImageView
+													attribute:NSLayoutAttributeCenterX
+													relatedBy:NSLayoutRelationEqual
+													   toItem:self
+													attribute:NSLayoutAttributeCenterX
+												   multiplier:1.0f
+													 constant:0.0f];
+	[self addConstraint:constraint];
+	
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[recipeImageView]"
 																options:kNilOptions metrics:nil views:self.viewsDictionary];
 	[self addConstraints:constraints];
+	
 	constraint							= [NSLayoutConstraint constraintWithItem:self.recipeImageView
 													attribute:NSLayoutAttributeHeight
 													relatedBy:NSLayoutRelationEqual
@@ -99,9 +117,37 @@
 {
 	[self nilifyAllViews];
 	[self setNeedsUpdateConstraints];
+	[self.activityIndicatorView startAnimating];
+	dispatch_async(dispatch_queue_create("Recipe Photo Fetcher", NULL),
+	^{
+		UIImage *image					= self.recipe.recipeImage;
+		
+		dispatch_async(dispatch_get_main_queue(),
+		^{
+			[self.activityIndicatorView stopAnimating];
+			[self.recipeImageView setImage:image animated:YES];
+			[self setNeedsUpdateConstraints];
+		});
+	});
 }
 
 #pragma mark - Setter & Getter Methods
+
+/**
+ *	this will indicate that the image view is loading
+ */
+- (UIActivityIndicatorView *)activityIndicatorView
+{
+	if (!_activityIndicatorView)
+	{
+		_activityIndicatorView			= [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+		_activityIndicatorView.color	= kYummlyColourMain;
+		
+		[self addSubview:_activityIndicatorView];
+	}
+	
+	return _activityIndicatorView;
+}
 
 /**
  *	the image view holding the main image for the recipe being represented
@@ -110,8 +156,9 @@
 {
 	if (!_recipeImageView)
 	{
-		_recipeImageView				= [[UIImageView alloc] initWithImage:self.recipe.recipeImage];
+		_recipeImageView				= [[UIImageView alloc] init];
 		_recipeImageView.contentMode	= UIViewContentModeScaleToFill;
+		[_recipeImageView addShadow];
 		
 		_recipeImageView.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self addSubview:_recipeImageView];
