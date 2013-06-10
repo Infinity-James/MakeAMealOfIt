@@ -22,6 +22,10 @@
 
 @implementation TextBackingView {}
 
+#pragma mark - Synthesise Properties
+
+@synthesize mainLabel					= _mainLabel;
+
 #pragma mark - Auto Layout Methods
 
 /**
@@ -47,17 +51,19 @@
 	constraint							= [NSLayoutConstraint constraintWithItem:self.mainLabel attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1.0f constant:0.0f];
 	[self addConstraint:constraint];
 	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==8)-[mainLabel]-(==8)-[detailLabel]" options:NSLayoutFormatAlignAllCenterX metrics:nil views:self.viewsDictionary];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==8)-[mainLabel(>=40)]-(==8)-[detailLabel]" options:NSLayoutFormatAlignAllCenterX metrics:nil views:self.viewsDictionary];
 	[self addConstraints:constraints];
 	
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=20)-[mainLabel]-(>=20)-|" options:kNilOptions metrics:nil views:self.viewsDictionary];
+	[self addConstraints:constraints];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=20)-[detailLabel]-(>=20)-|" options:kNilOptions metrics:nil views:self.viewsDictionary];
 	[self addConstraints:constraints];
 }
 
 #pragma mark - Setter & Getter Methods
 
 /**
- *
+ *	the subtitle of this view
  */
 - (UILabel *)detailLabel
 {
@@ -69,8 +75,6 @@
 		_detailLabel.textAlignment		= NSTextAlignmentCenter;
 		_detailLabel.textColor			= [UIColor whiteColor];
 		
-		[_detailLabel sizeToFit];
-		
 		_detailLabel.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self addSubview:_detailLabel];
 	}
@@ -79,20 +83,20 @@
 }
 
 /**
- *
+ *	the main title of this view, it can be multi-line to a certain extent
  */
 - (UILabel *)mainLabel
 {
 	if (!_mainLabel)
 	{
 		_mainLabel						= [[UILabel alloc] init];
+		_mainLabel.adjustsFontSizeToFitWidth	= NO;
 		_mainLabel.backgroundColor		= [UIColor clearColor];
 		_mainLabel.font					= [UIFont fontWithName:@"AvenirNext-Medium" size:12.0f];
+		_mainLabel.lineBreakMode		= NSLineBreakByWordWrapping;
 		_mainLabel.numberOfLines		= 0;
 		_mainLabel.textAlignment		= NSTextAlignmentCenter;
 		_mainLabel.textColor			= [UIColor whiteColor];
-		
-		[_mainLabel sizeToFit];
 		
 		_mainLabel.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self addSubview:_mainLabel];

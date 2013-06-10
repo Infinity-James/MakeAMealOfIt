@@ -7,7 +7,10 @@
 //
 
 #import "RecipeDetailsView.h"
+#import "StarRatingView.h"
 #import "UIImageView+Animation.h"
+
+static CGFloat const kImageHeight		= 200.0f;
 
 #pragma mark - Recipe Details View Private Class Extension
 
@@ -18,6 +21,7 @@
 @property (nonatomic, strong)	UIActivityIndicatorView		*activityIndicatorView;
 @property (nonatomic, strong)	Recipe						*recipe;
 @property (nonatomic, strong)	UIImageView					*recipeImageView;
+@property (nonatomic, strong)	StarRatingView				*starRatingView;
 @property (nonatomic, strong)	NSDictionary				*viewsDictionary;
 
 @end
@@ -37,6 +41,57 @@
 }
 
 /**
+ *	adds the activity indicator view over the image view
+ */
+- (void)addConstraintsForActivityIndicatorView
+{
+	NSLayoutConstraint *constraint;
+	NSArray *constraints;
+	
+	CGFloat imageMargin					= 20.0f + (kImageHeight / 2.0f);
+	
+	constraint							= [NSLayoutConstraint constraintWithItem:self.activityIndicatorView
+													attribute:NSLayoutAttributeCenterX
+													relatedBy:NSLayoutRelationEqual
+													   toItem:self
+													attribute:NSLayoutAttributeCenterX
+												   multiplier:1.0f
+													 constant:0.0f];
+	[self addConstraint:constraint];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(imageMargin)-[activityIndicator]"
+																options:kNilOptions
+																metrics:@{@"imageMargin": @(imageMargin)}
+																  views:self.viewsDictionary];
+	[self addConstraints:constraints];
+}
+
+/**
+ *
+ */
+- (void)addConstraintsForStarRatingView
+{
+	NSLayoutConstraint *constraint;
+	
+	constraint							= [NSLayoutConstraint constraintWithItem:self.starRatingView
+													attribute:NSLayoutAttributeWidth
+													relatedBy:NSLayoutRelationEqual
+													   toItem:nil
+													attribute:NSLayoutAttributeNotAnAttribute
+												   multiplier:1.0f
+													 constant:kImageHeight];
+	[self.starRatingView addConstraint:constraint];
+	
+	constraint							= [NSLayoutConstraint constraintWithItem:self.starRatingView
+													attribute:NSLayoutAttributeHeight
+													relatedBy:NSLayoutRelationEqual
+													   toItem:self.starRatingView
+													attribute:NSLayoutAttributeWidth
+												   multiplier:0.2f
+													 constant:0.0f];
+	[self.starRatingView addConstraint:constraint];
+}
+
+/**
  *	update constraints for the view
  */
 - (void)updateConstraints
@@ -46,6 +101,7 @@
 	//	remove all constraints
 	[self removeConstraints:self.constraints];
 	[self.recipeImageView removeConstraints:self.recipeImageView.constraints];
+	[self.starRatingView removeConstraints:self.starRatingView.constraints];
 	
 	NSArray *constraints;
 	NSLayoutConstraint *constraint;
@@ -57,7 +113,7 @@
 													   toItem:nil
 													attribute:NSLayoutAttributeNotAnAttribute
 												   multiplier:1.0f
-													 constant:200.0f];
+													 constant:kImageHeight];
 	[self.recipeImageView addConstraint:constraint];
 
 	constraint							= [NSLayoutConstraint constraintWithItem:self.recipeImageView
@@ -69,8 +125,10 @@
 													 constant:0.0f];
 	[self addConstraint:constraint];
 	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[recipeImageView]"
-																options:kNilOptions metrics:nil views:self.viewsDictionary];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[recipeImageView]-[starRating]"
+																options:NSLayoutFormatAlignAllCenterX
+																metrics:nil
+																  views:self.viewsDictionary];
 	[self addConstraints:constraints];
 	
 	constraint							= [NSLayoutConstraint constraintWithItem:self.recipeImageView
@@ -81,6 +139,9 @@
 												   multiplier:1.0f
 													 constant:0.0f];
 	[self.recipeImageView addConstraint:constraint];
+	
+	[self addConstraintsForActivityIndicatorView];
+	[self addConstraintsForStarRatingView];
 }
 
 #pragma mark - Convenience & Helper Methods
@@ -116,7 +177,6 @@
 - (void)recipeDictionaryHasLoaded
 {
 	[self nilifyAllViews];
-	[self setNeedsUpdateConstraints];
 	[self.activityIndicatorView startAnimating];
 	dispatch_async(dispatch_queue_create("Recipe Photo Fetcher", NULL),
 	^{
@@ -143,6 +203,7 @@
 		_activityIndicatorView			= [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
 		_activityIndicatorView.color	= kYummlyColourMain;
 		
+		_activityIndicatorView.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self addSubview:_activityIndicatorView];
 	}
 	
@@ -168,11 +229,29 @@
 }
 
 /**
+ *	this view represent the recipe's rating
+ */
+- (StarRatingView *)starRatingView
+{
+	if (!_starRatingView)
+	{
+		_starRatingView					= [[StarRatingView alloc] initWithRating:self.recipe.rating];
+		
+		_starRatingView.translatesAutoresizingMaskIntoConstraints	= NO;
+		[self addSubview:_starRatingView];
+	}
+	
+	return _starRatingView;
+}
+
+/**
  *	this dictionary is used when laying out constraints
  */
 - (NSDictionary *)viewsDictionary
 {
-	return @{	@"recipeImageView"	: self.recipeImageView	};
+	return @{	@"activityIndicator"	: self.activityIndicatorView,
+				@"recipeImageView"		: self.recipeImageView,
+				@"starRating"			: self.starRatingView	};
 }
 
 @end

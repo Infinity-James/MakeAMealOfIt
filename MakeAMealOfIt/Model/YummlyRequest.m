@@ -565,6 +565,17 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
+ *
+ */
+- (NSUInteger)numberOfResults
+{
+	if (!_numberOfResults)
+		_numberOfResults				= 40;
+	
+	return _numberOfResults;
+}
+
+/**
  *	the valid ranges for requests
  */
 + (NSArray *)rangeKeys

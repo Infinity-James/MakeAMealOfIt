@@ -9,6 +9,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "MainViewController.h"
 #import "LeftControllerDelegate.h"
+#import "UIView+AlphaControl.h"
 
 #pragma mark - View Controller Tags
 

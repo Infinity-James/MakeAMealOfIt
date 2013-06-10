@@ -62,7 +62,7 @@
  */
 - (NSUInteger)leftButtonTag
 {
-	return 0;
+	return self.leftButton.tag;
 }
 
 /**
@@ -70,7 +70,7 @@
  */
 - (NSUInteger)rightButtonTag
 {
-	return 0;
+	return self.rightButton.tag;
 }
 
 /**
@@ -78,6 +78,7 @@
  */
 - (void)setLeftButtonTag:(NSUInteger)tag
 {
+	self.leftButton.tag					= tag;
 }
 
 /**
@@ -85,6 +86,7 @@
  */
 - (void)setRightButtonTag:(NSUInteger)tag
 {
+	self.rightButton.tag				= tag;
 }
 
 #pragma mark - Initialisation

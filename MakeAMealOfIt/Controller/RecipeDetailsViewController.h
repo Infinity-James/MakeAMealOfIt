@@ -14,6 +14,7 @@
 
 #pragma mark - Public Properties
 
-- (instancetype)initWithRecipeID:(NSString *)recipeID;
+- (instancetype)initWithRecipeID:(NSString *)recipeID
+				   andRecipeName:(NSString *)recipeName;
 
 @end

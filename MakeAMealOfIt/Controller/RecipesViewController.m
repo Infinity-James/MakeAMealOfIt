@@ -262,17 +262,19 @@ didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
 - (void)  collectionView:(UICollectionView *)collectionView
 didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-	RecipeDetailsViewController *recipeVC	= [[RecipeDetailsViewController alloc] initWithRecipeID:self.recipes[indexPath.row][kYummlyMatchIDKey]];
+	RecipeDetailsViewController *recipeVC	= [[RecipeDetailsViewController alloc] initWithRecipeID:self.recipes[indexPath.row][kYummlyMatchIDKey]
+																					  andRecipeName:self.recipes[indexPath.row][kYummlyMatchRecipeNameKey]];
 	[appDelegate.slideOutVC showCentreViewController:recipeVC withRightViewController:nil];
 }
 
 #pragma mark - UICollectionViewDelegateFlowLayout Methods
 
 /**
+ *	asks the delegate for the spacing between successive items in the rows or columns of a section
  *
- *
- *	@param
- *	@param
+ *	@param	collectionView				collection view object displaying the flow layout
+ *	@param	collectionViewLayout		layout object requesting the information
+ *	@param	section						index number of the section whose inter-item spacing is needed
  */
 - (CGFloat)				  collectionView:(UICollectionView *)collectionView
 								  layout:(UICollectionViewLayout *)collectionViewLayout
@@ -296,6 +298,28 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 		return CGSizeMake(250.0f, 250.0f);
 	else
 		return CGSizeMake(210.0f, 210.0f);
+}
+
+#pragma mark - UIScrollViewDelegate Methods
+
+/**
+ *	tells delegate when the user scrolls the content view within the receiver
+ *
+ *	@param	scrollView					scroll-view object in which the scrolling occurred
+ */
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+	CGPoint offset						= scrollView.contentOffset;
+    CGRect bounds						= scrollView.bounds;
+    CGSize size							= scrollView.contentSize;
+    UIEdgeInsets inset					= scrollView.contentInset;
+    CGFloat y							= offset.y + bounds.size.height - inset.bottom;
+    CGFloat h							= size.height;
+	
+    CGFloat reloadDistance				= 10;
+	
+    if(y > h + reloadDistance)
+        NSLog(@"load more rows");
 }
 
 @end

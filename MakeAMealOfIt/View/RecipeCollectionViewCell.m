@@ -104,7 +104,7 @@
 #pragma mark - Setter & Getter Methods
 
 /**
- *
+ *	the view that will contain the recipe title and source name
  */
 - (TextBackingView *)recipeDetails
 {
@@ -171,6 +171,7 @@
 	CGPathAddLineToPoint(borderPath, nil, rect.origin.x + 10.0f, rect.origin.y + 10.0f);
 	CGContextAddPath(context, borderPath);
 	CGContextStrokePath(context);
+	CGPathRelease(borderPath);
 }
 
 @end

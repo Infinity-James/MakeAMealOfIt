@@ -8,6 +8,7 @@
 
 #import "RecipeDetailsViewController.h"
 #import "RecipeDetailsView.h"
+#import "ToolbarLabelYummlyTheme.h"
 #import "YummlyAPI.h"
 
 #pragma mark - Recipe Details VC Private Class Extension
@@ -18,6 +19,7 @@
 
 @property (nonatomic, strong)	RecipeDetailsView		*recipeDetailsView;
 @property (nonatomic, strong)	NSString				*recipeID;
+@property (nonatomic, strong)	NSString				*recipeName;
 @property (nonatomic, strong)	UIScrollView			*scrollView;
 
 @end
@@ -130,19 +132,39 @@
 	
 	UIBarButtonItem *flexibleSpace		= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
 	
+	UILabel *title						= [[UILabel alloc] init];
+	title.backgroundColor				= [UIColor clearColor];
+	
+	NSString *recipeName				= self.recipeName;
+	NSUInteger maximumCharacters		= (self.view.bounds.size.width / 10) - 10;
+	
+	if (recipeName.length > maximumCharacters)
+	{
+		NSRange unneccesaryCharacters	= NSMakeRange(maximumCharacters, recipeName.length - maximumCharacters);
+		NSLog(@"%@", NSStringFromRange(unneccesaryCharacters));
+		recipeName						= [recipeName stringByReplacingCharactersInRange:unneccesaryCharacters withString:@""];
+	}
+	title.text							= recipeName;
+	title.textAlignment					= NSTextAlignmentCenter;
+	[ThemeManager customiseLabel:title withTheme:[[ToolbarLabelYummlyTheme alloc] init]];
+	[title sizeToFit];
+	UIBarButtonItem *titleItem			= [[UIBarButtonItem alloc] initWithCustomView:title];
+	
 	self.rightButton					= [[UIBarButtonItem alloc] initWithTitle:@"Right" style:UIBarButtonItemStyleBordered target:self action:@selector(rightButtonTapped)];
 	
-	[self.toolbar setItems:@[self.leftButton, flexibleSpace, self.rightButton] animated:animate];
+	[self.toolbar setItems:@[self.leftButton, flexibleSpace, titleItem, flexibleSpace, self.rightButton] animated:animate];
 }
 
 /**
  *	called to initialise a class instance
  */
 - (instancetype)initWithRecipeID:(NSString *)recipeID
+				   andRecipeName:(NSString *)recipeName
 {
 	if (self = [super init])
 	{
 		self.recipeID					= recipeID;
+		self.recipeName					= recipeName;
 	}
 	
 	return self;
@@ -151,7 +173,7 @@
 #pragma mark - Setter & Getter Methods
 
 /**
- *
+ *	this view lives inside of the scroll view and shows everything to do with the selected recipe
  */
 - (RecipeDetailsView *)recipeDetailsView
 {
@@ -191,6 +213,20 @@
 {
 	return @{	@"scrollView"	: self.scrollView,
 				@"toolbar"		: self.toolbar};
+}
+
+#pragma mark - View Lifecycle
+
+/**
+ *	notifies the view controller that its view is about to layout its subviews
+ */
+- (void)viewWillLayoutSubviews
+{
+	[super viewWillLayoutSubviews];
+	self.recipeDetailsView.frame		= CGRectMake(0.0f, 0.0f, self.view.bounds.size.width, self.recipeDetailsView.bounds.size.height);
+	self.scrollView.contentSize			= self.recipeDetailsView.bounds.size;
+	[self.recipeDetailsView setNeedsUpdateConstraints];
+	[self addToolbarItemsAnimated:NO];
 }
 
 @end
