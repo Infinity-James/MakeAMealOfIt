@@ -27,7 +27,6 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 @property (nonatomic, copy)		LeftControllerDataModified	modifiedIngredients;
 @property (nonatomic, strong)	RecipeSearchView			*recipeSearchView;
 @property (nonatomic, strong)	NSMutableArray				*selectedIngredients;
-@property (nonatomic, strong)	UIToolbar					*toolbar;
 @property (nonatomic, strong)	NSDictionary				*viewsDictionary;
 
 @end
@@ -65,10 +64,7 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 {
 	NSArray *constraints;
 	
-	CGFloat toolbarHeight				= 44.0f;
-	
-	if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
-		toolbarHeight					= 32.0f;
+	CGFloat toolbarHeight				= self.toolbarHeight;
 	
 	//	add the table view to cover the whole main view except for the toolbar
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[recipeSearchView]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
@@ -125,7 +121,7 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 - (void)addToolbarItemsAnimated:(BOOL)animate
 {
 	self.leftButton						= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_hamburger"]
-															   style:UIBarButtonItemStyleBordered target:self action:@selector(leftButtonTapped)];
+															   style:UIBarButtonItemStylePlain target:self action:@selector(leftButtonTapped)];
 	
 	UIBarButtonItem *flexibleSpace		= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
 	
@@ -138,7 +134,7 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 	UIBarButtonItem *titleItem			= [[UIBarButtonItem alloc] initWithCustomView:title];
 	
 	self.rightButton					= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_allergies"]
-															 style:UIBarButtonItemStyleBordered target:self action:@selector(rightButtonTapped)];
+															 style:UIBarButtonItemStylePlain target:self action:@selector(rightButtonTapped)];
 	
 	[self.toolbar setItems:@[self.leftButton, flexibleSpace, titleItem, flexibleSpace, self.rightButton] animated:animate];
 }
@@ -211,6 +207,7 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 {
 	RecipesViewController *recipesVC	= [[RecipesViewController alloc] init];
 	recipesVC.recipes					= results[kYummlyMatchesArrayKey];
+	recipesVC.searchPhrase				= [results[@"criteria"][@"terms"] lastObject];
 	[appDelegate.slideOutVC showCentreViewController:recipesVC withRightViewController:[[RecipesViewController alloc] init]];
 	
 }

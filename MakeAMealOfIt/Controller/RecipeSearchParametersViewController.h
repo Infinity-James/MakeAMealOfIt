@@ -6,8 +6,10 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
+#import "UIRightViewController.h"
+
 #pragma mark - Recipe Search Parameters VC Public Interface
 
-@interface RecipeSearchParametersViewController : UIViewController {}
+@interface RecipeSearchParametersViewController : UIRightViewController {}
 
 @end

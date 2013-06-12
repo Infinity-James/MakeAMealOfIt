@@ -128,7 +128,7 @@
 	if (self.backButton)
 		self.leftButton					= self.backButton;
 	else
-		self.leftButton					= [[UIBarButtonItem alloc] initWithTitle:@"Left" style:UIBarButtonItemStyleBordered target:self action:@selector(leftButtonTapped)];
+		self.leftButton					= [[UIBarButtonItem alloc] initWithTitle:@"Left" style:UIBarButtonItemStylePlain target:self action:@selector(leftButtonTapped)];
 	
 	UIBarButtonItem *flexibleSpace		= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
 	
@@ -141,7 +141,6 @@
 	if (recipeName.length > maximumCharacters)
 	{
 		NSRange unneccesaryCharacters	= NSMakeRange(maximumCharacters, recipeName.length - maximumCharacters);
-		NSLog(@"%@", NSStringFromRange(unneccesaryCharacters));
 		recipeName						= [recipeName stringByReplacingCharactersInRange:unneccesaryCharacters withString:@""];
 	}
 	title.text							= recipeName;
@@ -150,7 +149,7 @@
 	[title sizeToFit];
 	UIBarButtonItem *titleItem			= [[UIBarButtonItem alloc] initWithCustomView:title];
 	
-	self.rightButton					= [[UIBarButtonItem alloc] initWithTitle:@"Right" style:UIBarButtonItemStyleBordered target:self action:@selector(rightButtonTapped)];
+	self.rightButton					= [[UIBarButtonItem alloc] initWithTitle:@"Right" style:UIBarButtonItemStylePlain target:self action:@selector(rightButtonTapped)];
 	
 	[self.toolbar setItems:@[self.leftButton, flexibleSpace, titleItem, flexibleSpace, self.rightButton] animated:animate];
 }

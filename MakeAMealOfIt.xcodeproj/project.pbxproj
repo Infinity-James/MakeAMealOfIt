@@ -37,6 +37,15 @@
 		1A7C1A50175792210075AF2D /* UICentreViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7C1A4F175792210075AF2D /* UICentreViewController.m */; };
 		1A7C1A531757ADA50075AF2D /* Recipe.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7C1A521757ADA50075AF2D /* Recipe.m */; };
 		1A84A59E1765BE1200E1F818 /* NetworkActivityIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A84A59D1765BE1200E1F818 /* NetworkActivityIndicator.m */; };
+		1A84A5A11765C2E300E1F818 /* YummlyToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A84A5A01765C2E300E1F818 /* YummlyToolbar.m */; };
+		1A84A5A31765CB7800E1F818 /* toolbar_default_yummlyflat.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A84A5A21765CB7800E1F818 /* toolbar_default_yummlyflat.png */; };
+		1A84A5A51765CB7F00E1F818 /* toolbar_default_yummlyflat@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A84A5A41765CB7F00E1F818 /* toolbar_default_yummlyflat@2x.png */; };
+		1A84A5A81765D27700E1F818 /* textfield_background_yummly@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A84A5A71765D27700E1F818 /* textfield_background_yummly@2x.png */; };
+		1A84A5AA1765DDE600E1F818 /* barbuttonitem_yummly@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A84A5A91765DDE600E1F818 /* barbuttonitem_yummly@2x.png */; };
+		1A84A5AD1765F7CA00E1F818 /* YummlyAttributionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A84A5AC1765F7CA00E1F818 /* YummlyAttributionViewController.m */; };
+		1A84A5B01765F8CE00E1F818 /* UIRightViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A84A5AF1765F8CE00E1F818 /* UIRightViewController.m */; };
+		1A84A5B31766299800E1F818 /* UILeftViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A84A5B21766299800E1F818 /* UILeftViewController.m */; };
+		1A84A5B6176630D900E1F818 /* IngredientHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A84A5B5176630D900E1F818 /* IngredientHeaderView.m */; };
 		1A8EC532174CC77600553857 /* ExtraOptionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A8EC531174CC77600553857 /* ExtraOptionsViewController.m */; };
 		1A8EC534174E24D800553857 /* barbuttonitem_back@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A8EC533174E24D800553857 /* barbuttonitem_back@2x.png */; };
 		1A8EC53A174E6DCD00553857 /* icon~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A8EC536174E6DCD00553857 /* icon~ipad.png */; };
@@ -166,6 +175,20 @@
 		1A7C1A521757ADA50075AF2D /* Recipe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Recipe.m; path = Model/Recipe.m; sourceTree = "<group>"; };
 		1A84A59C1765BE1200E1F818 /* NetworkActivityIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkActivityIndicator.h; sourceTree = "<group>"; };
 		1A84A59D1765BE1200E1F818 /* NetworkActivityIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetworkActivityIndicator.m; sourceTree = "<group>"; };
+		1A84A59F1765C2E300E1F818 /* YummlyToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YummlyToolbar.h; path = View/YummlyToolbar.h; sourceTree = "<group>"; };
+		1A84A5A01765C2E300E1F818 /* YummlyToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YummlyToolbar.m; path = View/YummlyToolbar.m; sourceTree = "<group>"; };
+		1A84A5A21765CB7800E1F818 /* toolbar_default_yummlyflat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = toolbar_default_yummlyflat.png; sourceTree = "<group>"; };
+		1A84A5A41765CB7F00E1F818 /* toolbar_default_yummlyflat@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "toolbar_default_yummlyflat@2x.png"; sourceTree = "<group>"; };
+		1A84A5A71765D27700E1F818 /* textfield_background_yummly@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "textfield_background_yummly@2x.png"; sourceTree = "<group>"; };
+		1A84A5A91765DDE600E1F818 /* barbuttonitem_yummly@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "barbuttonitem_yummly@2x.png"; sourceTree = "<group>"; };
+		1A84A5AB1765F7CA00E1F818 /* YummlyAttributionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YummlyAttributionViewController.h; path = Controller/YummlyAttributionViewController.h; sourceTree = "<group>"; };
+		1A84A5AC1765F7CA00E1F818 /* YummlyAttributionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YummlyAttributionViewController.m; path = Controller/YummlyAttributionViewController.m; sourceTree = "<group>"; };
+		1A84A5AE1765F8CE00E1F818 /* UIRightViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIRightViewController.h; path = Controller/UIRightViewController.h; sourceTree = "<group>"; };
+		1A84A5AF1765F8CE00E1F818 /* UIRightViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIRightViewController.m; path = Controller/UIRightViewController.m; sourceTree = "<group>"; };
+		1A84A5B11766299800E1F818 /* UILeftViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UILeftViewController.h; path = Controller/UILeftViewController.h; sourceTree = "<group>"; };
+		1A84A5B21766299800E1F818 /* UILeftViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UILeftViewController.m; path = Controller/UILeftViewController.m; sourceTree = "<group>"; };
+		1A84A5B4176630D900E1F818 /* IngredientHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IngredientHeaderView.h; path = View/IngredientHeaderView.h; sourceTree = "<group>"; };
+		1A84A5B5176630D900E1F818 /* IngredientHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IngredientHeaderView.m; path = View/IngredientHeaderView.m; sourceTree = "<group>"; };
 		1A8EC530174CC77600553857 /* ExtraOptionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExtraOptionsViewController.h; path = Controller/ExtraOptionsViewController.h; sourceTree = "<group>"; };
 		1A8EC531174CC77600553857 /* ExtraOptionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ExtraOptionsViewController.m; path = Controller/ExtraOptionsViewController.m; sourceTree = "<group>"; };
 		1A8EC533174E24D800553857 /* barbuttonitem_back@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "barbuttonitem_back@2x.png"; sourceTree = "<group>"; };
@@ -294,6 +317,7 @@
 		1A6D115A174A12BC00E0B000 /* Bar Button Items */ = {
 			isa = PBXGroup;
 			children = (
+				1A84A5A91765DDE600E1F818 /* barbuttonitem_yummly@2x.png */,
 				1A8EC533174E24D800553857 /* barbuttonitem_back@2x.png */,
 				1A6D1174174A239D00E0B000 /* barbuttonitem_allergies@2x.png */,
 				1A6D115B174A12BC00E0B000 /* barbuttonitem_hamburger@2x.png */,
@@ -349,6 +373,14 @@
 			path = "Utilities/Network Activity Indicator";
 			sourceTree = "<group>";
 		};
+		1A84A5A61765D27700E1F818 /* Text Field */ = {
+			isa = PBXGroup;
+			children = (
+				1A84A5A71765D27700E1F818 /* textfield_background_yummly@2x.png */,
+			);
+			path = "Text Field";
+			sourceTree = "<group>";
+		};
 		1A8EC535174E6DCD00553857 /* Images */ = {
 			isa = PBXGroup;
 			children = (
@@ -372,6 +404,10 @@
 		1A8EC53F174E733600553857 /* Right View Controller */ = {
 			isa = PBXGroup;
 			children = (
+				1A84A5AE1765F8CE00E1F818 /* UIRightViewController.h */,
+				1A84A5AF1765F8CE00E1F818 /* UIRightViewController.m */,
+				1A84A5AB1765F7CA00E1F818 /* YummlyAttributionViewController.h */,
+				1A84A5AC1765F7CA00E1F818 /* YummlyAttributionViewController.m */,
 				1A8EC530174CC77600553857 /* ExtraOptionsViewController.h */,
 				1A8EC531174CC77600553857 /* ExtraOptionsViewController.m */,
 				1A6D1187174B6ACE00E0B000 /* ParameterPageViewController.h */,
@@ -401,6 +437,8 @@
 		1A8EC541174E735D00553857 /* Left View Controller */ = {
 			isa = PBXGroup;
 			children = (
+				1A84A5B11766299800E1F818 /* UILeftViewController.h */,
+				1A84A5B21766299800E1F818 /* UILeftViewController.m */,
 				1A70C0C01755DF45004FEEF6 /* LeftControllerDelegate.h */,
 				1AEE005517424E2E00B6FC43 /* CupboardViewController.h */,
 				1AEE005617424E2E00B6FC43 /* CupboardViewController.m */,
@@ -540,6 +578,10 @@
 				1A70C0BB175500FF004FEEF6 /* RecipeDetailsView.m */,
 				1A9FCF8B1758CE7E00D74485 /* StarRatingView.h */,
 				1A9FCF8C1758CE7E00D74485 /* StarRatingView.m */,
+				1A84A59F1765C2E300E1F818 /* YummlyToolbar.h */,
+				1A84A5A01765C2E300E1F818 /* YummlyToolbar.m */,
+				1A84A5B4176630D900E1F818 /* IngredientHeaderView.h */,
+				1A84A5B5176630D900E1F818 /* IngredientHeaderView.m */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -696,6 +738,7 @@
 		1AEE00E11746252900B6FC43 /* Yummly */ = {
 			isa = PBXGroup;
 			children = (
+				1A84A5A61765D27700E1F818 /* Text Field */,
 				1A70C0B41754D45A004FEEF6 /* Search Bar */,
 				1A6D115A174A12BC00E0B000 /* Bar Button Items */,
 				1A6D1151174A05D500E0B000 /* Button */,
@@ -718,6 +761,8 @@
 		1AEE00E717467CFB00B6FC43 /* Toolbar Background */ = {
 			isa = PBXGroup;
 			children = (
+				1A84A5A41765CB7F00E1F818 /* toolbar_default_yummlyflat@2x.png */,
+				1A84A5A21765CB7800E1F818 /* toolbar_default_yummlyflat.png */,
 				1AEE00E817467CFB00B6FC43 /* toolbar_default_yummly.png */,
 				1AEE00E917467CFB00B6FC43 /* toolbar_default_yummly@2x.png */,
 			);
@@ -865,6 +910,10 @@
 				1A8EC53C174E6DCD00553857 /* icon~iphone.png in Resources */,
 				1A8EC53D174E6DCD00553857 /* icon~iphone@2x.png in Resources */,
 				1A70C0B61754D45A004FEEF6 /* searchbaricon_default_search@2x.png in Resources */,
+				1A84A5A31765CB7800E1F818 /* toolbar_default_yummlyflat.png in Resources */,
+				1A84A5A51765CB7F00E1F818 /* toolbar_default_yummlyflat@2x.png in Resources */,
+				1A84A5A81765D27700E1F818 /* textfield_background_yummly@2x.png in Resources */,
+				1A84A5AA1765DDE600E1F818 /* barbuttonitem_yummly@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -907,6 +956,11 @@
 				1A9FCF8D1758CE7E00D74485 /* StarRatingView.m in Sources */,
 				1A0A853D1765B66C00D45971 /* UIView+AlphaControl.m in Sources */,
 				1A84A59E1765BE1200E1F818 /* NetworkActivityIndicator.m in Sources */,
+				1A84A5A11765C2E300E1F818 /* YummlyToolbar.m in Sources */,
+				1A84A5AD1765F7CA00E1F818 /* YummlyAttributionViewController.m in Sources */,
+				1A84A5B01765F8CE00E1F818 /* UIRightViewController.m in Sources */,
+				1A84A5B31766299800E1F818 /* UILeftViewController.m in Sources */,
+				1A84A5B6176630D900E1F818 /* IngredientHeaderView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

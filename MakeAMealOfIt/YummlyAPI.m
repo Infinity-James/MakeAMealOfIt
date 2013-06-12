@@ -135,7 +135,9 @@ NSString *const kYummlyTotalMatchCountKey				= @"totalMatchCount";
 		return nil;
 	
 	NSString *getMetadataURL			= [NSString stringWithFormat:@"%@/metadata/%@?%@", kYummlyBaseAPIURL, metadataKey, kYummlyAuthorisationURLExtension];
+	[NetworkActivityIndicator start];
 	NSString *jsonString				= [[NSString alloc] initWithContentsOfURL:[[NSURL alloc] initWithString:getMetadataURL] encoding:NSUTF8StringEncoding error:nil];
+	[NetworkActivityIndicator stop];
 	jsonString							= [jsonString stringByReplacingOccurrencesOfString:@"set_metadata(" withString:@""];
 	jsonString							= [jsonString stringByReplacingOccurrencesOfString:@");" withString:@""];
 	jsonString							= [jsonString stringByReplacingOccurrencesOfString:[[NSString alloc] initWithFormat:@"'%@', ", metadataKey] withString:@""];
@@ -166,11 +168,12 @@ NSString *const kYummlyTotalMatchCountKey				= @"totalMatchCount";
 {
 	NSOperationQueue *yummlyQueue		= [[NSOperationQueue alloc] init];
 	
-	
+	[NetworkActivityIndicator start];
 	[NSURLConnection sendAsynchronousRequest:yummlyURLRequest
 									   queue:yummlyQueue
 						   completionHandler:^(NSURLResponse *response, NSData *jsonData, NSError *error)
 	{
+		[NetworkActivityIndicator stop];
 		if (error)						NSLog(@"Yummly Request Failed: %@\n With Response: %@", error.localizedDescription, response);
 		NSLog(@"Response: %@", response);
 		
@@ -209,7 +212,9 @@ NSString *const kYummlyTotalMatchCountKey				= @"totalMatchCount";
 	NSURLResponse *response;
 	NSError *error;
 	
+	[NetworkActivityIndicator start];
 	NSData *jsonData					= [NSURLConnection sendSynchronousRequest:yummlyURLRequest returningResponse:&response error:&error];
+	[NetworkActivityIndicator stop];
 	
 	if (error)							NSLog(@"Yummly Request Failed: %@\n With Response: %@", error.localizedDescription, response);
 	

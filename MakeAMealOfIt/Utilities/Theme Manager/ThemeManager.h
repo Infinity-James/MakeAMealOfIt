@@ -104,7 +104,10 @@
 #pragma mark - Text Field Appearance
 
 - (UIColor *)backgroundColourForTextField;
+- (UIImage *)backgroundImageForTextField;
+- (UIView *)leftViewForTextField;
 - (NSDictionary *)textFieldDictionary;
+- (UITextFieldViewMode)viewModeForLeftViewInTextField;
 
 #pragma mark - Toolbar Appearance
 

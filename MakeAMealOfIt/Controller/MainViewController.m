@@ -22,6 +22,9 @@ NS_ENUM(NSUInteger, ControllerViewTags)
 
 #pragma mark - Static & Constant Variables
 
+#define kCentreViewFrame				CGRectMake(0.0f, 20.0f, self.view.bounds.size.width, self.view.bounds.size.height - 20.0f)
+#define kSideViewFrame					CGRectMake(0.0f, 40.0f, self.view.bounds.size.width, self.view.bounds.size.height - 60.0f)
+
 static CGFloat const kCornerRadius		= 04.00f;
 //static CGFloat const kPanelWidth		= 60.00f;
 static CGFloat const kSlideTiming		= 00.25f;
@@ -159,21 +162,21 @@ static NSString *const kRightVCKey		= @"Right";
 {
 	UIView *childView									= viewController.view;
 	if (!childView)										return;
-	childView.frame										= self.view.bounds;
+	childView.frame										= kSideViewFrame;
 	[self.view addSubview:viewController.view];
 	[self.view sendSubviewToBack:childView];
+	
+	CGRect centreFrame								= kCentreViewFrame;
+	
+	if (forwards)
+		centreFrame.origin.x						= - self.view.bounds.size.width;
+	else
+		centreFrame.origin.x						= self.view.bounds.size.width;
 	
 	[UIView animateWithDuration:kSlideTiming
 					 animations:
 	^{
-		if (forwards)
-			self.centreViewController.view.frame		= CGRectMake(-self.view.bounds.size.width, 0.0f,
-																	 self.view.bounds.size.width, self.view.bounds.size.height);
-		else
-		{
-			self.centreViewController.view.frame		= CGRectMake(self.view.bounds.size.width, 0.0f,
-																	 self.view.bounds.size.width, self.view.bounds.size.height);
-		}
+		self.centreViewController.view.frame			= centreFrame;
 	}
 					 completion:^(BOOL finished)
 	{
@@ -191,15 +194,18 @@ static NSString *const kRightVCKey		= @"Right";
  */
 - (void)movePanelLeft
 {
-	UIView *childView									= self.rightPanelView;
+	UIView *childView					= self.rightPanelView;
 	if (!childView)										return;
 	[self.view sendSubviewToBack:childView];
+	
+	CGRect centreFrame					= kCentreViewFrame;
+	
+	centreFrame.origin.x				= - self.view.bounds.size.width + kPanelWidth;
 	
 	[UIView animateWithDuration:kSlideTiming
 					 animations:
 	^{
-		self.centreViewController.view.frame			= CGRectMake(-self.view.bounds.size.width + kPanelWidth, 0.0f,
-																 self.view.bounds.size.width, self.view.bounds.size.height);
+		self.centreViewController.view.frame			= centreFrame;
 	}
 					 completion:^(BOOL finished)
 	{
@@ -217,11 +223,14 @@ static NSString *const kRightVCKey		= @"Right";
 	if (!childView)										return;
 	[self.view sendSubviewToBack:childView];
 	
+	CGRect centreFrame					= kCentreViewFrame;
+	
+	centreFrame.origin.x				= self.view.bounds.size.width - kPanelWidth;
+	
 	[UIView animateWithDuration:kSlideTiming
 					 animations:
 	^{
-		self.centreViewController.view.frame			= CGRectMake(self.view.bounds.size.width - kPanelWidth, 0.0f,
-																 self.view.bounds.size.width, self.view.bounds.size.height);
+		self.centreViewController.view.frame			= centreFrame;
 	}
 					 completion:^(BOOL finished)
 	{
@@ -240,7 +249,7 @@ static NSString *const kRightVCKey		= @"Right";
 						options:UIViewAnimationOptionBeginFromCurrentState
 					 animations:
 	^{
-		self.centreViewController.view.frame	= CGRectMake(0.0f, 0.0f, self.view.bounds.size.width, self.view.bounds.size.height);
+		self.centreViewController.view.frame	= kCentreViewFrame;
 	}
 					 completion:^(BOOL finished)
 	{
@@ -357,7 +366,7 @@ static NSString *const kRightVCKey		= @"Right";
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(subviewTrackingTouch:) name:kSubviewTrackingTouch object:nil];
 		self.canTrackTouches			= YES;
 		self.backButton					= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_back"]
-															   style:UIBarButtonItemStyleBordered
+															   style:UIBarButtonItemStylePlain
 															  target:self
 															  action:@selector(backButtonPressed)];
 		self.pastViewControllerDictionaries	= [[NSMutableArray alloc] init];
@@ -385,7 +394,7 @@ static NSString *const kRightVCKey		= @"Right";
  */
 - (UIView *)leftPanelView
 {
-	self.leftViewController.view.frame	= CGRectMake(0.0f, 0.0f, self.view.bounds.size.width, self.view.bounds.size.height);
+	self.leftViewController.view.frame	= kSideViewFrame;
 	
 	self.showingLeftPanel				= YES;
 	
@@ -401,7 +410,7 @@ static NSString *const kRightVCKey		= @"Right";
  */
 - (UIView *)rightPanelView
 {
-	self.rightViewController.view.frame	= CGRectMake(0.0f, 0.0f, self.view.bounds.size.width, self.view.bounds.size.height);
+	self.rightViewController.view.frame	= kSideViewFrame;
 	
 	self.showingRightPanel				= YES;
 	
@@ -510,7 +519,7 @@ static NSString *const kRightVCKey		= @"Right";
 	};
 
 	_centreViewController.view.tag		= kCentreViewTag;
-	_centreViewController.view.frame	= self.view.bounds;
+	_centreViewController.view.frame	= kCentreViewFrame;
 	
 	[_centreViewController.view addGestureRecognizer:self.panGestureRecogniser];
 	

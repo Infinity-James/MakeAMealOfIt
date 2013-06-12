@@ -14,7 +14,6 @@
 @interface ParameterPageViewController () <RotaryProtocol> {}
 
 @property (nonatomic, strong)	RotaryWheel		*selectionWheel;
-@property (nonatomic, strong)	NSDictionary	*viewsDictionary;
 
 @end
 
@@ -67,22 +66,6 @@
 #pragma mark - Autorotation
 
 /**
- *	returns a boolean value indicating whether rotation methods are forwarded to child view controllers
- */
-- (BOOL)shouldAutomaticallyForwardRotationMethods
-{
-	return YES;
-}
-
-/**
- *	returns whether the view controller’s contents should auto rotate
- */
-- (BOOL)shouldAutorotate
-{
-	return YES;
-}
-
-/**
  *	sent to the view controller just before the user interface begins rotating
  *
  *	@param	toInterfaceOrientation		new orientation for the user interface
@@ -91,7 +74,6 @@
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 								duration:(NSTimeInterval)duration
 {
-	//	self.selectionWheel.drawnWheel		= NO;
 	[self.view setNeedsUpdateConstraints];
 }
 
@@ -160,17 +142,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
-	[self.view setNeedsUpdateConstraints];
 	[self.selectionWheel setNeedsLayout];
-}
-
-/**
- *	notifies the view controller that its view is about to layout its subviews
- */
-- (void)viewWillLayoutSubviews
-{
-	[super viewWillLayoutSubviews];
-	[self.view setNeedsUpdateConstraints];
 }
 
 @end

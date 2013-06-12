@@ -20,7 +20,7 @@
 - (NSDictionary *)labelTextDictionary
 {
 	return @{	UITextAttributeFont				: [UIFont fontWithName:@"AvenirNext-Medium" size:18.0f],
-				UITextAttributeTextColor		: [UIColor whiteColor],
+				UITextAttributeTextColor		: kYummlyColourMain,
 				UITextAttributeTextShadowColor	: [UIColor colorWithWhite:0.8f alpha:1.0f],
 				UITextAttributeTextShadowOffset	: [NSValue valueWithUIOffset:UIOffsetMake(0.0f, 1.0f)]};
 }

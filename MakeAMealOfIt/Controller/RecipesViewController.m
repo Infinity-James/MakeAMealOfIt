@@ -10,6 +10,7 @@
 #import "RecipeCollectionViewCell.h"
 #import "RecipeDetailsViewController.h"
 #import "RecipesViewController.h"
+#import "ToolbarLabelYummlyTheme.h"
 #import "UIImageView+Animation.h"
 #import "YummlyAPI.h"
 #import "YummlyRequest.h"
@@ -26,7 +27,6 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 
 @property (nonatomic, strong)	UICollectionView		*recipesCollectionView;
 @property (nonatomic, strong)	NSCache					*thumbnailCache;
-@property (nonatomic, strong)	UIToolbar				*toolbar;
 @property (nonatomic, strong)	NSDictionary			*viewsDictionary;
 
 @end
@@ -34,6 +34,10 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 #pragma mark - Recipes View Controller Implementation
 
 @implementation RecipesViewController {}
+
+#pragma mark - Synthesise Properties
+
+@synthesize searchPhrase				= _searchPhrase;
 
 #pragma mark - Autolayout Methods
 
@@ -72,13 +76,31 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 	if (self.backButton)
 		self.leftButton					= self.backButton;
 	else
-		self.leftButton					= [[UIBarButtonItem alloc] initWithTitle:@"Left" style:UIBarButtonItemStyleBordered target:self action:@selector(leftButtonTapped)];
+		self.leftButton					= [[UIBarButtonItem alloc] initWithTitle:@"Left" style:UIBarButtonItemStylePlain target:self action:@selector(leftButtonTapped)];
 	
 	UIBarButtonItem *flexibleSpace		= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
 	
-	self.rightButton					= [[UIBarButtonItem alloc] initWithTitle:@"Right" style:UIBarButtonItemStyleBordered target:self action:@selector(rightButtonTapped)];
+	UILabel *title						= [[UILabel alloc] init];
+	title.backgroundColor				= [UIColor clearColor];
 	
-	[self.toolbar setItems:@[self.leftButton, flexibleSpace, self.rightButton] animated:animate];
+	NSString *recipeName				= self.searchPhrase;
+	NSUInteger maximumCharacters		= (self.view.bounds.size.width / 10) - 10;
+	
+	if (recipeName.length > maximumCharacters)
+	{
+		NSRange unneccesaryCharacters	= NSMakeRange(maximumCharacters, recipeName.length - maximumCharacters);
+		recipeName						= [recipeName stringByReplacingCharactersInRange:unneccesaryCharacters withString:@""];
+	}
+	title.text							= recipeName;
+	title.textAlignment					= NSTextAlignmentCenter;
+	[ThemeManager customiseLabel:title withTheme:[[ToolbarLabelYummlyTheme alloc] init]];
+	[title sizeToFit];
+	UIBarButtonItem *titleItem			= [[UIBarButtonItem alloc] initWithCustomView:title];
+	
+	self.rightButton					= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_yummly"]
+															style:UIBarButtonItemStylePlain target:self action:@selector(rightButtonTapped)];
+	
+	[self.toolbar setItems:@[self.leftButton, flexibleSpace, titleItem, flexibleSpace, self.rightButton] animated:animate];
 }
 
 /**
@@ -119,6 +141,17 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 }
 
 /**
+ *
+ */
+- (NSString *)searchPhrase
+{
+	if (!_searchPhrase)
+		_searchPhrase					= [[NSString alloc] init];
+	
+	return _searchPhrase;
+}
+
+/**
  *	sets the recipes array that we are displaying
  *
  *	@param	recipes						the returned array of recipes from a search
@@ -127,6 +160,18 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 {
 	_recipes							= recipes;
 	[self.recipesCollectionView reloadData];
+}
+
+/**
+ *
+ *
+ *	@param
+ */
+- (void)setSearchPhrase:(NSString *)searchPhrase
+{
+	_searchPhrase						= [searchPhrase capitalizedString];
+	
+	[self addToolbarItemsAnimated:NO];
 }
 
 /**
@@ -320,6 +365,17 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 	
     if(y > h + reloadDistance)
         NSLog(@"load more rows");
+}
+
+#pragma mark - View Lifecycle
+
+/**
+ *	notifies the view controller that its view is about to layout its subviews
+ */
+- (void)viewWillLayoutSubviews
+{
+	[super viewWillLayoutSubviews];
+	[self addToolbarItemsAnimated:NO];
 }
 
 @end

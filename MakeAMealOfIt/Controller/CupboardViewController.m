@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
+#import <QuartzCore/QuartzCore.h>
 #import "CupboardViewController.h"
 #import "YummlyMetadata.h"
 
@@ -126,7 +127,7 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 /**
  *	filters the contents of the table view according to the search of the user
  *
- *	@param	searchText
+ *	@param	searchTexthttp://upload.wikimedia.org/wikipedia/commons/1/18/Yummly_logo.png
  *	@param	scope
  */
 - (void)filterContentForSearchText:(NSString *)searchText inScope:(NSString *)scope
@@ -610,6 +611,8 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 	if (!headerView)
 		headerView						= [[UITableViewHeaderFooterView alloc] initWithReuseIdentifier:kHeaderIdentifier];
 	headerView.textLabel.text			= [self.sectionTitles[section] capitalizedString];
+	headerView.contentView.backgroundColor	= [[UIColor alloc] initWithRed:0.2f green:0.2f blue:0.2f alpha:1.0f];
+	headerView.textLabel.textColor			= [UIColor whiteColor];
 	
 	return headerView;
 }

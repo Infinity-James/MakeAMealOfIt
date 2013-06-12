@@ -6,9 +6,11 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
+#import "UIRightViewController.h"
+
 #pragma mark - Parameters Page View Controller Public Interface
 
-@interface ParameterPageViewController : UIViewController {}
+@interface ParameterPageViewController : UIRightViewController {}
 
 #pragma mark - Public Properties
 

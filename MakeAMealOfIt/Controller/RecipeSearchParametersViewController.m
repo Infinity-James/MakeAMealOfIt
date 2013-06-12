@@ -19,7 +19,6 @@
 @property (nonatomic, assign)	NSUInteger				currentPageIndex;
 @property (nonatomic, strong)	NSDictionary			*optionsDictionary;
 @property (nonatomic, strong)	UIPageViewController	*pageViewController;
-@property (nonatomic, strong)	NSDictionary			*viewsDictionary;
 
 @end
 
@@ -46,36 +45,6 @@
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[pageView]|" options:kNilOptions
 																metrics:nil views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
-}
-
-#pragma mark - Autorotation
-
-/**
- *	returns a boolean value indicating whether rotation methods are forwarded to child view controllers
- */
-- (BOOL)shouldAutomaticallyForwardRotationMethods
-{
-	return YES;
-}
-
-/**
- *	returns whether the view controller’s contents should auto rotate
- */
-- (BOOL)shouldAutorotate
-{
-	return YES;
-}
-
-/**
- *	sent to the view controller just before the user interface begins rotating
- *
- *	@param	toInterfaceOrientation		new orientation for the user interface
- *	@param	duration					duration of the pending rotation, measured in seconds
- */
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
-								duration:(NSTimeInterval)duration
-{
-	//[self.pageViewController.presentedViewController.view performSelector:@selector(setNeedsUpdateConstraints)];
 }
 
 #pragma mark - Convenience & Helper Methods

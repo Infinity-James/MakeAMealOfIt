@@ -246,7 +246,7 @@
  */
 - (UIImage *)backgroundImageForSearchBar
 {
-	return [UIImage imageNamed:@"toolbar_default_yummly"];
+	return nil;
 }
 
 /**
@@ -402,7 +402,7 @@
 #pragma mark - Theme Methods: Text Field Apperance
 
 /**
- *
+ *	returns the background colour to a text field
  */
 - (UIColor *)backgroundColourForTextField
 {
@@ -410,7 +410,24 @@
 }
 
 /**
- *
+ *	returns the background image for a text field
+ */
+- (UIImage *)backgroundImageForTextField
+{
+	return [[UIImage imageNamed:@"button_background"] resizableImageWithCapInsets:UIEdgeInsetsMake(10.0f, 21.0f, 10.0f, 21.0f)
+																	 resizingMode:UIImageResizingModeStretch];
+}
+
+/**
+ *	returns a view for the left view of a text field
+ */
+- (UIView *)leftViewForTextField
+{
+	return [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 10.0f, 1.0f)];
+}
+
+/**
+ *	returns a dictionary of text attributes for use in a tect field
  */
 - (NSDictionary *)textFieldDictionary
 {
@@ -418,6 +435,14 @@
 				UITextAttributeTextColor		: kYummlyColourMain,
 				UITextAttributeTextShadowColor	: kYummlyColourShadow,
 				UITextAttributeTextShadowOffset	: [NSValue valueWithUIOffset:UIOffsetMake(0.0f, 1.0f)]};
+}
+
+/**
+ *	returns the uitextviewmode for the left view of a text field
+ */
+- (UITextFieldViewMode)viewModeForLeftViewInTextField
+{
+	return UITextFieldViewModeAlways;
 }
 
 #pragma mark - Theme Methods: Toolbar Appearance
@@ -434,9 +459,9 @@
 	if (barMetrics == UIBarMetricsDefault)
 		switch (toolbarPosition)
 		{
-			case UIToolbarPositionAny:		return [UIImage imageNamed:@"toolbar_default_yummly"];	break;
-			case UIToolbarPositionBottom:	return [UIImage imageNamed:@"toolbar_default_yummly"];	break;
-			case UIToolbarPositionTop:		return [UIImage imageNamed:@"toolbar_default_yummly"];	break;
+			case UIToolbarPositionAny:		return nil;												break;
+			case UIToolbarPositionBottom:	return nil;												break;
+			case UIToolbarPositionTop:		return nil;												break;
 			default:						return nil;												break;
 		}
 	
@@ -455,7 +480,7 @@
  */
 - (UIImage *)imageForToolbarShadowBottom
 {
-	return [UIImage imageNamed:@"toolbar_shadow_yummly"];
+	return nil;
 }
 
 /**
@@ -463,7 +488,7 @@
  */
 - (UIImage *)imageForToolbarShadowTop
 {
-	return [UIImage imageNamed:@"toolbar_shadow_yummly"];
+	return nil;
 }
 
 @end

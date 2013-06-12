@@ -370,9 +370,12 @@ static id<Theme> _theme					= nil;
 	if (!theme)
 		theme							= self.sharedTheme;
 	
-	textField.font						= theme.textFieldDictionary[UITextAttributeFont];
-	textField.textColor					= theme.textFieldDictionary[UITextAttributeTextColor];
-	textField.backgroundColor			= theme.backgroundColourForTextField;
+	textField.backgroundColor			= [theme backgroundColourForTextField];
+	textField.background				= [theme backgroundImageForTextField];
+	textField.font						= [theme textFieldDictionary][UITextAttributeFont];
+	textField.leftView					= [theme leftViewForTextField];
+	textField.leftViewMode				= [theme viewModeForLeftViewInTextField];
+	textField.textColor					= [theme textFieldDictionary][UITextAttributeTextColor];
 }
 
 /**

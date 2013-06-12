@@ -120,6 +120,7 @@
 		[ThemeManager customiseButton:_searchButton withTheme:nil];
 		[_searchButton addTarget:self action:@selector(searchButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 		[_searchButton sizeToFit];
+		
 		_searchButton.translatesAutoresizingMaskIntoConstraints			= NO;
 		[self addSubview:_searchButton];
 	}
@@ -135,11 +136,12 @@
 	if (!_searchPhraseField)
 	{
 		_searchPhraseField				= [[UITextField alloc] init];
-		_searchPhraseField.borderStyle	= UITextBorderStyleRoundedRect;
+		_searchPhraseField.borderStyle	= UITextBorderStyleNone;
 		_searchPhraseField.delegate		= self;
 		_searchPhraseField.placeholder	= [[NSString alloc] initWithFormat:@"%@...", self.foods[arc4random() % self.foods.count]];
 		[_searchPhraseField setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
 		[_searchPhraseField setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
+		
 		_searchPhraseField.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self addSubview:_searchPhraseField];
 	}

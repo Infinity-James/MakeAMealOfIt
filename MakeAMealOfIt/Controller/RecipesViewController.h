@@ -13,5 +13,6 @@
 @interface RecipesViewController : UICentreViewController {}
 
 @property (nonatomic, strong)	NSArray					*recipes;
+@property (nonatomic, strong)	NSString				*searchPhrase;
 
 @end

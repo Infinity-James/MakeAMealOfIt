@@ -100,8 +100,7 @@ static NSString *const kYummlyMetadataDictionary	= @"metadata";
  */
 + (void)saveMetadataDictionaryToPropertyList:(NSDictionary *)metadataDictionary
 {
-	NSLog(@"%@", self.metadataPath);
-	NSLog(@"%u", [metadataDictionary writeToFile:self.metadataPath atomically:YES]);
+	[metadataDictionary writeToFile:self.metadataPath atomically:YES];
 }
 
 #pragma mark - Convenience Methods

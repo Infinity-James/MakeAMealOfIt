@@ -189,7 +189,9 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 		NSString *imageURLString		= self.recipeDictionary[kYummlyRecipeImagesKey][0][kYummlyRecipeImagesLargeURLKey];
 		imageURLString					= [imageURLString stringByReplacingOccurrencesOfString:@".l." withString:@".xl."];
 		if (!imageURLString)			return nil;
+		[NetworkActivityIndicator start];
 		NSData *imageData				= [[NSData alloc] initWithContentsOfURL:[[NSURL alloc] initWithString:imageURLString]];
+		[NetworkActivityIndicator stop];
 		_recipeImage					= [[UIImage alloc] initWithData:imageData];
 	}
 	

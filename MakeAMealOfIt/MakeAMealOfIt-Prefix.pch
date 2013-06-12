@@ -12,6 +12,7 @@
 	#import <Foundation/Foundation.h>
 	#import <UIKit/UIKit.h>
 	#import "Defines.h"
+	#import "NetworkActivityIndicator.h"
 	#import "ThemeManager.h"
 	#import "UtilityMethodsCG.h"
 #endif
