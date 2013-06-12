@@ -314,12 +314,13 @@ static NSString *const kRightVCKey		= @"Right";
 												(self.centreViewController.view.bounds.size.width / 2);
 	
 	//	allow dragging only along the x-axis
-	panGesture.view.center				= CGPointMake(panGesture.view.center.x + translation.x, panGesture.view.center.y);
-	[panGesture setTranslation:CGPointMake(0, 0) inView:panGesture.view];
+	panGesture.view.layer.position		= CGPointMake(panGesture.view.layer.position.x + translation.x, panGesture.view.layer.position.y);
+	//panGesture.view.center				= CGPointMake(panGesture.view.center.x + translation.x, panGesture.view.center.y);
+	[panGesture setTranslation:CGPointZero inView:panGesture.view];
 	
 	//	check for change in direction
-	if ((velocity.x * self.preVelocity.x) + (velocity.y * self.preVelocity.y) > 0);
-	else;
+	//	if ((velocity.x * self.preVelocity.x) + (velocity.y * self.preVelocity.y) > 0);
+	//	else;
 	
 	self.preVelocity					= velocity;
 }
@@ -519,7 +520,10 @@ static NSString *const kRightVCKey		= @"Right";
 	};
 
 	_centreViewController.view.tag		= kCentreViewTag;
+	
+	[UIView beginAnimations:nil context:NULL];
 	_centreViewController.view.frame	= kCentreViewFrame;
+	[UIView commitAnimations];
 	
 	[_centreViewController.view addGestureRecognizer:self.panGestureRecogniser];
 	

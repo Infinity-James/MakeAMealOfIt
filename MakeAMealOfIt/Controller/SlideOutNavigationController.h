@@ -18,6 +18,12 @@
 
 #pragma mark - Public Methods
 
+/**
+ *	presents a new centre view controller
+ *
+ *	@param	centreViewController		new centre view controller
+ *	@param	rightViewController			new right slide out view controller
+ */
 - (void)showCentreViewController:(UIViewController *)centreViewController
 		 withRightViewController:(UIViewController *)rightViewController;
 
