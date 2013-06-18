@@ -13,7 +13,6 @@
 #import "RecipesViewController.h"
 #import "ToolbarLabelYummlyTheme.h"
 #import "UIImageView+Animation.h"
-#import "YummlyAPI.h"
 #import "YummlyRequest.h"
 
 #pragma mark - Constants & Static Variables
@@ -122,6 +121,36 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 	return self;
 }
 
+#pragma mark - Recipe Management
+
+/**
+ *	Loads more recipes for the collection view.
+ */
+- (void)loadMoreRecipes
+{
+	__weak RecipesViewController *weakSelf	= self;
+	
+	[appDelegate.yummlyRequest getMoreResults:^(BOOL success, NSDictionary *results)
+	{
+		if (!success)					return;
+		
+		NSUInteger recipesCount			= weakSelf.recipes.count;
+		NSMutableArray *allRecipes		= [weakSelf.recipes mutableCopy];
+		[allRecipes addObjectsFromArray:results[kYummlyMatchesArrayKey]];
+		weakSelf.recipes				= allRecipes;
+		
+		NSMutableArray *indexPaths		= [[NSMutableArray alloc] init];
+		
+		for (NSUInteger itemIndex = recipesCount; itemIndex < weakSelf.recipes.count; itemIndex++)
+			[indexPaths addObject:[NSIndexPath indexPathForItem:itemIndex inSection:0]];
+		
+		dispatch_async(dispatch_get_main_queue(),
+		^{
+			[weakSelf.recipesCollectionView insertItemsAtIndexPaths:indexPaths];
+		});
+	}];
+}
+
 #pragma mark - Setter & Getter Methods
 
 /**
@@ -169,8 +198,11 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
  */
 - (void)setRecipes:(NSArray *)recipes
 {
+	NSArray *oldRecipes					= _recipes;
 	_recipes							= recipes;
-	[self.recipesCollectionView reloadData];
+	
+	if (!oldRecipes)
+		[self.recipesCollectionView reloadData];
 }
 
 /**
@@ -225,7 +257,8 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 		if (!self.recipes.count)
 			[resultCell setInstructionLabelText:@"No Results Were Found"];
 		else
-			[resultCell startLoading];
+			[resultCell startLoading],
+			[self loadMoreRecipes];
 		
 		return resultCell;
 	}
@@ -366,7 +399,7 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
  *	tells delegate when the user scrolls the content view within the receiver
  *
  *	@param	scrollView					scroll-view object in which the scrolling occurred
- */
+ *
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
 	CGPoint offset						= scrollView.contentOffset;
@@ -374,13 +407,13 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
     CGSize size							= scrollView.contentSize;
     UIEdgeInsets inset					= scrollView.contentInset;
     CGFloat y							= offset.y + bounds.size.height - inset.bottom;
-    CGFloat h							= size.height;
+    CGFloat height							= size.height;
 	
     CGFloat reloadDistance				= 10;
 	
-    if(y > h + reloadDistance)
-        NSLog(@"load more rows");
-}
+    if (y > height + reloadDistance)
+        ;
+}*/
 
 #pragma mark - View Lifecycle
 

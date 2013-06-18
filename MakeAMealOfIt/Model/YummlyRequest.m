@@ -618,14 +618,17 @@ NSString *const kYummlyMinimumKey			= @"min";
  */
 - (void)executeSearchRecipesCallWithCompletionHandler:(YummlyRequestCompletionBlock)searchRecipesCallCompleted
 {
+	self.startIndexForResults			= 0;
 	[YummlyAPI asynchronousSearchRecipesCallWithParameters:[self getAsSearchParameters] andCompletionHandler:searchRecipesCallCompleted];
 }
 
 /**
- *	returns this yummly request objects as the search parameters needed for a request
+ *	Returns this yummly request objects as the search parameters needed for a request.
+ *
+ *	@return	A string of search parameters to be used in a URL for Yummly.
  */
 - (NSString *)getAsSearchParameters
-{
+{	
 	NSMutableString *searchParameters	= [[NSMutableString alloc] init];
 	
 	for (NSString *desiredCourse in self.desiredCourses)
@@ -685,11 +688,21 @@ NSString *const kYummlyMinimumKey			= @"min";
 	if (self.requirePictures)
 		[searchParameters appendString:@"requirePictures=true&"];
 	if (self.startIndexForResults)
-		[searchParameters appendFormat:@"start=%u", self.startIndexForResults];
+		[searchParameters appendFormat:@"start=%u&", self.startIndexForResults];
 
 	[searchParameters appendFormat:@"q=%@&", self.searchPhrase ? self.searchPhrase : @""];
 	
 	return searchParameters;
 }
 
+/**
+ *	This should be called after results have already been fetched and the user wants more results with the same request.
+ *
+ *	@param	completionHandler			The block to call when the request for more results has completed.
+ */
+- (void)getMoreResults:(YummlyRequestCompletionBlock)completionHandler
+{
+	self.startIndexForResults			+= self.numberOfResults;
+	[YummlyAPI asynchronousSearchRecipesCallWithParameters:[self getAsSearchParameters] andCompletionHandler:completionHandler];
+}
 @end

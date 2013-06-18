@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
-#ifndef CoolTable_Defines_h
-#define CoolTable_Defines_h
+#ifndef Defines_h
+#define Defines_h
 
 //	button constants
 #define	kButtonBevelMargin				3.0f
@@ -40,4 +40,4 @@ static NSString *const kNotificationYummlyRequestChanged		= @"NotificationYummly
 #define kYummlyFontWithSize(x)			[UIFont fontWithName:@"AvenirNext-Regular" size:x]
 #define kYummlyBolderFontWithSize(x)	[UIFont fontWithName:@"AvenirNext-Medium" size:x]
 
-#endif
+#endif	//	Defines_h

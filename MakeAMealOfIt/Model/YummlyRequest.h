@@ -76,7 +76,18 @@ extern NSString *const kYummlyMinimumKey;
 
 #pragma mark - Utility Methods
 
-- (NSString *)getAsSearchParameters;
 - (void)executeSearchRecipesCallWithCompletionHandler:(YummlyRequestCompletionBlock)searchRecipesCallCompleted;
+/**
+ *	Returns this yummly request objects as the search parameters needed for a request.
+ *
+ *	@return	A string of search parameters to be used in a URL for Yummly.
+ */
+- (NSString *)getAsSearchParameters;
+/**
+ *	This should be called after results have already been fetched and the user wants more results with the same request.
+ *
+ *	@param	completionHandler			The block to call when the request for more results has completed.
+ */
+- (void)getMoreResults:(YummlyRequestCompletionBlock)completionHandler;
 
 @end
