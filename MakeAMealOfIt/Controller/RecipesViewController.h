@@ -12,6 +12,8 @@
 
 @interface RecipesViewController : UICentreViewController {}
 
+#pragma mark - Public Properties
+
 @property (nonatomic, strong)	NSArray					*recipes;
 @property (nonatomic, strong)	NSString				*searchPhrase;
 

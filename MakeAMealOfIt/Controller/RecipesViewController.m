@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "ResultManagementCell.h"
 #import "RecipeCollectionViewCell.h"
 #import "RecipeDetailsViewController.h"
 #import "RecipesViewController.h"
@@ -17,7 +18,8 @@
 
 #pragma mark - Constants & Static Variables
 
-static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
+static NSString *const kCellIdentifier			= @"RecipeCellIdentifier";
+static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier";
 
 #pragma mark - Recipes View Controller Private Class Extension
 
@@ -42,7 +44,7 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 #pragma mark - Autolayout Methods
 
 /**
- *	called when the view controller’s view needs to update its constraints
+ *	Called when the view controller’s view needs to update its constraints.
  */
 - (void)updateViewConstraints
 {
@@ -72,7 +74,9 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 #pragma mark - Initialisation
 
 /**
- *	adds toolbar items to our toolbar
+ *	Adds toolbar items to our toolbar.
+ *
+ *	@param	animate						Whether or not the toolbar items should be an animated fashion.
  */
 - (void)addToolbarItemsAnimated:(BOOL)animate
 {
@@ -107,7 +111,7 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 }
 
 /**
- *	called to initialise a class instance
+ *	Called to initialise a class instance.
  */
 - (id)init
 {
@@ -121,20 +125,23 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 #pragma mark - Setter & Getter Methods
 
 /**
- *	the main view that will show the recipes in an elegant way
+ *	The main view that will show the recipes in an elegant way.
+ *
+ *	@return	The collection view showing the recipe thumbnails.
  */
 - (UICollectionView *)recipesCollectionView
 {
 	if (!_recipesCollectionView)
 	{
-		UICollectionViewFlowLayout *layout	= [[UICollectionViewFlowLayout alloc] init];
-		layout.sectionInset				= UIEdgeInsetsMake(40.0f, 20.0f, 20.0f, 20.0f);
-		_recipesCollectionView			= [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
+		UICollectionViewFlowLayout *layout		= [[UICollectionViewFlowLayout alloc] init];
+		layout.sectionInset						= UIEdgeInsetsMake(40.0f, 20.0f, 20.0f, 20.0f);
+		_recipesCollectionView					= [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
 		_recipesCollectionView.backgroundColor	= [UIColor whiteColor];
 		_recipesCollectionView.dataSource		= self;
-		_recipesCollectionView.delegate	= self;
+		_recipesCollectionView.delegate			= self;
 		
 		[_recipesCollectionView registerClass:[RecipeCollectionViewCell class] forCellWithReuseIdentifier:kCellIdentifier];
+		[_recipesCollectionView registerClass:[ResultManagementCell class] forCellWithReuseIdentifier:kSpecialCellIdentifier];
 		
 		_recipesCollectionView.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self.view addSubview:_recipesCollectionView];
@@ -203,21 +210,27 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 #pragma mark - UICollectionViewDataSource Methods
 
 /**
- *	as the data source we return the cell that corresponds to the specified item in the collection view
+ *	As the data source we return the cell that corresponds to the specified item in the collection view.
  *
- *	@param	collectionView				object representing the collection view requesting this information
- *	@param	indexPath					index path that specifies the location of the item
+ *	@param	collectionView				Object representing the collection view requesting this information.
+ *	@param	indexPath					Index path that specifies the location of the item.
  */
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView
 				  cellForItemAtIndexPath:(NSIndexPath *)indexPath
-{
-	RecipeCollectionViewCell *cell		= [collectionView dequeueReusableCellWithReuseIdentifier:kCellIdentifier forIndexPath:indexPath];
-	
-	if (!self.recipes.count)
+{	
+	if (!self.recipes.count || indexPath.item == self.recipes.count)
 	{
-		cell.recipeDetails.mainLabel.text	= @"No Results Found";
-		return cell;
+		ResultManagementCell *resultCell= [collectionView dequeueReusableCellWithReuseIdentifier:kSpecialCellIdentifier forIndexPath:indexPath];
+		
+		if (!self.recipes.count)
+			[resultCell setInstructionLabelText:@"No Results Were Found"];
+		else
+			[resultCell startLoading];
+		
+		return resultCell;
 	}
+	
+	RecipeCollectionViewCell *cell		= [collectionView dequeueReusableCellWithReuseIdentifier:kCellIdentifier forIndexPath:indexPath];
 	
 	cell.recipeDetails.mainLabel.text	= self.recipes[indexPath.row][kYummlyMatchRecipeNameKey];
 	cell.recipeDetails.detailLabel.text	= self.recipes[indexPath.row][kYummlyMatchSourceDisplayNameKey];
@@ -268,11 +281,8 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 - (NSInteger)collectionView:(UICollectionView *)collectionView
 	 numberOfItemsInSection:(NSInteger)section
 {
-	if (self.recipes.count)
-		return self.recipes.count;
-	
 	//	if there are no recipes we want to use a cell to the the user that there were no results
-	return 1;
+	return self.recipes.count + 1;
 }
 
 /**

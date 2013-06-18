@@ -13,5 +13,7 @@
 #pragma mark - Public Properties
 
 @property (nonatomic, assign)	CGFloat			angleOfSegment;
+@property (nonatomic, strong)	NSString		*segmentTitle;
+@property (nonatomic, assign)	BOOL			selected;
 
 @end

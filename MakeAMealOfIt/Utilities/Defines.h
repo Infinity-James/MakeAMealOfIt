@@ -37,5 +37,7 @@ static NSString *const kNotificationYummlyRequestChanged		= @"NotificationYummly
 #define	kYummlyColourShadow				[UIColor colorWithRed:130.0f / 255.0f green:034.0f / 255.0f blue:006.0f / 255.0f alpha:1.000f]
 #define	kYummlyColourMainWithAlpha(x)	[UIColor colorWithRed:218.0f / 255.0f green:074.0f / 255.0f blue:011.0f / 255.0f alpha:x]
 #define	kYummlyColourShadowWithAlpha(x)	[UIColor colorWithRed:130.0f / 255.0f green:034.0f / 255.0f blue:006.0f / 255.0f alpha:x]
+#define kYummlyFontWithSize(x)			[UIFont fontWithName:@"AvenirNext-Regular" size:x]
+#define kYummlyBolderFontWithSize(x)	[UIFont fontWithName:@"AvenirNext-Medium" size:x]
 
 #endif

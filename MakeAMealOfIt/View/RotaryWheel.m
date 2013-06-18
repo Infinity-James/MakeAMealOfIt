@@ -30,7 +30,6 @@
 
 #pragma mark - Private Properties
 
-
 @property (nonatomic, assign)	CGFloat			angleOfSegment;
 @property (nonatomic, assign)	CGFloat			radius;
 @property (nonatomic, strong)	NSMutableArray	*sectors;
@@ -44,7 +43,7 @@
 #pragma mark - Convenience & Helper Methods
 
 /**
- *	build the sectors if there are an even number of them
+ *	Build the sectors if there are an even number of them.
  */
 - (void)buildSectorsEven
 {
@@ -71,7 +70,7 @@
 }
 
 /**
- *	build the sectors if there an odd number of them
+ *	Build the sectors if there an odd number of them.
  */
 - (void)buildSectorsOdd
 {
@@ -98,6 +97,18 @@
 }
 
 /**
+ *	Handles everything required to properly deselect a segment of this wheel.
+ *
+ *	@param	segmentView					The segment of the wheel to deselect.
+ */
+- (void)deselectSegment:(SegmentView *)segmentView
+{
+	segmentView.alpha					= kMinimumAlpha;
+	segmentView.selected				= NO;
+	segmentView.transform				= CGAffineTransformMakeRotation(self.angleOfSegment * segmentView.tag);
+}
+
+/**
  *	returns the sector of a given value
  *
  *	@param	value						value of the sector to return
@@ -113,13 +124,25 @@
 	return segmentView;
 }
 
+/**
+ *	Handles everything required to properly select a segment of this wheel.
+ *
+ *	@param	segmentView					The segment of the wheel to select.
+ */
+- (void)selectSegment:(SegmentView *)segmentView
+{
+	segmentView.alpha					= kMaximumAlpha;
+	segmentView.selected				= YES;
+	segmentView.transform				= CGAffineTransformScale(segmentView.transform, 1.3f, 1.3f);
+}
+
 #pragma mark - Initialisation
 
 /**
- *	initialises an instance of this rotary wheel with the amount of sections it should have as well as the delegate
+ *	Initialises an instance of this rotary wheel with the amount of sections it should have as well as the delegate.
  *
- *	@param	delegate					the delegate wanting to receive notifications from this wheel
- *	@param	sectionsNumber				the number of sections that this wheel should have
+ *	@param	delegate					The delegate wanting to receive notifications from this wheel.
+ *	@param	sectionsNumber				The number of sections that this wheel should have.
  */
 - (instancetype)initWithDelegate:(id<RotaryProtocol>)delegate
 					withSections:(NSInteger)sectionsNumber
@@ -128,11 +151,11 @@
 }
 
 /**
- *	initializes and returns a newly allocated view object with the specified frame rectangle
+ *	Initializes and returns a newly allocated view object with the specified frame rectangle.
  *
- *	@param	frame						frame rectangle for the view, measured in points
- *	@param	delegate					delegate for the rotary protocol
- *	@param	sectionsNumber				number of sections for the rotary wheel control
+ *	@param	frame						Frame rectangle for the view, measured in points.
+ *	@param	delegate					Delegate for the rotary protocol.
+ *	@param	sectionsNumber				Number of sections for the rotary wheel control.
  */
 - (instancetype)initWithFrame:(CGRect)frame
 				  andDelegate:(id<RotaryProtocol>)delegate
@@ -171,6 +194,17 @@
 	return _radius;
 }
 
+/**
+ *
+ *
+ *	@param	segmentTitles				The titles for each segment in this wheel.
+ */
+- (void)setSegmentTitles:(NSArray *)segmentTitles
+{
+	if (segmentTitles.count == self.numberOfSections)
+		_segmentTitles					= segmentTitles;
+}
+
 #pragma mark - UIControl Methods
 
 /**
@@ -203,7 +237,10 @@
 	_startTransform						= _container.transform;
 	
 	//	selection in limbo so set all sector image's to minimum value by changing current one
-	[self getSectorByValue:_currentSector].alpha = kMinimumAlpha;
+	[UIView animateWithDuration:0.2f animations:
+	^{
+		[self deselectSegment:[self getSectorByValue:_currentSector]];
+	}];
 	
 	return YES;
 }
@@ -277,14 +314,12 @@
 	[self.delegate wheelDidChangeValue:[NSString stringWithFormat:@"Value is %i", _currentSector]];
 	
 	//	set up animation for final rotation and changing of current sector alpha
-	[UIView beginAnimations:nil context:NULL];
-	[UIView setAnimationDuration:0.2f];
-	
-	CGAffineTransform transform			= CGAffineTransformRotate(_container.transform, -newValue);
-	_container.transform				= transform;
-	[self getSectorByValue:_currentSector].alpha = kMaximumAlpha;
-	
-	[UIView commitAnimations];
+	[UIView animateWithDuration:0.2f animations:
+	^{
+		_container.transform				= CGAffineTransformRotate(_container.transform, -newValue);
+		
+		[self selectSegment:[self getSectorByValue:_currentSector]];
+	}];
 }
 
 #pragma mark - UIView Methods
@@ -335,6 +370,8 @@
 		SegmentView *sectorView			= [[SegmentView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.radius, 90.0f)];
 		sectorView.angleOfSegment		= self.angleOfSegment;
 		sectorView.opaque				= NO;
+		if (self.segmentTitles)
+			sectorView.segmentTitle		= self.segmentTitles[index];
 		sectorView.tag					= index;
 		sectorView.layer.anchorPoint	= CGPointMake(1.0f, 0.5f);
 		
@@ -345,7 +382,7 @@
 		
 		//	lower the alpha of every sector except for the selected one (by default this is 0)
 		if (index == 0)
-			sectorView.alpha			= kMaximumAlpha;
+			[self selectSegment:sectorView];
 		else
 			sectorView.alpha			= kMinimumAlpha;
 		

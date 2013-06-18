@@ -8,11 +8,13 @@
 
 #import "ParameterPageViewController.h"
 #import "RotaryWheel.h"
+#import "YummlyAPI.h"
 
 #pragma mark - Parameters Page View Controller Private Class Extension
 
 @interface ParameterPageViewController () <RotaryProtocol> {}
 
+@property (nonatomic, strong)	NSArray			*optionTitles;
 @property (nonatomic, strong)	RotaryWheel		*selectionWheel;
 
 @end
@@ -100,12 +102,35 @@
 	{
 		_optionLabel					= [[UILabel alloc] init];
 		_optionLabel.backgroundColor	= [UIColor clearColor];
+		_optionLabel.font				= kYummlyFontWithSize(20.0f);
+		_optionLabel.textColor			= kYummlyColourShadow;
 		[_optionLabel sizeToFit];
 		_optionLabel.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self.view addSubview:_optionLabel];
 	}
 	
 	return _optionLabel;
+}
+
+/**
+ *	The titles in the options array.
+ *
+ *	@return	An array of titles from the options array.
+ */
+- (NSArray *)optionTitles
+{
+	if (!_optionTitles)
+	{
+		NSMutableArray *optionTitles	= [[NSMutableArray alloc] initWithCapacity:self.options.count];
+		for (NSDictionary *option in self.options)
+			if (option[kYummlyMetadataShortDescriptionKey])
+				[optionTitles addObject:option[kYummlyMetadataShortDescriptionKey]];
+			else if (option[kYummlyMetadataDescriptionKey])
+				[optionTitles addObject:option[kYummlyMetadataDescriptionKey]];
+		_optionTitles					= optionTitles;
+	}
+	
+	return _optionTitles;
 }
 
 /**
@@ -116,6 +141,7 @@
 	if (!_selectionWheel)
 	{
 		_selectionWheel					= [[RotaryWheel alloc] initWithDelegate:self withSections:self.options.count];
+		_selectionWheel.segmentTitles	= self.optionTitles;
 		_selectionWheel.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self.view addSubview:_selectionWheel];
 	}

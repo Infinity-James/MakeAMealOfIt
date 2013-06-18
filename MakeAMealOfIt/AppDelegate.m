@@ -25,8 +25,7 @@
     self.window.backgroundColor			= [UIColor whiteColor];
 	self.window.tintColor				= kYummlyColourMain;
 	
-	//RecipesViewController *recipes		= [[RecipesViewController alloc] init];
-	//self.window.rootViewController		= recipes;
+	
 	
 	self.slideOutVC						= [[SlideOutNavigationController alloc] init];
 	self.window.rootViewController		= self.slideOutVC.mainViewController;

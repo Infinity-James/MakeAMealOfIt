@@ -12,18 +12,78 @@
 
 @interface SegmentView () {}
 
+#pragma mark - Private Properties
+
+@property (nonatomic, strong)	UILabel	*segmentLabel;
+
 @end
 
 #pragma mark - Segment View Implementation
 
 @implementation SegmentView {}
 
+#pragma mark - Setter & Getter Methods
+
+/**
+ *	Used to display the title of this segment.
+ *
+ *	@return	The label used to tell the user what this segment represents.
+ */
+- (UILabel *)segmentLabel
+{
+	if (!_segmentLabel)
+	{
+		_segmentLabel					= [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 35.0f, self.bounds.size.width - 30.0f, self.bounds.size.height - 30.0f)];
+		_segmentLabel.alpha				= 0.0f;
+		_segmentLabel.font				= kYummlyBolderFontWithSize(10.0f);
+		_segmentLabel.lineBreakMode		= NSLineBreakByWordWrapping;
+		_segmentLabel.numberOfLines		= 0;
+		_segmentLabel.shadowColor		= [UIColor whiteColor];
+		_segmentLabel.textAlignment		= NSTextAlignmentCenter;
+		_segmentLabel.textColor			= [UIColor lightGrayColor];
+		_segmentLabel.transform			= CGAffineTransformMakeRotation(-self.angleOfSegment / 2.0f);
+		[self addSubview:_segmentLabel];
+	}
+	
+	return _segmentLabel;
+}
+
+/**
+ *	The setter for title of this segment view.
+ *
+ *	@param	segmentTitle				The desired title for this segment view.
+ */
+- (void)setSegmentTitle:(NSString *)segmentTitle
+{	
+	_segmentTitle						= segmentTitle;
+	self.segmentLabel.text				= _segmentTitle;
+	/*NSAttributedString *attributedTitle	= [[NSAttributedString alloc] initWithString:_segmentTitle
+																		  attributes:@{	NSForegroundColorAttributeName	: kYummlyColourShadow,
+																						NSFontAttributeName				: kYummlyFontWithSize(18.0f),
+																						NSTextEffectAttributeName		: NSTextEffectLetterpressStyle}];
+	_segmentLabel.attributedText		= attributedTitle;*/
+}
+
+/**
+ *	Used to alert the view that it is the selected view.
+ *
+ *	@param	selected					Whether this segment is selected or not.
+ */
+- (void)setSelected:(BOOL)selected
+{
+	_selected							= selected;
+	if (selected)
+		self.segmentLabel.alpha				= 1.0f;
+	else
+		self.segmentLabel.alpha				= 0.0f;
+}
+
 #pragma mark - UIView Methods
 
 /**
- *	draws the receiver’s image within the passed-in rectangle
+ *	Draws the receiver’s image within the passed-in rectangle.
  *
- *	@param	rect						portion of the view’s bounds that needs to be updated
+ *	@param	rect						Portion of the view’s bounds that needs to be updated.
  */
 - (void)drawRect:(CGRect)rect
 {

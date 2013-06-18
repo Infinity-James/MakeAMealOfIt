@@ -565,7 +565,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
+ *	The getter for the number of results to ask for in the fetch.
  *
+ *	@return	The amount of results returned in a request.
  */
 - (NSUInteger)numberOfResults
 {
@@ -610,9 +612,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 #pragma mark - Utility Methods
 
 /**
+ *	Executes this request with all the parameters defined in it.
  *
- *
- *	@param
+ *	@param	searchRecipesCallCompleted	The completion handler to call with the results of the request.
  */
 - (void)executeSearchRecipesCallWithCompletionHandler:(YummlyRequestCompletionBlock)searchRecipesCallCompleted
 {

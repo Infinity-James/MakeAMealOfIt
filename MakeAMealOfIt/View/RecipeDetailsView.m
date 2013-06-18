@@ -41,7 +41,7 @@ static CGFloat const kImageHeight		= 200.0f;
 }
 
 /**
- *	adds the activity indicator view over the image view
+ *	Adds the activity indicator view over the image view.
  */
 - (void)addConstraintsForActivityIndicatorView
 {
@@ -92,7 +92,7 @@ static CGFloat const kImageHeight		= 200.0f;
 }
 
 /**
- *	update constraints for the view
+ *	Update constraints for the view.
  */
 - (void)updateConstraints
 {
@@ -245,7 +245,7 @@ static CGFloat const kImageHeight		= 200.0f;
 }
 
 /**
- *	this dictionary is used when laying out constraints
+ *	This dictionary is used when laying out constraints.
  */
 - (NSDictionary *)viewsDictionary
 {
