@@ -120,9 +120,10 @@
 	{
 		_toolbar						= [[UIToolbar alloc] init];
 		_toolbar.clipsToBounds			= NO;
-		//[ThemeManager customiseToolbar:_toolbar withTheme:nil];
 		_toolbar.translatesAutoresizingMaskIntoConstraints		= NO;
+		_toolbar.translucent			= YES;
 		[self.view addSubview:_toolbar];
+		[self.view bringSubviewToFront:_toolbar];
 	}
 	
 	return _toolbar;

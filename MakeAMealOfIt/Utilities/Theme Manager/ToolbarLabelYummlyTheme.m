@@ -19,10 +19,13 @@
  */
 - (NSDictionary *)labelTextDictionary
 {
-	return @{	UITextAttributeFont				: [UIFont fontWithName:@"AvenirNext-Medium" size:18.0f],
-				UITextAttributeTextColor		: kYummlyColourMain,
-				UITextAttributeTextShadowColor	: [UIColor colorWithWhite:0.8f alpha:1.0f],
-				UITextAttributeTextShadowOffset	: [NSValue valueWithUIOffset:UIOffsetMake(0.0f, 1.0f)]};
+	NSShadow *shadow					= [[NSShadow alloc] init];
+	shadow.shadowColor					= [UIColor colorWithWhite:0.8f alpha:1.0f];
+	shadow.shadowOffset					= CGSizeMake(0.0f, 1.0f);
+	
+	return @{	NSFontAttributeName				: [UIFont fontWithName:@"AvenirNext-Medium" size:18.0f],
+				NSForegroundColorAttributeName	: kYummlyColourMain,
+				NSShadowAttributeName			: shadow};
 }
 
 @end

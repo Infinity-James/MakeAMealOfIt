@@ -62,7 +62,10 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 	
 	CGFloat toolbarHeight				= self.toolbarHeight;
 	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[toolbar(height)][collectionView]|" options:kNilOptions metrics:@{@"height": @(toolbarHeight)} views:self.viewsDictionary];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[toolbar(height)]" options:kNilOptions metrics:@{@"height": @(toolbarHeight)} views:self.viewsDictionary];
+	[self.view addConstraints:constraints];
+	
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[collectionView]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
 }
 
@@ -76,7 +79,7 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 	if (self.backButton)
 		self.leftButton					= self.backButton;
 	else
-		self.leftButton					= [[UIBarButtonItem alloc] initWithTitle:@"Left" style:UIBarButtonItemStylePlain target:self action:@selector(leftButtonTapped)];
+		self.leftButton					= [[UIBarButtonItem alloc] init];
 	
 	UIBarButtonItem *flexibleSpace		= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
 	
@@ -97,7 +100,7 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 	[title sizeToFit];
 	UIBarButtonItem *titleItem			= [[UIBarButtonItem alloc] initWithCustomView:title];
 	
-	self.rightButton					= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_yummly"]
+	self.rightButton					= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_main_normal_attribution_yummly"]
 															style:UIBarButtonItemStylePlain target:self action:@selector(rightButtonTapped)];
 	
 	[self.toolbar setItems:@[self.leftButton, flexibleSpace, titleItem, flexibleSpace, self.rightButton] animated:animate];
@@ -125,7 +128,7 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 	if (!_recipesCollectionView)
 	{
 		UICollectionViewFlowLayout *layout	= [[UICollectionViewFlowLayout alloc] init];
-		layout.sectionInset				= UIEdgeInsetsMake(20.0f, 20.0f, 20.0f, 20.0f);
+		layout.sectionInset				= UIEdgeInsetsMake(40.0f, 20.0f, 20.0f, 20.0f);
 		_recipesCollectionView			= [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
 		_recipesCollectionView.backgroundColor	= [UIColor whiteColor];
 		_recipesCollectionView.dataSource		= self;
@@ -135,6 +138,7 @@ static NSString *const kCellIdentifier	= @"RecipeCellIdentifier";
 		
 		_recipesCollectionView.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self.view addSubview:_recipesCollectionView];
+		[self.view sendSubviewToBack:_recipesCollectionView];
 	}
 	
 	return _recipesCollectionView;
@@ -307,6 +311,7 @@ didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
 - (void)  collectionView:(UICollectionView *)collectionView
 didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+	self.backButton						= nil;
 	RecipeDetailsViewController *recipeVC	= [[RecipeDetailsViewController alloc] initWithRecipeID:self.recipes[indexPath.row][kYummlyMatchIDKey]
 																					  andRecipeName:self.recipes[indexPath.row][kYummlyMatchRecipeNameKey]];
 	[appDelegate.slideOutVC showCentreViewController:recipeVC withRightViewController:nil];
@@ -368,6 +373,19 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 }
 
 #pragma mark - View Lifecycle
+
+/**
+ *	sent to the view controller when the app receives a memory warning
+ */
+- (void)didReceiveMemoryWarning
+{
+	if (self.view.window)
+	{
+		self.thumbnailCache				= nil;
+	}
+	
+	[super didReceiveMemoryWarning];
+}
 
 /**
  *	notifies the view controller that its view is about to layout its subviews

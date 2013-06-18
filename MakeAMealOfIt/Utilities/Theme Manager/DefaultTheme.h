@@ -6,8 +6,9 @@
 //  Copyright (c) 2013 Adam Burkepile. All rights reserved.
 //
 
-#import <QuartzCore/QuartzCore.h>
 #import "ThemeManager.h"
+
+@import QuartzCore;
 
 #pragma mark - Default Theme Public Interface
 

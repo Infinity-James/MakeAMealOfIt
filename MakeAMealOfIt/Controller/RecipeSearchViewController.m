@@ -120,7 +120,7 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
  */
 - (void)addToolbarItemsAnimated:(BOOL)animate
 {
-	self.leftButton						= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_hamburger"]
+	self.leftButton						= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_main_normal_hamburger_yummly"]
 															   style:UIBarButtonItemStylePlain target:self action:@selector(leftButtonTapped)];
 	
 	UIBarButtonItem *flexibleSpace		= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
@@ -133,7 +133,7 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 	[title sizeToFit];
 	UIBarButtonItem *titleItem			= [[UIBarButtonItem alloc] initWithCustomView:title];
 	
-	self.rightButton					= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_allergies"]
+	self.rightButton					= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_main_normal_selection_yummly"]
 															 style:UIBarButtonItemStylePlain target:self action:@selector(rightButtonTapped)];
 	
 	[self.toolbar setItems:@[self.leftButton, flexibleSpace, titleItem, flexibleSpace, self.rightButton] animated:animate];
@@ -208,6 +208,7 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 	RecipesViewController *recipesVC	= [[RecipesViewController alloc] init];
 	recipesVC.recipes					= results[kYummlyMatchesArrayKey];
 	recipesVC.searchPhrase				= [results[@"criteria"][@"terms"] lastObject];
+	NSLog(@"%@", recipesVC.searchPhrase);
 	[appDelegate.slideOutVC showCentreViewController:recipesVC withRightViewController:[[RecipesViewController alloc] init]];
 	
 }

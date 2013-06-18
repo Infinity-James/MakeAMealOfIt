@@ -37,10 +37,14 @@
  */
 - (NSDictionary *)barButtonTextDictionary
 {
-	return @{	UITextAttributeFont				: [UIFont fontWithName:@"AvenirNext-Regular" size:16.0f],
-				UITextAttributeTextColor		: [UIColor whiteColor],
-				UITextAttributeTextShadowColor	: [UIColor colorWithWhite:0.8f alpha:1.0f],
-				UITextAttributeTextShadowOffset	: [NSValue valueWithUIOffset:UIOffsetMake(0.0f, 1.0f)]};
+	NSShadow *shadow					= [[NSShadow alloc] init];
+	shadow.shadowBlurRadius				= kShadowBlur;
+	shadow.shadowColor					= kYummlyColourShadow;
+	shadow.shadowOffset					= CGSizeMake(0.0f, 1.0f);
+	
+	return @{	NSFontAttributeName				: [UIFont fontWithName:@"AvenirNext-Regular" size:16.0f],
+				NSForegroundColorAttributeName	: [UIColor whiteColor],
+				NSShadowAttributeName			: shadow};
 }
 
 /**
@@ -55,7 +59,7 @@
 	if (barMetrics == UIBarMetricsDefault)
 		switch (controlState)
 		{
-			case UIControlStateNormal:			return [UIImage imageNamed:@"barbutton_default_yummly"];	break;
+			case UIControlStateNormal:			break;
 			case UIControlStateHighlighted:		break;
 			default:							break;
 		}
@@ -84,8 +88,8 @@
 	if (barMetrics == UIBarMetricsDefault)
 		switch (controlState)
 		{
-			case UIControlStateNormal:			return [UIImage imageNamed:@"barbutton_default_yummly_unsel"];		break;
-			case UIControlStateHighlighted:		return [UIImage imageNamed:@"barbutton_default_yummly_sel"];		break;
+			case UIControlStateNormal:			break;
+			case UIControlStateHighlighted:		break;
 			default:							break;
 		}
 	
@@ -93,8 +97,8 @@
 	else if (barMetrics == UIBarMetricsLandscapePhone)
 		switch (controlState)
 		{
-			case UIControlStateNormal:			return [UIImage imageNamed:@"barbutton_landscape_yummly_unsel"];	break;
-			case UIControlStateHighlighted:		return [UIImage imageNamed:@"barbutton_landscape_yummly_sel"];		break;
+			case UIControlStateNormal:			break;
+			case UIControlStateHighlighted:		break;
 			default:							break;
 		}
 	
@@ -108,10 +112,14 @@
  */
 - (NSDictionary *)buttonTextDictionary
 {
-	return @{	UITextAttributeFont				: [UIFont fontWithName:@"AvenirNext-Regular" size:16.0f],
-				UITextAttributeTextColor		: kYummlyColourMain,
-				UITextAttributeTextShadowColor	: kYummlyColourShadow,
-				UITextAttributeTextShadowOffset	: [NSValue valueWithUIOffset:UIOffsetMake(0.0f, 1.0f)]};
+	NSShadow *shadow					= [[NSShadow alloc] init];
+	shadow.shadowBlurRadius				= kShadowBlur;
+	shadow.shadowColor					= kYummlyColourShadow;
+	shadow.shadowOffset					= CGSizeMake(0.0f, 1.0f);
+	
+	return @{	NSFontAttributeName				: [UIFont fontWithName:@"AvenirNext-Regular" size:16.0f],
+				NSForegroundColorAttributeName	: kYummlyColourMain,
+				NSShadowAttributeName			: shadow};
 }
 
 /**
@@ -124,7 +132,7 @@
 	switch (controlState)
 	{
 		case UIControlStateNormal:
-			return [[UIImage imageNamed:@"button_background"] resizableImageWithCapInsets:UIEdgeInsetsMake(10.0f, 21.0f, 10.0f, 21.0f)
+			return [[UIImage imageNamed:@"button_background_normal_yummly"] resizableImageWithCapInsets:UIEdgeInsetsMake(10.0f, 21.0f, 10.0f, 21.0f)
 																			 resizingMode:UIImageResizingModeStretch];
 			break;
 		case UIControlStateHighlighted:
@@ -143,7 +151,7 @@
  */
 - (UIColor *)backgroundColour
 {
-	return [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_forest.png"]];
+	return nil;
 }
 
 #pragma mark - Theme Methods: Label Appearance
@@ -153,10 +161,14 @@
  */
 - (NSDictionary *)labelTextDictionary
 {
-	return @{	UITextAttributeFont				: [UIFont fontWithName:@"Optima" size:18.0f],
-				UITextAttributeTextColor		: kYummlyColourMain,
-				UITextAttributeTextShadowColor	: kYummlyColourShadow,
-				UITextAttributeTextShadowOffset	: [NSValue valueWithUIOffset:UIOffsetMake(0.0f, 1.0f)]};
+	NSShadow *shadow					= [[NSShadow alloc] init];
+	shadow.shadowBlurRadius				= kShadowBlur;
+	shadow.shadowColor					= kYummlyColourShadow;
+	shadow.shadowOffset					= CGSizeMake(0.0f, 1.0f);
+	
+	return @{	NSFontAttributeName				: [UIFont fontWithName:@"AvenirNext-Regular" size:16.0f],
+				NSForegroundColorAttributeName	: kYummlyColourMain,
+				NSShadowAttributeName			: shadow};
 }
 
 #pragma mark - Theme Methods: Navigation Bar Appearance
@@ -169,9 +181,9 @@
 - (UIImage *)imageForNavigationBarForBarMetrics:(UIBarMetrics)barMetrics
 {
 	if (barMetrics == UIBarMetricsDefault)
-		return [[UIImage imageNamed:@"nav_forest_portrait.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 100.0f, 0.0f, 100.0f)];
+		return nil;
 	else if (barMetrics == UIBarMetricsLandscapePhone)
-		return [[UIImage imageNamed:@"nav_forest_landscape.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(0.0f, 100.0f, 0.0f, 100.0f)];
+		return nil;
 	else
 		return nil;
 }
@@ -181,7 +193,7 @@
  */
 - (UIImage *)imageForNavigationBarShadow
 {
-	return [UIImage imageNamed:@"topShadow_forest.png"];
+	return nil;
 }
 
 /**
@@ -189,10 +201,14 @@
  */
 - (NSDictionary *)navigationBarTextDictionary
 {
-	return @{	UITextAttributeFont				: [UIFont fontWithName:@"Optima" size:24.0f],
-				UITextAttributeTextColor		: [UIColor colorWithRed:0.910f green:0.914f blue:0.824f alpha:1.000f],
-				UITextAttributeTextShadowColor	: [UIColor colorWithRed:0.224f green:0.173f blue:0.114f alpha:1.000f],
-				UITextAttributeTextShadowOffset	: [NSValue valueWithUIOffset:UIOffsetMake(0.0f, -1.0f)]};
+	NSShadow *shadow					= [[NSShadow alloc] init];
+	shadow.shadowBlurRadius				= kShadowBlur;
+	shadow.shadowColor					= kYummlyColourShadow;
+	shadow.shadowOffset					= CGSizeMake(0.0f, 1.0f);
+	
+	return @{	NSFontAttributeName				: [UIFont fontWithName:@"AvenirNext-Regular" size:16.0f],
+				NSForegroundColorAttributeName	: kYummlyColourMain,
+				NSShadowAttributeName			: shadow};
 }
 
 #pragma mark - Theme Methods: Page Appearance
@@ -214,6 +230,14 @@
 }
 
 #pragma mark - Theme Methods: Progress Bar Customisation
+
+/**
+ *
+ */
+- (UIImage *)imageForProgressBar
+{
+	return nil;
+}
 
 /**
  *	returns an image to use for the portion of the track that is not filled
@@ -242,7 +266,7 @@
 #pragma mark - Theme Methods: Search Bar Appearance
 
 /**
- *
+ *	returns the background image for the search bar
  */
 - (UIImage *)backgroundImageForSearchBar
 {
@@ -250,9 +274,11 @@
 }
 
 /**
+ *	called by the theme manager to get the background image for a search bar
  *
+ *	@param	controlState				the state of the search field
  *
- *	@param
+ *	@return	background image for the text field of the search bar
  */
 - (UIImage *)backgroundImageForSearchFieldForState:(UIControlState)controlState
 {
@@ -260,17 +286,21 @@
 }
 
 /**
+ *	called to get the theme manager image for a search icon for a search bar
  *
+ *	@param	controlState				the state of the search bar
  *
- *	@param
+ *	@return	the image for the search icon of the search bar
  */
 - (UIImage *)imageForSearchIconForState:(UIControlState)controlState
 {
-	return [UIImage imageNamed:@"searchbaricon_default_search"];
+	return [UIImage imageNamed:@"searchbar_icon_normal_yummly"];
 }
 
 /**
+ *	called by the theme manager to get the offset for some text inside a search bar
  *
+ *	@return	the offset for the text inside the search bar field
  */
 - (UIOffset)offsetForSearchBarText
 {
@@ -284,7 +314,7 @@
  */
 - (UIImage *)imageForStepperDecrement
 {
-	return [UIImage imageNamed:@"stepper_forest_decrement.png"];
+	return nil;
 }
 
 /**
@@ -292,7 +322,7 @@
  */
 - (UIImage *)imageForStepperDividerSelected
 {
-	return [UIImage imageNamed:@"stepper_forest_divider_sel.png"];
+	return nil;
 }
 
 /**
@@ -300,7 +330,7 @@
  */
 - (UIImage *)imageForStepperDividerUnselected
 {
-	return [UIImage imageNamed:@"stepper_forest_divider_uns.png"];
+	return nil;
 }
 
 /**
@@ -308,7 +338,7 @@
  */
 - (UIImage *)imageForStepperIncrement
 {
-	return [UIImage imageNamed:@"stepper_forest_increment.png"];
+	return nil;
 }
 
 /**
@@ -316,7 +346,7 @@
  */
 - (UIImage *)imageForStepperSelected
 {
-	return [UIImage imageNamed:@"stepper_forest_bg_sel.png"];
+	return nil;
 }
 
 /**
@@ -324,7 +354,7 @@
  */
 - (UIImage *)imageForStepperUnselected
 {
-	return [UIImage imageNamed:@"stepper_forest_bg_uns.png"];
+	return nil;
 }
 
 #pragma mark - Theme Methods: Switch Apperance
@@ -334,7 +364,7 @@
  */
 - (UIImage *)imageForSwitchOff
 {
-	return [UIImage imageNamed:@"tree_off.png"];
+	return nil;
 }
 
 /**
@@ -342,7 +372,7 @@
  */
 - (UIImage *)imageForSwitchOn
 {
-	return [UIImage imageNamed:@"tree_on.png"];
+	return nil;
 }
 
 /**
@@ -387,16 +417,19 @@
  */
 - (NSDictionary *)tableViewCellTextDictionarySelected:(BOOL)isSelected
 {
+	NSShadow *shadow					= [[NSShadow alloc] init];
+	shadow.shadowBlurRadius				= kShadowBlur;
+	shadow.shadowColor					= kYummlyColourShadow;
+	shadow.shadowOffset					= CGSizeMake(0.0f, 1.0f);
+	
 	if (isSelected)
-		return @{	UITextAttributeFont				: [UIFont fontWithName:@"AvenirNext-Regular" size:14.0f],
-					UITextAttributeTextColor		: [UIColor whiteColor],
-					UITextAttributeTextShadowColor	: kYummlyColourShadow,
-					UITextAttributeTextShadowOffset	: [NSValue valueWithUIOffset:UIOffsetMake(0.0f, 1.0f)]};
+		return @{	NSFontAttributeName				: [UIFont fontWithName:@"AvenirNext-Regular" size:14.0f],
+					NSForegroundColorAttributeName	: [UIColor whiteColor],
+					NSShadowAttributeName			: shadow};
 	else
-		return @{	UITextAttributeFont				: [UIFont fontWithName:@"AvenirNext-Regular" size:14.0f],
-					UITextAttributeTextColor		: kYummlyColourMain,
-					UITextAttributeTextShadowColor	: kYummlyColourShadow,
-					UITextAttributeTextShadowOffset	: [NSValue valueWithUIOffset:UIOffsetMake(0.0f, 1.0f)]};
+		return @{	NSFontAttributeName				: [UIFont fontWithName:@"AvenirNext-Regular" size:14.0f],
+					NSForegroundColorAttributeName	: kYummlyColourMain,
+					NSShadowAttributeName			: shadow};
 }
 
 #pragma mark - Theme Methods: Text Field Apperance
@@ -414,8 +447,8 @@
  */
 - (UIImage *)backgroundImageForTextField
 {
-	return [[UIImage imageNamed:@"button_background"] resizableImageWithCapInsets:UIEdgeInsetsMake(10.0f, 21.0f, 10.0f, 21.0f)
-																	 resizingMode:UIImageResizingModeStretch];
+	return [[UIImage imageNamed:@"button_background_normal_yummly"] resizableImageWithCapInsets:UIEdgeInsetsMake(10.0f, 21.0f, 10.0f, 21.0f)
+																		resizingMode:UIImageResizingModeStretch];
 }
 
 /**
@@ -431,10 +464,14 @@
  */
 - (NSDictionary *)textFieldDictionary
 {
-	return @{	UITextAttributeFont				: [UIFont fontWithName:@"AvenirNext-Regular" size:16.0f],
-				UITextAttributeTextColor		: kYummlyColourMain,
-				UITextAttributeTextShadowColor	: kYummlyColourShadow,
-				UITextAttributeTextShadowOffset	: [NSValue valueWithUIOffset:UIOffsetMake(0.0f, 1.0f)]};
+	NSShadow *shadow					= [[NSShadow alloc] init];
+	shadow.shadowBlurRadius				= kShadowBlur;
+	shadow.shadowColor					= kYummlyColourShadow;
+	shadow.shadowOffset					= CGSizeMake(0.0f, 1.0f);
+	
+	return @{	NSFontAttributeName				: [UIFont fontWithName:@"AvenirNext-Regular" size:16.0f],
+				NSForegroundColorAttributeName	: kYummlyColourMain,
+				NSShadowAttributeName			: shadow};
 }
 
 /**

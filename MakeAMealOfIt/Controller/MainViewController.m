@@ -6,10 +6,11 @@
 //  Copyright (c) 2013 Tammy L Coron. All rights reserved.
 //
 
-#import <QuartzCore/QuartzCore.h>
 #import "MainViewController.h"
 #import "LeftControllerDelegate.h"
 #import "UIView+AlphaControl.h"
+
+@import QuartzCore;
 
 #pragma mark - View Controller Tags
 
@@ -23,10 +24,9 @@ NS_ENUM(NSUInteger, ControllerViewTags)
 #pragma mark - Static & Constant Variables
 
 #define kCentreViewFrame				CGRectMake(0.0f, 20.0f, self.view.bounds.size.width, self.view.bounds.size.height - 20.0f)
-#define kSideViewFrame					CGRectMake(0.0f, 40.0f, self.view.bounds.size.width, self.view.bounds.size.height - 60.0f)
+#define kSideViewFrame					CGRectMake(0.0f, 30.0f, self.view.bounds.size.width, self.view.bounds.size.height - 50.0f)
 
 static CGFloat const kCornerRadius		= 04.00f;
-//static CGFloat const kPanelWidth		= 60.00f;
 static CGFloat const kSlideTiming		= 00.25f;
 
 static NSString *const kCentreVCKey		= @"Centre";
@@ -39,6 +39,8 @@ static NSString *const kRightVCKey		= @"Right";
 
 @property (nonatomic, strong)	UIBarButtonItem				*backButton;
 @property (nonatomic, assign)	BOOL						canTrackTouches;
+@property (nonatomic, strong)	UIMotionEffectGroup			*centreViewParallaxEffect;
+@property (nonatomic, strong)	UIMotionEffectGroup			*childViewParallaxEffect;
 @property (nonatomic, assign)	CGPoint						preVelocity;
 @property (nonatomic, assign)	BOOL						showingLeftPanel;
 @property (nonatomic, assign)	BOOL						showingRightPanel;
@@ -167,30 +169,53 @@ static NSString *const kRightVCKey		= @"Right";
 	[self.view sendSubviewToBack:childView];
 	
 	CGRect centreFrame								= kCentreViewFrame;
+	CGFloat animationDuration						= kSlideTiming;
 	
 	if (forwards)
-		centreFrame.origin.x						= - self.view.bounds.size.width;
+	{
+		centreFrame.origin.x						= self.view.bounds.size.width;
+		childView.frame								= centreFrame;
+		centreFrame									= kSideViewFrame;
+		animationDuration							= 0.5f;
+	}
 	else
 		centreFrame.origin.x						= self.view.bounds.size.width;
 	
-	[UIView animateWithDuration:kSlideTiming
+	[UIView animateWithDuration:animationDuration
 					 animations:
 	^{
-		self.centreViewController.view.frame			= centreFrame;
+		self.centreViewController.view.frame		= centreFrame;
 	}
 					 completion:^(BOOL finished)
 	{
 		if (!forwards)
+		{
 			[self resetMainView];
-		[childView removeFromSuperview];
-		self.centreViewController						= viewController;
-		if (forwards || self.pastViewControllerDictionaries.count)
-			self.centreViewController.backButton = self.backButton;
+			[childView removeFromSuperview];
+			self.centreViewController						= viewController;
+		}
+		else
+		{
+			[self.view bringSubviewToFront:childView];
+			[UIView animateWithDuration:kSlideTiming animations:
+			^{
+				childView.frame							= kCentreViewFrame;
+			}
+							 completion:^(BOOL finished)
+			{
+				[childView removeFromSuperview];
+				self.centreViewController						= viewController;
+				if (self.pastViewControllerDictionaries.count)
+					self.centreViewController.backButton = self.backButton;
+			}];
+		}
+		
+		
 	}];
 }
 
 /**
- *	moves the centre panel left
+ *	Moves the centre panel left.
  */
 - (void)movePanelLeft
 {
@@ -210,12 +235,15 @@ static NSString *const kRightVCKey		= @"Right";
 					 completion:^(BOOL finished)
 	{
 		if (finished)
+		{
 			[self.centreViewController setRightButtonTag:kButtonInUse];
+			[childView addMotionEffect:self.self.childViewParallaxEffect];
+		}
 	}];
 }
 
 /**
- *	moves the centre panel right
+ *	Moves the centre panel right.
  */
 - (void)movePanelRight
 {
@@ -235,12 +263,15 @@ static NSString *const kRightVCKey		= @"Right";
 					 completion:^(BOOL finished)
 	{
 		if (finished)
+		{
 			[self.centreViewController setLeftButtonTag:kButtonInUse];
+			[childView addMotionEffect:self.childViewParallaxEffect];
+		}
 	}];
 }
 
 /**
- *	moves the centre panel back to the original position
+ *	Moves the centre panel back to the original position.
  */
 - (void)movePanelToOriginalPosition
 {
@@ -260,10 +291,10 @@ static NSString *const kRightVCKey		= @"Right";
 #pragma mark - Convenience & Helper Methods
 
 /**
- *	a pan gesture has just started 
+ *	A pan gesture has just started. 
  *
- *	@param	panGesture					the gesture object representing the gesture
- *	@param	velocity					the velocity of the gesture in the view
+ *	@param	panGesture					The gesture object representing the gesture.
+ *	@param	velocity					The velocity of the gesture in the view.
  */
 - (void)panGestureBegan:(UIPanGestureRecognizer *)panGesture withVelocity:(CGPoint)velocity
 {
@@ -284,13 +315,15 @@ static NSString *const kRightVCKey		= @"Right";
 	//	put child view in back and keep centre view in front
 	[self.view sendSubviewToBack:childView];
 	[panGesture.view bringSubviewToFront:panGesture.view];
+	
+	[self.centreViewController.view removeMotionEffect:self.centreViewParallaxEffect];
 }
 
 /**
- *	a pan gesture has just changed
+ *	A pan gesture has just changed.
  *
- *	@param	panGesture					the gesture object representing the gesture
- *	@param	velocity					the velocity of the gesture in the view
+ *	@param	panGesture					The gesture object representing the gesture.
+ *	@param	velocity					The velocity of the gesture in the view.
  */
 - (void)panGestureChanged:(UIPanGestureRecognizer *)panGesture withVelocity:(CGPoint)velocity
 {
@@ -315,7 +348,6 @@ static NSString *const kRightVCKey		= @"Right";
 	
 	//	allow dragging only along the x-axis
 	panGesture.view.layer.position		= CGPointMake(panGesture.view.layer.position.x + translation.x, panGesture.view.layer.position.y);
-	//panGesture.view.center				= CGPointMake(panGesture.view.center.x + translation.x, panGesture.view.center.y);
 	[panGesture setTranslation:CGPointZero inView:panGesture.view];
 	
 	//	check for change in direction
@@ -350,6 +382,8 @@ static NSString *const kRightVCKey		= @"Right";
 		else if (self.showingRightPanel)
 			[self movePanelLeft];
 	}
+	
+	[self.centreViewController.view addMotionEffect:self.centreViewParallaxEffect];
 }
 
 #pragma mark - Initialisation
@@ -366,7 +400,7 @@ static NSString *const kRightVCKey		= @"Right";
 		self.centreViewController		= centreViewController;
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(subviewTrackingTouch:) name:kSubviewTrackingTouch object:nil];
 		self.canTrackTouches			= YES;
-		self.backButton					= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_back"]
+		self.backButton					= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_main_normal_back_yummly"]
 															   style:UIBarButtonItemStylePlain
 															  target:self
 															  action:@selector(backButtonPressed)];
@@ -400,7 +434,7 @@ static NSString *const kRightVCKey		= @"Right";
 	self.showingLeftPanel				= YES;
 	
 	//	set up view shadows
-	[self showCenterViewWithShadow:YES withOffset:-2.0f];
+	[self showCenterViewWithShadow:YES withOffset:CGSizeMake(-2.0f, -2.0f)];
 	
 	UIView *view						= self.leftViewController.view;
 	return view;
@@ -416,13 +450,59 @@ static NSString *const kRightVCKey		= @"Right";
 	self.showingRightPanel				= YES;
 	
 	//	set up view shadows
-	[self showCenterViewWithShadow:YES withOffset:2.0f];
+	[self showCenterViewWithShadow:YES withOffset:CGSizeMake(2.0f, -2.0f)];
 	
 	UIView *view						= self.rightViewController.view;
 	return view;
 }
 
 #pragma mark - Setter & Getter Methods
+
+/**
+ *	The getter for a group of motion effects to be applied to the centre view.
+ *
+ *	@return	The motion effect group for parallax motion effect to be applied to the centre view.
+ */
+- (UIMotionEffectGroup *)centreViewParallaxEffect
+{
+	if (!_centreViewParallaxEffect)
+	{
+		UIInterpolatingMotionEffect *xAxisEffect= [[UIInterpolatingMotionEffect alloc] initWithKeyPath:@"layer.position.x"
+																								  type:UIInterpolatingMotionEffectTypeTiltAlongHorizontalAxis];
+		UIInterpolatingMotionEffect *yAxisEffect= [[UIInterpolatingMotionEffect alloc] initWithKeyPath:@"layer.position.y"
+																								  type:UIInterpolatingMotionEffectTypeTiltAlongVerticalAxis];
+		
+		xAxisEffect.maximumRelativeValue		= yAxisEffect.maximumRelativeValue	= @(8.0f);
+		xAxisEffect.minimumRelativeValue		= yAxisEffect.minimumRelativeValue	= @(-8.0f);
+		_centreViewParallaxEffect				= [[UIMotionEffectGroup alloc] init];
+		_centreViewParallaxEffect.motionEffects	= @[xAxisEffect, yAxisEffect];
+	}
+	
+	return _centreViewParallaxEffect;
+}
+
+/**
+ *	The getter for a group of motion effects to be applied to child views.
+ *
+ *	@return	The motion effect group for parallax motion effect to be applied to a child view.
+ */
+- (UIMotionEffectGroup *)childViewParallaxEffect
+{
+	if (!_childViewParallaxEffect)
+	{
+		UIInterpolatingMotionEffect *xAxisEffect= [[UIInterpolatingMotionEffect alloc] initWithKeyPath:@"layer.position.x"
+																								  type:UIInterpolatingMotionEffectTypeTiltAlongHorizontalAxis];
+		UIInterpolatingMotionEffect *yAxisEffect= [[UIInterpolatingMotionEffect alloc] initWithKeyPath:@"layer.position.y"
+																								  type:UIInterpolatingMotionEffectTypeTiltAlongVerticalAxis];
+		
+		xAxisEffect.maximumRelativeValue		= yAxisEffect.maximumRelativeValue	= @(-15.0f);
+		xAxisEffect.minimumRelativeValue		= yAxisEffect.minimumRelativeValue	= @(15.0f);
+		_childViewParallaxEffect				= [[UIMotionEffectGroup alloc] init];
+		_childViewParallaxEffect.motionEffects	= @[xAxisEffect, yAxisEffect];
+	}
+	
+	return _childViewParallaxEffect;
+}
 
 /**
  *	this is the controller that slides out form the left
@@ -520,6 +600,7 @@ static NSString *const kRightVCKey		= @"Right";
 	};
 
 	_centreViewController.view.tag		= kCentreViewTag;
+	[_centreViewController.view addMotionEffect:self.centreViewParallaxEffect];
 	
 	[UIView beginAnimations:nil context:NULL];
 	_centreViewController.view.frame	= kCentreViewFrame;
@@ -688,7 +769,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 	}
 	
 	//	remove view shadows
-	[self showCenterViewWithShadow:NO withOffset:0.0f];
+	[self showCenterViewWithShadow:NO withOffset:CGSizeZero];
 }
 
 /**
@@ -698,7 +779,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
  *	@param
  */
 - (void)showCenterViewWithShadow:(BOOL)showShadow
-					  withOffset:(double)offset
+					  withOffset:(CGSize)offset
 {
 	if (showShadow)
 	{
@@ -710,7 +791,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 	else
 		self.centreViewController.view.layer.cornerRadius	= 0.0f;
 	
-	self.centreViewController.view.layer.shadowOffset	= CGSizeMake(offset, offset);
+	self.centreViewController.view.layer.shadowOffset	= offset;
 }
 
 /**
@@ -724,6 +805,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 											kLeftVCKey	: self.leftViewControllerClass,
 											kRightVCKey	: self.rightViewControllerClass};
 	[self.pastViewControllerDictionaries addObject:pastVCDictionary];
+	[self.centreViewController.view removeMotionEffect:self.centreViewParallaxEffect];
 	self.leftViewControllerClass		= self.centreViewController;
 	[self animateCentreViewControllerTransitionForwards:YES toViewController:viewController];
 }

@@ -6,9 +6,10 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
-#import <QuartzCore/QuartzCore.h>
 #import "CupboardViewController.h"
 #import "YummlyMetadata.h"
+
+@import QuartzCore;
 
 #pragma mark - Constants & Static Variables
 
@@ -292,6 +293,7 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 		_searchBar.delegate				= self;
 		_searchBar.placeholder			= [[NSString alloc] initWithFormat:@"%@...", self.placeholders[arc4random() % self.placeholders.count]];
 		_searchBar.showsScopeBar		= NO;
+		[ThemeManager customiseSearchBar:_searchBar withTheme:nil];
 		
 		_searchBar.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self.view addSubview:_searchBar];

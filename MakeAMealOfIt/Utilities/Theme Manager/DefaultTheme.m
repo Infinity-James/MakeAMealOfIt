@@ -35,73 +35,71 @@
  */
 - (NSDictionary *)barButtonTextDictionary
 {
-	return @{	UITextAttributeFont				: [UIFont fontWithName:@"Helvetica-Bold" size:12.0f],
-				UITextAttributeTextColor		: [UIColor whiteColor],
-				UITextAttributeTextShadowColor	: [UIColor blackColor],
-				UITextAttributeTextShadowOffset	: [NSValue valueWithUIOffset:UIOffsetMake(0.0f, -1.0f)]};
+	NSShadow *shadow					= [[NSShadow alloc] init];
+	shadow.shadowBlurRadius				= kShadowBlur;
+	shadow.shadowColor					= kYummlyColourShadow;
+	shadow.shadowOffset					= CGSizeMake(0.0f, 1.0f);
+	
+	return @{	NSFontAttributeName				: [UIFont fontWithName:@"AvenirNext-Regular" size:16.0f],
+				NSForegroundColorAttributeName	: [UIColor whiteColor],
+				NSShadowAttributeName			: shadow};
 }
 
 /**
- *	returns an image for 'done' bar button items when they are highlighted & landscape
+ *	returns image for standard bar button items depending on their state and the bar metrics
+ *
+ *	@param	controlState				the control state of the bar button that this image should represent
+ *	@param	barMetrics					the bar metrics for whatever bar this item belongs to
  */
-- (UIImage *)imageForBarButtonDoneHighlightedLandscape
+- (UIImage *)imageForBarButtonDoneForState:(UIControlState)controlState barMetrics:(UIBarMetrics)barMetrics
 {
+	//	returns images for standard bar button items when they are 44 points
+	if (barMetrics == UIBarMetricsDefault)
+		switch (controlState)
+	{
+		case UIControlStateNormal:			break;
+		case UIControlStateHighlighted:		break;
+		default:							break;
+	}
+	
+	//	returns images for standard bar button items when they are 32 points
+	else if (barMetrics == UIBarMetricsLandscapePhone)
+		switch (controlState)
+	{
+		case UIControlStateNormal:			break;
+		case UIControlStateHighlighted:		break;
+		default:							break;
+	}
+	
 	return nil;
 }
 
 /**
- *	returns an image for 'done' bar button items when they are highlighted & portrait
+ *	returns image for done bar button items depending on their state and the bar metrics
+ *
+ *	@param	controlState				the control state of the bar button that this image should represent
+ *	@param	barMetrics					the bar metrics for whatever bar this item belongs to
  */
-- (UIImage *)imageForBarButtonDoneHighlightedPortrait
+- (UIImage *)imageForBarButtonForState:(UIControlState)controlState barMetrics:(UIBarMetrics)barMetrics
 {
-	return nil;
-}
-
-/**
- *	returns an image for 'done' bar button items when they are normal & landscape
- */
-- (UIImage *)imageForBarButtonDoneNormalLandscape
-{
-	return nil;
-}
-
-/**
- *	returns an image for 'done' bar button items when they are normal & portrait
- */
-- (UIImage *)imageForBarButtonDoneNormalPortrait
-{
-	return nil;
-}
-
-/**
- *	returns an image for standard bar button items when they are highlighted & landscape
- */
-- (UIImage *)imageForBarButtonHighlightedLandscape
-{
-	return nil;
-}
-
-/**
- *	returns an image for standard bar button items when they are highlighted & portrait
- */
-- (UIImage *)imageForBarButtonHighlightedPortrait
-{
-	return nil;
-}
-
-/**
- *	returns an image for standard bar button items when they are normal & landscape
- */
-- (UIImage *)imageForBarButtonNormalLandscape
-{
-	return nil;
-}
-
-/**
- *	returns an image for standard bar button items when they are normal & portrait
- */
-- (UIImage *)imageForBarButtonNormalPortrait
-{
+	//	returns images for standard bar button items when they are 44 points
+	if (barMetrics == UIBarMetricsDefault)
+		switch (controlState)
+	{
+		case UIControlStateNormal:			break;
+		case UIControlStateHighlighted:		break;
+		default:							break;
+	}
+	
+	//	returns images for standard bar button items when they are 32 points
+	else if (barMetrics == UIBarMetricsLandscapePhone)
+		switch (controlState)
+	{
+		case UIControlStateNormal:			break;
+		case UIControlStateHighlighted:		break;
+		default:							break;
+	}
+	
 	return nil;
 }
 
@@ -112,23 +110,36 @@
  */
 - (NSDictionary *)buttonTextDictionary
 {
-	return nil;
+	NSShadow *shadow					= [[NSShadow alloc] init];
+	shadow.shadowBlurRadius				= kShadowBlur;
+	shadow.shadowColor					= kYummlyColourShadow;
+	shadow.shadowOffset					= CGSizeMake(0.0f, 1.0f);
+	
+	return @{	NSFontAttributeName				: [UIFont fontWithName:@"AvenirNext-Regular" size:16.0f],
+				NSForegroundColorAttributeName	: kYummlyColourMain,
+				NSShadowAttributeName			: shadow};
 }
 
 /**
- *	returns an image for when a button is highlighted
+ *	returns an image for a button depending on the state
+ *
+ *	@param	controlState				the control state of the button
  */
-- (UIImage *)imageForButtonHighlighted
+- (UIImage *)imageForButtonWithState:(UIControlState)controlState
 {
-	return nil;
-}
-
-/**
- *	returns an image for when a button is just standard
- */
-- (UIImage *)imageForButtonNormal
-{
-	return nil;
+	switch (controlState)
+	{
+		case UIControlStateNormal:
+			return [[UIImage imageNamed:@"button_normal_yummly"] resizableImageWithCapInsets:UIEdgeInsetsMake(10.0f, 21.0f, 10.0f, 21.0f)
+																				resizingMode:UIImageResizingModeStretch];
+			break;
+		case UIControlStateHighlighted:
+			return nil;
+			break;
+		default:
+			return nil;
+			break;
+	}
 }
 
 #pragma mark - Theme Methods: General Appearance
@@ -138,7 +149,7 @@
  */
 - (UIColor *)backgroundColour
 {
-	return [UIColor whiteColor];
+	return nil;
 }
 
 #pragma mark - Theme Methods: Label Appearance
@@ -148,25 +159,31 @@
  */
 - (NSDictionary *)labelTextDictionary
 {
-	return nil;
+	NSShadow *shadow					= [[NSShadow alloc] init];
+	shadow.shadowBlurRadius				= kShadowBlur;
+	shadow.shadowColor					= kYummlyColourShadow;
+	shadow.shadowOffset					= CGSizeMake(0.0f, 1.0f);
+	
+	return @{	NSFontAttributeName				: [UIFont fontWithName:@"AvenirNext-Regular" size:16.0f],
+				NSForegroundColorAttributeName	: kYummlyColourMain,
+				NSShadowAttributeName			: shadow};
 }
 
 #pragma mark - Theme Methods: Navigation Bar Appearance
 
 /**
- *	returns the image for the navigation bar when it is landscape
+ *	returns the image for the navigation bar depending on ber metrics
+ *
+ *	@param	barMetrics					the metrics of the navigation bar
  */
-- (UIImage *)imageForNavigationBarLandscape
+- (UIImage *)imageForNavigationBarForBarMetrics:(UIBarMetrics)barMetrics
 {
-	return nil;
-}
-
-/**
- *	returns the image for the navigation bar when it is portrait
- */
-- (UIImage *)imageForNavigationBarPortrait
-{
-	return nil;
+	if (barMetrics == UIBarMetricsDefault)
+		return nil;
+	else if (barMetrics == UIBarMetricsLandscapePhone)
+		return nil;
+	else
+		return nil;
 }
 
 /**
@@ -182,17 +199,24 @@
  */
 - (NSDictionary *)navigationBarTextDictionary
 {
-	return nil;
+	NSShadow *shadow					= [[NSShadow alloc] init];
+	shadow.shadowBlurRadius				= kShadowBlur;
+	shadow.shadowColor					= kYummlyColourShadow;
+	shadow.shadowOffset					= CGSizeMake(0.0f, 1.0f);
+	
+	return @{	NSFontAttributeName				: [UIFont fontWithName:@"AvenirNext-Regular" size:16.0f],
+				NSForegroundColorAttributeName	: kYummlyColourMain,
+				NSShadowAttributeName			: shadow};
 }
 
-#pragma mark - Theme Methods: Page Control Appearance
+#pragma mark - Theme Methods: Page Appearance
 
 /**
  *	tint color for the current page item
  */
 - (UIColor *)pageCurrentTintColour
 {
-	return [UIColor blackColor];
+	return  kYummlyColourMain;
 }
 
 /**
@@ -200,13 +224,15 @@
  */
 - (UIColor *)pageTintColour
 {
-	return [UIColor lightGrayColor];
+	return kYummlyColourShadow;
 }
 
 #pragma mark - Theme Methods: Progress Bar Customisation
 
 /**
- *	returns an image to use for the portion of the progress bar that is filled
+ *	Called to get the main image for a progress bar.
+ *
+ *	@return	Image for a progress bar.
  */
 - (UIImage *)imageForProgressBar
 {
@@ -214,7 +240,9 @@
 }
 
 /**
- *	returns an image to use for the portion of the track that is not filled
+ *	Called by theme manager to get an image to use for the portion of the track that is not filled.
+ *
+ *	@return	Image for the track of a progress bar.
  */
 - (UIImage *)imageForProgressBarTrack
 {
@@ -226,7 +254,7 @@
  */
 - (UIColor *)progressBarTintColour
 {
-	return nil;
+	return kYummlyColourMain;
 }
 
 /**
@@ -234,7 +262,51 @@
  */
 - (UIColor *)progressBarTrackTintColour
 {
-	return nil;	
+	return kYummlyColourShadow;
+}
+
+#pragma mark - Theme Methods: Search Bar Appearance
+
+/**
+ *	returns the background image for the search bar
+ */
+- (UIImage *)backgroundImageForSearchBar
+{
+	return nil;
+}
+
+/**
+ *	called by the theme manager to get the background image for a search bar
+ *
+ *	@param	controlState				the state of the search field
+ *
+ *	@return	background image for the text field of the search bar
+ */
+- (UIImage *)backgroundImageForSearchFieldForState:(UIControlState)controlState
+{
+	return nil;
+}
+
+/**
+ *	called to get the theme manager image for a search icon for a search bar
+ *
+ *	@param	controlState				the state of the search bar
+ *
+ *	@return	the image for the search icon of the search bar
+ */
+- (UIImage *)imageForSearchIconForState:(UIControlState)controlState
+{
+	return nil;
+}
+
+/**
+ *	called by the theme manager to get the offset for some text inside a search bar
+ *
+ *	@return	the offset for the text inside the search bar field
+ */
+- (UIOffset)offsetForSearchBarText
+{
+	return UIOffsetMake(0.0f, 0.0f);
 }
 
 #pragma mark - Theme Methods: Stepper Appearance
@@ -310,7 +382,7 @@
  */
 - (UIColor *)switchOnTintColour
 {
-	return nil;
+	return kYummlyColourMain;
 }
 
 /**
@@ -318,7 +390,7 @@
  */
 - (UIColor *)switchThumbTintColor
 {
-	return nil;
+	return [UIColor whiteColor];
 }
 
 /**
@@ -326,50 +398,138 @@
  */
 - (UIColor *)switchTintColour
 {
-	return nil;
+	return kYummlyColourShadow;
 }
 
 #pragma mark - Theme Methods: Table View Cell Appearance
 
 /**
- *	returns an array of colours for the gradient
+ *
  */
-- (NSArray *)coloursForGradient
+- (UIColor *)backgroundColourForTableViewCellSelected:(BOOL)isSelected
 {
-	return _coloursForGradient[0];
-}
-
-/**
- *	returns the class for the gradient that we want the cell to have
- */
-- (Class)gradientLayer
-{
-	return [GradientLayer class];
-}
-
-/**
- *	returns the location of the colours
- */
-- (NSArray *)locationsOfColours
-{
-	return _coloursForGradient[1];
-}
-
-/**
- *	returns the number of colours that this gradient will have
- */
-- (NSUInteger)numberOfColoursInGradient
-{
-	return ((NSArray *)_coloursForGradient[0]).count;
+	if (isSelected)
+		return kYummlyColourMain;
+	else
+		return [UIColor whiteColor];
 }
 
 /**
  *	returns a dictionary of properties for the table view cell
  */
-- (NSDictionary *)tableViewCellTextDictionary
+- (NSDictionary *)tableViewCellTextDictionarySelected:(BOOL)isSelected
 {
-	return @{	UITextAttributeFont		: [UIFont boldSystemFontOfSize:20.0f]};
+	NSShadow *shadow					= [[NSShadow alloc] init];
+	shadow.shadowBlurRadius				= kShadowBlur;
+	shadow.shadowColor					= kYummlyColourShadow;
+	shadow.shadowOffset					= CGSizeMake(0.0f, 1.0f);
+	
+	if (isSelected)
+		return @{	NSFontAttributeName				: [UIFont fontWithName:@"AvenirNext-Regular" size:14.0f],
+					NSForegroundColorAttributeName	: [UIColor whiteColor],
+					NSShadowAttributeName			: shadow};
+	else
+		return @{	NSFontAttributeName				: [UIFont fontWithName:@"AvenirNext-Regular" size:14.0f],
+					NSForegroundColorAttributeName	: kYummlyColourMain,
+					NSShadowAttributeName			: shadow};
 }
+
+#pragma mark - Theme Methods: Text Field Apperance
+
+/**
+ *	returns the background colour to a text field
+ */
+- (UIColor *)backgroundColourForTextField
+{
+	return [UIColor clearColor];
+}
+
+/**
+ *	returns the background image for a text field
+ */
+- (UIImage *)backgroundImageForTextField
+{
+	return [[UIImage imageNamed:@"button_normal_yummly"] resizableImageWithCapInsets:UIEdgeInsetsMake(10.0f, 21.0f, 10.0f, 21.0f)
+																		resizingMode:UIImageResizingModeStretch];
+}
+
+/**
+ *	returns a view for the left view of a text field
+ */
+- (UIView *)leftViewForTextField
+{
+	return [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 10.0f, 1.0f)];
+}
+
+/**
+ *	returns a dictionary of text attributes for use in a tect field
+ */
+- (NSDictionary *)textFieldDictionary
+{
+	NSShadow *shadow					= [[NSShadow alloc] init];
+	shadow.shadowBlurRadius				= kShadowBlur;
+	shadow.shadowColor					= kYummlyColourShadow;
+	shadow.shadowOffset					= CGSizeMake(0.0f, 1.0f);
+	
+	return @{	NSFontAttributeName				: [UIFont fontWithName:@"AvenirNext-Regular" size:16.0f],
+				NSForegroundColorAttributeName	: kYummlyColourMain,
+				NSShadowAttributeName			: shadow};
+}
+
+/**
+ *	returns the uitextviewmode for the left view of a text field
+ */
+- (UITextFieldViewMode)viewModeForLeftViewInTextField
+{
+	return UITextFieldViewModeAlways;
+}
+
+#pragma mark - Theme Methods: Toolbar Appearance
+
+/**
+ *	returns the toolbar background imaging depending on it's position and bar metrics
+ *
+ *	@param	toolbarPositon					the position of toolbar
+ *	@param	barMetrics						the metrics of toolbar
+ */
+- (UIImage *)backgroundImageForToolbarInPosition:(UIToolbarPosition)toolbarPosition
+									  barMetrics:(UIBarMetrics)barMetrics
+{
+	if (barMetrics == UIBarMetricsDefault)
+		switch (toolbarPosition)
+	{
+		case UIToolbarPositionAny:		return nil;												break;
+		case UIToolbarPositionBottom:	return nil;												break;
+		case UIToolbarPositionTop:		return nil;												break;
+		default:						return nil;												break;
+	}
+	
+	else
+		switch (toolbarPosition)
+	{
+		case UIToolbarPositionAny:		return nil;												break;
+		case UIToolbarPositionBottom:	return nil;												break;
+		case UIToolbarPositionTop:		return nil;												break;
+		default:						return nil;												break;
+	}
+}
+
+/**
+ *	returns the shadow for the bottom of the toolbar
+ */
+- (UIImage *)imageForToolbarShadowBottom
+{
+	return nil;
+}
+
+/**
+ *	returns the shadow for the top of the toolbar
+ */
+- (UIImage *)imageForToolbarShadowTop
+{
+	return nil;
+}
+
 
 @end
 

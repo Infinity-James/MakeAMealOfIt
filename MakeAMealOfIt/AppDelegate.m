@@ -23,6 +23,7 @@
 {
     self.window							= [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.backgroundColor			= [UIColor whiteColor];
+	self.window.tintColor				= kYummlyColourMain;
 	
 	//RecipesViewController *recipes		= [[RecipesViewController alloc] init];
 	//self.window.rootViewController		= recipes;

@@ -6,10 +6,11 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
-#import <QuartzCore/QuartzCore.h>
 #import "RotaryWheel.h"
 #import "Sector.h"
 #import "SegmentView.h"
+
+@import QuartzCore;
 
 #pragma mark - Defines
 
@@ -101,15 +102,15 @@
  *
  *	@param	value						value of the sector to return
  */
-- (UIImageView *)getSectorByValue:(NSInteger)value
+- (SegmentView *)getSectorByValue:(NSInteger)value
 {
-	UIImageView *sectorImage;
+	SegmentView *segmentView;
 	
-	for (UIImageView *image in _container.subviews)
-		if (image.tag == value)
-			sectorImage					= image;
+	for (SegmentView *segment in _container.subviews)
+		if (segment.tag == value)
+			segmentView					= segment;
 	
-	return sectorImage;
+	return segmentView;
 }
 
 #pragma mark - Initialisation
@@ -331,7 +332,10 @@
 	for (NSInteger index = 0; index < self.numberOfSections; index++)
 	{
 		//	create the sector and set anchor point (pivot) to the middle right of this rectangle		
-		UIView *sectorView				= [[SegmentView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.radius, 90.0f)];
+		SegmentView *sectorView			= [[SegmentView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.radius, 90.0f)];
+		sectorView.angleOfSegment		= self.angleOfSegment;
+		sectorView.opaque				= NO;
+		sectorView.tag					= index;
 		sectorView.layer.anchorPoint	= CGPointMake(1.0f, 0.5f);
 		
 		//	position the label in the centre of the container view and rotate u=it according to it's number and the calculated angle
@@ -361,12 +365,11 @@
 		
 	//	add a background image and a centre button
 	UIImageView *background				= [[UIImageView alloc] initWithFrame:self.bounds];
-	background.image					= [UIImage imageNamed:@"bg.png"];
 	[self addSubview:background];
 	
-	UIImageView *centre					= [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"centerButton.png"]];
+	UIImageView *centre					= [[UIImageView alloc] init];
 	centre.center						= CGPointMake(_container.bounds.size.width / 2.0f,
-													  _container.bounds.size.height / 2.0f + 3);
+													  _container.bounds.size.height / 2.0f);
 	centre.bounds						= CGRectMake(0, 0, 58, 58);
 	[self addSubview:centre];
 	

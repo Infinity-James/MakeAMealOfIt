@@ -30,12 +30,26 @@
 	//	get the context
 	CGContextRef context				= UIGraphicsGetCurrentContext();
 	
-	//	----	fiil the rect with a background colour first of all	----
+	//	----	get the points we need for ease	----
 	
-	//	set fill colour and then fill the rect
-	UIColor *backgroundColour			= [UIColor colorWithRed:1.0f green:0.5f blue:0.0f alpha:1.0f];
-	CGContextSetFillColorWithColor(context, backgroundColour.CGColor);
-	CGContextFillRect(context, rect);
+	CGPoint originPoint					= CGPointMake(rect.size.width, CGRectGetMidY(rect));
+	
+	CGFloat halfAngle					= self.angleOfSegment / 2.0f;
+	CGFloat magnitude					= rect.size.width / cos(halfAngle);
+	CGFloat xComponent					= magnitude * cos(halfAngle);
+	CGFloat yComponent					= magnitude * sin(halfAngle);
+	
+	CGPoint topPoint					= CGPointMake(originPoint.x - xComponent, originPoint.x - yComponent);
+	CGPoint bottomPoint					= CGPointMake(originPoint.x - xComponent, originPoint.x + yComponent);
+	
+	[kYummlyColourMain setStroke];
+	CGContextMoveToPoint(context, originPoint.x, originPoint.y);
+	CGContextAddLineToPoint(context, topPoint.x, topPoint.y);
+	CGContextAddLineToPoint(context, bottomPoint.x, bottomPoint.y);
+	CGContextAddLineToPoint(context, originPoint.x, originPoint.y);
+	
+	CGContextSetLineWidth(context, 10.0f);
+	CGContextStrokePath(context);
 }
 
 @end

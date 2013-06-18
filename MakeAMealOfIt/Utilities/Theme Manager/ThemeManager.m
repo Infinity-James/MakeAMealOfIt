@@ -148,12 +148,12 @@ static id<Theme> _theme					= nil;
 		theme							= self.sharedTheme;
 	
 	//	customise the button properties
-	button.titleLabel.font				= theme.buttonTextDictionary[UITextAttributeFont];
-	[button setTitleColor:theme.buttonTextDictionary[UITextAttributeTextColor] forState:UIControlStateNormal];
-	//button.titleLabel.textColor			= theme.buttonTextDictionary[UITextAttributeTextColor];
-	//button.titleLabel.shadowColor		= theme.buttonTextDictionary[UITextAttributeTextShadowColor];
-	[button setTitleShadowColor:theme.buttonTextDictionary[UITextAttributeTextShadowColor] forState:UIControlStateNormal];
-	button.titleLabel.shadowOffset		= ((NSValue *)theme.buttonTextDictionary[UITextAttributeTextShadowOffset]).CGSizeValue;
+	button.titleLabel.font				= [theme buttonTextDictionary][NSFontAttributeName];
+	[button setTitleColor:[theme buttonTextDictionary][NSForegroundColorAttributeName] forState:UIControlStateNormal];
+	
+	NSShadow *shadow					= [theme buttonTextDictionary][NSShadowAttributeName];
+	[button setTitleShadowColor:shadow.shadowColor forState:UIControlStateNormal];
+	button.titleLabel.shadowOffset		= shadow.shadowOffset;
 	
 	//	set the background images for the button
 	[button setBackgroundImage:[theme imageForButtonWithState:UIControlStateNormal] forState:UIControlStateNormal];
@@ -172,11 +172,14 @@ static id<Theme> _theme					= nil;
 	if (!theme)
 		theme							= self.sharedTheme;
 	
+	NSDictionary *labelTextDictionary	= [theme labelTextDictionary];
+	
 	//	customise the uilabel
-	label.font							= theme.labelTextDictionary[UITextAttributeFont];
-	label.textColor						= theme.labelTextDictionary[UITextAttributeTextColor];
-	label.shadowColor					= theme.labelTextDictionary[UITextAttributeTextShadowColor];
-	label.shadowOffset					= ((NSValue *)theme.labelTextDictionary[UITextAttributeTextShadowOffset]).CGSizeValue;
+	label.font							= labelTextDictionary[NSFontAttributeName];
+	label.textColor						= labelTextDictionary[NSForegroundColorAttributeName];
+	NSShadow *shadow					= labelTextDictionary[NSShadowAttributeName];
+	label.shadowColor					= shadow.shadowColor;
+	label.shadowOffset					= shadow.shadowOffset;
 }
 
 /**
@@ -231,7 +234,7 @@ static id<Theme> _theme					= nil;
 	[progressBar setProgressTintColor:[theme progressBarTintColour]];
 	[progressBar setTrackTintColor:[theme progressBarTrackTintColour]];
 	
-	//	use images for the progress bar
+	//	use images for the progress bar]
 	[progressBar setProgressImage:[theme imageForProgressBar]];
 	[progressBar setTrackImage:[theme imageForProgressBarTrack]];
 }
@@ -347,15 +350,17 @@ static id<Theme> _theme					= nil;
 		theme							= self.sharedTheme;
 	
 	BOOL isSelected						= tableViewCell.isSelected;
+	NSDictionary *cellDictionary		= [theme tableViewCellTextDictionarySelected:isSelected];
+	NSShadow *shadow					= cellDictionary[NSShadowAttributeName];
 	
 	//	set the general appearance
 	tableViewCell.backgroundColor		= [theme backgroundColourForTableViewCellSelected:isSelected];
 	
 	//	customise the table view cell's text properties
-	tableViewCell.textLabel.font		= [theme tableViewCellTextDictionarySelected:isSelected][UITextAttributeFont];
-	tableViewCell.textLabel.textColor	= [theme tableViewCellTextDictionarySelected:isSelected][UITextAttributeTextColor];
-	tableViewCell.textLabel.shadowColor	= [theme tableViewCellTextDictionarySelected:isSelected][UITextAttributeTextShadowColor];
-	tableViewCell.textLabel.shadowOffset= ((NSValue *)[theme tableViewCellTextDictionarySelected:isSelected][UITextAttributeTextShadowOffset]).CGSizeValue;
+	tableViewCell.textLabel.font		= cellDictionary[NSFontAttributeName];
+	tableViewCell.textLabel.textColor	= cellDictionary[NSForegroundColorAttributeName];
+	tableViewCell.textLabel.shadowColor	= shadow.shadowColor;
+	tableViewCell.textLabel.shadowOffset= shadow.shadowOffset;
 }
 
 /**
@@ -372,10 +377,10 @@ static id<Theme> _theme					= nil;
 	
 	textField.backgroundColor			= [theme backgroundColourForTextField];
 	textField.background				= [theme backgroundImageForTextField];
-	textField.font						= [theme textFieldDictionary][UITextAttributeFont];
+	textField.font						= [theme textFieldDictionary][NSFontAttributeName];
 	textField.leftView					= [theme leftViewForTextField];
 	textField.leftViewMode				= [theme viewModeForLeftViewInTextField];
-	textField.textColor					= [theme textFieldDictionary][UITextAttributeTextColor];
+	textField.textColor					= [theme textFieldDictionary][NSForegroundColorAttributeName];
 }
 
 /**
