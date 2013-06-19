@@ -237,15 +237,16 @@ NSString *const kYummlyMinimumKey			= @"min";
 						change:(NSDictionary *)change
 					   context:(void *)context
 {
+	//	we just post a general notification that this the yummly request has been changed
 	[[NSNotificationCenter defaultCenter] postNotificationName:kNotificationYummlyRequestChanged object:nil];
 }
 
 #pragma mark - Remove Desires
 
 /**
- *	removes a previously added course specification that the returned recipes needed to include
+ *	Removes a previously added course specification that the returned recipes needed to include.
  *
- *	@param	desiredCourse				the course that the user wants the recipes to be
+ *	@param	desiredCourse				The course that the user wanted the recipes to be, but doesn't anymore.
  */
 - (void)removeDesiredCourse:(NSString *)desiredCourse
 {
@@ -254,9 +255,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
- *	removes a previously added a cuisine type that returned recipes needed to include
+ *	Removes a previously added a cuisine type that returned recipes needed to include.
  *
- *	@param	desiredCuisine				the type of cuisine the user would like
+ *	@param	desiredCuisine				The type of cuisine the user wanted but no longer does.
  */
 - (void)removeDesiredCuisine:(NSString *)desiredCuisine
 {
@@ -265,9 +266,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
- *	removes a previously added holiday that the meal needed to be related to
+ *	Removes a previously added holiday that the meal needed to be related to.
  *
- *	@param	desiredHoliday				the type of holiday that the user is interested in
+ *	@param	desiredHoliday				the type of holiday that the user was interested in but is no longer.
  */
 - (void)removeDesiredHoliday:(NSString *)desiredHolday
 {
@@ -276,9 +277,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
- *	removes a previously added ingredient the user wanted the recipes to include
+ *	Removes a previously added ingredient the user wanted the recipes to include.
  *
- *	@param	desiredIngredient			the ingredient the user wants the meal to include
+ *	@param	desiredIngredient			The ingredient the user wanted the meal to include but no longer does.
  */
 - (void)removeDesiredIngredient:(NSString *)desiredIngredient
 {
@@ -289,9 +290,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 #pragma mark - Remove Exclusions
 
 /**
- *	removes a previously added course that was supposed to be excluded from recipe return results
+ *	Removes a previously added course that was supposed to be excluded from recipe return results.
  *
- *	@param	excludedCourse				a course type that the user doesn't want the meal to be
+ *	@param	excludedCourse				A course type that was previously excluded.
  */
 - (void)removeExcludedCourse:(NSString *)excludedCourse
 {
@@ -300,9 +301,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
- *	removes a previously added cuisine that the recipes should not have included
+ *	Removes a previously added cuisine that the recipes should not have included.
  *
- *	@param	excludedCuisine				the cuisine type to not exclude from results
+ *	@param	excludedCuisine				The cuisine type that was previously excluded.
  */
 - (void)removeExcludedCuisine:(NSString *)excludedCuisine
 {
@@ -311,9 +312,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
- *	removes a previously added holiday meal type that was to be excluded from results
+ *	Removes a previously added holiday meal type that was to be excluded from results.
  *
- *	@param	excludedHoliday				the holiday to exclude from recipe results
+ *	@param	excludedHoliday				The holiday to no longer exclude.
  */
 - (void)removeExcludedHoliday:(NSString *)excludedHoliday
 {
@@ -322,9 +323,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
- *	removes a previously added ingredient that if any meals included we should not have received them in results
+ *	Removes a previously added ingredient that if any meals included we should not have received them in results.
  *
- *	@param	excludedIngredient			an ingredient to exclude
+ *	@param	excludedIngredient			An ingredient to no longer exclude.
  */
 - (void)removeExcludedIngredient:(NSString *)excludedIngredient
 {
@@ -335,9 +336,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 #pragma mark - Remove Requirements
 
 /**
- *	removes a previously added allergy type that a returned recipe must have conformed to
+ *	Removes a previously added allergy type that a returned recipe must have conformed to.
  *
- *	@param	requiredAllergy				the allergy that recipes should conform to
+ *	@param	requiredAllergy				The allergy that recipes no longer have to conform to.
  */
 - (void)removeRequiredAllergy:(NSString *)requiredAllergy
 {
@@ -346,9 +347,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
- *	removes a previously added diet type (like vegetarian) that recipes needed to be
+ *	Removes a previously added diet type (like vegetarian) that recipes needed to be.
  *
- *	@param	requiredDiet				the recipes need to be okay for this diet
+ *	@param	requiredDiet				The diet that recipes no longer have to conform to.
  */
 - (void)removeRequiredDiet:(NSString *)requiredDiet
 {
@@ -359,7 +360,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 #pragma mark - Available Metadata Methods
 
 /**
- *	returns all of the available allergies names
+ *	Returns all of the available allergies names.
+ *
+ *	@return	An array with names of each allergy available.
  */
 + (NSArray *)availableAllergies
 {
@@ -376,7 +379,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
- *	returns all of the available allergy dictionaries
+ *	Returns all of the available allergy dictionaries.
+ *
+ *	@return	An array of each allergy dictionary available.
  */
 + (NSArray *)availableAllergyDictionaries
 {
@@ -385,14 +390,16 @@ NSString *const kYummlyMinimumKey			= @"min";
 	
 	dispatch_once(&onceToken,
 	^{
-		availableAllergyDictionaries	= [YummlyAPI synchronousGetMetadataForKey:kYummlyMetadataAllergies];
+		availableAllergyDictionaries	= [YummlyMetadata allMetadata][kYummlyMetadataAllergies];
 	});
 	
 	return availableAllergyDictionaries;
 }
 
 /**
- *	returns all of the available course dictionaries
+ *	Returns all of the available course dictionaries.
+ *
+ *	@return	An array of each course dictionary available.
  */
 + (NSArray *)availableCourseDictionaries
 {
@@ -401,14 +408,16 @@ NSString *const kYummlyMinimumKey			= @"min";
 	
 	dispatch_once(&onceToken,
 	^{
-		availableCourseDictionaries		= [YummlyAPI synchronousGetMetadataForKey:kYummlyMetadataCourses];
+		availableCourseDictionaries		= [YummlyMetadata allMetadata][kYummlyMetadataCourses];
 	});
 	
 	return availableCourseDictionaries;
 }
 
 /**
- *	returns all of the available courses names
+ *	Returns all of the available course names.
+ *
+ *	@return	An array with names of each course available.
  */
 + (NSArray *)availableCourses
 {
@@ -425,7 +434,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
- *	returns all of the available cuisine dictionaries
+ *	Returns all of the available cuisine dictionaries.
+ *
+ *	@return	An array of each cuisine dictionary available.
  */
 + (NSArray *)availableCuisineDictionaries
 {
@@ -434,14 +445,16 @@ NSString *const kYummlyMinimumKey			= @"min";
 	
 	dispatch_once(&onceToken,
 	^{
-		availableCuisineDictionaries		= [YummlyAPI synchronousGetMetadataForKey:kYummlyMetadataCuisines];
+		availableCuisineDictionaries		= [YummlyMetadata allMetadata][kYummlyMetadataCuisines];
 	});
 	
 	return availableCuisineDictionaries;
 }
 
 /**
- *	returns all of the available cuisines names
+ *	Returns all of the available cuisine names.
+ *
+ *	@return	An array with names of each cuisine available.
  */
 + (NSArray *)availableCuisines
 {
@@ -458,7 +471,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
- *	returns all of the available diet dictionaries
+ *	Returns all of the available diet dictionaries.
+ *
+ *	@return	An array of each diet dictionary available.
  */
 + (NSArray *)availableDietDictionaries
 {
@@ -467,14 +482,16 @@ NSString *const kYummlyMinimumKey			= @"min";
 	
 	dispatch_once(&onceToken,
 	^{
-		availableDietDictionaries		= [YummlyAPI synchronousGetMetadataForKey:kYummlyMetadataDiets];
+		availableDietDictionaries		= [YummlyMetadata allMetadata][kYummlyMetadataDiets];
 	});
 	
 	return availableDietDictionaries;
 }
 
 /**
- *	returns all of the available diets names
+ *	Returns all of the available diet names.
+ *
+ *	@return	An array with names of each diet available.
  */
 + (NSArray *)availableDiets
 {
@@ -491,7 +508,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
- *	returns all of the available holiday dictionaries
+ *	Returns all of the available holiday dictionaries.
+ *
+ *	@return	An array of each holiday dictionary available.
  */
 + (NSArray *)availableHolidayDictionaries
 {
@@ -500,14 +519,16 @@ NSString *const kYummlyMinimumKey			= @"min";
 	
 	dispatch_once(&onceToken,
 	^{
-		availableHolidayDictionaries	= [YummlyAPI synchronousGetMetadataForKey:kYummlyMetadataHolidays];
+		availableHolidayDictionaries	= [YummlyMetadata allMetadata][kYummlyMetadataHolidays];
 	});
 	
 	return availableHolidayDictionaries;
 }
 
 /**
- *	returns all of the available holiday names
+ *	Returns all of the available holiday names.
+ *
+ *	@return	An array with names of each holiday available.
  */
 + (NSArray *)availableHolidays
 {
@@ -524,7 +545,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
- *	returns all of the available ingredient dictionaries
+ *	Returns all of the available ingredient dictionaries.
+ *
+ *	@return	An array of each holiday ingredient available.
  */
 + (NSArray *)availableIngredientDictionaries
 {
@@ -533,14 +556,16 @@ NSString *const kYummlyMinimumKey			= @"min";
 	
 	dispatch_once(&onceToken,
 	^{
-		availableIngredientDictionaries	= [YummlyAPI synchronousGetMetadataForKey:kYummlyMetadataIngredients];
+		availableIngredientDictionaries	= [YummlyMetadata allMetadata][kYummlyMetadataIngredients];
 	});
 	
 	return availableIngredientDictionaries;
 }
 
 /**
- *	returns all of the available ingredients names
+ *	Returns all of the available ingredient names.
+ *
+ *	@return	An array with names of each ingredient available.
  */
 + (NSArray *)availableIngredients
 {
@@ -559,7 +584,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 #pragma mark - Setter & Getter Methods 
 
 /**
- *	the valid flavours to specify for a request
+ *	The valid flavours to specify for a request.
+ *
+ *	@return	An array of keys that can be used when specifying a flavour.
  */
 + (NSArray *)flavourKeys
 {
@@ -580,7 +607,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
- *	the valid ranges for requests
+ *	The valid ranges for requests.
+ *
+ *	@return	An array of keys representing the ranges available to be specified.
  */
 + (NSArray *)rangeKeys
 {
@@ -588,22 +617,23 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
- *	sets a value for a given flavour and at the given range extreme (min or max)
+ *	Sets a value for a given flavour and at the given range extreme (min or max).
  *
- *	@param	flavourValue				the value from 0 to 1 for the flavour
- *	@param	flavourKey					the flavour to apply the value to
- *	@param	rangeKey					whether the value is the minimum or maximum for the flavour
+ *	@param	flavourValue				The value from 0 to 1 for the flavour.
+ *	@param	flavourKey					The flavour to apply the value to.
+ *	@param	rangeKey					Whether the value is the minimum or maximum for the flavour.
  */
 - (void)setFlavourValue:(CGFloat)flavourValue
 				 forKey:(NSString *)flavourKey
 				atRange:(NSString *)rangeKey;
 {
+	//	check the given flavours and range are valid
 	if (![[YummlyRequest flavourKeys] containsObject:flavourKey] ||
 		![[YummlyRequest rangeKeys] containsObject:rangeKey] ||
 		flavourValue > 1.0f)
 		return;
 	
-	
+	//	alter the flavour dictionary
 	NSMutableDictionary *rangeValues	= [self.flavourDictionary[flavourKey] mutableCopy];
 	if (!rangeValues) rangeValues		= [[NSMutableDictionary alloc] init];
 	rangeValues[rangeKey]				= @(flavourValue);

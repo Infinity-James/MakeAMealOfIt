@@ -14,7 +14,17 @@
 
 #pragma mark - Public Properties
 
+/**
+ *	Gets all of the available metadata from Yummly; either from their database or from or document store.
+ *
+ *	@return	A dictionary of the various types of metadata.
+ */
 + (NSDictionary *)allMetadata;
+/**
+ *	Refreshes a chosen piece of metadata.
+ *
+ *	@param	metadataKey					The metadata to re-fetch (if nil will re-fetch all meatdata).
+ */
 + (void)forceMetadataRefresh:(NSString *)metadataKey;
 
 @end

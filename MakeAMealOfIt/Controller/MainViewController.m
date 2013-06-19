@@ -27,7 +27,7 @@ NS_ENUM(NSUInteger, ControllerViewTags)
 #define kSideViewFrame					CGRectMake(0.0f, 30.0f, self.view.bounds.size.width, self.view.bounds.size.height - 50.0f)
 
 static CGFloat const kCornerRadius		= 04.00f;
-static CGFloat const kSlideTiming		= 00.25f;
+static CGFloat const kSlideTiming		= 00.50f;
 
 static NSString *const kCentreVCKey		= @"Centre";
 static NSString *const kLeftVCKey		= @"Left";
@@ -69,7 +69,7 @@ static NSString *const kRightVCKey		= @"Right";
 #pragma mark - Action & Selector Methods
 
 /**
- *	this is called when the back button is pressed
+ *	This is called when the back button is pressed.
  */
 - (void)backButtonPressed
 {
@@ -80,17 +80,23 @@ static NSString *const kRightVCKey		= @"Right";
 	NSDictionary *desiredVCDictionary	= [self.pastViewControllerDictionaries lastObject];
 	[self.pastViewControllerDictionaries removeObjectAtIndex:self.pastViewControllerDictionaries.count - 1];
 	
+	//	set the new view controllers to the current view controller except for the centre
 	UIViewController <CentreViewControllerProtocol> *newCentreVC	= desiredVCDictionary[kCentreVCKey];
 	self.leftViewControllerClass		= desiredVCDictionary[kLeftVCKey];
 	self.rightViewControllerClass		= desiredVCDictionary[kRightVCKey];
 	
-	[self animateCentreViewControllerTransitionForwards:NO toViewController:newCentreVC];
+	//	animate towards the centre view controller
+	[self animateCentreViewControllerTransitionForwards:NO toViewController:newCentreVC withCompletionHandler:^(BOOL success)
+	{
+		//	when the animation has finished we want to complete the transition
+		[self finishTransitionToViewController:newCentreVC];
+	}];
 }
 
 /**
- *	this is called when a gesture is moving the panel
+ *	This is called when a gesture is moving the panel.
  *
- *	@param	gesture						the gesture recogniser calling this method
+ *	@param	gesture						The gesture recogniser calling this method.
  */
 - (void)movePanel:(UIPanGestureRecognizer *)gesture
 {
@@ -111,9 +117,9 @@ static NSString *const kRightVCKey		= @"Right";
 }
 
 /**
- *	this is called when a left view controller is representing a previous view and has been tapped
+ *	This is called when a left view controller is representing a previous view and has been tapped.
  *
- *	@param	tapGestureRecogniser		the tap gesture recogniser calling this methods
+ *	@param	tapGestureRecogniser		The tap gesture recogniser calling this method.
  */
 - (void)previousViewTapped:(UITapGestureRecognizer *)tapGestureRecogniser
 {
@@ -154,63 +160,72 @@ static NSString *const kRightVCKey		= @"Right";
 #pragma mark - Centre View Controller Moving Methods
 
 /**
- *	animate the transition from the current centre view controller to a new one
+ *	Animate the transition from the current centre view controller to a new one.
  *
- *	@param	forwards					whether are trasition towards a new controller or back to a previosuly displayed one
- *	@param	viewController				the view controller we want to transition to
+ *	@param	forwards					Whether this is a transition towards a new controller, or popping back to a previous one.
+ *	@param	viewController				The view controller we want to transition to.
+ *	@param	completionHandler			Called when the animations have finished.
  */
 - (void)animateCentreViewControllerTransitionForwards:(BOOL)forwards
 									 toViewController:(UIViewController <CentreViewControllerProtocol>*)viewController
+								withCompletionHandler:(void (^)(BOOL success))completionHandler
 {
+	//	the view controller we're transitioning to is the child view and we add it accordingly
 	UIView *childView									= viewController.view;
 	if (!childView)										return;
 	childView.frame										= kSideViewFrame;
 	[self.view addSubview:viewController.view];
 	[self.view sendSubviewToBack:childView];
 	
+	//	we get the centre frame offset to the left and get the default animation duration
 	CGRect centreFrame								= kCentreViewFrame;
+	centreFrame.origin.x							= self.view.bounds.size.width;
 	CGFloat animationDuration						= kSlideTiming;
 	
+	//	if it is a push...
 	if (forwards)
 	{
-		centreFrame.origin.x						= self.view.bounds.size.width;
+		//	set the frame of the view being pushed off so it is off to the side
 		childView.frame								= centreFrame;
+		//	make the desired centre frame the size of the side views
 		centreFrame									= kSideViewFrame;
+		//	change the animation duration for the shrinking of the main view 
 		animationDuration							= 0.5f;
 	}
-	else
-		centreFrame.origin.x						= self.view.bounds.size.width;
+		
 	
+	//	animate the push or pop
 	[UIView animateWithDuration:animationDuration
 					 animations:
 	^{
+		//	either slide the controller away for a pop, or shrink it a slighty, ready for a push
 		self.centreViewController.view.frame		= centreFrame;
 	}
 					 completion:^(BOOL finished)
 	{
+		//	if it is a pop we have done everything we need to do and now call the completion handler
 		if (!forwards)
 		{
 			[self resetMainView];
 			[childView removeFromSuperview];
-			self.centreViewController						= viewController;
+			completionHandler(finished);
 		}
 		else
 		{
+			//	bring the view controller we're pushing to the front
 			[self.view bringSubviewToFront:childView];
+			//	animate the pushing view controller sliding in
 			[UIView animateWithDuration:kSlideTiming animations:
 			^{
 				childView.frame							= kCentreViewFrame;
 			}
 							 completion:^(BOOL finished)
 			{
+				//	remove the pushing subview and call the completion handler
 				[childView removeFromSuperview];
-				self.centreViewController						= viewController;
-				if (self.pastViewControllerDictionaries.count)
-					self.centreViewController.backButton = self.backButton;
+				completionHandler(finished);
 			}];
 		}
-		
-		
 	}];
 }
 
@@ -389,9 +404,9 @@ static NSString *const kRightVCKey		= @"Right";
 #pragma mark - Initialisation
 
 /**
- *	called to initialise a class instance
+ *	Called to initialise a class instance with a centre view controller to adopt.
  *
- *	@param	centreViewController		the view controller to present in the centre
+ *	@param	centreViewController		The view controller to present in the centre.
  */
 - (instancetype)initWithCentreViewController:(UIViewController <CentreViewControllerProtocol> *)centreViewController
 {
@@ -723,9 +738,12 @@ static NSString *const kRightVCKey		= @"Right";
 #pragma mark - UIGestureRecogniserDelegate Methods
 
 /**
+ *	Ask the delegate if a gesture recognizer should receive an object representing a touch.
  *
+ *	@param	gestureRecognizer			An instance of a subclass of the abstract base class UIGestureRecognizer.
+ *	@param	touch						A UITouch object from the current multi-touch sequence.
  *
- *	@param
+ *	@return	YES to allow the gesture recognizer to examine the touch object, NO to prevent the gesture recognizer from seeing this touch object.
  */
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 	   shouldReceiveTouch:(UITouch *)touch
@@ -734,10 +752,12 @@ static NSString *const kRightVCKey		= @"Right";
 }
 
 /**
- *	asks the delegate if two gesture recognizers should be allowed to recognize gestures simultaneously
+ *	Asks the delegate if two gesture recognizers should be allowed to recognize gestures simultaneously.
  *
- *	@param	gestureRecogniser			the instance of a subclass of uigesturerecogniser sending the message to the delegate
- *	@param	otherGestureRecogniser		the other instance of a subclass of uigesturerecogniser
+ *	@param	gestureRecogniser			An instance of a subclass of the abstract base class UIGestureRecognizer and the object sending this message.
+ *	@param	otherGestureRecogniser		An instance of a subclass of the abstract base class UIGestureRecognizer.
+ *
+ *	@return	YES to allow both gestureRecognizer and otherGestureRecognizer to recognize their gestures simultaneously, NO otherwise.
  */
 - (BOOL)						 gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
@@ -748,7 +768,21 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 #pragma mark - View Management Methods
 
 /**
- *	resets the main (centre) view
+ * Handles the completion of transition centre view controllers.
+ *
+ *	@param	viewController				The view controller to become the new centre view controller.
+ */
+- (void)finishTransitionToViewController:(UIViewController <CentreViewControllerProtocol>*)viewController
+{
+	self.centreViewController						= viewController;
+	
+	//	if there are other view controller behind this one we set a back button
+	if (self.pastViewControllerDictionaries.count)
+		self.centreViewController.backButton = self.backButton;
+}
+
+/**
+ *	Resets the main (centre) view.
  */
 - (void)resetMainView
 {
@@ -773,10 +807,10 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 }
 
 /**
+ *	Add or removes a shadow from the centre view controller as it is being shown.
  *
- *
- *	@param
- *	@param
+ *	@param	showShadow					Whether to show a shadow or remove it.
+ *	@param	offset						The offset of the shadow we're showing or removing.
  */
 - (void)showCenterViewWithShadow:(BOOL)showShadow
 					  withOffset:(CGSize)offset
@@ -787,7 +821,6 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 		self.centreViewController.view.layer.shadowColor	= [UIColor blackColor].CGColor;
 		self.centreViewController.view.layer.shadowOpacity	= 0.8f;
 	}
-	
 	else
 		self.centreViewController.view.layer.cornerRadius	= 0.0f;
 	
@@ -795,19 +828,27 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 }
 
 /**
+ *	Handles the transitioning to a new centre view controller.
  *
- *
- *	@param
+ *	@param	viewController				The view controller to be set as the new centre view controller.
  */
 - (void)transitionCentreToViewController:(UIViewController <CentreViewControllerProtocol>*)viewController
 {
+	//	create a dictionary of the current view controllers and add it to our array of them
 	NSDictionary *pastVCDictionary		= @{kCentreVCKey: self.centreViewController,
 											kLeftVCKey	: self.leftViewControllerClass,
 											kRightVCKey	: self.rightViewControllerClass};
 	[self.pastViewControllerDictionaries addObject:pastVCDictionary];
+	
+	//	remove the parallax effect from the centre view controller
 	[self.centreViewController.view removeMotionEffect:self.centreViewParallaxEffect];
+	//	make the old centre view controller the new left view controller and then animate everything
 	self.leftViewControllerClass		= self.centreViewController;
-	[self animateCentreViewControllerTransitionForwards:YES toViewController:viewController];
+	[self animateCentreViewControllerTransitionForwards:YES toViewController:viewController withCompletionHandler:^(BOOL success)
+	{
+		//	when the animation has finished we want to complete the transition
+		[self finishTransitionToViewController:viewController];
+	}];
 }
 
 @end

@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
-#import "YummlyAPI.h"
+#import "YummlyMetadata.h"
 
 #pragma mark - Constants & Static Variables
 
@@ -106,31 +106,93 @@ extern NSString *const kYummlyMinimumKey;
 
 #pragma mark - Remove Desires
 
+/**
+ *	Removes a previously added course specification that the returned recipes needed to include.
+ *
+ *	@param	desiredCourse				The course that the user wanted the recipes to be, but doesn't anymore.
+ */
 - (void)removeDesiredCourse:(NSString *)desiredCourse;
+/**
+ *	Removes a previously added a cuisine type that returned recipes needed to include.
+ *
+ *	@param	desiredCuisine				The type of cuisine the user wanted but no longer does.
+ */
 - (void)removeDesiredCuisine:(NSString *)desiredCuisine;
+/**
+ *	Removes a previously added holiday that the meal needed to be related to.
+ *
+ *	@param	desiredHoliday				the type of holiday that the user was interested in but is no longer.
+ */
 - (void)removeDesiredHoliday:(NSString *)desiredHolday;
+/**
+ *	Removes a previously added ingredient the user wanted the recipes to include.
+ *
+ *	@param	desiredIngredient			The ingredient the user wanted the meal to include but no longer does.
+ */
 - (void)removeDesiredIngredient:(NSString *)desiredIngredient;
 
 #pragma mark - Remove Exclusions
 
+/**
+ *	Removes a previously added course that was supposed to be excluded from recipe return results.
+ *
+ *	@param	excludedCourse				A course type that was previously excluded.
+ */
 - (void)removeExcludedCourse:(NSString *)excludedCourse;
+/**
+ *	Removes a previously added cuisine that the recipes should not have included.
+ *
+ *	@param	excludedCuisine				The cuisine type that was previously excluded.
+ */
 - (void)removeExcludedCuisine:(NSString *)excludedCuisine;
+/**
+ *	Removes a previously added holiday meal type that was to be excluded from results.
+ *
+ *	@param	excludedHoliday				The holiday to no longer exclude.
+ */
 - (void)removeExcludedHoliday:(NSString *)excludedHoliday;
+/**
+ *	Removes a previously added ingredient that if any meals included we should not have received them in results.
+ *
+ *	@param	excludedIngredient			An ingredient to no longer exclude.
+ */
 - (void)removeExcludedIngredient:(NSString *)excludedIngredient;
 
 #pragma mark - Remove Requirements
 
+/**
+ *	Removes a previously added allergy type that a returned recipe must have conformed to.
+ *
+ *	@param	requiredAllergy				The allergy that recipes no longer have to conform to.
+ */
 - (void)removeRequiredAllergy:(NSString *)requiredAllergy;
+/**
+ *	Removes a previously added allergy type that a returned recipe must have conformed to.
+ *
+ *	@param	requiredAllergy				The allergy that recipes no longer have to conform to.
+ */
 - (void)removeRequiredDiet:(NSString *)requiredDiet;
 
 #pragma mark - Set Values
 
+/**
+ *	Sets a value for a given flavour and at the given range extreme (min or max).
+ *
+ *	@param	flavourValue				The value from 0 to 1 for the flavour.
+ *	@param	flavourKey					The flavour to apply the value to.
+ *	@param	rangeKey					Whether the value is the minimum or maximum for the flavour.
+ */
 - (void)setFlavourValue:(CGFloat)flavourValue
 				 forKey:(NSString *)flavourKey
 				atRange:(NSString *)rangeKey;
 
 #pragma mark - Utility Methods
 
+/**
+ *	Executes this request with all the parameters defined in it.
+ *
+ *	@param	searchRecipesCallCompleted	The completion handler to call with the results of the request.
+ */
 - (void)executeSearchRecipesCallWithCompletionHandler:(YummlyRequestCompletionBlock)searchRecipesCallCompleted;
 /**
  *	Returns this yummly request objects as the search parameters needed for a request.

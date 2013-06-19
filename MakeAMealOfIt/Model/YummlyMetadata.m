@@ -21,7 +21,9 @@ static NSString *const kYummlyMetadataDictionary	= @"metadata";
 #pragma mark - Metadata Access
 
 /**
- *	returns a full metadata dictionary array
+ *	Gets all of the available metadata from Yummly; either from their database or from or document store.
+ *
+ *	@return	A dictionary of the various types of metadata.
  */
 + (NSDictionary *)allMetadata
 {
@@ -29,14 +31,15 @@ static NSString *const kYummlyMetadataDictionary	= @"metadata";
 	
 	dispatch_once(&onceToken,
 	^{
+		//	get the metadata from a saved plist
 		metadata						= [self getMetadataPropertyListAsDictionary];
 		
+		//	if it's not in a plist we get it from the yummly server instead
 		if (!metadata)
 		{
 			metadata					= [self fetchAllMetadata];
 			
 			[self saveMetadataDictionaryToPropertyList:metadata];
-			
 		}
 	});
 	
@@ -44,12 +47,13 @@ static NSString *const kYummlyMetadataDictionary	= @"metadata";
 }
 
 /**
- *	refreshes a chosen piece of metadata
+ *	Refreshes a chosen piece of metadata.
  *
- *	@param	metadataKey					the metadata to re-fetch (if nil will re-fetch all meatdata)
+ *	@param	metadataKey					The metadata to re-fetch (if nil will re-fetch all meatdata).
  */
 + (void)forceMetadataRefresh:(NSString *)metadataKey
 {
+	//	if the key is nil we fetch all metadata
 	if (!metadataKey)
 	{
 		metadata						= [self fetchAllMetadata];
@@ -58,10 +62,11 @@ static NSString *const kYummlyMetadataDictionary	= @"metadata";
 	
 	NSArray *newMetadata;
 	
+	//	if a valid key was passed in we fetch that specific metadata
 	if ([[YummlyAPI metadataKeys] containsObject:metadataKey])
 		newMetadata						= [YummlyAPI synchronousGetMetadataForKey:metadataKey];
 	
-	
+	//	with the new specific metadata we add it into the dictionary
 	NSMutableDictionary *mutableMetadata= [metadata mutableCopy];
 	mutableMetadata[metadataKey]		= newMetadata;
 	metadata							= (NSDictionary *)mutableMetadata;
@@ -70,12 +75,15 @@ static NSString *const kYummlyMetadataDictionary	= @"metadata";
 #pragma mark - Metadata Document Management
 
 /**
- *	gets all of the metadata from the yummly database
+ *	Gets all of the metadata from the Yummly database synchronously.
+ *
+ *	@return	A dictionary of all fo the metadata available from Yummly.
  */
 + (NSDictionary *)fetchAllMetadata
 {
 	NSMutableDictionary *metadataDictionary	= [[NSMutableDictionary alloc] init];
 	
+	//	for each piece of metadata 
 	for (NSString *metadataKey in [YummlyAPI metadataKeys])
 		metadataDictionary[metadataKey]	= [YummlyAPI synchronousGetMetadataForKey:metadataKey];
 	
@@ -83,7 +91,9 @@ static NSString *const kYummlyMetadataDictionary	= @"metadata";
 }
 
 /**
- *	returns the saved metadata property list as a dictionary
+ *	Gets the metadata from a saved plist.
+ *
+ *	@return	A dictionary of all metadata or nil if there is no plist.
  */
 + (NSDictionary *)getMetadataPropertyListAsDictionary
 {
@@ -94,9 +104,9 @@ static NSString *const kYummlyMetadataDictionary	= @"metadata";
 }
 
 /**
- *	saves the passed in metadata dictionary as a property list
+ *	Saves the passed in metadata dictionary as a property list.
  *
- *	@param	metadata					the dictionary to write to a file
+ *	@param	metadata					The dictionary to write to a file.
  */
 + (void)saveMetadataDictionaryToPropertyList:(NSDictionary *)metadataDictionary
 {
@@ -106,7 +116,9 @@ static NSString *const kYummlyMetadataDictionary	= @"metadata";
 #pragma mark - Convenience Methods
 
 /**
- *	returns the document directory for convenience
+ *	The document directory to save app-specific documents into.
+ *
+ *	@return	The document directory available to this app.
  */
 + (NSString *)documentDirectory
 {
@@ -115,6 +127,7 @@ static NSString *const kYummlyMetadataDictionary	= @"metadata";
 	
 	dispatch_once(&onceToken,
 	^{
+		//	there is only one document directory so we get an array of them and use the only object in the array
 		NSArray *directories			= NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 		documentDirectory				= directories[0];
 	});
@@ -123,7 +136,9 @@ static NSString *const kYummlyMetadataDictionary	= @"metadata";
 }
 
 /**
- *	returns a nsfilemanager object for handling documents
+ *	Returns a file manager object for handling documents.
+ *
+ *	@return	The file manager to be used when handling the saving and loading of metadata.
  */
 + (NSFileManager *)fileManager
 {
@@ -139,7 +154,9 @@ static NSString *const kYummlyMetadataDictionary	= @"metadata";
 }
 
 /**
- *	returns the path of the metadata plist
+ *	Returns a fully constrcuted path within the document directory to save metadata to.
+ *
+ *	@return	A string detailing the path to save metadata in.
  */
 + (NSString *)metadataPath
 {
