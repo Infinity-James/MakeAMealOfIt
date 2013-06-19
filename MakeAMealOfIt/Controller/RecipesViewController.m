@@ -26,8 +26,12 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 
 #pragma mark - Private Properties
 
+
+/**	The main view that will show the recipes in an elegant way.	*/
 @property (nonatomic, strong)	UICollectionView		*recipesCollectionView;
+/**	The cache used to store thumbnail images for the recipes.	*/
 @property (nonatomic, strong)	NSCache					*thumbnailCache;
+/**	A dictionary to used when creating visual constraints for this view controller.	*/
 @property (nonatomic, strong)	NSDictionary			*viewsDictionary;
 
 @end
@@ -54,14 +58,15 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 	
 	NSArray *constraints;
 	
-	//	add the collection view to cover the whole main view except for the toolbar
+	//	get the correct height of the toolbar
+	CGFloat toolbarHeight				= self.toolbarHeight;
+	
+	//	add the collection view to cover the whole main view underlapping the toolbar
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[collectionView]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
 	
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[toolbar]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
-	
-	CGFloat toolbarHeight				= self.toolbarHeight;
 	
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[toolbar(height)]" options:kNilOptions metrics:@{@"height": @(toolbarHeight)} views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
@@ -79,46 +84,41 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
  */
 - (void)addToolbarItemsAnimated:(BOOL)animate
 {
+	//	if our back button property is set we use that, otherwise we just use a blank bar button item
 	if (self.backButton)
 		self.leftButton					= self.backButton;
 	else
 		self.leftButton					= [[UIBarButtonItem alloc] init];
 	
+	//	this flexible space neatly separates the bar button items
 	UIBarButtonItem *flexibleSpace		= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
 	
+	//	this label will be used as the title in the toolbar
 	UILabel *title						= [[UILabel alloc] init];
 	title.backgroundColor				= [UIColor clearColor];
 	
-	NSString *recipeName				= self.searchPhrase;
+	//	we use the search phrase for the title and calculate the maximum number of character able to be displayed in the title
+	NSString *searchTitle				= self.searchPhrase;
 	NSUInteger maximumCharacters		= (self.view.bounds.size.width / 10) - 10;
 	
-	if (recipeName.length > maximumCharacters)
+	//	limit the title using the calculated number of character
+	if (searchTitle.length > maximumCharacters)
 	{
-		NSRange unneccesaryCharacters	= NSMakeRange(maximumCharacters, recipeName.length - maximumCharacters);
-		recipeName						= [recipeName stringByReplacingCharactersInRange:unneccesaryCharacters withString:@""];
+		NSRange unneccesaryCharacters	= NSMakeRange(maximumCharacters, searchTitle.length - maximumCharacters);
+		searchTitle						= [searchTitle stringByReplacingCharactersInRange:unneccesaryCharacters withString:@""];
 	}
-	title.text							= recipeName;
+	//	use the title in the label, customise it, and then make a bar button item with it
+	title.text							= searchTitle;
 	title.textAlignment					= NSTextAlignmentCenter;
 	[ThemeManager customiseLabel:title withTheme:[[ToolbarLabelYummlyTheme alloc] init]];
 	[title sizeToFit];
 	UIBarButtonItem *titleItem			= [[UIBarButtonItem alloc] initWithCustomView:title];
 	
+	//	the right button for this controller will be used to open an attribution view controller
 	self.rightButton					= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_main_normal_attribution_yummly"]
 															style:UIBarButtonItemStylePlain target:self action:@selector(rightButtonTapped)];
 	
 	[self.toolbar setItems:@[self.leftButton, flexibleSpace, titleItem, flexibleSpace, self.rightButton] animated:animate];
-}
-
-/**
- *	Called to initialise a class instance.
- */
-- (id)init
-{
-	if (self = [super init])
-	{
-	}
-	
-	return self;
 }
 
 #pragma mark - Recipe Management
@@ -128,22 +128,27 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
  */
 - (void)loadMoreRecipes
 {
+	//	make sure the block doesn't have  a strong pointer to us
 	__weak RecipesViewController *weakSelf	= self;
 	
+	//	uses the global yummly request to get more results for out view
 	[appDelegate.yummlyRequest getMoreResults:^(BOOL success, NSDictionary *results)
 	{
 		if (!success)					return;
 		
+		//	adds the newly fetched results to the recipe array
 		NSUInteger recipesCount			= weakSelf.recipes.count;
 		NSMutableArray *allRecipes		= [weakSelf.recipes mutableCopy];
 		[allRecipes addObjectsFromArray:results[kYummlyMatchesArrayKey]];
 		weakSelf.recipes				= allRecipes;
 		
+		//	get an array of index paths to 'insert' into the collection view
 		NSMutableArray *indexPaths		= [[NSMutableArray alloc] init];
 		
 		for (NSUInteger itemIndex = recipesCount; itemIndex < weakSelf.recipes.count; itemIndex++)
 			[indexPaths addObject:[NSIndexPath indexPathForItem:itemIndex inSection:0]];
 		
+		//	on the main thread we insert the new items into the collection view
 		dispatch_async(dispatch_get_main_queue(),
 		^{
 			[weakSelf.recipesCollectionView insertItemsAtIndexPaths:indexPaths];
@@ -160,18 +165,23 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
  */
 - (UICollectionView *)recipesCollectionView
 {
+	//	using lazy instantiation to make sure a fully set up collection view is returned
 	if (!_recipesCollectionView)
 	{
+		//	create a layout and set the insets appropriately
 		UICollectionViewFlowLayout *layout		= [[UICollectionViewFlowLayout alloc] init];
 		layout.sectionInset						= UIEdgeInsetsMake(40.0f, 20.0f, 20.0f, 20.0f);
+		//	inialised the collection view, sets this controller as it's datasource and delegate and sets a white background colour
 		_recipesCollectionView					= [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
 		_recipesCollectionView.backgroundColor	= [UIColor whiteColor];
 		_recipesCollectionView.dataSource		= self;
 		_recipesCollectionView.delegate			= self;
 		
+		//	registers collection view cell classes that will be used in our collection view
 		[_recipesCollectionView registerClass:[RecipeCollectionViewCell class] forCellWithReuseIdentifier:kCellIdentifier];
 		[_recipesCollectionView registerClass:[ResultManagementCell class] forCellWithReuseIdentifier:kSpecialCellIdentifier];
 		
+		//	adds the collection view to the main view set up for use in autolayout
 		_recipesCollectionView.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self.view addSubview:_recipesCollectionView];
 		[self.view sendSubviewToBack:_recipesCollectionView];
@@ -181,10 +191,13 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 }
 
 /**
+ *	The search phrase pertaining to the array of recipes to display.
  *
+ *	@return	Either a valid search phrase or an empty string, but never a nil object.
  */
 - (NSString *)searchPhrase
 {
+	//	use lazy instantiation to make sure we don't return a nil object
 	if (!_searchPhrase)
 		_searchPhrase					= [[NSString alloc] init];
 	
@@ -192,9 +205,9 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 }
 
 /**
- *	sets the recipes array that we are displaying
+ *	Sets the recipes array that we are displaying.
  *
- *	@param	recipes						the returned array of recipes from a search
+ *	@param	recipes						The returned array of recipes from a search.
  */
 - (void)setRecipes:(NSArray *)recipes
 {
@@ -206,9 +219,9 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 }
 
 /**
+ *	This is the phrase used when getting the results we are presenting.
  *
- *
- *	@param
+ *	@param	searchPhrase				The phrase used in a Yummly recipe search.
  */
 - (void)setSearchPhrase:(NSString *)searchPhrase
 {
@@ -218,7 +231,9 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 }
 
 /**
- *	the cache used to store thumbnail images for the recipes
+ *	The cache used to store thumbnail images for the recipes.
+ *
+ *	@return	A cache to be used to store and retrieve thumbnails.
  */
 - (NSCache *)thumbnailCache
 {
@@ -231,7 +246,9 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 }
 
 /**
- *	this is the dictionary of view to apply constraint to
+ *	A dictionary to used when creating visual constraints for this view controller.
+ *
+ *	@return	A dictionary with of views and appropriate keys.
  */
 - (NSDictionary *)viewsDictionary
 {
@@ -246,16 +263,22 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
  *
  *	@param	collectionView				Object representing the collection view requesting this information.
  *	@param	indexPath					Index path that specifies the location of the item.
+ *
+ *	@return	A collection view cell appropriate for the given index path.
  */
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView
 				  cellForItemAtIndexPath:(NSIndexPath *)indexPath
-{	
+{
+	//	figure out if we are at the end of the collection view content, or if there are no results
 	if (!self.recipes.count || indexPath.item == self.recipes.count)
 	{
+		//	this cell is used to tell the user something special about the results
 		ResultManagementCell *resultCell= [collectionView dequeueReusableCellWithReuseIdentifier:kSpecialCellIdentifier forIndexPath:indexPath];
 		
+		//	if there were no results found, we tell the user
 		if (!self.recipes.count)
 			[resultCell setInstructionLabelText:@"No Results Were Found"];
+		//	if we are at the end of the results 
 		else
 			[resultCell startLoading],
 			[self loadMoreRecipes];
@@ -306,10 +329,12 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 }
 
 /**
- *	as the data source we return number of items in the specified section
+ *	Asks the data source for the number of items in the specified section. 
  *
- *	@param	collectionView				object representing the collection view requesting this information
- *	@param	section						index identifying section in collection view
+ *	@param	collectionView				An object representing the collection view requesting this information.
+ *	@param	section						An index number identifying a section in collectionView. This index value is 0-based.
+ *
+ *	@return	The number of rows in section.
  */
 - (NSInteger)collectionView:(UICollectionView *)collectionView
 	 numberOfItemsInSection:(NSInteger)section
@@ -319,9 +344,11 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 }
 
 /**
- *	returns number of sections in collection view
+ *	Asks the data source for the number of sections in the collection view.
  *
- *	@param	collectionView				object representing the collection view requesting this information
+ *	@param	collectionView				An object representing the collection view requesting this information.
+ *
+ *	@return	The number of sections in collectionView.
  */
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
@@ -330,13 +357,11 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 
 #pragma mark - UICollectionViewDelegate Methods
 
-
-
 /**
- *	called when the item at the specified index path was deselected
+ *	Tells the delegate that the item at the specified path was deselected.
  *
- *	@param	collectionview				collection view object that is notifying us of the selection change
- *	@param	indexPath					index path of the cell that was deselected
+ *	@param	collectionview				The collection view object that is notifying you of the selection change.
+ *	@param	indexPath					The index path of the cell that was deselected.
  */
 - (void)	collectionView:(UICollectionView *)collectionView
 didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
@@ -344,12 +369,11 @@ didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
 	
 }
 
-
 /**
- *	called when the item at the specified index path was selected
+ *	Tells the delegate that the item at the specified index path was selected.
  *
- *	@param	collectionview				collection view object that is notifying us of the selection change
- *	@param	indexPath					index path of the cell that was selected
+ *	@param	collectionview				The collection view object that is notifying you of the selection change.
+ *	@param	indexPath					The index path of the cell that was selected.
  */
 - (void)  collectionView:(UICollectionView *)collectionView
 didSelectItemAtIndexPath:(NSIndexPath *)indexPath
@@ -363,11 +387,13 @@ didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 #pragma mark - UICollectionViewDelegateFlowLayout Methods
 
 /**
- *	asks the delegate for the spacing between successive items in the rows or columns of a section
+ *	Asks the delegate for the spacing between successive items in the rows or columns of a section.
  *
- *	@param	collectionView				collection view object displaying the flow layout
- *	@param	collectionViewLayout		layout object requesting the information
- *	@param	section						index number of the section whose inter-item spacing is needed
+ *	@param	collectionView				The collection view object displaying the flow layout.
+ *	@param	collectionViewLayout		The layout object requesting the information.
+ *	@param	section						The index number of the section whose inter-item spacing is needed.
+ *
+ *	@return	The minimum space (measured in points) to apply between successive items in the lines of a section.
  */
 - (CGFloat)				  collectionView:(UICollectionView *)collectionView
 								  layout:(UICollectionViewLayout *)collectionViewLayout
@@ -377,11 +403,13 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 }
 
 /**
- *	returns the size of the specified item’s cell
+ *	Asks the delegate for the size of the specified item’s cell.
  *
- *	@param	collectionView				collection view object displaying the flow layout
- *	@param	collectionViewLayout		layout object requesting the information
- *	@param	indexPath					index path of the item
+ *	@param	collectionView				The collection view object displaying the flow layout.
+ *	@param	collectionViewLayout		The layout object requesting the information.
+ *	@param	indexPath					The index path of the item.
+ *
+ *	@return	The width and height of the specified item. Both values must be greater than 0.
  */
 - (CGSize)collectionView:(UICollectionView *)collectionView
 				  layout:(UICollectionViewLayout *)collectionViewLayout
@@ -396,9 +424,9 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 #pragma mark - UIScrollViewDelegate Methods
 
 /**
- *	tells delegate when the user scrolls the content view within the receiver
+ *	Tells the delegate when the user scrolls the content view within the receiver.
  *
- *	@param	scrollView					scroll-view object in which the scrolling occurred
+ *	@param	scrollView					The scroll-view object in which the scrolling occurred.
  *
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
@@ -418,7 +446,7 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 #pragma mark - View Lifecycle
 
 /**
- *	sent to the view controller when the app receives a memory warning
+ *	Sent to the view controller when the app receives a memory warning.
  */
 - (void)didReceiveMemoryWarning
 {
@@ -431,7 +459,7 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 }
 
 /**
- *	notifies the view controller that its view is about to layout its subviews
+ *	Notifies the view controller that its view is about to layout its subviews.
  */
 - (void)viewWillLayoutSubviews
 {

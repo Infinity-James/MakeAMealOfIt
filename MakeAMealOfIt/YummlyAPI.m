@@ -69,21 +69,23 @@ NSString *const kYummlyTotalMatchCountKey				= @"totalMatchCount";
 
 @implementation YummlyAPI {}
 
-#pragma mark - Make API Call Methods: Synchronous
+#pragma mark - Make API Call Methods: Asynchronous
 
 /**
- *	asynchronously makes a request to yummly for metadata (returns results in dictionary with results metadata key)
+ *	Asynchronously makes a request to Yummly for metadata.
  *
- *	@param	metadataKey					the type of metadata to get
- *	@param	getMetadataCallCompleted	a block which is called when the metadata is retrieved (either successfully or not)
+ *	@param	metadataKey					The type of metadata to request.
+ *	@param	getMetadataCallCompleted	A block called when the request has completed. Results will be found under the kYummlyRequestResultsMetadataKey.
  */
 + (void)asynchronousGetMetadataForKey:(NSString *)metadataKey
 				withCompletionHandler:(YummlyRequestCompletionBlock)getMetadataCallCompleted
 {
 	dispatch_async(dispatch_queue_create("Metadata Fetcher", NULL),
 	^{
+		//	executes the synchronous request but in a separate thread
 		NSArray *results				= [self synchronousGetMetadataForKey:metadataKey];
 		
+		//	call the completion block indicating either success or failure
 		if (results)
 			getMetadataCallCompleted(YES, @{kYummlyRequestResultsMetadataKey: results})	;
 		else
@@ -91,46 +93,55 @@ NSString *const kYummlyTotalMatchCountKey				= @"totalMatchCount";
 	});
 }
 
-#pragma mark - Make API Call Methods: Asynchronous
-
 /**
- *	asynchronously makes a request to yummly for details on a specific recipe
+ *	Asynchronously makes a request to Yummly for details on a specific recipe.
  *
- *	@param	recipeID					the id for the recipe we want the url ot be able to get
- *	@param	getRecipeCallCompleted		a block which is called when the recipe is retrieved (either successfully or not)
+ *	@param	recipeID					The ID for the recipe to get the details of.
+ *	@param	getRecipeCallCompleted		A block called when the recipe is retrieved (either successfully or not).
  */
 + (void)asynchronousGetRecipeCallForRecipeID:(NSString *)recipeID
 					   withCompletionHandler:(YummlyRequestCompletionBlock)getRecipeCallCompleted
 {
+	//	create the url and request object
 	NSString *getRecipeURL				= [NSString stringWithFormat:@"%@/recipe/%@", kYummlyBaseAPIURL, recipeID];
 	NSURLRequest *yummlyURLRequest		= [self authenticatedYummlyURLRequestForURL:[[NSURL alloc] initWithString:getRecipeURL]];
+	
+	//	execute the created and authenticated request asynchronously
 	[self asynchronouslyExecuteYummlyURLRequest:yummlyURLRequest withCompletionHandler:getRecipeCallCompleted];
 }
 
 /**
- *	asynchronously searches for recipes with the given search parameters
+ *	Asynchronously searches for recipes with the given search parameters.
  *
- *	@param	searchParameters			the defined terms for the resipes search
- *	@param	searchRecipesCallCompleted	a block which is called when the search for recipes has completed (successfully or not)
+ *	@param	searchParameters			The defined terms for the recipes search.
+ *	@param	searchRecipesCallCompleted	A block which is called when the search for recipes has completed (successfully or not).
  */
 + (void)asynchronousSearchRecipesCallWithParameters:(NSString *)searchParameters
 							   andCompletionHandler:(YummlyRequestCompletionBlock)searchRecipesCallCompleted
 {
+	//	create the url and request object
 	NSString *yummlySearchURL			= [[NSString alloc] initWithFormat:@"%@/recipes?%@", kYummlyBaseAPIURL, searchParameters];
 	yummlySearchURL						= [yummlySearchURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 	NSLog(@"Final URL: %@", yummlySearchURL);
 	NSURLRequest *yummlyURLRequest		= [self authenticatedYummlyURLRequestForURL:[[NSURL alloc] initWithString:yummlySearchURL]];
+	
+	//	execute the created and authenticated request asynchronously
 	[self asynchronouslyExecuteYummlyURLRequest:yummlyURLRequest withCompletionHandler:searchRecipesCallCompleted];
 	
 }
 
+#pragma mark - Make API Call Methods: Synchronous
+
 /**
- *	synchronously makes a request to yummly for metadata
+ *	Synchronously makes a request to Yummly for metadata.
  *
- *	@param	metadataKey					the type of metadata to get
+ *	@param	metadataKey					The type of metadata to request.
+ *
+ *	@return	An array of the the dictionaries of the type of metadata requested.
  */
 + (NSArray *)synchronousGetMetadataForKey:(NSString *)metadataKey
 {
+	//	makes sure that the requested type of metadata requested is actually valid
 	if (![[self metadataKeys] containsObject:metadataKey])
 		return nil;
 	
@@ -149,7 +160,9 @@ NSString *const kYummlyTotalMatchCountKey				= @"totalMatchCount";
 #pragma mark - Setter & Getter Methods
 
 /**
- *	returns the valid metadata keys
+ *	Returns the valid metadata keys.
+ *
+ *	@return	An array of metadata keys that exist on the Yummly database.
  */
 + (NSArray *)metadataKeys
 {
@@ -159,53 +172,69 @@ NSString *const kYummlyTotalMatchCountKey				= @"totalMatchCount";
 #pragma mark - Utility Methods
 
 /**
- *	takes a url request and executes it asynchronously
+ *	Takes a URL request, executes it asynchronously and calls back with the results.
  *
- *	@param	yummlyURLRequest
+ *	@param	yummlyURLRequest			The URL request to be executed in a separate thread.
+ *	@param	yummlyURLRequestCompleted	The completion block to call when the URL request has finished, either successfully or unsuccessfully.
  */
 + (void)asynchronouslyExecuteYummlyURLRequest:(NSURLRequest *)yummlyURLRequest
 						withCompletionHandler:(YummlyRequestCompletionBlock)yummlyURLRequestCompleted
 {
+	//	create a queue for the request to be executed on
 	NSOperationQueue *yummlyQueue		= [[NSOperationQueue alloc] init];
 	
+	//	executes the request asynchronously indicating the use of internet with network activity indicator 
 	[NetworkActivityIndicator start];
 	[NSURLConnection sendAsynchronousRequest:yummlyURLRequest
 									   queue:yummlyQueue
 						   completionHandler:^(NSURLResponse *response, NSData *jsonData, NSError *error)
 	{
+		//	stop the network activity indicator now the request is complete
 		[NetworkActivityIndicator stop];
+		//	if it failed we log as much
 		if (error)						NSLog(@"Yummly Request Failed: %@\n With Response: %@", error.localizedDescription, response);
 		NSLog(@"Response: %@", response);
 		
+		//	get a dictionary of results from the returned json
 		NSDictionary *results			= jsonData ? [NSJSONSerialization JSONObjectWithData:jsonData
 																			  options:NSJSONReadingMutableLeaves
 																				error:&error] : nil;
 		
 		if (error)						NSLog(@"JSON Serialisation Failed: %@", error.localizedDescription);
 		
+		//	call back with whether it was a success and any results we got
 		yummlyURLRequestCompleted(!error, results);
 	}];
 }
 
 /**
- *	returns a url request object with authentication header for a given url
+ *	Returns a URL request object with authentication header for a given URL.
  *
- *	@param	url							the url that this request is for
+ *	@param	url							The URL to use to create the request with.
+ *
+ *	@return	A URL request for the given URL with the app ID and keys in the headers for authentication.
  */
 + (NSURLRequest *)authenticatedYummlyURLRequestForURL:(NSURL *)url
 {
+	//	creates the url request with the given url
 	NSMutableURLRequest *yummlyURLRequest	= [[NSMutableURLRequest alloc] initWithURL:url];
 	
+	//	adds the authentication id's to the quest through headers
 	[yummlyURLRequest addValue:kYummlyAppID forHTTPHeaderField:kYummlyAppIDHeaderField];
 	[yummlyURLRequest addValue:kYummlyAppKey forHTTPHeaderField:kYummlyAppKeyHeaderField];
+	
+	//	makes sure that the request times out after 20 seconds of waiting
+	yummlyURLRequest.timeoutInterval		= 20.0f;
 	
 	return (NSURLRequest *)yummlyURLRequest;
 }
 
 /**
- *	takes a url request and executes it asynchronously
+ *	Takes a URL request and executes it synchronously.
  *
- *	@param	yummlyURLRequest
+ *	@param	yummlyURLRequest			The URL request to be executed.
+ *
+ *	@return	A dictionary of any results we got back from Yummly.
  */
 + (NSDictionary *)synchronouslyExecuteYummlyURLRequest:(NSURLRequest *)yummlyURLRequest
 {	

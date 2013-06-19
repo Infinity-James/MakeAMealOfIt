@@ -47,9 +47,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 #pragma mark - Adding Desires
 
 /**
- *	adds a course specification that the returned recipes need to include
+ *	Adds a course specification that the returned recipes need to include.
  *
- *	@param	desiredCourse				the course that the user wants the recipes to be
+ *	@param	desiredCourse				The course that the user wants the recipes to be.
  */
 - (void)addDesiredCourse:(NSString *)desiredCourse
 {
@@ -60,9 +60,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
- *	adds a cuisine type that returned recipes need to include
+ *	Adds a cuisine type that returned recipes need to include.
  *
- *	@param	desiredCuisine				the type of cuisine the user would like
+ *	@param	desiredCuisine				The type of cuisine the user would like.
  */
 - (void)addDesiredCuisine:(NSString *)desiredCuisine
 {
@@ -72,9 +72,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
- *	adds a holiday that the meal needs to be related to
+ *	Adds a holiday that the meal needs to be related to.
  *
- *	@param	desiredHoliday				the type of holiday that the user is interested in
+ *	@param	desiredHoliday				The type of holiday that the user is interested in.
  */
 - (void)addDesiredHoliday:(NSString *)desiredHoliday
 {
@@ -84,9 +84,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
- *	adds an ingredient the user wanted the recipes to include
+ *	Adds an ingredient the user wanted the recipes to include.
  *
- *	@param	desiredIngredient			the ingredient the user wants the meal to include
+ *	@param	desiredIngredient			The ingredient the user wants the meal to include.
  */
 - (void)addDesiredIngredient:(NSString *)desiredIngredient
 {
@@ -98,9 +98,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 #pragma mark - Adding Exclusions
 
 /**
- *	adds a course to exclude from recipe return results
+ *	Adds a course to exclude from recipe return results.
  *
- *	@param	excludedCourse				a course type that the user doesn't want the meal to be
+ *	@param	excludedCourse				A course type that the user doesn't want the meal to be.
  */
 - (void)addExcludedCourse:(NSString *)excludedCourse
 {
@@ -110,9 +110,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
- *	adds a cuisine that the recipes should not include
+ *	Adds a cuisine that the recipes should not include.
  *
- *	@param	excludedCuisine				the cuisine type to not exclude from results
+ *	@param	excludedCuisine				The cuisine type to not exclude from results.
  */
 - (void)addExcludedCuisine:(NSString *)excludedCuisine
 {
@@ -122,9 +122,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
- *	adds a holiday meal type to exclude from results
+ *	Adds a holiday meal type to exclude from results.
  *
- *	@param	excludedHoliday				the holiday to exclude from recipe results	
+ *	@param	excludedHoliday				The holiday to exclude from recipe results.
  */
 - (void)addExcludedHoliday:(NSString *)excludedHoliday
 {
@@ -134,9 +134,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
- *	adds an ingredient that if any meals include we should not receive them in results
+ *	Adds an ingredient that if any meals include we should not receive them in results.
  *
- *	@param	excludedIngredient			an ingredient to exclude
+ *	@param	excludedIngredient			An ingredient to exclude from the recipe results.
  */
 - (void)addExcludedIngredient:(NSString *)excludedIngredient
 {
@@ -148,9 +148,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 #pragma mark - Adding Requirements
 
 /**
- *	adds an allergy type that a returned recipe must conform to
+ *	Adds an allergy type that a returned recipe must conform to.
  *
- *	@param	requiredAllergy				the allergy that recipes should conform to
+ *	@param	requiredAllergy				The allergy that recipes should conform to.
  */
 - (void)addRequiredAllergy:(NSString *)requiredAllergy
 {
@@ -160,9 +160,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
- *	adds a diet type (like vegetarian) that recipes need to be
+ *	Adds a diet type (like vegetarian) that recipes need to conform to.
  *
- *	@param	requiredDiet				the recipes need to be okay for this diet
+ *	@param	requiredDiet				The recipes need to be okay for this diet.
  */
 - (void)addRequiredDiet:(NSString *)requiredDiet
 {
@@ -174,7 +174,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 #pragma mark - Initialisation
 
 /**
- *	called to initialise a class instance
+ *	Implemented by subclasses to initialize a new object (the receiver) immediately after memory for it has been allocated.
+ *
+ *	@return	An initialized object.
  */
 - (instancetype)init
 {
@@ -203,7 +205,7 @@ NSString *const kYummlyMinimumKey			= @"min";
 }
 
 /**
- *	initialises all the arrays
+ *	Initialises all the arrays.
  */
 - (void)initialiseArrays
 {
@@ -223,12 +225,12 @@ NSString *const kYummlyMinimumKey			= @"min";
 #pragma mark - NSKeyValueObserving Methods
 
 /**
- *	receive this messsage message when the value at the specified key path relative to the given object has changed
+ *	This message is sent to the receiver when the value at the specified key path relative to the given object has changed.
  *
- *	@param	keyPath						key path, relative to object, to the value that has changed
- *	@param	object						source object of the key path
- *	@param	change						dictionary that describing changes made to the value of the property at the key path
- *	@param	context						value provided when receiver registered to receive key-value observation notifications
+ *	@param	keyPath						The key path, relative to object, to the value that has changed.
+ *	@param	object						The source object of the key path keyPath.
+ *	@param	change						A dictionary describing the changes that have been made to the value of the property at the key path relative to object.
+ *	@param	context						The value that was provided when the receiver was registered to receive key-value observation notifications.
  */
 - (void)observeValueForKeyPath:(NSString *)keyPath
 					  ofObject:(id)object
