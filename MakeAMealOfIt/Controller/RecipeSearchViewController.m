@@ -209,8 +209,8 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 	RecipesViewController *recipesVC	= [[RecipesViewController alloc] init];
 	recipesVC.recipes					= results[kYummlyMatchesArrayKey];
 	recipesVC.searchPhrase				= [results[@"criteria"][@"terms"] lastObject];
-	NSLog(@"%@", recipesVC.searchPhrase);
-	[appDelegate.slideOutVC showCentreViewController:recipesVC withRightViewController:[[RecipesViewController alloc] init]];
+	
+	[appDelegate.slideOutVC showCentreViewController:recipesVC withRightViewController:nil];
 	
 }
 

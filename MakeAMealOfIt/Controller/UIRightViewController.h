@@ -10,6 +10,7 @@
 
 @interface UIRightViewController : UIViewController {}
 
+/**	A dictionary to be used for auto layout	*/
 @property (nonatomic, strong)	NSDictionary	*viewsDictionary;
 
 @end

@@ -14,8 +14,11 @@
 
 #pragma mark - Public Properties
 
+/**	The index of this page within the containing page view controller.	*/
 @property (nonatomic, assign)	NSUInteger	index;
-@property (nonatomic, strong)	UILabel		*optionLabel;
+/**	An array of options for this page to show.	*/
 @property (nonatomic, strong)	NSArray		*options;
+/**	The title of this page.	*/
+@property (nonatomic, strong)	NSString	*optionCategoryTitle;
 
 @end

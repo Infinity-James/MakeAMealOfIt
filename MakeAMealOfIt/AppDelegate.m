@@ -14,10 +14,10 @@
 @implementation AppDelegate
 
 /**
- *	tells the delegate that the launch process is almost done and the app is almost ready to run
+ *	Tells the delegate that the launch process is almost done and the app is almost ready to run.
  *
- *	@param	application					the delegating application object
- *	@param	launchOptions				dictionary indicating the reason the application was launched (if any)
+ *	@param	application					The delegating application object.
+ *	@param	launchOptions				A dictionary indicating the reason the application was launched (if any).
  */
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {

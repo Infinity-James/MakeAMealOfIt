@@ -16,8 +16,9 @@
 
 #pragma mark - Private Properties
 
-@property (nonatomic, assign)	NSUInteger				currentPageIndex;
+/**	A dictionary defining the options aviable in each page.	*/
 @property (nonatomic, strong)	NSDictionary			*optionsDictionary;
+/**	A page view controller that displays the spinning wheels.	*/
 @property (nonatomic, strong)	UIPageViewController	*pageViewController;
 
 @end
@@ -29,7 +30,7 @@
 #pragma mark - Autolayout Methods
 
 /**
- *	called when the view controller’s view needs to update its constraints
+ *	Called when the view controller’s view needs to update its constraints.
  */
 - (void)updateViewConstraints
 {
@@ -50,7 +51,9 @@
 #pragma mark - Convenience & Helper Methods
 
 /**
+ *	Convenient way to get the keys of the options dictionary as an array.
  *
+ *	@return	A sorted array of the keys in the options dictionary.
  */
 - (NSArray *)keysAsArray
 {
@@ -63,67 +66,78 @@
 #pragma mark - Initialisation
 
 /**
- *	called to initialise a class instance
+ *	This method gets all of the metadata.
  */
-- (instancetype)init
+- (void)getAllOptions
 {
-	if (self = [super init])
-	{
-
-	}
-	
-	return self;
+	dispatch_async(dispatch_queue_create("Metadata Fetcher", NULL),
+	^{
+		//	we get the yummly metadata and remove the ingredients because that is displayed elsewhere
+		NSMutableDictionary *allMetadata= [[YummlyMetadata allMetadata] mutableCopy];
+		[allMetadata removeObjectForKey:kYummlyMetadataIngredients];
+		self.optionsDictionary			= allMetadata;
+		//	nil out the page view controller so that it is reload when we update the view
+		self.pageViewController			= nil;
+		[self.view performSelectorOnMainThread:@selector(setNeedsUpdateConstraints) withObject:nil waitUntilDone:NO];
+	});
 }
 
 #pragma mark - Setter & Getter Methods
 
 /**
- *	this options dictionary defines the options aviable in each page
+ *	This options dictionary defines the options aviable in each page.
+ *
+ *	@return	A dictionary of all of the options to be displayed to the user.
  */
 - (NSDictionary *)optionsDictionary
 {
+	//	use lazy instantiation
 	if (!_optionsDictionary)
 	{
-		NSMutableDictionary *allMetadata= [[YummlyMetadata allMetadata] mutableCopy];
-		[allMetadata removeObjectForKey:kYummlyMetadataIngredients];
-		_optionsDictionary				= allMetadata;
+		_optionsDictionary				= @{};
 	}
 	
 	return _optionsDictionary;
 }
 
 /**
- *	this is the page view controller that display the spinning wheels
+ *	This is the page view controller that displays the spinning wheels.
+ *
+ *	@param	A fully set up page view controller for use in displaying options.
  */
 - (UIPageViewController *)pageViewController
 {
 	if (!_pageViewController)
 	{
+	
 		_pageViewController				= [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll
 																 navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal
 																			   options:@{UIPageViewControllerOptionSpineLocationKey:@(UIPageViewControllerSpineLocationMin)}];
-		_pageViewController.view.translatesAutoresizingMaskIntoConstraints	= NO;
-		_pageViewController.dataSource	= self;
-		_pageViewController.delegate	= self;
-		ParameterPageViewController *firstPage		= [[ParameterPageViewController alloc] init];
-		firstPage.index					= 0;
-		firstPage.optionLabel.text		= [[self keysAsArray][firstPage.index] capitalizedString];
-		firstPage.options				= self.optionsDictionary[[self keysAsArray][self.currentPageIndex]];
-		[_pageViewController setViewControllers:@[firstPage] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
+		if (self.optionsDictionary.count > 0)
+		{
+			_pageViewController.dataSource			= self;
+			_pageViewController.delegate			= self;
+			ParameterPageViewController *firstPage	= [[ParameterPageViewController alloc] init];
+			firstPage.index							= 0;
+			firstPage.optionCategoryTitle			= [[self keysAsArray][firstPage.index] capitalizedString];
+			firstPage.options						= self.optionsDictionary[[self keysAsArray][firstPage.index]];
+			[_pageViewController setViewControllers:@[firstPage] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
+		}
 		
 		self.view.gestureRecognizers	= _pageViewController.gestureRecognizers;
 		
+		_pageViewController.view.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self.view addSubview:_pageViewController.view];
 		[self addChildViewController:_pageViewController];
 		[_pageViewController didMoveToParentViewController:self];
-		
 	}
-	
 	return _pageViewController;
 }
 
 /**
- *	this is the dictionary of view to apply constraint to
+ *	A dictionary to used when creating visual constraints for this view controller.
+ *
+ *	@return	A dictionary with of views and appropriate keys.
  */
 - (NSDictionary *)viewsDictionary
 {
@@ -133,10 +147,12 @@
 #pragma mark - UIPageViewControllerDataSource Methods
 
 /**
- *	returns the view controller after the given view controller
+ *	Returns the view controller after the given view controller.
  *
- *	@param	pageViewController			page view controller
- *	@param	viewController				view controller that the user navigated away from
+ *	@param	pageViewController			The page view controller.
+ *	@param	viewController				The view controller that the user navigated away from.
+ *
+ *	@return	The view controller after the given view controller, or nil to indicate that there is no next view controller.
  */
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController
 	   viewControllerAfterViewController:(UIViewController *)viewController
@@ -150,17 +166,19 @@
 	//	create the view controller to return
 	ParameterPageViewController *nextPage	= [[ParameterPageViewController alloc] init];
 	nextPage.index							= currentPage.index + 1;
-	nextPage.optionLabel.text				= [[self keysAsArray][nextPage.index] capitalizedString];
+	nextPage.optionCategoryTitle			= [[self keysAsArray][nextPage.index] capitalizedString];
 	nextPage.options						= self.optionsDictionary[[self keysAsArray][nextPage.index]];
 	
 	return nextPage;
 }
 
 /**
- *	returns the view controller before the given view controller
+ *	Returns the view controller before the given view controller.
  *
- *	@param	pageViewController			page view controller
- *	@param	viewController				view controller that the user navigated away from
+ *	@param	pageViewController			The page view controller.
+ *	@param	viewController				The view controller that the user navigated away from.
+ *
+ *	@return	The view controller before the given view controller, or nil to indicate that there is no previous view controller.
  */
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController
 	  viewControllerBeforeViewController:(UIViewController *)viewController
@@ -174,16 +192,18 @@
 	//	create the view controller to return
 	ParameterPageViewController *previousPage	= [[ParameterPageViewController alloc] init];
 	previousPage.index							= currentPage.index - 1;
-	previousPage.optionLabel.text				= [[self keysAsArray][previousPage.index] capitalizedString];
+	previousPage.optionCategoryTitle			= [[self keysAsArray][previousPage.index] capitalizedString];
 	previousPage.options						= self.optionsDictionary[[self keysAsArray][previousPage.index]];
 	
 	return previousPage;
 }
 
 /**
- *	returns the number of items to be reflected in the page indicator
+ *	Returns the number of items to be reflected in the page indicator.
  *
- *	@param pageViewController			page view controller
+ *	@param pageViewController			The page view controller.
+ *
+ *	@return	The number of items to be reflected in the page indicator.
  */
 - (NSInteger)presentationCountForPageViewController:(UIPageViewController *)pageViewController
 {
@@ -191,9 +211,11 @@
 }
 
 /**
- *	returns the index of the selected item to be reflected in the page indicator
+ *	Returns the index of the selected item to be reflected in the page indicator.
  *
- *	@param pageViewController			page view controller
+ *	@param pageViewController			The page view controller.
+ *
+ *	@return	The index of the selected item to be reflected in the page indicator.
  */
 - (NSInteger)presentationIndexForPageViewController:(UIPageViewController *)pageViewController
 {
@@ -206,13 +228,22 @@
 #pragma mark - View Lifecycle
 
 /**
+ *	Called after the controller’s view is loaded into memory.
+ */
+- (void)viewDidLoad
+{
+	[super viewDidLoad];
+	
+		[self getAllOptions];
+}
+
+/**
  *	notifies the view controller that its view is about to layout its subviews
  */
 - (void)viewWillLayoutSubviews
 {
 	[super viewWillLayoutSubviews];
 	[self.view setNeedsUpdateConstraints];
-	//[self.pageViewController.presentedViewController.view performSelector:@selector(setNeedsUpdateConstraints)];
 }
 
 @end

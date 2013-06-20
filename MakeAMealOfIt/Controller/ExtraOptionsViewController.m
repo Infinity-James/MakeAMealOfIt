@@ -19,8 +19,11 @@ static NSString *const kCellIdentifier	= @"OptionsCellIdentifier";
 
 #pragma mark - Private Properties
 
+/**	This view controller represents parameters to choose from for recipe searches.	*/
 @property (nonatomic, strong)	RecipeSearchParametersViewController	*recipeParametersController;
+/**	This table view will be used to show the user the selected options.	*/
 @property (nonatomic, strong)	UITableView								*tableView;
+/**	A dictionary to be used for auto layout	*/
 @property (nonatomic, strong)	NSDictionary							*viewsDictionary;
 
 @end
@@ -32,7 +35,7 @@ static NSString *const kCellIdentifier	= @"OptionsCellIdentifier";
 #pragma mark - Autolayout Methods
 
 /**
- *	called when the view controller’s view needs to update its constraints
+ *	Called when the view controller’s view needs to update its constraints.
  */
 - (void)updateViewConstraints
 {
@@ -43,7 +46,7 @@ static NSString *const kCellIdentifier	= @"OptionsCellIdentifier";
 	
 	NSArray *constraints;
 	
-	//	add the table view to cover the whole main view except for the toolbar
+	//	add the table view to the top of the view and the parameters view to the bottom
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(Panel)-[tableView]|" options:kNilOptions metrics:@{@"Panel": @(kPanelWidth)} views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
 	
@@ -57,7 +60,9 @@ static NSString *const kCellIdentifier	= @"OptionsCellIdentifier";
 #pragma mark - Autorotation
 
 /**
- *	returns a boolean value indicating whether rotation methods are forwarded to child view controllers
+ *	Returns a Boolean value indicating whether rotation methods are forwarded to child view controllers.
+ *
+ *	@param	YES if rotation methods are forwarded or NO if they are not.
  */
 - (BOOL)shouldAutomaticallyForwardRotationMethods
 {
@@ -65,7 +70,9 @@ static NSString *const kCellIdentifier	= @"OptionsCellIdentifier";
 }
 
 /**
- *	returns whether the view controller’s contents should auto rotate
+ *	Returns whether the view controller’s contents should auto rotate.
+ *
+ *	@param	YES if the content should rotate, otherwise NO.
  */
 - (BOOL)shouldAutorotate
 {
@@ -75,10 +82,13 @@ static NSString *const kCellIdentifier	= @"OptionsCellIdentifier";
 #pragma mark - Setter & Getter Methods
 
 /**
- *	this view controller represents parameters to choose from for recipe searches
+ *	This view controller represents parameters to choose from for recipe searches.
+ *
+ *	@return	A fully initialised view controller handling the display of advanced options.
  */
 - (RecipeSearchParametersViewController *)recipeParametersController
 {
+	//	use lazy instantiation to create the view controller and add it as a child of this view controller
 	if (!_recipeParametersController)
 	{
 		_recipeParametersController		= [[RecipeSearchParametersViewController alloc] init];
@@ -92,10 +102,13 @@ static NSString *const kCellIdentifier	= @"OptionsCellIdentifier";
 }
 
 /**
- *	this is the main table view for this view controller
+ *	This table view will be used to show the user the selected options.
+ *
+ *	@return	A fully initialised table view.
  */
 - (UITableView *)tableView
 {
+	//	use lazy instantiation to initialise the table view and set it up for use
 	if (!_tableView)
 	{
 		_tableView						= [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStyleGrouped];
@@ -112,7 +125,9 @@ static NSString *const kCellIdentifier	= @"OptionsCellIdentifier";
 }
 
 /**
- *	this is the dictionary of view to apply constraint to
+ *	A dictionary to used when creating visual constraints for this view controller.
+ *
+ *	@return	A dictionary with of views and appropriate keys.
  */
 - (NSDictionary *)viewsDictionary
 {
@@ -123,9 +138,9 @@ static NSString *const kCellIdentifier	= @"OptionsCellIdentifier";
 #pragma mark - UITableViewDataSource Methods
 
 /**
- *	as the data source, we must define how many sections we want the table view to have
+ *	Asks the data source to return the number of sections in the table view.
  *
- *	@param	tableView					the table view for which are defining the sections number
+ *	@param	tableView					The number of sections in tableView. The default value is 1.
  */
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -133,10 +148,10 @@ static NSString *const kCellIdentifier	= @"OptionsCellIdentifier";
 }
 
 /**
- *	create and return the cells for each row of the table view
+ *	Asks the data source for a cell to insert in a particular location of the table view.
  *
- *	@param	tableView					the table view for which we are creating cells
- *	@param	indexPath					the index path of the row we are creating a cell for
+ *	@param	tableView					A table-view object requesting the cell.
+ *	@param	indexPath					An index path locating a row in tableView.
  */
 - (UITableViewCell *)tableView:(UITableView *)tableView
 		 cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -151,10 +166,10 @@ static NSString *const kCellIdentifier	= @"OptionsCellIdentifier";
 }
 
 /**
- *	define how many rows for each section there are in this table view
+ *	Tells the data source to return the number of rows in a given section of a table view.
  *
- *	@param	tableView					the table view for which we are creating cells
- *	@param	section						the particular section for which we must define the rows
+ *	@param	tableView					The table-view object requesting this information.
+ *	@param	section						An index number identifying a section in tableView.
  */
 - (NSInteger)tableView:(UITableView *)tableView
  numberOfRowsInSection:(NSInteger)section
@@ -165,10 +180,10 @@ static NSString *const kCellIdentifier	= @"OptionsCellIdentifier";
 #pragma mark - UITableViewDelegate Methods
 
 /**
- *	handle the fact that a cell was just selected
+ *	Tells the delegate that the specified row is now selected.
  *
- *	@param	tableView					the table view containing selected cell
- *	@param	indexPath					the index path of the cell that was selected
+ *	@param	tableView					A table-view object informing the delegate about the new row selection.
+ *	@param	indexPath					An index path locating the new selected row in tableView.
  */
 - (void)	  tableView:(UITableView *)tableView
 didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -176,10 +191,10 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 }
 
 /**
- *	define the height of the cell
+ *	Asks the delegate for the height to use for a row in a specified location.
  *
- *	@param	tableView					the view which owns the cell for which we need to define the height
- *	@param	indexPath					index path of the cell
+ *	@param	tableView					The table-view object requesting this information.
+ *	@param	indexPath					An index path that locates a row in tableView.
  */
 - (CGFloat)	  tableView:(UITableView *)tableView
 heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -190,7 +205,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 #pragma mark - View Lifecycle
 
 /**
- *	sent to the view controller when the app receives a memory warning
+ *	Sent to the view controller when the app receives a memory warning.
  */
 - (void)didReceiveMemoryWarning
 {
@@ -198,7 +213,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 }
 
 /**
- *	called once this controller's view has been loaded into memory
+ *	Called after the controller’s view is loaded into memory.
  */
 - (void)viewDidLoad
 {
@@ -206,9 +221,9 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 }
 
 /**
- *	notifies the view controller that its view is about to be added to a view hierarchy
+ *	Notifies the view controller that its view is about to be added to a view hierarchy.
  *
- *	@param	animated					whether the view needs to be added to the window with an animation
+ *	@param	animated					If YES, the view is being added to the window using an animation.
  */
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -217,7 +232,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 }
 
 /**
- *	notifies the view controller that its view is about to layout its subviews
+ *	Notifies the view controller that its view is about to layout its subviews.
  */
 - (void)viewWillLayoutSubviews
 {

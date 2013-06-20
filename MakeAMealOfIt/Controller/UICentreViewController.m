@@ -26,7 +26,7 @@
 #pragma mark - Action & Selector Methods
 
 /**
- *	called when the button in the toolbar for the left panel is tapped
+ *	Called when the button in the toolbar for the left panel is tapped.
  */
 - (void)leftButtonTapped
 {
@@ -41,7 +41,7 @@
 }
 
 /**
- *	called when the button in the toolbar for the right panel is tapped
+ *	Called when the button in the toolbar for the right panel is tapped.
  */
 - (void)rightButtonTapped
 {
@@ -58,7 +58,9 @@
 #pragma mark - CentreViewControllerProtocol Methods
 
 /**
- *	returns the left button tag
+ *	A convenient way to get the left button's tag.
+ *
+ *	@return	kButtonInUse if the button is in use and kButtonNotInUse if it is not.
  */
 - (NSUInteger)leftButtonTag
 {
@@ -66,7 +68,9 @@
 }
 
 /**
- *	returns right button tag
+ *	A convenient way to get the right button's tag.
+ *
+ *	@return	kButtonInUse if the button is in use and kButtonNotInUse if it is not.
  */
 - (NSUInteger)rightButtonTag
 {
@@ -74,7 +78,9 @@
 }
 
 /**
- *	sets the tag of the button to the left of the toolbar
+ *	Sets the tag of the button to the left of the toolbar.
+ *
+ *	@param	tag							Should be kButtonInUse for when button has been tapped, and kButtonNotInUse otherwise.
  */
 - (void)setLeftButtonTag:(NSUInteger)tag
 {
@@ -82,7 +88,9 @@
 }
 
 /**
- *	sets the tag of the button to the right of the toolbar
+ *	Sets the tag of the button to the right of the toolbar.
+ *
+ *	@param	tag							Should be kButtonInUse for when button has been tapped, and kButtonNotInUse otherwise.
  */
 - (void)setRightButtonTag:(NSUInteger)tag
 {
@@ -92,7 +100,9 @@
 #pragma mark - Initialisation
 	
 /**
- *	adds toolbar items to our toolbar
+ *	Adds toolbar items to our toolbar.
+ *
+ *	@param	animate						Whether or not the toolbar items should be an animated fashion.
  */
 - (void)addToolbarItemsAnimated:(BOOL)animate
 {
@@ -101,9 +111,9 @@
 #pragma mark - Setter & Getter Methods
 	
 /**
- *	the setter for the back button declared by the centre view protocol and used to transition to previous controller
+ *	The setter for the back button declared by the centre view protocol and used to transition to previous controller.
  *
- *	@param	backButton					back button which would have been set by
+ *	@param	backButton					The back button set up by the manager of this controller.
  */
 - (void)setBackButton:(UIBarButtonItem *)backButton
 {
@@ -112,10 +122,13 @@
 }
 
 /**
- *	a toolbar to keep at the top of the view
+ *	A toolbar to keep at the top of the view.
+ *
+ *	@return	A fully initialised toolbar to be used at the top of centre views.
  */
 - (UIToolbar *)toolbar
 {
+	//	use lazy instantiation to create and design toolbar at the last minute
 	if (!_toolbar)
 	{
 		_toolbar						= [[UIToolbar alloc] init];
@@ -130,7 +143,9 @@
 }
 
 /**
- *	returns the toolbar height according to the orientation and device
+ *	Returns the correct height for a toolbar, depending on the orientation.
+ *
+ *	@return	A smaller height for landscape and taller for portrait.
  */
 - (CGFloat)toolbarHeight
 {	
@@ -143,7 +158,7 @@
 #pragma mark - View Lifecycle
 
 /**
- *	sent to the view controller when the app receives a memory warning
+ *	Sent to the view controller when the app receives a memory warning.
  */
 - (void)didReceiveMemoryWarning
 {
@@ -151,7 +166,7 @@
 }
 
 /**
- *	called once this controller's view has been loaded into memory
+ *	Called after the controller’s view is loaded into memory.
  */
 - (void)viewDidLoad
 {
@@ -161,9 +176,9 @@
 }
 
 /**
- *	notifies the view controller that its view is about to be added to a view hierarchy
+ *	Notifies the view controller that its view is about to be added to a view hierarchy.
  *
- *	@param	animated					whether the view needs to be added to the window with an animation
+ *	@param	animated					If YES, the view is being added to the window using an animation.
  */
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -172,7 +187,7 @@
 }
 
 /**
- *	notifies the view controller that its view is about to layout its subviews
+ *	Notifies the view controller that its view is about to layout its subviews.
  */
 - (void)viewWillLayoutSubviews
 {

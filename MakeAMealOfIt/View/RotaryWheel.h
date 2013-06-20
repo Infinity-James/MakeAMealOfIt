@@ -10,10 +10,15 @@
 
 @protocol RotaryProtocol <NSObject>
 
-#pragma mark - Reuired Methods
+#pragma mark - Required Methods
 
 @required
 
+/**
+ *	The rotary wheel's value has changed.
+ *
+ *	@param	newValue					The selected value in the wheel.
+ */
 - (void)wheelDidChangeValue:(NSString *)newValue;
 
 @end

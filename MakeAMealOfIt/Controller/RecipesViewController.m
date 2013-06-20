@@ -450,10 +450,12 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
  */
 - (void)didReceiveMemoryWarning
 {
-	if (self.view.window)
+	if (!self.view.window)
 	{
-		self.thumbnailCache				= nil;
+		
 	}
+	
+	self.thumbnailCache				= nil;
 	
 	[super didReceiveMemoryWarning];
 }

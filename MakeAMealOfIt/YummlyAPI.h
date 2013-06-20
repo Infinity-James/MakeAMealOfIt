@@ -6,6 +6,8 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
+#import "YummlyKeys.h"
+
 #pragma mark - Constants & Static Variables: Yummly Request Custom Result Keys
 
 extern NSString *const kYummlyRequestResultsMetadataKey;

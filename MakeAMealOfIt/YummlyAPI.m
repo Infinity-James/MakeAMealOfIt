@@ -202,6 +202,8 @@ NSString *const kYummlyTotalMatchCountKey				= @"totalMatchCount";
 		
 		if (error)						NSLog(@"JSON Serialisation Failed: %@", error.localizedDescription);
 		
+		NSLog(@"Results: %@", results);
+		
 		//	call back with whether it was a success and any results we got
 		yummlyURLRequestCompleted(!error, results);
 	}];

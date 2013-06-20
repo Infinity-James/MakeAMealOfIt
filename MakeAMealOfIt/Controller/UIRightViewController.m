@@ -21,7 +21,9 @@
 #pragma mark - Autorotation
 
 /**
- *	returns a boolean value indicating whether rotation methods are forwarded to child view controllers
+ *	Returns a Boolean value indicating whether rotation methods are forwarded to child view controllers.
+ *
+ *	@param	YES if rotation methods are forwarded or NO if they are not.
  */
 - (BOOL)shouldAutomaticallyForwardRotationMethods
 {
@@ -29,7 +31,9 @@
 }
 
 /**
- *	returns whether the view controller’s contents should auto rotate
+ *	Returns whether the view controller’s contents should auto rotate.
+ *
+ *	@param	YES if the content should rotate, otherwise NO.
  */
 - (BOOL)shouldAutorotate
 {
@@ -37,50 +41,57 @@
 }
 
 /**
- *	sent to the view controller just before the user interface begins rotating
+ *	Sent to the view controller just before the user interface begins rotating.
  *
- *	@param	toInterfaceOrientation		new orientation for the user interface
- *	@param	duration					duration of the pending rotation, measured in seconds
+ *	@param	toInterfaceOrientation		The new orientation for the user interface. The possible values are described in UIInterfaceOrientation.
+ *	@param	duration					The duration of the pending rotation, measured in seconds.
  */
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 								duration:(NSTimeInterval)duration
 {
-	//[self.pageViewController.presentedViewController.view performSelector:@selector(setNeedsUpdateConstraints)];
+	[super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
 }
 
 #pragma mark - Setter & Getter Methods
 
 /**
- *	this is the dictionary of view to apply constraint to
+ *	A dictionary to used when creating visual constraints for this view controller.
+ *
+ *	@return	A dictionary with of views and appropriate keys.
  */
 - (NSDictionary *)viewsDictionary
 {
-	return @{	};
+	return @{};
 }
 
 #pragma mark - View Lifecycle
 
 /**
- *	sent to the view controller when the app receives a memory warning
+ *	Sent to the view controller when the app receives a memory warning.
  */
 - (void)didReceiveMemoryWarning
 {
+	if (!self.view.window)
+	{
+		
+	}
+	
 	[super didReceiveMemoryWarning];
 }
 
 /**
- *	called once this controller's view has been loaded into memory
+ *	Called after the controller’s view is loaded into memory.
  */
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
-	self.view.backgroundColor	= [UIColor whiteColor];
+	self.view.backgroundColor			= [UIColor whiteColor];
 }
 
 /**
- *	notifies the view controller that its view is about to be added to a view hierarchy
+ *	Notifies the view controller that its view is about to be added to a view hierarchy.
  *
- *	@param	animated					whether the view needs to be added to the window with an animation
+ *	@param	animated					If YES, the view is being added to the window using an animation.
  */
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -89,7 +100,7 @@
 }
 
 /**
- *	notifies the view controller that its view is about to layout its subviews
+ *	Notifies the view controller that its view is about to layout its subviews.
  */
 - (void)viewWillLayoutSubviews
 {

@@ -12,4 +12,13 @@
 
 @interface YummlyAttributionViewController : UIRightViewController {}
 
+/**
+ *	Implemented by subclasses to initialize a new object (the receiver) immediately after memory for it has been allocated.
+ *
+ *	@param	attributionDictionary		A dictionary of things required for a Yummly attribution.
+ *
+ *	@return	An initialized object.
+ */
+- (instancetype)initWithAttributionDictionary:(NSDictionary *)attributionDictionary;
+
 @end

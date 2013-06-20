@@ -14,7 +14,11 @@
 
 @interface ParameterPageViewController () <RotaryProtocol> {}
 
+/**	The label that will be used to display the title of this page.	*/
+@property (nonatomic, strong)	UILabel			*optionLabel;
+/**	An array of the titles for each option.	*/
 @property (nonatomic, strong)	NSArray			*optionTitles;
+/**	The wheel that will be used to display the options.	*/
 @property (nonatomic, strong)	RotaryWheel		*selectionWheel;
 
 @end
@@ -26,7 +30,7 @@
 #pragma mark - Autolayout Methods
 
 /**
- *	called when the view controller’s view needs to update its constraints
+ *	Called when the view controller’s view needs to update its constraints.
  */
 - (void)updateViewConstraints
 {
@@ -68,23 +72,24 @@
 #pragma mark - Autorotation
 
 /**
- *	sent to the view controller just before the user interface begins rotating
+ *	Sent to the view controller just before the user interface begins rotating.
  *
- *	@param	toInterfaceOrientation		new orientation for the user interface
- *	@param	duration					duration of the pending rotation, measured in seconds
+ *	@param	toInterfaceOrientation		The new orientation for the user interface. The possible values are described in UIInterfaceOrientation.
+ *	@param	duration					The duration of the pending rotation, measured in seconds.
  */
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 								duration:(NSTimeInterval)duration
 {
+	[super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
 	[self.view setNeedsUpdateConstraints];
 }
 
 #pragma mark - RotaryProtocol Methods
 
 /**
- *	the rotary wheel's value has changed
+ *	The rotary wheel's value has changed.
  *
- *	@param	newValue					the value that the wheel is now representing
+ *	@param	newValue					The selected value in the wheel.
  */
 - (void)wheelDidChangeValue:(NSString *)newValue
 {
@@ -94,7 +99,9 @@
 #pragma mark - Setter & Getter Methods
 
 /**
- *	a label that is the title of this particular option
+ *	A label that is the title of this particular option.
+ *
+ *	@return	Fully initialised label to be used as the title of this page.
  */
 - (UILabel *)optionLabel
 {
@@ -134,10 +141,13 @@
 }
 
 /**
- *	the rotary selection wheel representing the option petinent to the particular page
+ *	The rotary selection wheel representing the option pertinent to the particular page.
+ *
+ *	@param	A fully initialised wheel UIControl.
  */
 - (RotaryWheel *)selectionWheel
 {
+	//	use lazy instantiation to initialise the wheel with the amount os options we will need, also setting ourself as delegate
 	if (!_selectionWheel)
 	{
 		_selectionWheel					= [[RotaryWheel alloc] initWithDelegate:self withSections:self.options.count];
@@ -150,7 +160,20 @@
 }
 
 /**
- *	this is the dictionary of view to apply constraint to
+ *	This will be used in the label displaying the title of the page.
+ *
+ *	@param	optionCategoryTitle			The desired title for this page.
+ */
+- (void)setOptionCategoryTitle:(NSString *)optionCategoryTitle
+{
+	//	set the label's text with the new option category title
+	self.optionLabel.text				= _optionCategoryTitle		= optionCategoryTitle;
+}
+
+/**
+ *	A dictionary to used when creating visual constraints for this view controller.
+ *
+ *	@return	A dictionary with of views and appropriate keys.
  */
 - (NSDictionary *)viewsDictionary
 {
@@ -161,9 +184,9 @@
 #pragma mark - View Lifecycle
 
 /**
- *	notifies the view controller that its view is about to be added to a view hierarchy
+ *	Notifies the view controller that its view is about to be added to a view hierarchy.
  *
- *	@param	animated					whether the view needs to be added to the window with an animation
+ *	@param	animated					If YES, the view is being added to the window using an animation.
  */
 - (void)viewWillAppear:(BOOL)animated
 {
