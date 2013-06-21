@@ -36,6 +36,7 @@
 		1A9C84B417423DFD006B8664 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9C84B317423DFD006B8664 /* MainViewController.m */; };
 		1A9FCF8D1758CE7E00D74485 /* StarRatingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FCF8C1758CE7E00D74485 /* StarRatingView.m */; };
 		1AA236B6177372AB00827C84 /* YummlyAttributionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A84A5AC1765F7CA00E1F818 /* YummlyAttributionViewController.m */; };
+		1AA236B917743D6900827C84 /* YummlySearchResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA236B817743D6900827C84 /* YummlySearchResult.m */; };
 		1AD55FE9171AF33200AE5FED /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD55FE8171AF33200AE5FED /* UIKit.framework */; };
 		1AD55FEB171AF33200AE5FED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD55FEA171AF33200AE5FED /* Foundation.framework */; };
 		1AD55FED171AF33200AE5FED /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD55FEC171AF33200AE5FED /* CoreGraphics.framework */; };
@@ -63,7 +64,6 @@
 		1A46523B1770A08A00049B4D /* ResultManagementCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResultManagementCell.h; path = View/ResultManagementCell.h; sourceTree = "<group>"; };
 		1A46523C1770A08A00049B4D /* ResultManagementCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ResultManagementCell.m; path = View/ResultManagementCell.m; sourceTree = "<group>"; };
 		1A46523E1772E89100049B4D /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Icons.xcassets; sourceTree = "<group>"; };
-		1A465241177325B200049B4D /* YummlyKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YummlyKeys.h; path = Utilities/YummlyKeys.h; sourceTree = "<group>"; };
 		1A6D1171174A1C5300E0B000 /* ToolbarLabelYummlyTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ToolbarLabelYummlyTheme.h; sourceTree = "<group>"; };
 		1A6D1172174A1C5300E0B000 /* ToolbarLabelYummlyTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ToolbarLabelYummlyTheme.m; sourceTree = "<group>"; };
 		1A6D1176174A2C3800E0B000 /* RecipeSearchParametersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecipeSearchParametersViewController.h; path = Controller/RecipeSearchParametersViewController.h; sourceTree = "<group>"; };
@@ -119,6 +119,9 @@
 		1A9C84B317423DFD006B8664 /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MainViewController.m; path = Controller/MainViewController.m; sourceTree = "<group>"; };
 		1A9FCF8B1758CE7E00D74485 /* StarRatingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StarRatingView.h; path = View/StarRatingView.h; sourceTree = "<group>"; };
 		1A9FCF8C1758CE7E00D74485 /* StarRatingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StarRatingView.m; path = View/StarRatingView.m; sourceTree = "<group>"; };
+		1AA236B717743D6900827C84 /* YummlySearchResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YummlySearchResult.h; path = Model/YummlySearchResult.h; sourceTree = "<group>"; };
+		1AA236B817743D6900827C84 /* YummlySearchResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YummlySearchResult.m; path = Model/YummlySearchResult.m; sourceTree = "<group>"; };
+		1AA236BA1774999100827C84 /* RightControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RightControllerDelegate.h; path = Controller/RightControllerDelegate.h; sourceTree = "<group>"; };
 		1AD55FE5171AF33200AE5FED /* MakeAMealOfIt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MakeAMealOfIt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AD55FE8171AF33200AE5FED /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		1AD55FEA171AF33200AE5FED /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -172,7 +175,6 @@
 			isa = PBXGroup;
 			children = (
 				1A6D1186174B55F400E0B000 /* Defines.h */,
-				1A465241177325B200049B4D /* YummlyKeys.h */,
 			);
 			name = Definitions;
 			sourceTree = "<group>";
@@ -237,6 +239,7 @@
 		1A8EC53F174E733600553857 /* Right View Controller */ = {
 			isa = PBXGroup;
 			children = (
+				1AA236BA1774999100827C84 /* RightControllerDelegate.h */,
 				1A8EC530174CC77600553857 /* ExtraOptionsViewController.h */,
 				1A8EC531174CC77600553857 /* ExtraOptionsViewController.m */,
 				1A6D1187174B6ACE00E0B000 /* ParameterPageViewController.h */,
@@ -382,6 +385,8 @@
 		1AEE006217427E3400B6FC43 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				1AA236B717743D6900827C84 /* YummlySearchResult.h */,
+				1AA236B817743D6900827C84 /* YummlySearchResult.m */,
 				1A7C1A511757ADA50075AF2D /* Recipe.h */,
 				1A7C1A521757ADA50075AF2D /* Recipe.m */,
 				1A70C0B117535F55004FEEF6 /* YummlyMetadata.h */,
@@ -523,6 +528,7 @@
 			files = (
 				1AD55FF9171AF33200AE5FED /* AppDelegate.m in Sources */,
 				1AEE005717424E2E00B6FC43 /* CupboardViewController.m in Sources */,
+				1AA236B917743D6900827C84 /* YummlySearchResult.m in Sources */,
 				1AEE007517453D8700B6FC43 /* DefaultTheme.m in Sources */,
 				1A8EC532174CC77600553857 /* ExtraOptionsViewController.m in Sources */,
 				1A84A5B6176630D900E1F818 /* IngredientHeaderView.m in Sources */,

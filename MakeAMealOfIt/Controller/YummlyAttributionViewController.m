@@ -7,7 +7,7 @@
 //
 
 #import "YummlyAttributionViewController.h"
-#import "YummlyAPI.h"
+#import "YummlySearchResult.h"
 
 #pragma mark - Yummly Attribution VC Private Class Extension
 
@@ -17,16 +17,18 @@
 
 /**	A dictionary with stuff to include in the attribution.	*/
 @property (nonatomic, strong)	NSDictionary	*attributionDictionary;
-/**	This button is used to actually attribute Yummly and allow the user to navigate to the Yummly website.	*/
-@property (nonatomic, strong)	UIButton		*attributionText;
+/**	This label simply attributes Yummly for the data.	*/
+@property (nonatomic, strong)	UILabel			*attributionText;
 /**	This URL opens the Yummly website with a specific search or recipe.	*/
 @property (nonatomic, strong)	NSURL			*attributionURL;
 /**	The label that for my company.	*/
 @property (nonatomic, strong)	UILabel			*companyLabel;
 /**	The label I will use to show that I made it.	*/
 @property (nonatomic, strong)	UILabel			*developerLabel;
-/**	An image view to use with the Yummly logo	*/
-@property (nonatomic, strong)	UIImageView		*yummlyLogo;
+/**	When clicked on it will open the Yuumly attribution URL in a web view of some sort.	*/
+@property (nonatomic, strong)	UIButton		*yummlyButton;
+/**	An image of the Yummly logo.	*/
+@property (nonatomic, strong)	UIImage			*yummlyLogo;
 
 @end
 
@@ -60,12 +62,18 @@
 	NSLayoutConstraint *constraint;
 	NSArray *constraints;
 	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[developerLabel]"
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:[developerLabel]|"
 																options:kNilOptions
 																metrics:Nil
 																  views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
-	constraint							= [NSLayoutConstraint constraintWithItem:self.developerLabel
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:[developerLabel]-|"
+																options:kNilOptions
+																metrics:Nil
+																  views:self.viewsDictionary];
+	[self.view addConstraints:constraints];
+	
+	constraint							= [NSLayoutConstraint constraintWithItem:self.yummlyButton
 													attribute:NSLayoutAttributeCenterX
 													relatedBy:NSLayoutRelationEqual
 													   toItem:self.view
@@ -73,6 +81,27 @@
 												   multiplier:1.0f
 													 constant:0.0f];
 	[self.view addConstraint:constraint];
+	constraint							= [NSLayoutConstraint constraintWithItem:self.yummlyButton
+													attribute:NSLayoutAttributeWidth
+													relatedBy:NSLayoutRelationEqual
+													   toItem:nil
+													attribute:NSLayoutAttributeNotAnAttribute
+												   multiplier:1.0f
+													 constant:44.0f];
+	[self.yummlyButton addConstraint:constraint];
+	constraint							= [NSLayoutConstraint constraintWithItem:self.yummlyButton
+													attribute:NSLayoutAttributeHeight
+													relatedBy:NSLayoutRelationEqual
+													   toItem:nil
+													attribute:NSLayoutAttributeNotAnAttribute
+												   multiplier:1.0f
+													 constant:44.0f];
+	[self.yummlyButton addConstraint:constraint];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[attributionText]-[yummlyButton]"
+																options:NSLayoutFormatAlignAllCenterX
+																metrics:Nil
+																  views:self.viewsDictionary];
+	[self.view addConstraints:constraints];
 }
 
 #pragma mark - Initialisation
@@ -89,6 +118,12 @@
 	if (self = [super init])
 	{
 		self.attributionDictionary		= attributionDictionary;
+		
+		//	load the views asynchronously to save everything loading later
+		dispatch_async(dispatch_queue_create("View Loader", NULL),
+		^{
+			[self viewsDictionary];
+		});
 	}
 	
 	return self;
@@ -105,7 +140,10 @@
 {
 	//	use lazy instantiation to make sure it is never a nil object
 	if (!_attributionDictionary)
-		_attributionDictionary			= @{};
+		_attributionDictionary			= @{	kYummlyAttributionHTMLKey	: @"",
+												kYummlyAttributionLogoKey	: @"",
+												kYummlyAttributionTextKey	: @"",
+												kYummlyAttributionURLKey	: @""	};
 	
 	return _attributionDictionary;
 }
@@ -115,16 +153,15 @@
  *
  *	@return	A long button that when pressed will navigate to the Yummly website. 
  */
-- (UIButton *)attributionText
+- (UILabel *)attributionText
 {
 	//	lazy instantiation of the button
 	if (!_attributionText)
 	{
-		_attributionText						= [[UIButton alloc] init];
-		_attributionText.backgroundColor		= [UIColor clearColor];
-		_attributionText.titleLabel.text		= self.attributionDictionary[kYummlyAttributionTextKey];
-		_attributionText.titleLabel.textColor	= kYummlyColourMain;
-		[_attributionText addTarget:self action:@selector(openAttributionURL) forControlEvents:UIControlEventTouchUpInside];
+		_attributionText				= [[UILabel alloc] init];
+		_attributionText.backgroundColor= [UIColor clearColor];
+		_attributionText.text			= self.attributionDictionary[kYummlyAttributionTextKey];
+		_attributionText.textColor		= kYummlyColourMain;
 		
 		_attributionText.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self.view addSubview:_attributionText];
@@ -155,6 +192,14 @@
  */
 - (UILabel *)companyLabel
 {
+	if (!_companyLabel)
+	{
+		_companyLabel					= [[UILabel alloc] init];
+		
+		_companyLabel.translatesAutoresizingMaskIntoConstraints		= NO;
+		[self.view addSubview:_companyLabel];
+	}
+	
 	return _companyLabel;
 }
 
@@ -168,27 +213,96 @@
 	if (!_developerLabel)
 	{
 		_developerLabel					= [[UILabel alloc] init];
-		NSAttributedString *developer	= [[NSAttributedString alloc] initWithString:@"James Valaitis"
-																		attributes:@{	NSForegroundColorAttributeName	:	kYummlyColourMain,
+		
+		UIColor *signatureColour		= [[UIColor alloc] initWithRed:175.0f / 255.0f green:124.0f / 255.0f blue:208.0f / 255.0f alpha:1.0f];
+		NSAttributedString *developer	= [[NSAttributedString alloc] initWithString:@"james valaitis"
+																		attributes:@{	NSForegroundColorAttributeName	: signatureColour,
 																						NSTextEffectAttributeName		: NSTextEffectLetterpressStyle,
-																						NSFontAttributeName				: kYummlyFontWithSize(18.0f)}];
+																						NSFontAttributeName				: [UIFont fontWithName:@"Futura-Medium"
+																																 size:14.0f]}];
 		_developerLabel.attributedText	= developer;
+		[_developerLabel sizeToFit];
+		
+		_developerLabel.translatesAutoresizingMaskIntoConstraints	= NO;
+		[self.view addSubview:_developerLabel];
 	}
 	
 	return _developerLabel;
 }
 
 /**
+ *	A dictionary to used when creating visual constraints for this view controller.
  *
- *
- *	@return
+ *	@return	A dictionary with of views and appropriate keys.
  */
 - (NSDictionary *)viewsDictionary
 {
 	return @{	@"attributionText"	: self.attributionText,
 				@"companyLabel"		: self.companyLabel,
 				@"developerLabel"	: self.developerLabel,
-				@"yummlyLogo"		: self.yummlyLogo		};
+				@"yummlyButton"		: self.yummlyButton		};
+}
+
+/**
+ *	This button is intended to let the user view the presented Yummly data on their website when tapped on.
+ *
+ *	@return	An initialised button with an added target to open attribution URL.
+ */
+- (UIButton *)yummlyButton
+{
+	if (!_yummlyButton)
+	{
+		_yummlyButton					= [[UIButton alloc] init];
+		[_yummlyButton addTarget:self action:@selector(openAttributionURL) forControlEvents:UIControlEventTouchUpInside];
+		
+		_yummlyButton.translatesAutoresizingMaskIntoConstraints		= NO;
+		[self.view addSubview:_yummlyButton];
+	}
+	
+	return _yummlyButton;
+}
+
+/**
+ *	Image view with Yummly logo.
+ *
+ *	@return	An initialised image view containing the small Yummly logo.
+ */
+- (UIImage *)yummlyLogo
+{
+	if (!_yummlyLogo)
+	{
+		NSData *yummlyImageData			= [[NSData alloc] initWithContentsOfURL:[[NSURL alloc] initWithString:self.attributionDictionary[kYummlyAttributionLogoKey]]];
+		_yummlyLogo						= [[UIImage alloc] initWithData:yummlyImageData];
+	}
+	
+	return _yummlyLogo;
+}
+
+#pragma mark - View Lifecycle
+
+/**
+ *	Called after the controller’s view is loaded into memory.
+ */
+- (void)viewDidLoad
+{
+	[super viewDidLoad];
+	
+	dispatch_async(dispatch_queue_create("Logo Fetcher", NULL),
+	^{
+		if ([self.rightDelegate respondsToSelector:@selector(attributionDictionaryForCurrentRecipe)])
+			self.attributionDictionary	= [self.rightDelegate attributionDictionaryForCurrentRecipe];
+		
+		UIImage *yummlyLogo				= [[UIImage alloc] initWithCGImage:self.yummlyLogo.CGImage
+															scale:self.yummlyLogo.scale * 2.0f
+													  orientation:self.yummlyLogo.imageOrientation];
+		dispatch_async(dispatch_get_main_queue(),
+		^{
+			[self.yummlyButton setImage:yummlyLogo forState:UIControlStateNormal];
+			[self.view setNeedsUpdateConstraints];
+		});
+	});
+	
+	
 }
 
 @end

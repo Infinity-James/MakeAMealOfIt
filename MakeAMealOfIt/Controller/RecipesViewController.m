@@ -13,6 +13,7 @@
 #import "RecipesViewController.h"
 #import "ToolbarLabelYummlyTheme.h"
 #import "UIImageView+Animation.h"
+#import "YummlyAttributionViewController.h"
 #import "YummlyRequest.h"
 
 #pragma mark - Constants & Static Variables
@@ -25,7 +26,6 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 @interface RecipesViewController () <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout> {}
 
 #pragma mark - Private Properties
-
 
 /**	The main view that will show the recipes in an elegant way.	*/
 @property (nonatomic, strong)	UICollectionView		*recipesCollectionView;
@@ -381,7 +381,10 @@ didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 	self.backButton						= nil;
 	RecipeDetailsViewController *recipeVC	= [[RecipeDetailsViewController alloc] initWithRecipeID:self.recipes[indexPath.row][kYummlyMatchIDKey]
 																					  andRecipeName:self.recipes[indexPath.row][kYummlyMatchRecipeNameKey]];
-	[appDelegate.slideOutVC showCentreViewController:recipeVC withRightViewController:nil];
+	
+	YummlyAttributionViewController *attributionVC	= [[YummlyAttributionViewController alloc] init];
+	
+	[appDelegate.slideOutVC showCentreViewController:recipeVC withRightViewController:attributionVC];
 }
 
 #pragma mark - UICollectionViewDelegateFlowLayout Methods

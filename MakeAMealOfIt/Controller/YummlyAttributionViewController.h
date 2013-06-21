@@ -6,11 +6,14 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
+#import "RightControllerDelegate.h"
 #import "UIRightViewController.h"
 
 #pragma mark - Yummly Attribution VC Public Interface
 
 @interface YummlyAttributionViewController : UIRightViewController {}
+
+#pragma mark - Public Properties
 
 /**
  *	Implemented by subclasses to initialize a new object (the receiver) immediately after memory for it has been allocated.
@@ -20,5 +23,9 @@
  *	@return	An initialized object.
  */
 - (instancetype)initWithAttributionDictionary:(NSDictionary *)attributionDictionary;
+
+#pragma mark - Public Methods
+
+@property (nonatomic, weak)	id <RightControllerDelegate>	rightDelegate;
 
 @end

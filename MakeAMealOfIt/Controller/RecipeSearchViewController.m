@@ -11,7 +11,8 @@
 #import "RecipeSearchViewController.h"
 #import "RecipesViewController.h"
 #import "ToolbarLabelYummlyTheme.h"
-#import "YummlyAPI.h"
+#import "YummlyAttributionViewController.h"
+#import "YummlySearchResult.h"
 
 #pragma mark - Constants & Static Variables
 
@@ -23,11 +24,14 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 
 #pragma mark - Private Properties
 
+/**	The table view representing the chosen ingredients for the recipe search.	*/
 @property (nonatomic, strong)	UITableView					*ingredientsTableView;
+/**	A block to call when any left controller sata has been modified in this view controller.	*/
 @property (nonatomic, copy)		LeftControllerDataModified	modifiedIngredients;
+/**	This is the main view that allows the user to search.	*/
 @property (nonatomic, strong)	RecipeSearchView			*recipeSearchView;
+/**	An array of ingredients to include in the recipes we search for.	*/
 @property (nonatomic, strong)	NSMutableArray				*selectedIngredients;
-@property (nonatomic, strong)	NSDictionary				*viewsDictionary;
 
 @end
 
@@ -38,7 +42,7 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 #pragma mark - Action & Selector Methods
 
 /**
- *	called when the button in the toolbar for the left panel is tapped
+ *	Called when the button in the toolbar for the left panel is tapped.
  */
 - (void)leftButtonTapped
 {
@@ -47,7 +51,7 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 }
 
 /**
- *	called when the button in the toolbar for the right panel is tapped
+ *	cClled when the button in the toolbar for the right panel is tapped.
  */
 - (void)rightButtonTapped
 {
@@ -58,10 +62,15 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 #pragma mark - Autolayout Methods
 
 /**
- *	adds the constraints for the table view and the toolbar
+ *	Called when the view controller’s view needs to update its constraints.
  */
-- (void)addConstraintsForMainView
+- (void)updateViewConstraints
 {
+	[super updateViewConstraints];
+	
+	//	remove all constraints
+	[self.view removeConstraints:self.view.constraints];
+	
 	NSArray *constraints;
 	
 	CGFloat toolbarHeight				= self.toolbarHeight;
@@ -78,45 +87,16 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 	
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[toolbar(height)][recipeSearchView(==150)]-[tableView]|" options:kNilOptions metrics:@{@"height": @(toolbarHeight)} views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
-}
-
-/**
- *	called when the view controller’s view needs to update its constraints
- */
-- (void)updateViewConstraints
-{
-	[super updateViewConstraints];
-	
-	//	remove all constraints
-	[self.view removeConstraints:self.view.constraints];
-	
-	[self addConstraintsForMainView];
 	
 	[self.view bringSubviewToFront:self.toolbar];
-}
-
-#pragma mark - Autorotation
-
-/**
- *	returns a boolean value indicating whether rotation methods are forwarded to child view controllers
- */
-- (BOOL)shouldAutomaticallyForwardRotationMethods
-{
-	return YES;
-}
-
-/**
- *	returns whether the view controller’s contents should auto rotate
- */
-- (BOOL)shouldAutorotate
-{
-	return YES;
 }
 
 #pragma mark - Initialisation
 
 /**
- *	adds toolbar items to our toolbar
+ *	Adds toolbar items to our toolbar.
+ *
+ *	@param	animate						Whether or not the toolbar items should be an animated fashion.
  */
 - (void)addToolbarItemsAnimated:(BOOL)animate
 {
@@ -135,7 +115,6 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 	
 	self.rightButton					= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_main_selected_selection_yummly"]
 															 style:UIBarButtonItemStylePlain target:self action:@selector(rightButtonTapped)];
-	//self.rightButton.selectedImage		= [UIImage imageNamed:@"barbuttonitem_main_selected_selection_yummly"];
 	
 	[self.toolbar setItems:@[self.leftButton, flexibleSpace, titleItem, flexibleSpace, self.rightButton] animated:animate];
 }
@@ -143,9 +122,9 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 #pragma mark - Left Controller Delegate Methods
 
 /**
- * a block sent by the delegate to be executed when data has been modified
+ *	A block sent by the delegate to be executed when data has been modified.
  *
- *	@param	dataModifiedBlack			to be executed with modified data
+ *	@param	dataModifiedBlack			Intended to be executed with any modified data.
  */
 - (void)blockToExecuteWhenDataModified:(LeftControllerDataModified)dataModifiedBlock
 {
@@ -154,10 +133,10 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 }
 
 /**
- *	sent to the delegate when a user has updated any selections in the left view controller
+ *	Sent to the delegate when a user has updated any selections in the left view controller.
  *
- *	@param	leftViewController			the left view controller sending this message
- *	@param	selections					the selections dictionary with all of the selections in the table view
+ *	@param	leftViewController			The left view controller sending this message.
+ *	@param	selections					The selections dictionary with all of the selections in the table view.
  */
 - (void)leftController:(UIViewController *)leftViewController
  updatedWithSelections:(NSDictionary *)selections
@@ -189,9 +168,9 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 #pragma mark - RecipeSearchViewController Methods
 
 /**
- *	called when a view controller was added to recipe search view
+ *	Called when a view controller was added to recipe search view.
  *
- *	@param	viewController				the view controller which was added to the view
+ *	@param	viewController				The view controller which was added to the our child view.
  */
 - (void)addedViewController:(UIViewController *)viewController
 {
@@ -200,35 +179,46 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 }
 
 /**
- *	called when a search was executed and returned with the results dictionary
+ *	Called when a search was executed and returned with the results dictionary.
  *
- *	@param	results						the dictionary of results from the yummly response
+ *	@param	results						The dictionary of results from the yummly response.
  */
 - (void)searchExecutedForResults:(NSDictionary *)results
 {
+	//	set up the next centre view controller with the recipes it needs to display
 	RecipesViewController *recipesVC	= [[RecipesViewController alloc] init];
 	recipesVC.recipes					= results[kYummlyMatchesArrayKey];
 	recipesVC.searchPhrase				= [results[@"criteria"][@"terms"] lastObject];
 	
-	[appDelegate.slideOutVC showCentreViewController:recipesVC withRightViewController:nil];
+	//	set up the next right view controller with the attributions it needs to display
+	YummlyAttributionViewController *yummlyAttribution	= [[YummlyAttributionViewController alloc] initWithAttributionDictionary:results[kYummlyAttributionDictionaryKey]];
 	
+	//	present the next set of view controllers
+	[appDelegate.slideOutVC showCentreViewController:recipesVC withRightViewController:yummlyAttribution];
 }
 
 #pragma mark - Setter & Getter Methods
 
 /**
- *	the table view representing the chosen ingredients for the recipe search
+ *	The table view representing the chosen ingredients for the recipe search.
+ *
+ *	@return	An initialised and designed table view for use showing included ingredients.
  */
 - (UITableView *)ingredientsTableView
 {
+	//	use lazy instantiation to set up the table view
 	if (!_ingredientsTableView)
 	{
-		_ingredientsTableView			= [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStyleGrouped];
-		_ingredientsTableView.bounces	= NO;
+		_ingredientsTableView					= [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStyleGrouped];
+		_ingredientsTableView.bounces			= NO;
 		_ingredientsTableView.backgroundColor	= [UIColor whiteColor];
 		_ingredientsTableView.backgroundView	= nil;
-		_ingredientsTableView.dataSource= self;
-		_ingredientsTableView.delegate	= self;
+		
+		//	we are in complete control of this table view
+		_ingredientsTableView.dataSource		= self;
+		_ingredientsTableView.delegate			= self;
+		
+		//	the only type of cell this table view uses is the standard one
 		[_ingredientsTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kCellIdentifier];
 		
 		_ingredientsTableView.translatesAutoresizingMaskIntoConstraints	= NO;
@@ -239,10 +229,13 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 }
 
 /**
- *	this is the main view that holds all the stuff
+ *	This is the main view that allows the user to search.
+ *
+ *	@return	A fully initiased view with ourselves as the delegate.
  */
 - (RecipeSearchView *)recipeSearchView
 {
+	//	use lazy instantiation to initialise the view
 	if (!_recipeSearchView)
 	{
 		_recipeSearchView				= [[RecipeSearchView alloc] init];
@@ -256,7 +249,9 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 }
 
 /**
- *	the ingredients selected by the left controller
+ *	The ingredients selected by the left controller.
+ *
+ *	@return	An array of ingredients to include in the recipes we search for.
  */
 - (NSMutableArray *)selectedIngredients
 {
@@ -267,7 +262,9 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 }
 
 /**
- *	this is the dictionary of view to apply constraint to
+ *	A dictionary to used when creating visual constraints for this view controller.
+ *
+ *	@return	A dictionary with of views and appropriate keys.
  */
 - (NSDictionary *)viewsDictionary
 {
@@ -279,9 +276,9 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 #pragma mark - UITableViewDataSource Methods
 
 /**
- *	as the data source, we must define how many sections we want the table view to have
+ *	Asks the data source to return the number of sections in the table view.
  *
- *	@param	tableView					the table view for which are defining the sections number
+ *	@param	tableView					The number of sections in tableView. The default value is 1.
  */
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -289,10 +286,10 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 }
 
 /**
- *	create and return the cells for each row of the table view
+ *	Asks the data source for a cell to insert in a particular location of the table view.
  *
- *	@param	tableView					the table view for which we are creating cells
- *	@param	indexPath					the index path of the row we are creating a cell for
+ *	@param	tableView					A table-view object requesting the cell.
+ *	@param	indexPath					An index path locating a row in tableView.
  */
 - (UITableViewCell *)tableView:(UITableView *)tableView
 		 cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -306,24 +303,10 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 }
 
 /**
- *	called to commit the insertion or deletion of a specified row in the receiver
+ *	Tells the data source to return the number of rows in a given section of a table view.
  *
- *	@param	tableView					table view object requesting the insertion or deletion
- *	@param	editingStyle				cell editing style corresponding to a insertion or deletion
- *	@param	indexPath					index path of row requesting editing
- */
-- (void) tableView:(UITableView *)				tableView
-commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
- forRowAtIndexPath:(NSIndexPath *)				indexPath
-{
-	
-}
-
-/**
- *	define how many rows for each section there are in this table view
- *
- *	@param	tableView					the table view for which we are creating cells
- *	@param	section						the particular section for which we must define the rows
+ *	@param	tableView					The table-view object requesting this information.
+ *	@param	section						An index number identifying a section in tableView.
  */
 - (NSInteger)tableView:(UITableView *)tableView
  numberOfRowsInSection:(NSInteger)section
@@ -334,10 +317,10 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
 #pragma mark - UITableViewDelegate Methods
 
 /**
- *	tells the delegate that the specified row is now selected
+ *	Tells the delegate that the specified row is now selected.
  *
- *	@param	tableView					table-view object informing the delegate about the new row selection
- *	@param	indexPath					index path locating the new selected row in table view
+ *	@param	tableView					A table-view object informing the delegate about the new row selection.
+ *	@param	indexPath					An index path locating the new selected row in tableView.
  */
 - (void)	  tableView:(UITableView *)tableView
 didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -346,11 +329,11 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 }
 
 /**
- *	tells the delegate the table view is about to draw a cell for a particular row
+ *	Tells the delegate the table view is about to draw a cell for a particular row.
  *
- *	@param	tableView					table-view object informing the delegate of this impending event
- *	@param	cell						table-view cell object that table view is going to use when drawing the row
- *	@param	indexPath					index path locating the row in table view
+ *	@param	tableView					The table-view object informing the delegate of this impending event.
+ *	@param	cell						A table-view cell object that tableView is going to use when drawing the row.
+ *	@param	indexPath					An index path locating the row in tableView.
  */
 - (void)tableView:(UITableView *)tableView
   willDisplayCell:(UITableViewCell *)cell
@@ -363,7 +346,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 #pragma mark - View Lifecycle
 
 /**
- *	notifies the view controller that its view is about to layout its subviews
+ *	Notifies the view controller that its view is about to layout its subviews.
  */
 - (void)viewWillLayoutSubviews
 {

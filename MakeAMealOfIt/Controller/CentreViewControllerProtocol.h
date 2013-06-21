@@ -9,9 +9,9 @@
 #pragma mark - Constants & Static Variables
 
 /**	Indicates a button is currently in use.	*/
-static NSUInteger const kButtonInUse		= 0;
+static NSUInteger const kButtonInUse		= 1;
 /**	Indicates a button is currently not in use.	*/
-static NSUInteger const kButtonNotInUse		= 1;
+static NSUInteger const kButtonNotInUse		= 0;
 
 #pragma mark - Type Definitions
 

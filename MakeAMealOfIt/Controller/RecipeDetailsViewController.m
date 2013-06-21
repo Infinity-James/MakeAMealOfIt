@@ -149,13 +149,18 @@
 	[title sizeToFit];
 	UIBarButtonItem *titleItem			= [[UIBarButtonItem alloc] initWithCustomView:title];
 	
-	self.rightButton					= [[UIBarButtonItem alloc] initWithTitle:@"Right" style:UIBarButtonItemStylePlain target:self action:@selector(rightButtonTapped)];
+	//	the right button for this controller will be used to open an attribution view controller
+	self.rightButton					= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_main_normal_attribution_yummly"]
+															style:UIBarButtonItemStylePlain target:self action:@selector(rightButtonTapped)];
 	
 	[self.toolbar setItems:@[self.leftButton, flexibleSpace, titleItem, flexibleSpace, self.rightButton] animated:animate];
 }
 
 /**
- *	called to initialise a class instance
+ *	Called to initialise an instance of this class with an ID of a recipe to present as well as it's name.
+ *
+ *	@param	recipeID					The ID of the recipe this view controller will show through it's views.
+ *	@param	recipeName					The name of the recipe this view controller wil show.
  */
 - (instancetype)initWithRecipeID:(NSString *)recipeID
 				   andRecipeName:(NSString *)recipeName
@@ -167,6 +172,30 @@
 	}
 	
 	return self;
+}
+
+#pragma mark - RightControllerDelegate Methods
+
+/**
+ *	Called to get the attribution dictionary for the recipe being shown in the delegate.
+ *
+ *	@return	A dictionary with the details required for correct attribution for a recipe.
+ */
+- (NSDictionary *)attributionDictionaryForCurrentRecipe
+{
+	return self.recipeDetailsView.recipe.attributionDictionary;
+}
+
+/**
+ *	Called when the user has updated selections available in the right view controller/
+ *
+ *	@param	rightViewController			The right view updated with selections.
+ *	@param	selections					A dictionary of selection updates in the right view controller.
+ */
+- (void)rightController:(UIViewController *)rightViewController
+  updatedWithSelections:(NSDictionary *)selections
+{
+	
 }
 
 #pragma mark - Setter & Getter Methods

@@ -12,6 +12,10 @@
 
 @interface RecipeDetailsView : UIView  <RecipeDelegate> {}
 
+#pragma mark - Public Properties
+
+@property (nonatomic, readonly, strong)	Recipe	*recipe;
+
 #pragma mark - Public Methods
 
 - (instancetype)initWithRecipe:(Recipe *)recipe;

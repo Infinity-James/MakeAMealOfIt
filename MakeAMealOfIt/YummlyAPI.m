@@ -17,54 +17,6 @@ static NSString *const kYummlyAppKeyHeaderField			= @"X-Yummly-App-Key";
 static NSString *const kYummlyAuthorisationURLExtension	= @"_app_id=286bc6f3&_app_key=a175c2748234fcb57b0e4594ea95f3d7";
 static NSString *const kYummlyBaseAPIURL				= @"https://api.yummly.com/v1/api";
 
-#pragma mark - Constants & Static Variables: Yummly Request Custom Result Keys
-
-NSString *const kYummlyRequestResultsMetadataKey		= @"metadata";
-
-#pragma mark - Constants & Static Variables: Yummly Metadata Result Keys
-
-NSString *const kYummlyMetadataDescriptionKey			= @"description";
-NSString *const kYummlyMetadataIDKey					= @"id";
-NSString *const kYummlyMetadataLongDescriptionKey		= @"longDescription";
-NSString *const kYummlyMetadataSearchValueKey			= @"searchValue";
-NSString *const kYummlyMetadataShortDescriptionKey		= @"shortDescription";
-NSString *const kYummlyMetadataTermKey					= @"term";
-NSString *const kYummlyMetadataTypeKey					= @"type";
-
-#pragma mark - Constants & Static Variables: Yummly Metadata Request Keys
-
-NSString *const kYummlyMetadataAllergies				= @"allergy";
-NSString *const kYummlyMetadataCourses					= @"course";
-NSString *const kYummlyMetadataCuisines					= @"cuisine";
-NSString *const kYummlyMetadataDiets					= @"diet";
-NSString *const kYummlyMetadataHolidays					= @"holiday";
-NSString *const kYummlyMetadataIngredients				= @"ingredient";
-
-#pragma mark - Constants & Static Variables: Yummly Search Recipe Keys
-
-NSString *const kYummlyAttributionDictionaryKey			= @"attribution";
-NSString *const kYummlyAttributionHTMLKey				= @"html";
-NSString *const kYummlyAttributionLogoKey				= @"logo";
-NSString *const kYummlyAttributionTextKey				= @"text";
-NSString *const kYummlyAttributionURLKey				= @"url";
-
-NSString *const kYummlyCriteriaDictionaryKey			= @"criteria";
-
-NSString *const kYummlyFacetCountsDictionaryKey			= @"facetCounts";
-
-NSString *const kYummlyMatchesArrayKey					= @"matches";
-NSString *const kYummlyMatchAttributesKey				= @"attributes";
-NSString *const kYummlyMatchFlavoursKey					= @"flavors";
-NSString *const kYummlyMatchIDKey						= @"id";
-NSString *const kYummlyMatchIngredientsArrayKey			= @"ingredients";
-NSString *const kYummlyMatchRatingKey					= @"rating";
-NSString *const kYummlyMatchRecipeNameKey				= @"recipeName";
-NSString *const kYummlyMatchSmallImageURLsArrayKey		= @"smallImageUrls";
-NSString *const kYummlyMatchSourceDisplayNameKey		= @"sourceDisplayName";
-NSString *const kYummlyMatchTimeToMakeKey				= @"totalTimeInSeconds";
-
-NSString *const kYummlyTotalMatchCountKey				= @"totalMatchCount";
-
 #pragma mark - Yummly API Implementation
 
 @implementation YummlyAPI {}
@@ -122,7 +74,6 @@ NSString *const kYummlyTotalMatchCountKey				= @"totalMatchCount";
 	//	create the url and request object
 	NSString *yummlySearchURL			= [[NSString alloc] initWithFormat:@"%@/recipes?%@", kYummlyBaseAPIURL, searchParameters];
 	yummlySearchURL						= [yummlySearchURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-	NSLog(@"Final URL: %@", yummlySearchURL);
 	NSURLRequest *yummlyURLRequest		= [self authenticatedYummlyURLRequestForURL:[[NSURL alloc] initWithString:yummlySearchURL]];
 	
 	//	execute the created and authenticated request asynchronously
@@ -201,8 +152,6 @@ NSString *const kYummlyTotalMatchCountKey				= @"totalMatchCount";
 																				error:&error] : nil;
 		
 		if (error)						NSLog(@"JSON Serialisation Failed: %@", error.localizedDescription);
-		
-		NSLog(@"Results: %@", results);
 		
 		//	call back with whether it was a success and any results we got
 		yummlyURLRequestCompleted(!error, results);

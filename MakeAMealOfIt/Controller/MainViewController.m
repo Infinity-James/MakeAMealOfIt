@@ -8,6 +8,7 @@
 
 #import "MainViewController.h"
 #import "LeftControllerDelegate.h"
+#import "RightControllerDelegate.h"
 #import "UIView+AlphaControl.h"
 
 @import QuartzCore;
@@ -37,22 +38,36 @@ static NSString *const kRightVCKey		= @"Right";
 
 @interface MainViewController () <UIGestureRecognizerDelegate> {}
 
+/**	This back button can be set on the centre view controller to manage navigation.	*/
 @property (nonatomic, strong)	UIBarButtonItem				*backButton;
+/**	This boolean tells us whether we should be the first to adopt pan gestures.	*/
 @property (nonatomic, assign)	BOOL						canTrackTouches;
+/**	A motion effect deigned for the centre view controller.	*/
 @property (nonatomic, strong)	UIMotionEffectGroup			*centreViewParallaxEffect;
+/**	A motion effect designed for the side view controllers*/
 @property (nonatomic, strong)	UIMotionEffectGroup			*childViewParallaxEffect;
+/**	*/
 @property (nonatomic, assign)	CGPoint						preVelocity;
+/**	*/
 @property (nonatomic, assign)	BOOL						showingLeftPanel;
+/**	*/
 @property (nonatomic, assign)	BOOL						showingRightPanel;
+/**	*/
 @property (nonatomic, assign)	BOOL						showPanel;
 
+/**	*/
 @property (nonatomic, strong)	UIPanGestureRecognizer		*panGestureRecogniser;
+/**	*/
 @property (nonatomic, strong)	UITapGestureRecognizer		*tapGestureRecogniser;
 
+/**	*/
 @property (nonatomic, strong)	UIViewController <CentreViewControllerProtocol>	*centreViewController;
+/**	*/
 @property (nonatomic, strong)	UIViewController								*leftViewController;
+/**	*/
 @property (nonatomic, strong)	UIViewController								*rightViewController;
 
+/**	*/
 @property (nonatomic, strong)	NSMutableArray									*pastViewControllerDictionaries;
 
 @end
@@ -130,7 +145,9 @@ static NSString *const kRightVCKey		= @"Right";
 #pragma mark - Autorotation
 
 /**
- *	returns a boolean value indicating whether rotation methods are forwarded to child view controllers
+ *	Returns a Boolean value indicating whether rotation methods are forwarded to child view controllers.
+ *
+ *	@param	YES if rotation methods are forwarded or NO if they are not.
  */
 - (BOOL)shouldAutomaticallyForwardRotationMethods
 {
@@ -138,7 +155,9 @@ static NSString *const kRightVCKey		= @"Right";
 }
 
 /**
- *	returns whether the view controller’s contents should auto rotate
+ *	Returns whether the view controller’s contents should auto rotate.
+ *
+ *	@param	YES if the content should rotate, otherwise NO.
  */
 - (BOOL)shouldAutorotate
 {
@@ -146,15 +165,15 @@ static NSString *const kRightVCKey		= @"Right";
 }
 
 /**
- *	sent to the view controller just before the user interface begins rotating
+ *	Sent to the view controller just before the user interface begins rotating.
  *
- *	@param	toInterfaceOrientation		new orientation for the user interface
- *	@param	duration					duration of the pending rotation, measured in seconds
+ *	@param	toInterfaceOrientation		The new orientation for the user interface. The possible values are described in UIInterfaceOrientation.
+ *	@param	duration					The duration of the pending rotation, measured in seconds.
  */
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 								duration:(NSTimeInterval)duration
 {
-	[self movePanelToOriginalPosition];
+	[super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
 }
 
 #pragma mark - Centre View Controller Moving Methods
@@ -373,10 +392,10 @@ static NSString *const kRightVCKey		= @"Right";
 }
 
 /**
- *	a pan gesture has just ended
+ *	A pan gesture has just ended.
  *
- *	@param	panGesture					the gesture object representing the gesture
- *	@param	velocity					the velocity of the gesture in the view
+ *	@param	panGesture					The gesture object representing the gesture.
+ *	@param	velocity					The velocity of the gesture in the view.
  */
 - (void)panGestureEnded:(UIPanGestureRecognizer *)panGesture withVelocity:(CGPoint)velocity
 {
@@ -413,6 +432,7 @@ static NSString *const kRightVCKey		= @"Right";
 	if (self = [super init])
 	{
 		self.centreViewController		= centreViewController;
+		//	whenever a subview want to control the pan gesture recogniser we honour that
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(subviewTrackingTouch:) name:kSubviewTrackingTouch object:nil];
 		self.canTrackTouches			= YES;
 		self.backButton					= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_main_normal_back_yummly"]
@@ -428,9 +448,9 @@ static NSString *const kRightVCKey		= @"Right";
 #pragma mark - Notification Methods
 
 /**
+ *	Called when a subview is currently tracking touches.
  *
- *
- *	@param
+ *	@param	notification				The notification object paired with this notification.
  */
 - (void)subviewTrackingTouch:(NSNotification *)notification
 {
@@ -440,7 +460,7 @@ static NSString *const kRightVCKey		= @"Right";
 #pragma mark - Property Accessor Methods
 
 /**
- *	returns the left controller's view
+ *	Returns the temporary left controller's view.
  */
 - (UIView *)leftPanelView
 {
@@ -456,7 +476,7 @@ static NSString *const kRightVCKey		= @"Right";
 }
 
 /**
- *	returns the right controller's view
+ *	Returns the temporary right controller's view.
  */
 - (UIView *)rightPanelView
 {
@@ -520,19 +540,15 @@ static NSString *const kRightVCKey		= @"Right";
 }
 
 /**
- *	this is the controller that slides out form the left
+ *	This is the temporary form of the view controller that slides out form the left.
+ *
+ *	@return	A pointer to the left view controller that has been adopted by this view controller. 
  */
 - (UIViewController *)leftViewController
 {
 	if (!_leftViewController && self.leftViewControllerClass)
 	{
 		_leftViewController					= self.leftViewControllerClass;
-		
-		_leftViewController.view.tag		= kLeftViewTag;
-		
-		if ([_leftViewController respondsToSelector:@selector(setLeftDelegate:)] &&
-			[self.centreViewController conformsToProtocol:@protocol(LeftControllerDelegate)])
-			[_leftViewController performSelector:@selector(setLeftDelegate:) withObject:self.centreViewController];
 		
 		[self.view addSubview:_leftViewController.view];
 		[self addChildViewController:_leftViewController];
@@ -543,7 +559,9 @@ static NSString *const kRightVCKey		= @"Right";
 }
 
 /**
- *	the pan gesture recogniser used to pan the centre view left or right
+ *	The pan gesture recogniser used to pan the centre view left or right.
+ *
+ *	@return	A pan gesture recogniser that should be added to the centre view.
  */
 - (UIPanGestureRecognizer *)panGestureRecogniser
 {
@@ -559,15 +577,15 @@ static NSString *const kRightVCKey		= @"Right";
 }
 
 /**
- *	this is the controller that slides out from the right
+ *	This is the temporary form of the view controller that slides out form the right.
+ *
+ *	@return	A pointer to the right view controller that has been adopted by this view controller.
  */
 - (UIViewController *)rightViewController
 {
 	if (!_rightViewController && self.rightViewControllerClass)
 	{
 		_rightViewController				= self.rightViewControllerClass;
-		
-		_rightViewController.view.tag		= kRightViewTag;
 		
 		[self.view addSubview:_rightViewController.view];
 		[self addChildViewController:_rightViewController];
@@ -578,9 +596,9 @@ static NSString *const kRightVCKey		= @"Right";
 }
 
 /**
- *	this centre view controller is the main controller displayed
+ *	This centre view controller is the main controller displayed.
  *
- *	@param	centreViewController		used to set some basics of the centre view controller
+ *	@param	centreViewController		Used to set some basics of the centre view controller.
  */
 - (void)setCentreViewController:(UIViewController<CentreViewControllerProtocol> *)centreViewController
 {
@@ -596,6 +614,7 @@ static NSString *const kRightVCKey		= @"Right";
 	
 	__weak MainViewController *weakSelf	= self;
 	
+	//	this is how the blog will communicate to us that it should move due to an action in it
 	_centreViewController.movingViewBlock	= ^(MoveDestination movingDestination)
 	{
 		switch (movingDestination)
@@ -615,23 +634,29 @@ static NSString *const kRightVCKey		= @"Right";
 	};
 
 	_centreViewController.view.tag		= kCentreViewTag;
+	
+	//	this parallax effect is specific to the centre view
 	[_centreViewController.view addMotionEffect:self.centreViewParallaxEffect];
 	
-	[UIView beginAnimations:nil context:NULL];
-	_centreViewController.view.frame	= kCentreViewFrame;
-	[UIView commitAnimations];
+	//	animate the setting of the frame
+	[UIView animateWithDuration:1.0f animations:
+	^{
+		_centreViewController.view.frame= kCentreViewFrame;
+	}];
 	
+	//	add the pan gesture recogniser allowing the sliding of the view
 	[_centreViewController.view addGestureRecognizer:self.panGestureRecogniser];
 	
+	//	adopt the view controller and it's view
 	[self.view addSubview:_centreViewController.view];
 	[self addChildViewController:_centreViewController];
 	[_centreViewController didMoveToParentViewController:self];
 }
 
 /**
+ *	Setting of the temporary left view controller.
  *
- *
- *	@param
+ *	@param	leftViewController			A pointer to the permanent view controller.
  */
 - (void)setLeftViewController:(UIViewController *)leftViewController
 {
@@ -646,9 +671,25 @@ static NSString *const kRightVCKey		= @"Right";
 }
 
 /**
+ *	Sets the view controller to swiped in from the left.
  *
+ *	@param	leftViewControllerClass		The permanent version of the left view controller.
+ */
+- (void)setLeftViewControllerClass:(UIViewController *)leftViewControllerClass
+{
+	_leftViewControllerClass			= leftViewControllerClass;
+	
+	_leftViewControllerClass.view.tag	= kLeftViewTag;
+	
+	if ([_leftViewControllerClass respondsToSelector:@selector(setLeftDelegate:)] &&
+		[self.centreViewController conformsToProtocol:@protocol(LeftControllerDelegate)])
+		[_leftViewControllerClass performSelector:@selector(setLeftDelegate:) withObject:self.centreViewController];
+}
+
+/**
+ *	Setting of the temporary right view controller.
  *
- *	@param
+ *	@param	rightViewController			A pointer to the permanent view controller.
  */
 - (void)setRightViewController:(UIViewController *)rightViewController
 {
@@ -663,7 +704,25 @@ static NSString *const kRightVCKey		= @"Right";
 }
 
 /**
+ *	Sets the view controller to swiped in from the right.
  *
+ *	@param	rightViewControllerClass	The permanent version of the right view controller.
+ */
+- (void)setRightViewControllerClass:(UIViewController *)rightViewControllerClass
+{
+	_rightViewControllerClass			= rightViewControllerClass;
+	
+	_rightViewControllerClass.view.tag	= kRightViewTag;
+	
+	if ([_rightViewControllerClass respondsToSelector:@selector(setRightDelegate:)] &&
+		[self.centreViewController conformsToProtocol:@protocol(RightControllerDelegate)])
+		[_rightViewControllerClass performSelector:@selector(setRightDelegate:) withObject:self.centreViewController];
+}
+
+/**
+ *	This tap gesture recogniser should be added to a previous centre view controller so when tapped on it will return.
+ *
+ *	@return	A fully initialisd and targeted tap gesture recogniser.
  */
 - (UITapGestureRecognizer *)tapGestureRecogniser
 {
@@ -671,68 +730,6 @@ static NSString *const kRightVCKey		= @"Right";
 		_tapGestureRecogniser			= [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(previousViewTapped:)];
 	
 	return _tapGestureRecogniser;
-}
-
-#pragma mark - View Lifecycle
-
-/**
- *	prepares the receiver for service after it has been loaded from an interface builder archive, or nib file
- */
-- (void)awakeFromNib
-{
-	[super awakeFromNib];
-}
-
-/**
- *	sent to the view controller when the app receives a memory warning
- */
-- (void)didReceiveMemoryWarning
-{
-	[super didReceiveMemoryWarning];
-}
-
-/**
- *	notifies the view controller that its view was added to a view hierarchy
- */
-- (void)viewDidAppear:(BOOL)animated
-{
-	[super viewDidAppear:animated];
-}
-
-/**
- *	notifies the view controller that its view was removed from a view hierarchy
- */
-- (void)viewDidDisappear:(BOOL)animated
-{
-	[super viewDidDisappear:animated];
-}
-
-/**
- *	called once this controller's view has been loaded into memory
- */
-- (void)viewDidLoad
-{
-	[super viewDidLoad];
-}
-
-/**
- *	notifies the view controller that its view is about to be added to a view hierarchy
- *
- *	@param	animated					whether the view needs to be added to the window with an animation
- */
-- (void)viewWillAppear:(BOOL)animated
-{
-	[super viewWillAppear:animated];
-}
-
-/**
- *	notifies the view controller that its view is about to be removed from the view hierarchy
- *
- *	@param	animated					whether the view needs to be removed from the window with an animation
- */
-- (void)viewWillDisappear:(BOOL)animated
-{
-	[super viewWillDisappear:animated];
 }
 
 #pragma mark - UIGestureRecogniserDelegate Methods
@@ -789,6 +786,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 	//	remove left view and reset variables
 	if (self.leftViewController)
 	{
+		//	set the temporary left view controller to nil to easily remove it from the main view controller
 		self.leftViewController			= nil;
 		[self.centreViewController setLeftButtonTag:kButtonNotInUse];
 		self.showingLeftPanel			= NO;

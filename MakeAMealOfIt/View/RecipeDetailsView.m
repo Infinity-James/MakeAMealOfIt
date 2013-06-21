@@ -18,11 +18,11 @@ static CGFloat const kImageHeight		= 200.0f;
 
 #pragma mark - Private Properties
 
-@property (nonatomic, strong)	UIActivityIndicatorView		*activityIndicatorView;
-@property (nonatomic, strong)	Recipe						*recipe;
-@property (nonatomic, strong)	UIImageView					*recipeImageView;
-@property (nonatomic, strong)	StarRatingView				*starRatingView;
-@property (nonatomic, strong)	NSDictionary				*viewsDictionary;
+@property (nonatomic, strong)				UIActivityIndicatorView		*activityIndicatorView;
+@property (nonatomic, readwrite, strong)	Recipe						*recipe;
+@property (nonatomic, strong)				UIImageView					*recipeImageView;
+@property (nonatomic, strong)				StarRatingView				*starRatingView;
+@property (nonatomic, strong)				NSDictionary				*viewsDictionary;
 
 @end
 
