@@ -19,6 +19,10 @@ static NSString *const kCellIdentifier	= @"OptionsCellIdentifier";
 
 #pragma mark - Private Properties
 
+/**	A dictionary of excluded parameters iwht the parameters name and it's type.	*/
+@property (nonatomic, strong)	NSDictionary							*excludedParameters;
+/**	A dictionary of included parameters iwht the parameters name and it's type.	*/
+@property (nonatomic, strong)	NSDictionary							*includedParameters;
 /**	This view controller represents parameters to choose from for recipe searches.	*/
 @property (nonatomic, strong)	RecipeSearchParametersViewController	*recipeParametersController;
 /**	This table view will be used to show the user the selected options.	*/
@@ -112,6 +116,7 @@ static NSString *const kCellIdentifier	= @"OptionsCellIdentifier";
 	if (!_tableView)
 	{
 		_tableView						= [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStyleGrouped];
+		_tableView.backgroundColor		= [UIColor whiteColor];
 		_tableView.dataSource			= self;
 		_tableView.delegate				= self;
 		[self.view addSubview:_tableView];

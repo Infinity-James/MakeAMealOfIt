@@ -27,6 +27,8 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 
 #pragma mark - Private Properties
 
+/**	*/
+@property (nonatomic, assign)	BOOL					internetAccess;
 /**	The main view that will show the recipes in an elegant way.	*/
 @property (nonatomic, strong)	UICollectionView		*recipesCollectionView;
 /**	The cache used to store thumbnail images for the recipes.	*/
@@ -121,6 +123,21 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 	[self.toolbar setItems:@[self.leftButton, flexibleSpace, titleItem, flexibleSpace, self.rightButton] animated:animate];
 }
 
+/**
+ *	Implemented by subclasses to initialize a new object (the receiver) immediately after memory for it has been allocated.
+ *
+ *	@return	An initialized object.
+ */
+- (instancetype)init
+{
+	if (self = [super init])
+	{
+		self.internetAccess				= YES;
+	}
+	
+	return self;
+}
+
 #pragma mark - Recipe Management
 
 /**
@@ -134,7 +151,11 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 	//	uses the global yummly request to get more results for out view
 	[appDelegate.yummlyRequest getMoreResults:^(BOOL success, NSDictionary *results)
 	{
-		if (!success)					return;
+		if (!success)
+		{
+			self.internetAccess			= NO;
+			[self.recipesCollectionView deleteItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:self.recipes.count inSection:0]]];
+		}
 		
 		//	adds the newly fetched results to the recipe array
 		NSUInteger recipesCount			= weakSelf.recipes.count;
@@ -311,7 +332,8 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 			^{
 				thumbnailData			= [[NSData alloc] initWithContentsOfURL:thumbnailURL];
 				UIImage *thumbnail		= [[UIImage alloc] initWithData:thumbnailData];
-				[self.thumbnailCache setObject:thumbnail forKey:smallThumbnailURLString];
+				if (thumbnail)
+					[self.thumbnailCache setObject:thumbnail forKey:smallThumbnailURLString];
 											 
 				//	synchronously update imgae views on main thread so it happens chronologically
 				dispatch_sync(dispatch_get_main_queue(),
@@ -339,7 +361,11 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 - (NSInteger)collectionView:(UICollectionView *)collectionView
 	 numberOfItemsInSection:(NSInteger)section
 {
-	//	if there are no recipes we want to use a cell to the the user that there were no results
+	//	if there are results being shown, but no internet access, we don't show a 'loading more results' cells
+	if (!self.internetAccess && self.recipes.count != 0)
+		return self.recipes.count;
+	
+	//	if there's either no results, or results left to load, we show a loading more results cell or no results cell
 	return self.recipes.count + 1;
 }
 

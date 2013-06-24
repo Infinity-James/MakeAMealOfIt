@@ -113,7 +113,7 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 	[title sizeToFit];
 	UIBarButtonItem *titleItem			= [[UIBarButtonItem alloc] initWithCustomView:title];
 	
-	self.rightButton					= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_main_selected_selection_yummly"]
+	self.rightButton					= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_main_normal_selection_yummly"]
 															 style:UIBarButtonItemStylePlain target:self action:@selector(rightButtonTapped)];
 	
 	[self.toolbar setItems:@[self.leftButton, flexibleSpace, titleItem, flexibleSpace, self.rightButton] animated:animate];

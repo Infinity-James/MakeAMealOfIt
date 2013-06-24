@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1A0A853D1765B66C00D45971 /* UIView+AlphaControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0A853C1765B66C00D45971 /* UIView+AlphaControl.m */; };
+		1A347614177837B100E723CD /* IncludeExcludeControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A347613177837B100E723CD /* IncludeExcludeControl.m */; };
 		1A46523D1770A08A00049B4D /* ResultManagementCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A46523C1770A08A00049B4D /* ResultManagementCell.m */; };
 		1A46523F1772E89100049B4D /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A46523E1772E89100049B4D /* Icons.xcassets */; };
 		1A6D1173174A1C5400E0B000 /* ToolbarLabelYummlyTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6D1172174A1C5300E0B000 /* ToolbarLabelYummlyTheme.m */; };
@@ -61,6 +62,8 @@
 /* Begin PBXFileReference section */
 		1A0A853B1765B66C00D45971 /* UIView+AlphaControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIView+AlphaControl.h"; path = "Categories/UIView+AlphaControl.h"; sourceTree = "<group>"; };
 		1A0A853C1765B66C00D45971 /* UIView+AlphaControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIView+AlphaControl.m"; path = "Categories/UIView+AlphaControl.m"; sourceTree = "<group>"; };
+		1A347612177837B100E723CD /* IncludeExcludeControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IncludeExcludeControl.h; path = View/IncludeExcludeControl.h; sourceTree = "<group>"; };
+		1A347613177837B100E723CD /* IncludeExcludeControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IncludeExcludeControl.m; path = View/IncludeExcludeControl.m; sourceTree = "<group>"; };
 		1A46523B1770A08A00049B4D /* ResultManagementCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResultManagementCell.h; path = View/ResultManagementCell.h; sourceTree = "<group>"; };
 		1A46523C1770A08A00049B4D /* ResultManagementCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ResultManagementCell.m; path = View/ResultManagementCell.m; sourceTree = "<group>"; };
 		1A46523E1772E89100049B4D /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Icons.xcassets; sourceTree = "<group>"; };
@@ -239,13 +242,13 @@
 		1A8EC53F174E733600553857 /* Right View Controller */ = {
 			isa = PBXGroup;
 			children = (
-				1AA236BA1774999100827C84 /* RightControllerDelegate.h */,
 				1A8EC530174CC77600553857 /* ExtraOptionsViewController.h */,
 				1A8EC531174CC77600553857 /* ExtraOptionsViewController.m */,
 				1A6D1187174B6ACE00E0B000 /* ParameterPageViewController.h */,
 				1A6D1188174B6ACE00E0B000 /* ParameterPageViewController.m */,
 				1A6D1176174A2C3800E0B000 /* RecipeSearchParametersViewController.h */,
 				1A6D1177174A2C3800E0B000 /* RecipeSearchParametersViewController.m */,
+				1AA236BA1774999100827C84 /* RightControllerDelegate.h */,
 				1A84A5AE1765F8CE00E1F818 /* UIRightViewController.h */,
 				1A84A5AF1765F8CE00E1F818 /* UIRightViewController.m */,
 				1A84A5AB1765F7CA00E1F818 /* YummlyAttributionViewController.h */,
@@ -385,14 +388,14 @@
 		1AEE006217427E3400B6FC43 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				1AA236B717743D6900827C84 /* YummlySearchResult.h */,
-				1AA236B817743D6900827C84 /* YummlySearchResult.m */,
 				1A7C1A511757ADA50075AF2D /* Recipe.h */,
 				1A7C1A521757ADA50075AF2D /* Recipe.m */,
 				1A70C0B117535F55004FEEF6 /* YummlyMetadata.h */,
 				1A70C0B217535F55004FEEF6 /* YummlyMetadata.m */,
 				1AEE005F17427E2F00B6FC43 /* YummlyRequest.h */,
 				1AEE006017427E2F00B6FC43 /* YummlyRequest.m */,
+				1AA236B717743D6900827C84 /* YummlySearchResult.h */,
+				1AA236B817743D6900827C84 /* YummlySearchResult.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -400,16 +403,18 @@
 		1AEE00681743F42400B6FC43 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				1A347612177837B100E723CD /* IncludeExcludeControl.h */,
+				1A347613177837B100E723CD /* IncludeExcludeControl.m */,
 				1A84A5B4176630D900E1F818 /* IngredientHeaderView.h */,
 				1A84A5B5176630D900E1F818 /* IngredientHeaderView.m */,
-				1A46523B1770A08A00049B4D /* ResultManagementCell.h */,
-				1A46523C1770A08A00049B4D /* ResultManagementCell.m */,
 				1A8EC542174F4CCA00553857 /* RecipeCollectionViewCell.h */,
 				1A8EC543174F4CCA00553857 /* RecipeCollectionViewCell.m */,
 				1A70C0BA175500FF004FEEF6 /* RecipeDetailsView.h */,
 				1A70C0BB175500FF004FEEF6 /* RecipeDetailsView.m */,
 				1AEE00DE17460EA500B6FC43 /* RecipeSearchView.h */,
 				1AEE00DF17460EA500B6FC43 /* RecipeSearchView.m */,
+				1A46523B1770A08A00049B4D /* ResultManagementCell.h */,
+				1A46523C1770A08A00049B4D /* ResultManagementCell.m */,
 				1A6D1179174B4A4200E0B000 /* RotaryWheel.h */,
 				1A6D117A174B4A4200E0B000 /* RotaryWheel.m */,
 				1A6D117B174B4A4200E0B000 /* Sector.h */,
@@ -527,6 +532,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1AD55FF9171AF33200AE5FED /* AppDelegate.m in Sources */,
+				1A347614177837B100E723CD /* IncludeExcludeControl.m in Sources */,
 				1AEE005717424E2E00B6FC43 /* CupboardViewController.m in Sources */,
 				1AA236B917743D6900827C84 /* YummlySearchResult.m in Sources */,
 				1AEE007517453D8700B6FC43 /* DefaultTheme.m in Sources */,

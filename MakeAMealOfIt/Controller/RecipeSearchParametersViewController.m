@@ -12,7 +12,7 @@
 
 #pragma mark - Recipe Search Parameters VC Private Class Extension
 
-@interface RecipeSearchParametersViewController () <UIPageViewControllerDataSource, UIPageViewControllerDelegate> {}
+@interface RecipeSearchParametersViewController () <ParameterPageDelegate, UIPageViewControllerDataSource, UIPageViewControllerDelegate> {}
 
 #pragma mark - Private Properties
 
@@ -82,6 +82,23 @@
 	});
 }
 
+#pragma mark - ParameterPageDelegate
+
+/**
+ *	Sent to the delegate when a parameter has been selected in some fashion.
+ *
+ *	@param	parameterPageVC				The page calling this method.
+ *	@param	parameterIndex				The index of the parameter that has been selected.
+ *	@param	included					Whether the selected parameter is to be included or excluded.
+ */
+- (void)parameterPageViewController:(ParameterPageViewController *)parameterPageVC
+		   selectedParameterAtIndex:(NSUInteger)parameterIndex
+						   included:(BOOL)included
+{
+	NSString *choice					= self.optionsDictionary[[self keysAsArray][parameterPageVC.index]][parameterIndex];
+	NSLog(@"CHOICE: %@", choice);
+}
+
 #pragma mark - Setter & Getter Methods
 
 /**
@@ -118,6 +135,7 @@
 			_pageViewController.dataSource			= self;
 			_pageViewController.delegate			= self;
 			ParameterPageViewController *firstPage	= [[ParameterPageViewController alloc] init];
+			firstPage.delegate						= self;
 			firstPage.index							= 0;
 			firstPage.optionCategoryTitle			= [[self keysAsArray][firstPage.index] capitalizedString];
 			firstPage.options						= self.optionsDictionary[[self keysAsArray][firstPage.index]];
@@ -165,6 +183,7 @@
 	
 	//	create the view controller to return
 	ParameterPageViewController *nextPage	= [[ParameterPageViewController alloc] init];
+	nextPage.delegate						= self;
 	nextPage.index							= currentPage.index + 1;
 	nextPage.optionCategoryTitle			= [[self keysAsArray][nextPage.index] capitalizedString];
 	nextPage.options						= self.optionsDictionary[[self keysAsArray][nextPage.index]];
@@ -191,6 +210,7 @@
 	
 	//	create the view controller to return
 	ParameterPageViewController *previousPage	= [[ParameterPageViewController alloc] init];
+	previousPage.delegate						= self;
 	previousPage.index							= currentPage.index - 1;
 	previousPage.optionCategoryTitle			= [[self keysAsArray][previousPage.index] capitalizedString];
 	previousPage.options						= self.optionsDictionary[[self keysAsArray][previousPage.index]];

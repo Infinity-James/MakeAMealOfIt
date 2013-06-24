@@ -829,8 +829,10 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
  *	Handles the transitioning to a new centre view controller.
  *
  *	@param	viewController				The view controller to be set as the new centre view controller.
+ *	@param	rightViewController			The new right view controller to be paired with the new centre view controller.
  */
 - (void)transitionCentreToViewController:(UIViewController <CentreViewControllerProtocol>*)viewController
+			  withNewRightViewController:(UIViewController *)rightViewController
 {
 	//	create a dictionary of the current view controllers and add it to our array of them
 	NSDictionary *pastVCDictionary		= @{kCentreVCKey: self.centreViewController,
@@ -844,8 +846,9 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 	self.leftViewControllerClass		= self.centreViewController;
 	[self animateCentreViewControllerTransitionForwards:YES toViewController:viewController withCompletionHandler:^(BOOL success)
 	{
-		//	when the animation has finished we want to complete the transition
+		//	when the animation has finished we want to complete the transition and set the new right view controller
 		[self finishTransitionToViewController:viewController];
+		self.rightViewControllerClass	= rightViewController;
 	}];
 }
 

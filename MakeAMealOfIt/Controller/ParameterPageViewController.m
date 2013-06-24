@@ -6,20 +6,25 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
+#import "IncludeExcludeControl.h"
 #import "ParameterPageViewController.h"
 #import "RotaryWheel.h"
 #import "YummlyAPI.h"
 
 #pragma mark - Parameters Page View Controller Private Class Extension
 
-@interface ParameterPageViewController () <RotaryProtocol> {}
+@interface ParameterPageViewController () <IncludeExcludeDelegate, RotaryProtocol> {}
 
+/**	Which option is currently highlighted.	*/
+@property (nonatomic, assign)	NSUInteger				highlightedOptionIndex;
+/**	The control that allows the inclusion or exclusion of a highlighted option.	*/
+@property (nonatomic, strong)	IncludeExcludeControl	*includeExcludeControl;
 /**	The label that will be used to display the title of this page.	*/
-@property (nonatomic, strong)	UILabel			*optionLabel;
+@property (nonatomic, strong)	UILabel					*optionLabel;
 /**	An array of the titles for each option.	*/
-@property (nonatomic, strong)	NSArray			*optionTitles;
+@property (nonatomic, strong)	NSArray					*optionTitles;
 /**	The wheel that will be used to display the options.	*/
-@property (nonatomic, strong)	RotaryWheel		*selectionWheel;
+@property (nonatomic, strong)	RotaryWheel				*selectionWheel;
 
 @end
 
@@ -43,13 +48,19 @@
 	
 	if (self.interfaceOrientation == UIInterfaceOrientationPortrait || self.interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown)
 	{
-		constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[optionLabel]-[selectionWheel]-|"
+		constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(8)-[optionLabel]-[includeExclude(==32)]-[selectionWheel]-|"
 																	options:NSLayoutFormatAlignAllCenterX
 																	metrics:nil
 																	  views:self.viewsDictionary];
 		[self.view addConstraints:constraints];
 		
 		constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[selectionWheel]-|"
+																	options:kNilOptions
+																	metrics:nil
+																	  views:self.viewsDictionary];
+		[self.view addConstraints:constraints];
+		
+		constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[includeExclude]-|"
 																	options:kNilOptions
 																	metrics:nil
 																	  views:self.viewsDictionary];
@@ -84,6 +95,24 @@
 	[self.view setNeedsUpdateConstraints];
 }
 
+#pragma mark - IncludeExcludeDelegate Methods
+
+/**
+ *	Sent to the delegate when the exclude button was tapped.
+ */
+- (void)excludeSelected
+{
+	[self.delegate parameterPageViewController:self selectedParameterAtIndex:self.highlightedOptionIndex included:NO];
+}
+
+/**
+ *	Sent to the delegate when the include button was tapped.
+ */
+- (void)includeSelected
+{
+	[self.delegate parameterPageViewController:self selectedParameterAtIndex:self.highlightedOptionIndex included:YES];
+}
+
 #pragma mark - RotaryProtocol Methods
 
 /**
@@ -91,12 +120,32 @@
  *
  *	@param	newValue					The selected value in the wheel.
  */
-- (void)wheelDidChangeValue:(NSString *)newValue
+- (void)wheelDidChangeValue:(NSUInteger)newValue
 {
-	
+	self.includeExcludeControl.optionText	= self.optionTitles[newValue];
+	self.highlightedOptionIndex				= newValue;
 }
 
 #pragma mark - Setter & Getter Methods
+
+/**
+ *	Allows the user to include or exclude the currently select metadata.
+ *
+ *	@return	An initialised control that displays the selected option and buttons to either exclude or include it.
+ */
+- (IncludeExcludeControl *)includeExcludeControl
+{
+	if (!_includeExcludeControl)
+	{
+		_includeExcludeControl			= [[IncludeExcludeControl alloc] init];
+		_includeExcludeControl.delegate	= self;
+		
+		_includeExcludeControl.translatesAutoresizingMaskIntoConstraints	= NO;
+		[self.view addSubview:_includeExcludeControl];
+	}
+	
+	return _includeExcludeControl;
+}
 
 /**
  *	A label that is the title of this particular option.
@@ -112,6 +161,7 @@
 		_optionLabel.font				= kYummlyFontWithSize(20.0f);
 		_optionLabel.textColor			= kYummlyColourShadow;
 		[_optionLabel sizeToFit];
+		
 		_optionLabel.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self.view addSubview:_optionLabel];
 	}
@@ -177,7 +227,8 @@
  */
 - (NSDictionary *)viewsDictionary
 {
-	return @{	@"optionLabel"		: self.optionLabel,
+	return @{	@"includeExclude"	: self.includeExcludeControl,
+				@"optionLabel"		: self.optionLabel,
 				@"selectionWheel"	: self.selectionWheel};
 }
 

@@ -136,6 +136,14 @@
 	segmentView.transform				= CGAffineTransformScale(segmentView.transform, 1.3f, 1.3f);
 }
 
+/**
+ *	Updates the delegate with the currently selected sector.
+ */
+- (void)updateDelegate
+{
+	[self.delegate wheelDidChangeValue:_currentSector];
+}
+
 #pragma mark - Initialisation
 
 /**
@@ -311,7 +319,7 @@
 			newValue = radians - sector.middleValue, _currentSector = sector.sectorID;
 	}
 
-	[self.delegate wheelDidChangeValue:[NSString stringWithFormat:@"Value is %i", _currentSector]];
+	[self updateDelegate];
 	
 	//	set up animation for final rotation and changing of current sector alpha
 	[UIView animateWithDuration:0.2f animations:
@@ -415,7 +423,7 @@
 	else
 		[self buildSectorsOdd];
 	
-	[self.delegate wheelDidChangeValue:[NSString stringWithFormat:@"Value is %i", _currentSector]];
+	[self updateDelegate];
 }
 
 #pragma mark - View-Related Observation Methods

@@ -31,7 +31,9 @@
  *	Handles the transitioning to a new centre view controller.
  *
  *	@param	viewController				The view controller to be set as the new centre view controller.
+ *	@param	rightViewController			The new right view controller to be paired with the new centre view controller.
  */
-- (void)transitionCentreToViewController:(UIViewController *)viewController;
+- (void)transitionCentreToViewController:(UIViewController *)viewController
+			  withNewRightViewController:(UIViewController *)rightViewController;
 
 @end

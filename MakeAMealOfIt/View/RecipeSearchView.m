@@ -13,9 +13,13 @@
 
 @interface RecipeSearchView () <UITextFieldDelegate> {}
 
+/**	A button allowing the user to execute the search.	*/
 @property (nonatomic, strong)	UIButton		*searchButton;
+/**	A boolean value indicating whether a search is currently loading.	*/
 @property (nonatomic, assign)	BOOL			searchLoading;
+/**	A text field allowing the user to specify a search phrase.	*/
 @property (nonatomic, strong)	UITextField		*searchPhraseField;
+/**	A dictionary to be used for auto layout.	*/
 @property (nonatomic, strong)	NSDictionary	*viewsDictionary;
 
 @end
@@ -27,7 +31,7 @@
 #pragma mark - Action & Selector Methods
 
 /**
- *	the user wants to execute the search
+ *	The user wants to execute the search.
  */
 - (void)searchButtonTapped
 {
@@ -53,7 +57,9 @@
 #pragma mark - Auto Layout Methods
 
 /**
- *	returns whether the receiver depends on the constraint-based layout system
+ *	Returns whether the receiver depends on the constraint-based layout system.
+ *
+ *	@return	YES if the view must be in a window using constraint-based layout to function properly, NO otherwise.
  */
 + (BOOL)requiresConstraintBasedLayout
 {
@@ -61,7 +67,7 @@
 }
 
 /**
- *	update constraints for the view
+ *	Update constraints for the view.
  */
 - (void)updateConstraints
 {

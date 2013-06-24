@@ -46,8 +46,7 @@
 - (void)showCentreViewController:(UIViewController *)centreViewController
 		 withRightViewController:(UIViewController *)rightViewController
 {
-	[self.mainViewController transitionCentreToViewController:centreViewController];
-	self.mainViewController.rightViewControllerClass		= rightViewController;
+	[self.mainViewController transitionCentreToViewController:centreViewController withNewRightViewController:rightViewController];
 }
 
 @end

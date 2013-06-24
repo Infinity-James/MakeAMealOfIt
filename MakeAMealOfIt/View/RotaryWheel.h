@@ -19,7 +19,7 @@
  *
  *	@param	newValue					The selected value in the wheel.
  */
-- (void)wheelDidChangeValue:(NSString *)newValue;
+- (void)wheelDidChangeValue:(NSUInteger)newValue;
 
 @end
 
