@@ -6,8 +6,10 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
+#import "AppDelegate.h"
 #import "ParameterPageViewController.h"
 #import "RecipeSearchParametersViewController.h"
+#import "YummlySearchResult.h"
 #import "YummlyMetadata.h"
 
 #pragma mark - Recipe Search Parameters VC Private Class Extension
@@ -49,6 +51,47 @@
 }
 
 #pragma mark - Convenience & Helper Methods
+
+/**
+ *	Adds a selected parameter to the global Yummly request.
+ *
+ *	@param	parameterIndex				The index of the parameter within the type array.
+ *	@param	parameterTypeIndex			The index in the optionsDictionary of the type of parameter.
+ *	@param	included					YES for included, and NO for excluded parameter.
+ */
+- (void)addParameterAtIndex:(NSUInteger)parameterIndex
+				ofTypeIndex:(NSUInteger)parameterTypeIndex
+				 toIncluded:(BOOL)included
+{
+	NSString *parameterType				= [self keysAsArray][parameterTypeIndex];
+	NSString *parameter					= self.optionsDictionary[parameterType][parameterIndex][kYummlyMetadataDescriptionKey];
+	if (!parameter)
+		parameter						= self.optionsDictionary[parameterType][parameterIndex][kYummlyMetadataShortDescriptionKey];
+	
+	if (included)
+	{
+		if ([parameterType isEqualToString:kYummlyMetadataAllergies])
+			[appDelegate.yummlyRequest addRequiredAllergy:parameter];
+		else if ([parameterType isEqualToString:kYummlyMetadataCourses])
+			[appDelegate.yummlyRequest addDesiredCourse:parameter];
+		else if ([parameterType isEqualToString:kYummlyMetadataCuisines])
+			[appDelegate.yummlyRequest addDesiredCuisine:parameter];
+		else if ([parameterType isEqualToString:kYummlyMetadataDiets])
+			[appDelegate.yummlyRequest addRequiredDiet:parameter];
+		else if ([parameterType isEqualToString:kYummlyMetadataHolidays])
+			[appDelegate.yummlyRequest addDesiredHoliday:parameter];
+	}
+	
+	else
+	{
+		if ([parameterType isEqualToString:kYummlyMetadataCourses])
+			[appDelegate.yummlyRequest addExcludedCourse:parameter];
+		else if ([parameterType isEqualToString:kYummlyMetadataCuisines])
+			[appDelegate.yummlyRequest addExcludedCuisine:parameter];
+		else if ([parameterType isEqualToString:kYummlyMetadataHolidays])
+			[appDelegate.yummlyRequest addExcludedHoliday:parameter];
+	}
+}
 
 /**
  *	Convenient way to get the keys of the options dictionary as an array.
@@ -95,8 +138,7 @@
 		   selectedParameterAtIndex:(NSUInteger)parameterIndex
 						   included:(BOOL)included
 {
-	NSString *choice					= self.optionsDictionary[[self keysAsArray][parameterPageVC.index]][parameterIndex];
-	NSLog(@"CHOICE: %@", choice);
+	[self addParameterAtIndex:parameterIndex ofTypeIndex:parameterPageVC.index toIncluded:included];
 }
 
 #pragma mark - Setter & Getter Methods

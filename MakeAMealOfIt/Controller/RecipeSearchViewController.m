@@ -151,13 +151,13 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 		{
 			[self.selectedIngredients addObjectsFromArray:addedSelections];
 			for (NSDictionary *ingredientDictionary in addedSelections)
-				[appDelegate.yummlyRequest addDesiredIngredient:ingredientDictionary[kYummlyMetadataSearchValueKey]];
+				[appDelegate.yummlyRequest addDesiredIngredient:ingredientDictionary[kYummlyMetadataDescriptionKey]];
 		}
 		if (removedSelections)
 		{
 			[self.selectedIngredients removeObjectsInArray:removedSelections];
 			for (NSDictionary *ingredientDictionary in removedSelections)
-				[appDelegate.yummlyRequest removeDesiredIngredient:ingredientDictionary[kYummlyMetadataSearchValueKey]];
+				[appDelegate.yummlyRequest removeDesiredIngredient:ingredientDictionary[kYummlyMetadataDescriptionKey]];
 		}
 		
 		//	reload the table view on the main thread

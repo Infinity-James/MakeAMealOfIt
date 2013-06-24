@@ -20,9 +20,9 @@ static NSString *const kCellIdentifier	= @"OptionsCellIdentifier";
 #pragma mark - Private Properties
 
 /**	A dictionary of excluded parameters iwht the parameters name and it's type.	*/
-@property (nonatomic, strong)	NSDictionary							*excludedParameters;
+@property (nonatomic, strong)	NSMutableDictionary						*excludedParameters;
 /**	A dictionary of included parameters iwht the parameters name and it's type.	*/
-@property (nonatomic, strong)	NSDictionary							*includedParameters;
+@property (nonatomic, strong)	NSMutableDictionary						*includedParameters;
 /**	This view controller represents parameters to choose from for recipe searches.	*/
 @property (nonatomic, strong)	RecipeSearchParametersViewController	*recipeParametersController;
 /**	This table view will be used to show the user the selected options.	*/
@@ -84,6 +84,32 @@ static NSString *const kCellIdentifier	= @"OptionsCellIdentifier";
 }
 
 #pragma mark - Setter & Getter Methods
+
+/**
+ *	A dictionary of excluded parameters iwht the parameters name and it's type.
+ *
+ *	@return	An initialised mutable dictionary to hold parameters that are to be excluded from the search.
+ */
+- (NSMutableDictionary *)excludedParameters
+{
+	if (!_excludedParameters)
+		_excludedParameters				= [[NSMutableDictionary alloc] init];
+	
+	return _excludedParameters;
+}
+
+/**
+ *	A dictionary of included parameters iwht the parameters name and it's type.
+ *
+ *	@return	An initialised mutable dictionary to hold parameters that are to be included in the search.
+ */
+- (NSMutableDictionary *)includedParameters
+{
+	if (!_includedParameters)
+		_includedParameters				= [[NSMutableDictionary alloc] init];
+	
+	return _includedParameters;
+}
 
 /**
  *	This view controller represents parameters to choose from for recipe searches.
