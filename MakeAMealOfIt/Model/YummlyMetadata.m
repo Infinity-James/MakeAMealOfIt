@@ -6,13 +6,24 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
+#import "YummlyAPI.h"
 #import "YummlyMetadata.h"
 
 static NSDictionary *metadata;
 
 #pragma mark - Constants & Static Variables
 
-static NSString *const kYummlyMetadataDictionary	= @"metadata";
+static NSString *const kYummlyMetadataDictionary		= @"metadata";
+
+#pragma mark - Constants & Static Variables: Yummly Metadata Result Keys
+
+NSString *const kYummlyMetadataDescriptionKey			= @"description";
+NSString *const kYummlyMetadataIDKey					= @"id";
+NSString *const kYummlyMetadataLongDescriptionKey		= @"longDescription";
+NSString *const kYummlyMetadataSearchValueKey			= @"searchValue";
+NSString *const kYummlyMetadataShortDescriptionKey		= @"shortDescription";
+NSString *const kYummlyMetadataTermKey					= @"term";
+NSString *const kYummlyMetadataTypeKey					= @"type";
 
 #pragma mark - Yummly Metadata Implementation
 

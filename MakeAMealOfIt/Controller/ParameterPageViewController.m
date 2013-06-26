@@ -9,7 +9,7 @@
 #import "IncludeExcludeControl.h"
 #import "ParameterPageViewController.h"
 #import "RotaryWheel.h"
-#import "YummlyAPI.h"
+#import "YummlyMetadata.h"
 
 #pragma mark - Parameters Page View Controller Private Class Extension
 
@@ -31,6 +31,21 @@
 #pragma mark - Parameters Page View Controller Implementation
 
 @implementation ParameterPageViewController {}
+
+#pragma mark - Animation
+
+/**
+ *
+ */
+- (void)animateSelectedLabel
+{
+	UIImageView *labelImageView				= [self.includeExcludeControl labelImageView];
+	[self.view addSubview:labelImageView];
+	[UIView animateWithDuration:0.5f animations:
+	^{
+		labelImageView.center				= CGPointMake(self.view.bounds.size.width * 2.0f, labelImageView.center.y);
+	}];
+}
 
 #pragma mark - Autolayout Methods
 
@@ -103,6 +118,8 @@
 - (void)excludeSelected
 {
 	[self.delegate parameterPageViewController:self selectedParameterAtIndex:self.highlightedOptionIndex included:NO];
+	[self animateSelectedLabel];
+	
 }
 
 /**
@@ -111,6 +128,7 @@
 - (void)includeSelected
 {
 	[self.delegate parameterPageViewController:self selectedParameterAtIndex:self.highlightedOptionIndex included:YES];
+	[self animateSelectedLabel];	
 }
 
 #pragma mark - RotaryProtocol Methods

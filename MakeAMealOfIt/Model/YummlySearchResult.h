@@ -10,16 +10,6 @@
 
 extern NSString *const kYummlyRequestResultsMetadataKey;
 
-#pragma mark - Constants & Static Variables: Yummly Metadata Result Keys
-
-extern NSString *const kYummlyMetadataDescriptionKey;
-extern NSString *const kYummlyMetadataIDKey;
-extern NSString *const kYummlyMetadataLongDescriptionKey;
-extern NSString *const kYummlyMetadataSearchValueKey;
-extern NSString *const kYummlyMetadataShortDescriptionKey;
-extern NSString *const kYummlyMetadataTermKey;
-extern NSString *const kYummlyMetadataTypeKey;
-
 #pragma mark - Constants & Static Variables: Yummly Metadata Request Keys
 
 extern NSString *const kYummlyMetadataAllergies;

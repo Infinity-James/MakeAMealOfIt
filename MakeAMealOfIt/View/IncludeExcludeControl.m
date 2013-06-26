@@ -254,4 +254,25 @@
 	return CGRectContainsPoint(largerFrame, point) ? self : nil;
 }
 
+#pragma mark - Utility Methods
+
+/**
+ *	Creates and returns an image view of the current look of the option label.
+ *
+ *	@return	An image view with a randered snapshot of the option label as the image and is centred correctly.
+ */
+- (UIImageView *)labelImageView
+{
+	UIGraphicsBeginImageContext(self.optionLabel.bounds.size);
+	[self.optionLabel.layer renderInContext:UIGraphicsGetCurrentContext()];
+	UIImage *labelImage					= UIGraphicsGetImageFromCurrentImageContext();
+	UIGraphicsEndImageContext();
+	
+	UIImageView *labelImageView			= [[UIImageView alloc] initWithImage:labelImage];
+	CGPoint superCentre					= [self convertPoint:self.optionLabel.center toView:self.superview];
+	labelImageView.center				= superCentre;
+	
+	return labelImageView;
+}
+
 @end

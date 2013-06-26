@@ -19,9 +19,9 @@ static id<Theme> _theme					= nil;
 #pragma mark - Setter & Getter Methods
 
 /**
- *	accepts a theme and applies it
+ *	Applies a theme as the new standard theme across the application.
  *
- *	@param	theme						theme to apply
+ *	@param	theme						Theme to apply.
  */
 + (void)setSharedTheme:(id<Theme>)theme
 {
@@ -32,7 +32,9 @@ static id<Theme> _theme					= nil;
 #pragma mark - Singleton Methods
 
 /**
- *	returns the theme
+ *	Returns the theme.
+ *
+ *	@return	The standard theme for this application.
  */
 + (id<Theme>)sharedTheme
 {
@@ -42,7 +44,7 @@ static id<Theme> _theme					= nil;
 #pragma mark - Theme General Customisation Methods
 
 /**
- *	applies the theme
+ *	Applies the theme to as many types of views as possible.
  */
 + (void)applyTheme
 {
@@ -88,10 +90,10 @@ static id<Theme> _theme					= nil;
 #pragma mark - Theme Specific Customisation Methods
 
 /**
- *	customises a specific bar button item
+ *	Customises a specific bar button item.
  *
- *	@param	barButton					the bar button item to customise
- *	@param	theme						the theme to use to customise the bar button item 
+ *	@param	barButton					The bar button item to customise.
+ *	@param	theme						The theme to use to customise the bar button item .
  */
 + (void)customiseBarButtonItem:(UIBarButtonItem *)barButton withTheme:(id<Theme>)theme
 {
@@ -136,10 +138,10 @@ static id<Theme> _theme					= nil;
 }
 
 /**
- *	customises a uibutton with the set theme
+ *	Customises a uibutton with the set theme.
  *
- *	@param	button						the uibutton to customise
- *	@param	theme						the theme to use to customise the button 
+ *	@param	button						The UIButton to customise.
+ *	@param	theme						The theme to use to customise the button .
  */
 + (void)customiseButton:(UIButton *)button withTheme:(id<Theme>)theme
 {
@@ -161,10 +163,10 @@ static id<Theme> _theme					= nil;
 }
 
 /**
- *	customises a specific uilabel
+ *	Customises a specific UILabel.
  *
- *	@param	label						the label to customise
- *	@param	theme						the theme to use to customise the label
+ *	@param	label						The label to customise.
+ *	@param	theme						The theme to use to customise the label.
  */
 + (void)customiseLabel:(UILabel *)label withTheme:(id<Theme>)theme
 {
@@ -183,10 +185,10 @@ static id<Theme> _theme					= nil;
 }
 
 /**
- *	customises a specific navigation bar
+ *	Customises a specific navigation bar.
  *
- *	@param	navigationBar				the navigation bar to customise
- *	@param	theme						the theme to use to customise the navigation bar 
+ *	@param	navigationBar				The navigation bar to customise.
+ *	@param	theme						The theme to use to customise the navigation bar.
  */
 + (void)customiseNavigationBar:(UINavigationBar *)navigationBar withTheme:(id<Theme>)theme
 {
@@ -202,10 +204,10 @@ static id<Theme> _theme					= nil;
 }
 
 /**
- *	customises a uipagecontrol
+ *	Customises a UIPageControl.
  *
- *	@param	pageControl					the page control to customise
- *	@param	theme						the theme to use to customise the page control
+ *	@param	pageControl					The page control to customise.
+ *	@param	theme						The theme to use to customise the page control.
  */
 + (void)customisePageControl:(UIPageControl *)pageControl withTheme:(id<Theme>)theme
 {
@@ -219,10 +221,10 @@ static id<Theme> _theme					= nil;
 }
 
 /**
- *	customises a progress view
+ *	Customises a UIProgressView.
  *
- *	@param	progressBar					the progress bar to customise
- *	@param	theme						the theme to use to customise the progress bar
+ *	@param	progressBar					The progress bar to customise.
+ *	@param	theme						The theme to use to customise the progress bar.
  */
 + (void)customiseProgressBar:(UIProgressView *)progressBar withTheme:(id<Theme>)theme
 {
@@ -240,10 +242,10 @@ static id<Theme> _theme					= nil;
 }
 
 /**
- *	customises a uisearchbar
+ *	Customises a UISearchBar.
  *
- *	@param	searchBar					the uistepper to customise
- *	@param	theme						the theme to use to customise the search bar
+ *	@param	searchBar					The search bar to customise.
+ *	@param	theme						the theme to use to customise the search bar.
  */
 + (void)customiseSearchBar:(UISearchBar *)searchBar withTheme:(id<Theme>)theme
 {
@@ -252,6 +254,7 @@ static id<Theme> _theme					= nil;
 		theme							= self.sharedTheme;
 	
 	//	customise the whole of the search bar
+	searchBar.backgroundColor			= [theme backgroundColourForSearchBar];
 	searchBar.backgroundImage			= [theme backgroundImageForSearchBar];
 	[searchBar setSearchFieldBackgroundImage:[theme backgroundImageForSearchFieldForState:UIControlStateNormal] forState:UIControlStateNormal];
 	[searchBar setImage:[theme imageForSearchIconForState:UIControlStateNormal] forSearchBarIcon:UISearchBarIconSearch state:UIControlStateNormal];
@@ -259,10 +262,10 @@ static id<Theme> _theme					= nil;
 }
 
 /**
- *	customises a uistepper
+ *	Customises a UIStepper.
  *
- *	@param	stepper						the uistepper to customise
- *	@param	theme						the theme to use to customise the stepper
+ *	@param	stepper						The stepper control to customise.
+ *	@param	theme						The theme to use to customise the stepper.
  */
 + (void)customiseStepper:(UIStepper *)stepper withTheme:(id<Theme>)theme
 {
@@ -286,10 +289,10 @@ static id<Theme> _theme					= nil;
 }
 
 /**
- *	customises a uiswitch
+ *	Customises a UISwitch.
  *
- *	@param	switchControl				the uiswitch to customise
- *	@param	theme						the theme to use to customise the switch
+ *	@param	switchControl				The switch control to customise.
+ *	@param	theme						The theme to use to customise the switch.
  */
 + (void)customiseSwitch:(UISwitch *)switchControl withTheme:(id<Theme>)theme
 {
@@ -306,10 +309,10 @@ static id<Theme> _theme					= nil;
 }
 
 /**
- *	customises a uitabbar
+ *	Customises a UITabBar.
  *
- *	@param	tabBar						the tab bar to customise
- *	@param	theme						the theme to use to customise the tab bar
+ *	@param	tabBar						The tab bar to customise.
+ *	@param	theme						The theme to use to customise the tab bar.
  */
 + (void)customiseTabBar:(UITabBar *)tabBar withTheme:(id<Theme>)theme
 {
@@ -323,10 +326,10 @@ static id<Theme> _theme					= nil;
 }
 
 /**
- *	customises a uitabbaritem
+ *	Customises a UITabBarItem.
  *
- *	@param	tabBarItem					the tab bar item to customise
- *	@param	theme						the theme to use to customise the tab bar item
+ *	@param	tabBarItem					The tab bar item to customise.
+ *	@param	theme						The theme to use to customise the tab bar item.
  */
 + (void)customiseTabBarItem:(UITabBarItem *)tabBarItem withTheme:(id<Theme>)theme
 {
@@ -338,10 +341,10 @@ static id<Theme> _theme					= nil;
 }
 
 /**
- *	customises a uitableviewcell
+ *	Customises a UITableViewCell.
  *
- *	@param	switchControl				the table view cell to customise
- *	@param	theme						the theme to use to customise the table view cell
+ *	@param	switchControl				The table view cell to customise.
+ *	@param	theme						The theme to use to customise the table view cell.
  */
 + (void)customiseTableViewCell:(UITableViewCell *)tableViewCell withTheme:(id<Theme>)theme
 {
@@ -364,10 +367,10 @@ static id<Theme> _theme					= nil;
 }
 
 /**
- *	customise a uitextfield
+ *	Customises a UITextField.
  *
- *	@param	textField					the uitextfield to customise
- *	@param	theme						the theme to use to customise the text field
+ *	@param	textField					The text field to customise.
+ *	@param	theme						The theme to use to customise the text field.
  */
 + (void)customiseTextField:(UITextField *)textField withTheme:(id<Theme>)theme
 {
@@ -384,10 +387,10 @@ static id<Theme> _theme					= nil;
 }
 
 /**
- *	customises a uitoolbar
+ *	Customises a UIToolbar.
  *
- *	@param	toolbar						the uitoolbar to customise
- *	@param	theme						the theme to use to customise the toolbar
+ *	@param	toolbar						The toolbar to customise.
+ *	@param	theme						The theme to use to customise the toolbar.
  */
 + (void)customiseToolbar:(UIToolbar *)toolbar withTheme:(id<Theme>)theme
 {
@@ -401,10 +404,10 @@ static id<Theme> _theme					= nil;
 }
 
 /**
- *	customise a specific view
+ *	Customises a specific UIView.
  *
- *	@param	view						the view to customise
- *	@param	theme						the theme to use to customise the view
+ *	@param	view						The view to customise.
+ *	@param	theme						The theme to use to customise the view.
  */
 + (void)customiseView:(UIView *)view withTheme:(id<Theme>)theme
 {

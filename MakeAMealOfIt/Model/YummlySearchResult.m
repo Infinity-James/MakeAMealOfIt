@@ -12,16 +12,6 @@
 
 NSString *const kYummlyRequestResultsMetadataKey		= @"metadata";
 
-#pragma mark - Constants & Static Variables: Yummly Metadata Result Keys
-
-NSString *const kYummlyMetadataDescriptionKey			= @"description";
-NSString *const kYummlyMetadataIDKey					= @"id";
-NSString *const kYummlyMetadataLongDescriptionKey		= @"longDescription";
-NSString *const kYummlyMetadataSearchValueKey			= @"searchValue";
-NSString *const kYummlyMetadataShortDescriptionKey		= @"shortDescription";
-NSString *const kYummlyMetadataTermKey					= @"term";
-NSString *const kYummlyMetadataTypeKey					= @"type";
-
 #pragma mark - Constants & Static Variables: Yummly Metadata Request Keys
 
 NSString *const kYummlyMetadataAllergies				= @"allergy";

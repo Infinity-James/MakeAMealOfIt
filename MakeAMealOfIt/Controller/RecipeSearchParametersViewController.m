@@ -53,47 +53,6 @@
 #pragma mark - Convenience & Helper Methods
 
 /**
- *	Adds a selected parameter to the global Yummly request.
- *
- *	@param	parameterIndex				The index of the parameter within the type array.
- *	@param	parameterTypeIndex			The index in the optionsDictionary of the type of parameter.
- *	@param	included					YES for included, and NO for excluded parameter.
- */
-- (void)addParameterAtIndex:(NSUInteger)parameterIndex
-				ofTypeIndex:(NSUInteger)parameterTypeIndex
-				 toIncluded:(BOOL)included
-{
-	NSString *parameterType				= [self keysAsArray][parameterTypeIndex];
-	NSString *parameter					= self.optionsDictionary[parameterType][parameterIndex][kYummlyMetadataDescriptionKey];
-	if (!parameter)
-		parameter						= self.optionsDictionary[parameterType][parameterIndex][kYummlyMetadataShortDescriptionKey];
-	
-	if (included)
-	{
-		if ([parameterType isEqualToString:kYummlyMetadataAllergies])
-			[appDelegate.yummlyRequest addRequiredAllergy:parameter];
-		else if ([parameterType isEqualToString:kYummlyMetadataCourses])
-			[appDelegate.yummlyRequest addDesiredCourse:parameter];
-		else if ([parameterType isEqualToString:kYummlyMetadataCuisines])
-			[appDelegate.yummlyRequest addDesiredCuisine:parameter];
-		else if ([parameterType isEqualToString:kYummlyMetadataDiets])
-			[appDelegate.yummlyRequest addRequiredDiet:parameter];
-		else if ([parameterType isEqualToString:kYummlyMetadataHolidays])
-			[appDelegate.yummlyRequest addDesiredHoliday:parameter];
-	}
-	
-	else
-	{
-		if ([parameterType isEqualToString:kYummlyMetadataCourses])
-			[appDelegate.yummlyRequest addExcludedCourse:parameter];
-		else if ([parameterType isEqualToString:kYummlyMetadataCuisines])
-			[appDelegate.yummlyRequest addExcludedCuisine:parameter];
-		else if ([parameterType isEqualToString:kYummlyMetadataHolidays])
-			[appDelegate.yummlyRequest addExcludedHoliday:parameter];
-	}
-}
-
-/**
  *	Convenient way to get the keys of the options dictionary as an array.
  *
  *	@return	A sorted array of the keys in the options dictionary.
@@ -104,6 +63,23 @@
 	{
 		return [keyA compare:keyB];
 	}];
+}
+
+/**
+ *	Returns the description of a piece of metadata of a given type at a given index.
+ *
+ *	@param	index						The index of the metadata or parameter in an parameter type array.
+ *	@param	parameterType				The type of metadata that the index pertains to.
+ *
+ *	@return	A description of the piece of metadata.
+ */
+- (NSString *)parameterAtIndex:(NSUInteger)index ofType:(NSString *)parameterType
+{
+	NSString *parameter					= self.optionsDictionary[parameterType][index][kYummlyMetadataDescriptionKey];
+	if (!parameter)
+		parameter						= self.optionsDictionary[parameterType][index][kYummlyMetadataShortDescriptionKey];
+	
+	return parameter;
 }
 
 #pragma mark - Initialisation
@@ -138,7 +114,15 @@
 		   selectedParameterAtIndex:(NSUInteger)parameterIndex
 						   included:(BOOL)included
 {
-	[self addParameterAtIndex:parameterIndex ofTypeIndex:parameterPageVC.index toIncluded:included];
+	NSString *metadataType				= [self keysAsArray][parameterPageVC.index];
+	NSString *metadataDescription		= [self parameterAtIndex:parameterIndex ofType:metadataType];
+	
+	[self addParameter:metadataDescription ofType:metadataType toIncluded:included];
+	
+	if (included)
+		[self.delegate metadataIncluded:metadataDescription ofType:metadataType];
+	else
+		[self.delegate metadataExcluded:metadataDescription ofType:metadataType];
 }
 
 #pragma mark - Setter & Getter Methods
@@ -192,6 +176,25 @@
 		[_pageViewController didMoveToParentViewController:self];
 	}
 	return _pageViewController;
+}
+
+/**
+ *	The setter for the delegate subscribing to the SelectedSearchParametersDelegate protocol.
+ *
+ *	@param		delegate				The object that wants to be notified when certain pieces of metadata are included / excluded from search.
+ */	
+- (void)setDelegate:(id<SelectedSearchParametersDelegate>)delegate
+{
+	_delegate							= delegate;
+	
+	//	give the delegate a block to call when the user wants to remove a piece of metadata from the search
+	__weak RecipeSearchParametersViewController *weakSelf	= self;
+	
+	if ([_delegate respondsToSelector:@selector(blockToCallToRemoveMetadata:)])
+		[_delegate blockToCallToRemoveMetadata:^(NSDictionary *metadataDictionary, NSString *metadataType, BOOL included)
+		{
+			[weakSelf removeMetadataDictionary:metadataDictionary ofType:metadataType fromIncluded:included];
+		}];
 }
 
 /**
@@ -306,6 +309,58 @@
 {
 	[super viewWillLayoutSubviews];
 	[self.view setNeedsUpdateConstraints];
+}
+
+#pragma mark - Yummly Request Management
+
+/**
+ *	Adds a selected parameter to the global Yummly request.
+ *
+ *	@param	parameter					The name of the parameter within the type array.
+ *	@param	parameterType				The type of metadata.
+ *	@param	included					YES for included, and NO for excluded parameter.
+ */
+- (void)addParameter:(NSString *)parameter
+			  ofType:(NSString *)parameterType
+		  toIncluded:(BOOL)included
+{	
+	if (included)
+	{
+		if ([parameterType isEqualToString:kYummlyMetadataAllergies])
+			[appDelegate.yummlyRequest addRequiredAllergy:parameter];
+		else if ([parameterType isEqualToString:kYummlyMetadataCourses])
+			[appDelegate.yummlyRequest addDesiredCourse:parameter];
+		else if ([parameterType isEqualToString:kYummlyMetadataCuisines])
+			[appDelegate.yummlyRequest addDesiredCuisine:parameter];
+		else if ([parameterType isEqualToString:kYummlyMetadataDiets])
+			[appDelegate.yummlyRequest addRequiredDiet:parameter];
+		else if ([parameterType isEqualToString:kYummlyMetadataHolidays])
+			[appDelegate.yummlyRequest addDesiredHoliday:parameter];
+	}
+	
+	else
+	{
+		if ([parameterType isEqualToString:kYummlyMetadataCourses])
+			[appDelegate.yummlyRequest addExcludedCourse:parameter];
+		else if ([parameterType isEqualToString:kYummlyMetadataCuisines])
+			[appDelegate.yummlyRequest addExcludedCuisine:parameter];
+		else if ([parameterType isEqualToString:kYummlyMetadataHolidays])
+			[appDelegate.yummlyRequest addExcludedHoliday:parameter];
+	}
+}
+
+/**
+ *	Called to remove a piece of metadata that has been specified from the Yummly Request.
+ *
+ *	@param	metadata					The piece of metadata being included / excluded in recipe search results.
+ *	@param	metadataType				The general type of this piece of metadata.
+ *	@param	included					YES if the metadata is currently being included in recipe search results, or excluded.
+ */
+- (void)removeMetadataDictionary:(NSDictionary *)metadata
+						  ofType:(NSString *)metadataType
+					fromIncluded:(BOOL)included
+{
+	
 }
 
 @end

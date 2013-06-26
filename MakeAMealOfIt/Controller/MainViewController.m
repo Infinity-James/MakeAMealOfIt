@@ -117,6 +117,8 @@ static NSString *const kRightVCKey		= @"Right";
 {
 	//	stop any animations that may already be occuring in this view
 	[gesture.view.layer removeAllAnimations];
+	
+	[self.centreViewController resignFirstResponder];
 
 	//	get the current velocity of the gesture
 	CGPoint velocity					= [gesture velocityInView:gesture.view];
@@ -366,6 +368,11 @@ static NSString *const kRightVCKey		= @"Right";
 	//	if the velocity is right we react accordingly and same for left
 	if (velocity.x > 0)
 	{
+		if (!self.leftViewControllerClass && !self.showingRightPanel)
+		{
+			[self movePanelToOriginalPosition];
+			return;
+		}
 	}
 	else
 	{
@@ -380,15 +387,17 @@ static NSString *const kRightVCKey		= @"Right";
 	self.showPanel						= abs(panGesture.view.center.x - self.centreViewController.view.bounds.size.width / 2) >
 												(self.centreViewController.view.bounds.size.width / 2);
 	
+	CGPoint dragTranslation				= CGPointMake(panGesture.view.layer.position.x + translation.x, panGesture.view.layer.position.y);
+	
+	
 	//	allow dragging only along the x-axis
-	panGesture.view.layer.position		= CGPointMake(panGesture.view.layer.position.x + translation.x, panGesture.view.layer.position.y);
+	panGesture.view.layer.position		= dragTranslation;
 	[panGesture setTranslation:CGPointZero inView:panGesture.view];
 	
-	//	check for change in direction
+	//	if velocity's direction is constant
 	//	if ((velocity.x * self.preVelocity.x) + (velocity.y * self.preVelocity.y) > 0);
-	//	else;
-	
-	self.preVelocity					= velocity;
+	//	otherwise if the direction has changed
+	//	else ;
 }
 
 /**
@@ -400,8 +409,8 @@ static NSString *const kRightVCKey		= @"Right";
 - (void)panGestureEnded:(UIPanGestureRecognizer *)panGesture withVelocity:(CGPoint)velocity
 {
 	//	if the velocity is right we react accordingly and same for left
-	if (velocity.x > 0);
-	else;
+	//if (velocity.x > 0);
+	//else;
 	
 	if (!self.showPanel)
 		[self movePanelToOriginalPosition];

@@ -273,6 +273,19 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 				@"toolbar"			: self.toolbar};
 }
 
+#pragma mark - UIResponder Methods
+
+/**
+ *	Notifies the receiver that it has been asked to relinquish its status as first responder in its window.
+ *
+ *	@return	YES - resigning first responder status or NO, refusing to relinquish first responder status.
+ */
+- (BOOL)resignFirstResponder
+{
+	[self.recipeSearchView resignFirstResponder];
+	return [super resignFirstResponder];
+}
+
 #pragma mark - UITableViewDataSource Methods
 
 /**

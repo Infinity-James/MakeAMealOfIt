@@ -22,16 +22,29 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 
 #pragma mark - Private Properties
 
+/**	*/
 @property (nonatomic, strong)	NSMutableArray				*filteredIngredients;
+/**	*/
 @property (nonatomic, strong)	NSArray						*ingredientsArray;
+/**	*/
 @property (nonatomic, strong)	NSArray						*ingredientsMetadata;
+/**	*/
 @property (nonatomic, strong)	NSMutableDictionary			*ingredientsForTableView;
+/**	A comparator block that sorts letter before numbers and punctuation.	*/
+@property (nonatomic, assign)	NSComparator				prioritiseLettersComparator;
+/**	This search bar will be used to search the ingredients table view.	*/
 @property (nonatomic, strong)	UISearchBar					*searchBar;
+/**	The constraints used to set the search bar on top of the table view.	*/
 @property (nonatomic, strong)	NSArray						*searchBarConstraints;
+/**	*/
 @property (nonatomic, strong)	UISearchDisplayController	*searchDisplay;
+/**	*/
 @property (nonatomic, strong)	NSArray						*sectionTitles;
+/**	*/
 @property (nonatomic, strong)	NSMutableArray				*selectedIndices;
+/**	*/
 @property (nonatomic, strong)	UITableView					*tableView;
+/**	*/
 @property (nonatomic, strong)	NSDictionary				*viewsDictionary;
 
 @end
@@ -43,10 +56,15 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 #pragma mark - Autolayout Methods
 
 /**
- *	adds the constraints for the table view and the toolbar
+ *	Called when the view controller’s view needs to update its constraints.
  */
-- (void)addConstraintsForTableView
+- (void)updateViewConstraints
 {
+	[super updateViewConstraints];
+	
+	//	remove all constraints
+	[self.view removeConstraints:self.view.constraints];
+	
 	NSArray *constraints;
 	NSLayoutConstraint *constraint;
 	
@@ -61,26 +79,15 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 	[self.view addConstraints:self.searchBarConstraints];
 }
 
-/**
- *	called when the view controller’s view needs to update its constraints
- */
-- (void)updateViewConstraints
-{
-	[super updateViewConstraints];
-	
-	//	remove all constraints
-	[self.view removeConstraints:self.view.constraints];
-	
-	[self addConstraintsForTableView];
-}
-
 #pragma mark - Convenience & Helper Methods
 
 /**
- *	returns an index path for a specified ingredient dictionary
+ *	Returns an index path for a specified ingredient dictionary.
  *
- *	@param	ingredientDictionary		the ingredient dictionary to find the index path for in a table view
- *	@param	tableView					the table view we want the index path to refer to
+ *	@param	ingredientDictionary		The ingredient dictionary to find the index path for in a table view.
+ *	@param	tableView					The table view we want the index path to refer to.
+ *
+ *	@return	An NSIndexPath with the row and section for the passed in ingredientDictionary.
  */
 - (NSIndexPath *)indexPathForIngredientDictionary:(NSDictionary *)ingredientDictionary
 									  inTableView:(UITableView *)tableView
@@ -104,10 +111,12 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 }
 
 /**
- *	returns an ingredient dictionary for an index path in a table view
+ *	Returns an ingredient dictionary for an index path in a table view.
  *
- *	@param	indexPath					the index path of the item in the table view
- *	@param	tableView					the table view that the index path refers to
+ *	@param	indexPath					The index path of the item in the table view.
+ *	@param	tableView					The table view that the index path refers to.
+ *
+ *	@return	An NSDictionary with the details of the ingredient at the passed in index path.
  */
 - (NSDictionary *)ingredientDictionaryForIndexPath:(NSIndexPath *)indexPath
 									   inTableView:(UITableView *)tableView
@@ -126,10 +135,10 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 }
 
 /**
- *	filters the contents of the table view according to the search of the user
+ *	Filters the contents of the table view according to the search of the user.
  *
- *	@param	searchTexthttp://upload.wikimedia.org/wikipedia/commons/1/18/Yummly_logo.png
- *	@param	scope
+ *	@param	searchText					The search phrase.
+ *	@param	scope						The scope under which to use the search phrase.
  */
 - (void)filterContentForSearchText:(NSString *)searchText inScope:(NSString *)scope
 {
@@ -142,7 +151,7 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 }
 
 /**
- *	sets the the search display controller's table view properties
+ *	Sets the the search display controller's table view properties.
  */
 - (void)sortOutSearchDisplayControllerTableView
 {
@@ -155,7 +164,7 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 #pragma mark - Initialisation
 
 /**
- *	asynchronously gets the ingredient dictionaries and then reloads the table view with them
+ *	Asynchronously gets the ingredient dictionaries and then reloads the table view with them.
  */
 - (void)getIngredientsDictionaries
 {
@@ -168,7 +177,7 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 }
 
 /**
- *	this will be responsible for setting up the sections and the index titles for the table view
+ *	This will be responsible for setting up the sections and the index titles for the table view.
  */
 - (void)setupTableViewIndex
 {	
@@ -283,7 +292,39 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 }
 
 /**
- *	this search bar will be used to search the ingredients table view
+ *	The getter for the comparator to use when sorting things for the table view.
+ *
+ *	@return	A comparator block that sorts letter before numbers and punctuation.
+ */
+- (NSComparator)prioritiseLettersComparator
+{
+	if (!_prioritiseLettersComparator)
+	{
+		_prioritiseLettersComparator	= ^NSComparisonResult(NSString *stringA, NSString *stringB)
+		{
+			//	gets whether either first letter is a number
+			BOOL isNumberA				= [[NSCharacterSet decimalDigitCharacterSet] characterIsMember:[stringA characterAtIndex:0]];
+			BOOL isNumberB				= [[NSCharacterSet decimalDigitCharacterSet] characterIsMember:[stringB characterAtIndex:0]];
+			
+			//	we sort the letter over the number
+			if (!isNumberA && isNumberB)
+				return NSOrderedAscending;
+			
+			else if (isNumberA && !isNumberB)
+				return NSOrderedDescending;
+			
+			//	if both or neither are numbers we sort normally
+			return [stringA compare:stringB options:NSDiacriticInsensitiveSearch|NSCaseInsensitiveSearch];
+		};
+	}
+	
+	return _prioritiseLettersComparator;
+}
+
+/**
+ *	This search bar will be used to search the ingredients table view.
+ *
+ *	@return	A fully initialised and customised seach bar.
  */
 - (UISearchBar *)searchBar
 {
@@ -322,7 +363,7 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
  */
 - (NSArray *)sectionTitles
 {
-	return [self.ingredientsForTableView.allKeys sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+	return [self.ingredientsForTableView.allKeys sortedArrayUsingComparator:self.prioritiseLettersComparator];
 }
 
 /**
@@ -343,7 +384,7 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
  */
 - (void)setIngredientsArray:(NSArray *)ingredientsArray
 {
-	_ingredientsArray					= [ingredientsArray sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+	_ingredientsArray					= [ingredientsArray sortedArrayUsingComparator:self.prioritiseLettersComparator];
 }
 
 /**
@@ -526,6 +567,8 @@ shouldReloadTableForSearchString:(NSString *)searchString
 	if (tableView == self.searchDisplay.searchResultsTableView)
 		return self.filteredIngredients.count;
 	
+	
+	
 	return ((NSArray *)self.ingredientsForTableView[self.sectionTitles[section]]).count;
 }
 
@@ -586,10 +629,10 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 }
 
 /**
- *	define the height of the cell
+ *	Asks the delegate for the height to use for a row in a specified location.
  *
- *	@param	tableView					the view which owns the cell for which we need to define the height
- *	@param	indexPath					index path of the cell
+ *	@param	tableView					The table-view object requesting this information.
+ *	@param	indexPath					An index path that locates a row in tableView.
  */
 - (CGFloat)	  tableView:(UITableView *)tableView
 heightForRowAtIndexPath:(NSIndexPath *)indexPath

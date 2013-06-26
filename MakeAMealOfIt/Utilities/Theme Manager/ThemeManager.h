@@ -60,6 +60,12 @@
 
 #pragma mark - Search Bar Appearance
 
+/**
+ *	Called to get the colour for a search bar implementing this theme.
+ *
+ *	@return	A colour for the background of a search bar.
+ */
+- (UIColor *)backgroundColourForSearchBar;
 - (UIImage *)backgroundImageForSearchBar;
 - (UIImage *)backgroundImageForSearchFieldForState:(UIControlState)controlState;
 - (UIImage *)imageForSearchIconForState:(UIControlState)controlState;
@@ -124,32 +130,141 @@
 
 #pragma mark - Class Public Methods
 
+/**
+ *	Applies the theme to as many types of views as possible.
+ */
 + (void)applyTheme;
+/**
+ *	Customises a specific bar button item.
+ *
+ *	@param	barButton					The bar button item to customise.
+ *	@param	theme						The theme to use to customise the bar button item .
+ */
 + (void)customiseBarButtonItem:(UIBarButtonItem *)barButton
 					 withTheme:(id<Theme>)theme;
+/**
+ *	Customises a uibutton with the set theme.
+ *
+ *	@param	button						The UIButton to customise.
+ *	@param	theme						The theme to use to customise the button .
+ */
 + (void)customiseButton:(UIButton *)button
 			  withTheme:(id<Theme>)theme;
+/**
+ *	Customises a specific UILabel.
+ *
+ *	@param	label						The label to customise.
+ *	@param	theme						The theme to use to customise the label.
+ */
 + (void)customiseLabel:(UILabel *)label
 			 withTheme:(id<Theme>)theme;
+/**
+ *	Customises a specific navigation bar.
+ *
+ *	@param	navigationBar				The navigation bar to customise.
+ *	@param	theme						The theme to use to customise the navigation bar.
+ */
 + (void)customiseNavigationBar:(UINavigationBar *)navigationBar
 					 withTheme:(id<Theme>)theme;
+/**
+ *	Customises a UIPageControl.
+ *
+ *	@param	pageControl					The page control to customise.
+ *	@param	theme						The theme to use to customise the page control.
+ */
 + (void)customisePageControl:(UIPageControl *)pageControl
 				   withTheme:(id<Theme>)theme;
+/**
+ *	Customises a UIProgressView.
+ *
+ *	@param	progressBar					The progress bar to customise.
+ *	@param	theme						The theme to use to customise the progress bar.
+ */
 + (void)customiseProgressBar:(UIProgressView *)progressBar
 				   withTheme:(id<Theme>)theme;
+/**
+ *	Customises a UISearchBar.
+ *
+ *	@param	searchBar					The search bar to customise.
+ *	@param	theme						the theme to use to customise the search bar.
+ */
 + (void)customiseSearchBar:(UISearchBar *)searchBar
 				 withTheme:(id<Theme>)theme;
+/**
+ *	Customises a UIStepper.
+ *
+ *	@param	stepper						The stepper control to customise.
+ *	@param	theme						The theme to use to customise the stepper.
+ */
 + (void)customiseStepper:(UIStepper *)stepper
 			   withTheme:(id<Theme>)theme;
+/**
+ *	Customises a UISwitch.
+ *
+ *	@param	switchControl				The switch control to customise.
+ *	@param	theme						The theme to use to customise the switch.
+ */
++ (void)customiseSwitch:(UISwitch *)switchControl
+			  withTheme:(id<Theme>)theme;
+/**
+ *	Customises a UITabBar.
+ *
+ *	@param	tabBar						The tab bar to customise.
+ *	@param	theme						The theme to use to customise the tab bar.
+ */
++ (void)customiseTabBar:(UITabBar *)tabBar
+			  withTheme:(id<Theme>)theme;
+/**
+ *	Customises a UITabBarItem.
+ *
+ *	@param	tabBarItem					The tab bar item to customise.
+ *	@param	theme						The theme to use to customise the tab bar item.
+ */
++ (void)customiseTabBarItem:(UITabBarItem *)tabBarItem
+				  withTheme:(id<Theme>)theme;
+/**
+ *	Customises a UITableViewCell.
+ *
+ *	@param	switchControl				The table view cell to customise.
+ *	@param	theme						The theme to use to customise the table view cell.
+ */
 + (void)customiseTableViewCell:(UITableViewCell *)tableViewCell
 					 withTheme:(id<Theme>)theme;
+/**
+ *	Customises a UITextField.
+ *
+ *	@param	textField					The text field to customise.
+ *	@param	theme						The theme to use to customise the text field.
+ */
 + (void)customiseTextField:(UITextField *)textField
 				 withTheme:(id<Theme>)theme;
+/**
+ *	Customises a UIToolbar.
+ *
+ *	@param	toolbar						The toolbar to customise.
+ *	@param	theme						The theme to use to customise the toolbar.
+ */
 + (void)customiseToolbar:(UIToolbar *)toolbar
 			   withTheme:(id<Theme>)theme;
+/**
+ *	Customises a specific UIView.
+ *
+ *	@param	view						The view to customise.
+ *	@param	theme						The theme to use to customise the view.
+ */
 + (void)customiseView:(UIView *)view
 			withTheme:(id<Theme>)theme;
+/**
+ *	Applies a theme as the new standard theme across the application.
+ *
+ *	@param	theme						Theme to apply.
+ */
 + (void)setSharedTheme:(id<Theme>)theme;
+/**
+ *	Returns the theme.
+ *
+ *	@return	The standard theme for this application.
+ */
 + (id<Theme>)sharedTheme;
 
 @end

@@ -43,7 +43,7 @@
 	shadow.shadowOffset					= CGSizeMake(0.0f, 1.0f);
 	
 	return @{	NSFontAttributeName				: [UIFont fontWithName:@"AvenirNext-Regular" size:16.0f],
-				NSForegroundColorAttributeName	: [UIColor whiteColor],
+				NSForegroundColorAttributeName	: kYummlyColourMain,
 				NSShadowAttributeName			: shadow};
 }
 
@@ -266,6 +266,16 @@
 #pragma mark - Theme Methods: Search Bar Appearance
 
 /**
+ *	Called to get the colour for a search bar implementing this theme.
+ *
+ *	@return	A colour for the background of a search bar.
+ */
+- (UIColor *)backgroundColourForSearchBar
+{
+	return [UIColor grayColor];
+}
+
+/**
  *	returns the background image for the search bar
  */
 - (UIImage *)backgroundImageForSearchBar
@@ -294,7 +304,7 @@
  */
 - (UIImage *)imageForSearchIconForState:(UIControlState)controlState
 {
-	return [UIImage imageNamed:@"searchbar_icon_normal_yummly"];
+	return [UIImage imageNamed:@"searchbar_icon_default_search"];
 }
 
 /**

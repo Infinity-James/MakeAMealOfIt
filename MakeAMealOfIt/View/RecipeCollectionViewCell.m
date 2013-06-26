@@ -25,7 +25,9 @@
 #pragma mark - Auto Layout Methods
 
 /**
- *	returns whether the receiver depends on the constraint-based layout system
+ *	Returns whether the receiver depends on the constraint-based layout system.
+ *
+ *	@return	YES if the view must be in a window using constraint-based layout to function properly, NO otherwise.
  */
 + (BOOL)requiresConstraintBasedLayout
 {
@@ -33,7 +35,7 @@
 }
 
 /**
- *	update constraints for the view
+ *	Update constraints for the view.
  */
 - (void)updateConstraints
 {

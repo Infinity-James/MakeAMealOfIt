@@ -47,6 +47,7 @@
 		1AD55FFB171AF33200AE5FED /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AD55FFA171AF33200AE5FED /* Default.png */; };
 		1AD55FFD171AF33200AE5FED /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AD55FFC171AF33200AE5FED /* Default@2x.png */; };
 		1AD55FFF171AF33200AE5FED /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AD55FFE171AF33200AE5FED /* Default-568h@2x.png */; };
+		1AE89C84177AF4F6001C356A /* MetadataCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE89C83177AF4F6001C356A /* MetadataCell.m */; };
 		1AE8DB7D176B2281008C5D36 /* YummlyThemeImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AE8DB7C176B2281008C5D36 /* YummlyThemeImages.xcassets */; };
 		1AEE005717424E2E00B6FC43 /* CupboardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEE005617424E2E00B6FC43 /* CupboardViewController.m */; };
 		1AEE005D17425BC100B6FC43 /* YummlyAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEE005C17425BC100B6FC43 /* YummlyAPI.m */; };
@@ -138,6 +139,8 @@
 		1AD55FFA171AF33200AE5FED /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		1AD55FFC171AF33200AE5FED /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		1AD55FFE171AF33200AE5FED /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		1AE89C82177AF4F6001C356A /* MetadataCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MetadataCell.h; path = View/MetadataCell.h; sourceTree = "<group>"; };
+		1AE89C83177AF4F6001C356A /* MetadataCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MetadataCell.m; path = View/MetadataCell.m; sourceTree = "<group>"; };
 		1AE8DB7C176B2281008C5D36 /* YummlyThemeImages.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = YummlyThemeImages.xcassets; path = Yummly/YummlyThemeImages.xcassets; sourceTree = "<group>"; };
 		1AEE005517424E2E00B6FC43 /* CupboardViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CupboardViewController.h; path = Controller/CupboardViewController.h; sourceTree = "<group>"; };
 		1AEE005617424E2E00B6FC43 /* CupboardViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CupboardViewController.m; path = Controller/CupboardViewController.m; sourceTree = "<group>"; };
@@ -405,6 +408,8 @@
 			children = (
 				1A347612177837B100E723CD /* IncludeExcludeControl.h */,
 				1A347613177837B100E723CD /* IncludeExcludeControl.m */,
+				1AE89C82177AF4F6001C356A /* MetadataCell.h */,
+				1AE89C83177AF4F6001C356A /* MetadataCell.m */,
 				1A84A5B4176630D900E1F818 /* IngredientHeaderView.h */,
 				1A84A5B5176630D900E1F818 /* IngredientHeaderView.m */,
 				1A8EC542174F4CCA00553857 /* RecipeCollectionViewCell.h */,
@@ -567,6 +572,7 @@
 				1A6D1185174B55E900E0B000 /* UtilityMethodsCG.m in Sources */,
 				1AEE005D17425BC100B6FC43 /* YummlyAPI.m in Sources */,
 				1AA236B6177372AB00827C84 /* YummlyAttributionViewController.m in Sources */,
+				1AE89C84177AF4F6001C356A /* MetadataCell.m in Sources */,
 				1A70C0B317535F55004FEEF6 /* YummlyMetadata.m in Sources */,
 				1AEE006117427E2F00B6FC43 /* YummlyRequest.m in Sources */,
 				1AEE007917453F3A00B6FC43 /* YummlyTheme.m in Sources */,

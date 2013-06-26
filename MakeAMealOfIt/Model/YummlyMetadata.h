@@ -6,7 +6,24 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
-#import "YummlyAPI.h"
+#pragma mark - Constants & Static Variables: Yummly Metadata Result Keys
+
+extern NSString *const kYummlyMetadataDescriptionKey;
+extern NSString *const kYummlyMetadataIDKey;
+extern NSString *const kYummlyMetadataLongDescriptionKey;
+extern NSString *const kYummlyMetadataSearchValueKey;
+extern NSString *const kYummlyMetadataShortDescriptionKey;
+extern NSString *const kYummlyMetadataTermKey;
+extern NSString *const kYummlyMetadataTypeKey;
+
+#pragma mark - Constants & Static Variables: Yummly Metadata Request Keys
+
+extern NSString *const kYummlyMetadataAllergies;
+extern NSString *const kYummlyMetadataCourses;
+extern NSString *const kYummlyMetadataCuisines;
+extern NSString *const kYummlyMetadataDiets;
+extern NSString *const kYummlyMetadataHolidays;
+extern NSString *const kYummlyMetadataIngredients;
 
 #pragma mark - Yummly Metadata Public Interface
 

@@ -135,7 +135,9 @@
 }
 
 /**
- *	the field for search phrases
+ *	The field for search phrases.
+ *
+ *	@return	A fully initialised text field designed to accept search text.
  */
 - (UITextField *)searchPhraseField
 {
@@ -179,7 +181,9 @@
 #pragma mark - UIResponder Methods
 
 /**
- *	notifies the receiver that it has been asked to relinquish its status as first responder in its window
+ *	Notifies the receiver that it has been asked to relinquish its status as first responder in its window.
+ *
+ *	@return	YES - resigning first responder status or NO, refusing to relinquish first responder status.
  */
 - (BOOL)resignFirstResponder
 {

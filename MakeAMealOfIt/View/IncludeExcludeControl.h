@@ -29,6 +29,15 @@
 
 @interface IncludeExcludeControl : UIControl
 
+#pragma mark - Public Methods
+
+/**
+ *	Creates and returns an image view of the current look of the option label.
+ *
+ *	@return	An image view with a randered snapshot of the option label as the image and is centred correctly.
+ */
+- (UIImageView *)labelImageView;
+
 #pragma mark - Public Properties
 
 /**	The delegate for this control.	*/

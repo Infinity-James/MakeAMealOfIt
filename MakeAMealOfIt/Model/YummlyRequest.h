@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
+#import "YummlyAPI.h"
 #import "YummlyMetadata.h"
 
 #pragma mark - Constants & Static Variables
