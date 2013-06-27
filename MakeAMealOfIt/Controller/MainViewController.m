@@ -27,7 +27,11 @@ NS_ENUM(NSUInteger, ControllerViewTags)
 #define kCentreViewFrame				CGRectMake(0.0f, 20.0f, self.view.bounds.size.width, self.view.bounds.size.height - 20.0f)
 #define kSideViewFrame					CGRectMake(0.0f, 30.0f, self.view.bounds.size.width, self.view.bounds.size.height - 50.0f)
 
+#define PanGestureCleared(panGesture)	abs(panGesture.view.center.x - self.centreViewController.view.bounds.size.width / 2) > \
+										(self.centreViewController.view.bounds.size.width / 2)
+
 static CGFloat const kCornerRadius		= 04.00f;
+static CGFloat const kShrinkDuration	= 00.50f;
 static CGFloat const kSlideTiming		= 00.50f;
 
 static NSString *const kCentreVCKey		= @"Centre";
@@ -211,7 +215,7 @@ static NSString *const kRightVCKey		= @"Right";
 		//	make the desired centre frame the size of the side views
 		centreFrame									= kSideViewFrame;
 		//	change the animation duration for the shrinking of the main view 
-		animationDuration							= 0.5f;
+		animationDuration							= kShrinkDuration;
 	}
 		
 	
@@ -384,8 +388,7 @@ static NSString *const kRightVCKey		= @"Right";
 	}
 	
 	//	check if we're now more than half way, and if so we are officially showing the panel
-	self.showPanel						= abs(panGesture.view.center.x - self.centreViewController.view.bounds.size.width / 2) >
-												(self.centreViewController.view.bounds.size.width / 2);
+	self.showPanel						= PanGestureCleared(panGesture);
 	
 	CGPoint dragTranslation				= CGPointMake(panGesture.view.layer.position.x + translation.x, panGesture.view.layer.position.y);
 	

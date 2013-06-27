@@ -394,12 +394,6 @@
 		else
 			sectorView.alpha			= kMinimumAlpha;
 		
-		UIImageView *sectorIcon			= [[UIImageView alloc] initWithFrame:CGRectMake(12.0f, 15.0f, 40.0f, 40.f)];
-		NSString *icon					= [NSString stringWithFormat:@"icon%i.png", index];
-		sectorIcon.image				= ImageMake(icon);
-		
-		[sectorView addSubview:sectorIcon];
-		
 		[_container addSubview:sectorView];
 	}
 	

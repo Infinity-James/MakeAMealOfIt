@@ -35,15 +35,17 @@
 #pragma mark - Animation
 
 /**
- *
+ *	Animates the selected label within the includeExcludeControl.
  */
 - (void)animateSelectedLabel
 {
 	UIImageView *labelImageView				= [self.includeExcludeControl labelImageView];
+	labelImageView.layer.affineTransform	= CGAffineTransformScale(labelImageView.layer.affineTransform, 1.2f, 1.2f);
 	[self.view addSubview:labelImageView];
-	[UIView animateWithDuration:0.5f animations:
+	[UIView animateWithDuration:1.0f animations:
 	^{
-		labelImageView.center				= CGPointMake(self.view.bounds.size.width * 2.0f, labelImageView.center.y);
+		labelImageView.center				= CGPointMake(self.view.bounds.size.width * 1.5f, labelImageView.center.y);
+		labelImageView.layer.affineTransform= CGAffineTransformScale(labelImageView.layer.affineTransform, 0.4f, 0.4f);
 	}];
 }
 
@@ -63,7 +65,7 @@
 	
 	if (self.interfaceOrientation == UIInterfaceOrientationPortrait || self.interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown)
 	{
-		constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(8)-[optionLabel]-[includeExclude(==32)]-[selectionWheel]-|"
+		constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(8)-[optionLabel]-[selectionWheel]-[includeExclude(==32)]-|"
 																	options:NSLayoutFormatAlignAllCenterX
 																	metrics:nil
 																	  views:self.viewsDictionary];
@@ -117,8 +119,8 @@
  */
 - (void)excludeSelected
 {
-	[self.delegate parameterPageViewController:self selectedParameterAtIndex:self.highlightedOptionIndex included:NO];
-	[self animateSelectedLabel];
+	if ([self.delegate parameterPageViewController:self selectedParameterAtIndex:self.highlightedOptionIndex included:NO])
+		[self animateSelectedLabel];
 	
 }
 
@@ -127,8 +129,8 @@
  */
 - (void)includeSelected
 {
-	[self.delegate parameterPageViewController:self selectedParameterAtIndex:self.highlightedOptionIndex included:YES];
-	[self animateSelectedLabel];	
+	if ([self.delegate parameterPageViewController:self selectedParameterAtIndex:self.highlightedOptionIndex included:YES])
+		[self animateSelectedLabel];
 }
 
 #pragma mark - RotaryProtocol Methods
@@ -260,6 +262,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
+	self.view.clipsToBounds				= NO;
 	[self.selectionWheel setNeedsLayout];
 }
 

@@ -737,4 +737,14 @@ NSString *const kYummlyMinimumKey			= @"min";
 	self.startIndexForResults			+= self.numberOfResults;
 	[YummlyAPI asynchronousSearchRecipesCallWithParameters:[self getAsSearchParameters] andCompletionHandler:completionHandler];
 }
+
+/**
+ *	Resets the entirety of this Yummly Request.
+ */
+- (void)reset
+{
+	[self initialiseArrays];
+	self.searchPhrase					= nil;
+}
+
 @end

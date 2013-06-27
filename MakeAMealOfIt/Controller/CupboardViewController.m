@@ -53,6 +53,22 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 
 @implementation CupboardViewController {}
 
+#pragma mark - Action & Selector Methods
+
+/**
+ *	Called when the global Yummly Request object has been reset.
+ *
+ *	@param	notification				The object containing a name, an object, and an optional dictionary.
+ */
+- (void)yummlyRequestHasBeenReset:(NSNotification *)notification
+{
+	for (NSIndexPath *selectedIndexPath in self.tableView.indexPathsForSelectedRows)
+	{
+		[self.tableView deselectRowAtIndexPath:selectedIndexPath animated:YES];
+		[self tableView:self.tableView didDeselectRowAtIndexPath:selectedIndexPath];
+	}
+}
+
 #pragma mark - Autolayout Methods
 
 /**
@@ -174,6 +190,21 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 		[self setupTableViewIndex];
 		[self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 	});
+}
+
+/**
+ *	Implemented by subclasses to initialize a new object (the receiver) immediately after memory for it has been allocated.
+ *
+ *	@return	An initialized object.
+ */
+- (instancetype)init
+{
+	if (self = [super init])
+	{
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(yummlyRequestHasBeenReset:) name:kNotificationResetSearch object:nil];
+	}
+	
+	return self;
 }
 
 /**
@@ -601,9 +632,9 @@ didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
 	UITableViewCell *cell				= [tableView cellForRowAtIndexPath:indexPath];
 	
 	[UIView animateWithDuration:0.5f animations:
-	 ^{
-		 [ThemeManager customiseTableViewCell:cell withTheme:nil];
-	 }];
+	^{
+		[ThemeManager customiseTableViewCell:cell withTheme:nil];
+	}];
 	
 	[self tableView:tableView selected:NO indexPath:indexPath];
 }

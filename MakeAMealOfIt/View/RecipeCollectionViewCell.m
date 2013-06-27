@@ -154,7 +154,7 @@
  *	draws the receiver’s image within the passed-in rectangle
  *
  *	@param	rect						portion of the view’s bounds that needs to be updated
- */
+ *
  - (void)drawRect:(CGRect)rect
 {
 	//	get the context
@@ -174,6 +174,6 @@
 	CGContextAddPath(context, borderPath);
 	CGContextStrokePath(context);
 	CGPathRelease(borderPath);
-}
+}*/
 
 @end

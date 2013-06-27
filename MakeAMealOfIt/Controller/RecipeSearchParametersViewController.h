@@ -10,7 +10,7 @@
 
 #pragma mark - Type Definitions
 
-typedef void(^MetadataNeedsRemoving)(NSDictionary *metadataDictionary, NSString *metadataType, BOOL included);
+typedef void(^MetadataNeedsRemoving)(NSString *metadata, NSString *metadataType, BOOL included);
 
 #pragma mark - SelectedSearchParametersDelegate Protocol
 
@@ -36,16 +36,20 @@ typedef void(^MetadataNeedsRemoving)(NSDictionary *metadataDictionary, NSString 
  *
  *	@param	metadata					The piece of metadata being used to narrow the Yummly search.
  *	@param	metadataType				The type of the metadata that was excluded.
+ *
+ *	@return	YES if the metadata was added to the table view, NO otherwise.
  */
-- (void)metadataExcluded:(NSString *)metadata
+- (BOOL)metadataExcluded:(NSString *)metadata
 				  ofType:(NSString *)metadataType;
 /**
  *	Sent to the delegate when a piece of metadata has been included in the search.
  *
  *	@param	metadata					The piece of metadata being used to narrow the Yummly search.
  *	@param	metadataType				The type of the metadata that was included.
+ *
+ *	@return	YES if the metadata was added to the table view, NO otherwise.
  */
-- (void)metadataIncluded:(NSString *)metadata
+- (BOOL)metadataIncluded:(NSString *)metadata
 				  ofType:(NSString *)metadataType;
 
 @end

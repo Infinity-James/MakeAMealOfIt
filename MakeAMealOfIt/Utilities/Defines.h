@@ -30,7 +30,8 @@ static CGFloat const kPanelWidth		= 60.00f;
 //	notification names
 #define kSubviewTrackingTouch				@"NotificationSubviewTrackingTouch"
 #define kThemeChanged						@"NotificationThemeChanged"
-static NSString *const kNotificationYummlyRequestChanged		= @"NotificationYummlyRequestChanged";
+static NSString *const kNotificationYummlyRequestChanged	= @"NotificationYummlyRequestChanged";
+static NSString *const kNotificationResetSearch				= @"NotificationResetYummlySearch";
 
 //	yummly theme constants
 #define	kYummlyColourMain				[UIColor colorWithRed:218.0f / 255.0f green:074.0f / 255.0f blue:011.0f / 255.0f alpha:1.000f]

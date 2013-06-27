@@ -109,20 +109,22 @@
  *	@param	parameterPageVC				The page calling this method.
  *	@param	parameterIndex				The index of the parameter that has been selected.
  *	@param	included					Whether the selected parameter is to be included or excluded.
+ *
+ *	@return	YES if metadata was included in the search, NO otherwise.
  */
-- (void)parameterPageViewController:(ParameterPageViewController *)parameterPageVC
+- (BOOL)parameterPageViewController:(ParameterPageViewController *)parameterPageVC
 		   selectedParameterAtIndex:(NSUInteger)parameterIndex
 						   included:(BOOL)included
 {
 	NSString *metadataType				= [self keysAsArray][parameterPageVC.index];
 	NSString *metadataDescription		= [self parameterAtIndex:parameterIndex ofType:metadataType];
 	
-	[self addParameter:metadataDescription ofType:metadataType toIncluded:included];
+	[self addMetadata:metadataDescription ofType:metadataType toIncluded:included];
 	
 	if (included)
-		[self.delegate metadataIncluded:metadataDescription ofType:metadataType];
+		return [self.delegate metadataIncluded:metadataDescription ofType:metadataType];
 	else
-		[self.delegate metadataExcluded:metadataDescription ofType:metadataType];
+		return [self.delegate metadataExcluded:metadataDescription ofType:metadataType];
 }
 
 #pragma mark - Setter & Getter Methods
@@ -146,7 +148,7 @@
 /**
  *	This is the page view controller that displays the spinning wheels.
  *
- *	@param	A fully set up page view controller for use in displaying options.
+ *	@return	A fully set up page view controller for use in displaying options.
  */
 - (UIPageViewController *)pageViewController
 {
@@ -181,7 +183,7 @@
 /**
  *	The setter for the delegate subscribing to the SelectedSearchParametersDelegate protocol.
  *
- *	@param		delegate				The object that wants to be notified when certain pieces of metadata are included / excluded from search.
+ *	@param	delegate					The object that wants to be notified when certain pieces of metadata are included / excluded from search.
  */	
 - (void)setDelegate:(id<SelectedSearchParametersDelegate>)delegate
 {
@@ -191,9 +193,9 @@
 	__weak RecipeSearchParametersViewController *weakSelf	= self;
 	
 	if ([_delegate respondsToSelector:@selector(blockToCallToRemoveMetadata:)])
-		[_delegate blockToCallToRemoveMetadata:^(NSDictionary *metadataDictionary, NSString *metadataType, BOOL included)
+		[_delegate blockToCallToRemoveMetadata:^(NSString *metadata, NSString *metadataType, BOOL included)
 		{
-			[weakSelf removeMetadataDictionary:metadataDictionary ofType:metadataType fromIncluded:included];
+			[weakSelf removeMetadata:metadata ofType:metadataType fromIncluded:included];
 		}];
 }
 
@@ -299,7 +301,7 @@
 {
 	[super viewDidLoad];
 	
-		[self getAllOptions];
+	[self getAllOptions];
 }
 
 /**
@@ -316,36 +318,36 @@
 /**
  *	Adds a selected parameter to the global Yummly request.
  *
- *	@param	parameter					The name of the parameter within the type array.
- *	@param	parameterType				The type of metadata.
+ *	@param	metadata					The name of the metadata within the type array.
+ *	@param	metadataType				The type of metadata.
  *	@param	included					YES for included, and NO for excluded parameter.
  */
-- (void)addParameter:(NSString *)parameter
-			  ofType:(NSString *)parameterType
-		  toIncluded:(BOOL)included
+- (void)addMetadata:(NSString *)metadata
+			 ofType:(NSString *)metadataType
+		 toIncluded:(BOOL)included
 {	
 	if (included)
 	{
-		if ([parameterType isEqualToString:kYummlyMetadataAllergies])
-			[appDelegate.yummlyRequest addRequiredAllergy:parameter];
-		else if ([parameterType isEqualToString:kYummlyMetadataCourses])
-			[appDelegate.yummlyRequest addDesiredCourse:parameter];
-		else if ([parameterType isEqualToString:kYummlyMetadataCuisines])
-			[appDelegate.yummlyRequest addDesiredCuisine:parameter];
-		else if ([parameterType isEqualToString:kYummlyMetadataDiets])
-			[appDelegate.yummlyRequest addRequiredDiet:parameter];
-		else if ([parameterType isEqualToString:kYummlyMetadataHolidays])
-			[appDelegate.yummlyRequest addDesiredHoliday:parameter];
+		if ([metadataType isEqualToString:kYummlyMetadataAllergies])
+			[appDelegate.yummlyRequest addRequiredAllergy:metadata];
+		else if ([metadataType isEqualToString:kYummlyMetadataCourses])
+			[appDelegate.yummlyRequest addDesiredCourse:metadata];
+		else if ([metadataType isEqualToString:kYummlyMetadataCuisines])
+			[appDelegate.yummlyRequest addDesiredCuisine:metadata];
+		else if ([metadataType isEqualToString:kYummlyMetadataDiets])
+			[appDelegate.yummlyRequest addRequiredDiet:metadata];
+		else if ([metadataType isEqualToString:kYummlyMetadataHolidays])
+			[appDelegate.yummlyRequest addDesiredHoliday:metadata];
 	}
 	
 	else
 	{
-		if ([parameterType isEqualToString:kYummlyMetadataCourses])
-			[appDelegate.yummlyRequest addExcludedCourse:parameter];
-		else if ([parameterType isEqualToString:kYummlyMetadataCuisines])
-			[appDelegate.yummlyRequest addExcludedCuisine:parameter];
-		else if ([parameterType isEqualToString:kYummlyMetadataHolidays])
-			[appDelegate.yummlyRequest addExcludedHoliday:parameter];
+		if ([metadataType isEqualToString:kYummlyMetadataCourses])
+			[appDelegate.yummlyRequest addExcludedCourse:metadata];
+		else if ([metadataType isEqualToString:kYummlyMetadataCuisines])
+			[appDelegate.yummlyRequest addExcludedCuisine:metadata];
+		else if ([metadataType isEqualToString:kYummlyMetadataHolidays])
+			[appDelegate.yummlyRequest addExcludedHoliday:metadata];
 	}
 }
 
@@ -356,11 +358,33 @@
  *	@param	metadataType				The general type of this piece of metadata.
  *	@param	included					YES if the metadata is currently being included in recipe search results, or excluded.
  */
-- (void)removeMetadataDictionary:(NSDictionary *)metadata
-						  ofType:(NSString *)metadataType
-					fromIncluded:(BOOL)included
+- (void)removeMetadata:(NSString *)metadata
+				ofType:(NSString *)metadataType
+		  fromIncluded:(BOOL)included
 {
+	if (included)
+	{
+		if ([metadataType isEqualToString:kYummlyMetadataAllergies])
+			[appDelegate.yummlyRequest removeRequiredAllergy:metadata];
+		else if ([metadataType isEqualToString:kYummlyMetadataCourses])
+			[appDelegate.yummlyRequest removeDesiredCourse:metadata];
+		else if ([metadataType isEqualToString:kYummlyMetadataCuisines])
+			[appDelegate.yummlyRequest removeDesiredCuisine:metadata];
+		else if ([metadataType isEqualToString:kYummlyMetadataDiets])
+			[appDelegate.yummlyRequest removeRequiredDiet:metadata];
+		else if ([metadataType isEqualToString:kYummlyMetadataHolidays])
+			[appDelegate.yummlyRequest removeDesiredHoliday:metadata];
+	}
 	
+	else
+	{
+		if ([metadataType isEqualToString:kYummlyMetadataCourses])
+			[appDelegate.yummlyRequest removeExcludedCourse:metadata];
+		else if ([metadataType isEqualToString:kYummlyMetadataCuisines])
+			[appDelegate.yummlyRequest removeExcludedCuisine:metadata];
+		else if ([metadataType isEqualToString:kYummlyMetadataHolidays])
+			[appDelegate.yummlyRequest removeExcludedHoliday:metadata];
+	}
 }
 
 @end

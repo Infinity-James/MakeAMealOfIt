@@ -54,6 +54,16 @@
 	}];
 }
 
+/**
+ *	Called when the global Yummly Request object has been reset.
+ *
+ *	@param	notification				The object containing a name, an object, and an optional dictionary.
+ */
+- (void)yummlyRequestHasBeenReset:(NSNotification *)notification
+{
+	self.searchPhraseField.text			= @"";
+}
+
 #pragma mark - Auto Layout Methods
 
 /**
@@ -98,6 +108,7 @@
 	if (self = [super init])
 	{
 		self.backgroundColor			= [UIColor whiteColor];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(yummlyRequestHasBeenReset:) name:kNotificationResetSearch object:nil];
 	}
 	
 	return self;

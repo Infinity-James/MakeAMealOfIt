@@ -22,8 +22,10 @@
  *	@param	parameterPageVC				The page calling this method.
  *	@param	parameterIndex				The index of the parameter that has been selected.
  *	@param	included					Whether the selected parameter is to be included or excluded.
+ *
+ *	@return	YES if metadata was included in the search, NO otherwise.
  */
-- (void)parameterPageViewController:(ParameterPageViewController *)parameterPageVC
+- (BOOL)parameterPageViewController:(ParameterPageViewController *)parameterPageVC
 		   selectedParameterAtIndex:(NSUInteger)parameterIndex
 						   included:(BOOL)included;
 

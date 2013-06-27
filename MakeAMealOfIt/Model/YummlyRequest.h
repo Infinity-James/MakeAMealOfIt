@@ -207,5 +207,9 @@ extern NSString *const kYummlyMinimumKey;
  *	@param	completionHandler			The block to call when the request for more results has completed.
  */
 - (void)getMoreResults:(YummlyRequestCompletionBlock)completionHandler;
+/**
+ *	Resets the entirety of this Yummly Request.
+ */
+- (void)reset;
 
 @end

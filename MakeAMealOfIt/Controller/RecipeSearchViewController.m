@@ -20,10 +20,12 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 
 #pragma mark - Recipe Search View Controller Private Class Extension
 
-@interface RecipeSearchViewController () <RecipeSearchViewController, UITableViewDataSource, UITableViewDelegate> {}
+@interface RecipeSearchViewController () <RecipeSearchViewController, UIActionSheetDelegate, UITableViewDataSource, UITableViewDelegate> {}
 
 #pragma mark - Private Properties
 
+/**	A button that allows the user to reset the entire search.	*/
+@property (nonatomic, strong)	UIButton					*clearSearchButton;
 /**	The table view representing the chosen ingredients for the recipe search.	*/
 @property (nonatomic, strong)	UITableView					*ingredientsTableView;
 /**	A block to call when any left controller sata has been modified in this view controller.	*/
@@ -51,12 +53,47 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 }
 
 /**
- *	cClled when the button in the toolbar for the right panel is tapped.
+ *	User has selected the option to reset the search.
+ */
+- (void)resetSearchTapped
+{
+	//	we make sure that they meant to do this
+	[[[UIActionSheet alloc] initWithTitle:@"Reset Entire Search?"
+								 delegate:self cancelButtonTitle:@"Cancel"
+				   destructiveButtonTitle:@"Reset Search"
+						otherButtonTitles:nil] showFromRect:self.clearSearchButton.frame inView:self.view animated:YES];
+}
+
+/**
+ *	Called when the button in the toolbar for the right panel is tapped.
  */
 - (void)rightButtonTapped
 {
 	[self.recipeSearchView resignFirstResponder];
 	[super rightButtonTapped];
+}
+
+/**
+ *	Called when the global Yummly Request object has been reset.
+ *
+ *	@param	notification				The object containing a name, an object, and an optional dictionary.
+ */
+- (void)yummlyRequestHasBeenReset:(NSNotification *)notification
+{
+	dispatch_async(dispatch_queue_create("Ingredients Clearer", NULL),
+	^{
+		NSUInteger rowCount					= self.selectedIngredients.count;
+		NSMutableArray *indexPaths			= [[NSMutableArray alloc] initWithCapacity:rowCount];
+		for (NSUInteger index = 0; index < rowCount; index++)
+			[indexPaths addObject:[NSIndexPath indexPathForRow:index inSection:0]];
+		
+		[self.selectedIngredients removeAllObjects];
+		
+		dispatch_async(dispatch_get_main_queue(),
+		^{
+			[self.ingredientsTableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationLeft];
+		});
+	});
 }
 
 #pragma mark - Autolayout Methods
@@ -84,14 +121,33 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 	
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[tableView]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:[clearSearchButton]-|" options:kNilOptions metrics:nil views:self.viewsDictionary];
+	[self.view addConstraints:constraints];
 	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[toolbar(height)][recipeSearchView(==150)]-[tableView]|" options:kNilOptions metrics:@{@"height": @(toolbarHeight)} views:self.viewsDictionary];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[toolbar(height)][recipeSearchView(==150)]-[tableView]" options:kNilOptions metrics:@{@"height": @(toolbarHeight)} views:self.viewsDictionary];
+	[self.view addConstraints:constraints];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:[tableView]-[clearSearchButton]-|" options:kNilOptions metrics:nil views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
 	
 	[self.view bringSubviewToFront:self.toolbar];
 }
 
 #pragma mark - Initialisation
+
+/**
+ *	Implemented by subclasses to initialize a new object (the receiver) immediately after memory for it has been allocated.
+ *
+ *	@return	An initialized object.
+ */
+- (instancetype)init
+{
+	if (self = [super init])
+	{
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(yummlyRequestHasBeenReset:) name:kNotificationResetSearch object:nil];
+	}
+	
+	return self;
+}
 
 /**
  *	Adds toolbar items to our toolbar.
@@ -200,6 +256,30 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 #pragma mark - Setter & Getter Methods
 
 /**
+ *	A button that allows the user to reset the entire search.
+ *
+ *	@return	A fully initialise button targeted to a method which resets the Yummly Search.
+ */
+- (UIButton *)clearSearchButton
+{
+	if (!_clearSearchButton)
+	{
+		_clearSearchButton							= [[UIButton alloc] init];
+		_clearSearchButton.titleLabel.font			= kYummlyBolderFontWithSize(16.0f);
+		_clearSearchButton.titleLabel.textAlignment	= NSTextAlignmentCenter;
+		[_clearSearchButton setTitle:@"Reset Search" forState:UIControlStateNormal];
+		[_clearSearchButton setTitleColor:[UIColor colorWithRed:0.8f green:0.3f blue:0.3f alpha:1.0f] forState:UIControlStateNormal];
+		
+		[_clearSearchButton addTarget:self action:@selector(resetSearchTapped) forControlEvents:UIControlEventTouchUpInside];
+		
+		_clearSearchButton.translatesAutoresizingMaskIntoConstraints	= NO;
+		[self.view addSubview:_clearSearchButton];
+	}
+	
+	return _clearSearchButton;
+}
+
+/**
  *	The table view representing the chosen ingredients for the recipe search.
  *
  *	@return	An initialised and designed table view for use showing included ingredients.
@@ -268,10 +348,32 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
  */
 - (NSDictionary *)viewsDictionary
 {
-	return @{	@"recipeSearchView"	: self.recipeSearchView,
+	return @{	@"clearSearchButton": self.clearSearchButton,
+				@"recipeSearchView"	: self.recipeSearchView,
 				@"tableView"		: self.ingredientsTableView,
 				@"toolbar"			: self.toolbar};
 }
+
+#pragma mark - UIActionSheetDelegate
+
+/**
+ *	Sent to the delegate before an action sheet is dismissed.
+ *
+ *	@param	actionSheet					The action sheet that is about to be dismissed.
+ *	@param	buttonIndex					The index of the button that was clicked. If this is the cancel button index, the action sheet is canceling.
+ */
+- (void)	   actionSheet:(UIActionSheet *)actionSheet
+willDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+	if (buttonIndex == actionSheet.destructiveButtonIndex)
+	{
+		[appDelegate.yummlyRequest reset];
+		[[NSNotificationCenter defaultCenter] postNotificationName:kNotificationResetSearch object:nil];
+	}
+	else if (buttonIndex == actionSheet.cancelButtonIndex)
+		;
+}
+
 
 #pragma mark - UIResponder Methods
 

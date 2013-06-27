@@ -26,6 +26,7 @@
 
 #pragma mark - Public Methods
 
+/**	The delegate that acknowledges us as it's right view controller.	*/
 @property (nonatomic, weak)	id <RightControllerDelegate>	rightDelegate;
 
 @end
