@@ -46,6 +46,13 @@ NSString *const kYummlyMatchTimeToMakeKey				= @"totalTimeInSeconds";
 
 NSString *const kYummlyTotalMatchCountKey				= @"totalMatchCount";
 
+#pragma mark - Yummly Search Result Private Class Extension
+
+@interface YummlySearchResult () {}
+
+@end
+
+#pragma mark - Yummly Search Result Implementation
 
 @implementation YummlySearchResult {}
 

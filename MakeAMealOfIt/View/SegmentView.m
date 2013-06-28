@@ -39,6 +39,7 @@
 		_segmentLabel.lineBreakMode		= NSLineBreakByWordWrapping;
 		_segmentLabel.numberOfLines		= 0;
 		_segmentLabel.shadowColor		= [UIColor whiteColor];
+		_segmentLabel.text				= self.segmentTitle;
 		_segmentLabel.textAlignment		= NSTextAlignmentCenter;
 		_segmentLabel.textColor			= [UIColor lightGrayColor];
 		_segmentLabel.transform			= CGAffineTransformMakeRotation(-self.angleOfSegment / 2.0f);
@@ -56,7 +57,7 @@
 - (void)setSegmentTitle:(NSString *)segmentTitle
 {	
 	_segmentTitle						= segmentTitle;
-	self.segmentLabel.text				= _segmentTitle;
+	//self.segmentLabel.text				= _segmentTitle;
 	/*NSAttributedString *attributedTitle	= [[NSAttributedString alloc] initWithString:_segmentTitle
 																		  attributes:@{	NSForegroundColorAttributeName	: kYummlyColourShadow,
 																						NSFontAttributeName				: kYummlyFontWithSize(18.0f),

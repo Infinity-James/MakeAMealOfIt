@@ -57,6 +57,9 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
  */
 - (void)resetSearchTapped
 {
+	if (self.leftButtonTag == kButtonInUse || self.rightButtonTag == kButtonInUse)
+		return;
+	
 	//	we make sure that they meant to do this
 	[[[UIActionSheet alloc] initWithTitle:@"Reset Entire Search?"
 								 delegate:self cancelButtonTitle:@"Cancel"

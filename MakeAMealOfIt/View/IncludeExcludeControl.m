@@ -36,6 +36,7 @@
  */
 - (void)excludeButtonTapped
 {
+	if (!self.excludeButton.enabled)	return;
 	self.excludeButton.highlighted		= YES;
 	[self.delegate excludeSelected];
 	[self.excludeButton performSelector:@selector(setHighlighted:) withObject:@NO afterDelay:0.2f];
@@ -64,6 +65,7 @@
  */
 - (void)includeButtonTapped
 {
+	if (!self.includeButton.enabled)	return;
 	self.includeButton.highlighted		= YES;
 	[self.delegate includeSelected];
 	[self.includeButton performSelector:@selector(setHighlighted:) withObject:@NO afterDelay:0.2f];
@@ -114,6 +116,44 @@
 	[self.excludeButton addConstraint:constraint];
 	constraint							= [NSLayoutConstraint constraintWithItem:self.includeButton attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.includeButton attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0.0f];
 	[self.includeButton addConstraint:constraint];
+}
+
+#pragma mark - Convenience & Helper Methods
+
+/**
+ *	Disables the exclude button so the user knows it is not an option.
+ */
+- (void)deactivateExcludeButton
+{
+	self.excludeButton.alpha			= 0.5f;
+	self.excludeButton.enabled			= NO;
+}
+
+/**
+ *	Disables the include button so the user knows it is not an option.
+ */
+- (void)deactivateIncludeButton
+{
+	self.includeButton.alpha			= 0.5f;
+	self.includeButton.enabled			= NO;
+}
+
+/**
+ *	Enables the exclude button, letting the user know it is an option.
+ */
+- (void)enableExcludeButton
+{
+	self.excludeButton.alpha			= 1.0f;
+	self.excludeButton.enabled			= YES;
+}
+
+/**
+ *	Enables the include button, letting the user know it is an option.
+ */
+- (void)enableIncludeButton
+{
+	self.includeButton.alpha			= 1.0f;
+	self.includeButton.enabled			= YES;
 }
 
 #pragma mark - Initialisation

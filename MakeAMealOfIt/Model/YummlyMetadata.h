@@ -38,6 +38,14 @@ extern NSString *const kYummlyMetadataIngredients;
  */
 + (NSDictionary *)allMetadata;
 /**
+ *	Called to find whether a kind of metadata can be excluded from search results.
+ *
+ *	@param	metadataKey				A constant string for the type of metadata.
+ *
+ *	@return	YES if the metadata can be excluded from Yummly recipe searches, NO otherwsie.
+ */
++ (BOOL)canMetadataBeExcluded:(NSString *)metadataKey;
+/**
  *	Refreshes a chosen piece of metadata.
  *
  *	@param	metadataKey					The metadata to re-fetch (if nil will re-fetch all meatdata).

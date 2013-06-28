@@ -20,13 +20,13 @@
  *	Sent to the delegate when a parameter has been selected in some fashion.
  *
  *	@param	parameterPageVC				The page calling this method.
- *	@param	parameterIndex				The index of the parameter that has been selected.
+ *	@param	metadata					The metadata description that was selected.
  *	@param	included					Whether the selected parameter is to be included or excluded.
  *
  *	@return	YES if metadata was included in the search, NO otherwise.
  */
 - (BOOL)parameterPageViewController:(ParameterPageViewController *)parameterPageVC
-		   selectedParameterAtIndex:(NSUInteger)parameterIndex
+				   selectedMetadata:(NSString *)metadata
 						   included:(BOOL)included;
 
 @end

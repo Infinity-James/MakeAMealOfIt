@@ -107,24 +107,23 @@
  *	Sent to the delegate when a parameter has been selected in some fashion.
  *
  *	@param	parameterPageVC				The page calling this method.
- *	@param	parameterIndex				The index of the parameter that has been selected.
+ *	@param	metadata					The metadata description that was selected.
  *	@param	included					Whether the selected parameter is to be included or excluded.
  *
  *	@return	YES if metadata was included in the search, NO otherwise.
  */
 - (BOOL)parameterPageViewController:(ParameterPageViewController *)parameterPageVC
-		   selectedParameterAtIndex:(NSUInteger)parameterIndex
+				   selectedMetadata:(NSString *)metadata
 						   included:(BOOL)included
 {
 	NSString *metadataType				= [self keysAsArray][parameterPageVC.index];
-	NSString *metadataDescription		= [self parameterAtIndex:parameterIndex ofType:metadataType];
 	
-	[self addMetadata:metadataDescription ofType:metadataType toIncluded:included];
+	[self addMetadata:metadata ofType:metadataType toIncluded:included];
 	
 	if (included)
-		return [self.delegate metadataIncluded:metadataDescription ofType:metadataType];
+		return [self.delegate metadataIncluded:metadata ofType:metadataType];
 	else
-		return [self.delegate metadataExcluded:metadataDescription ofType:metadataType];
+		return [self.delegate metadataExcluded:metadata ofType:metadataType];
 }
 
 #pragma mark - Setter & Getter Methods
@@ -165,7 +164,7 @@
 			ParameterPageViewController *firstPage	= [[ParameterPageViewController alloc] init];
 			firstPage.delegate						= self;
 			firstPage.index							= 0;
-			firstPage.optionCategoryTitle			= [[self keysAsArray][firstPage.index] capitalizedString];
+			firstPage.optionCategoryTitle			= [self keysAsArray][firstPage.index];
 			firstPage.options						= self.optionsDictionary[[self keysAsArray][firstPage.index]];
 			[_pageViewController setViewControllers:@[firstPage] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
 		}
@@ -232,7 +231,7 @@
 	ParameterPageViewController *nextPage	= [[ParameterPageViewController alloc] init];
 	nextPage.delegate						= self;
 	nextPage.index							= currentPage.index + 1;
-	nextPage.optionCategoryTitle			= [[self keysAsArray][nextPage.index] capitalizedString];
+	nextPage.optionCategoryTitle			= [self keysAsArray][nextPage.index];
 	nextPage.options						= self.optionsDictionary[[self keysAsArray][nextPage.index]];
 	
 	return nextPage;
@@ -259,7 +258,7 @@
 	ParameterPageViewController *previousPage	= [[ParameterPageViewController alloc] init];
 	previousPage.delegate						= self;
 	previousPage.index							= currentPage.index - 1;
-	previousPage.optionCategoryTitle			= [[self keysAsArray][previousPage.index] capitalizedString];
+	previousPage.optionCategoryTitle			= [self keysAsArray][previousPage.index];
 	previousPage.options						= self.optionsDictionary[[self keysAsArray][previousPage.index]];
 	
 	return previousPage;

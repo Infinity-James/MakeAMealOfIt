@@ -44,6 +44,8 @@ extern NSString *const kYummlyMatchTimeToMakeKey;
 
 extern NSString *const kYummlyTotalMatchCountKey;
 
+#pragma mark - Yummly Search Result Public Interface
+
 @interface YummlySearchResult : NSObject {}
 
 @end

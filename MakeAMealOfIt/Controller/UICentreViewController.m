@@ -84,6 +84,8 @@
  */
 - (void)setLeftButtonTag:(NSUInteger)tag
 {
+	if (tag == kButtonInUse)
+		[self resignFirstResponder];
 	self.leftButton.tag					= tag;
 }
 
@@ -94,6 +96,8 @@
  */
 - (void)setRightButtonTag:(NSUInteger)tag
 {
+	if (tag == kButtonInUse)
+		[self resignFirstResponder];
 	self.rightButton.tag				= tag;
 }
 

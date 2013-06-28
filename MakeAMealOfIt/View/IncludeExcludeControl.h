@@ -32,6 +32,22 @@
 #pragma mark - Public Methods
 
 /**
+ *	Disables the exclude button so the user knows it is not an option.
+ */
+- (void)deactivateExcludeButton;
+/**
+ *	Disables the include button so the user knows it is not an option.
+ */
+- (void)deactivateIncludeButton;
+/**
+ *	Enables the exclude button, letting the user know it is an option.
+ */
+- (void)enableExcludeButton;
+/**
+ *	Enables the include button, letting the user know it is an option.
+ */
+- (void)enableIncludeButton;
+/**
  *	Creates and returns an image view of the current look of the option label.
  *
  *	@return	An image view with a randered snapshot of the option label as the image and is centred correctly.

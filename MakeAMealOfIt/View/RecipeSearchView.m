@@ -177,18 +177,6 @@
 				@"searchButton"		: self.searchButton};
 }
 
-/**
- *	tells the receiver when one or more fingers touch down in a view or window
- *
- *	@param	touches						set of uitouch instances that represent touches for the starting phase of the event
- *	@param	event						object representing the event to which the touches belong
- */
-- (void)touchesBegan:(NSSet *)touches
-		   withEvent:(UIEvent *)event
-{
-	[self.searchPhraseField resignFirstResponder];
-}
-
 #pragma mark - UIResponder Methods
 
 /**
@@ -200,6 +188,19 @@
 {
 	[self.searchPhraseField resignFirstResponder];
 	return [super resignFirstResponder];
+}
+
+/**
+ *	Tells the receiver when one or more fingers touch down in a view or window.
+ *
+ *	@param	touches						A set of UITouch instances that represent the touches for the starting phase of the event represented by event.
+ *	@param	event						An object representing the event to which the touches belong.
+ */
+- (void)touchesBegan:(NSSet *)touches
+		   withEvent:(UIEvent *)event
+{
+	[super touchesBegan:touches withEvent:event];
+	[self.searchPhraseField resignFirstResponder];
 }
 
 #pragma mark - UITextFieldDelegate Methods

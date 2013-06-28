@@ -6,10 +6,8 @@
 	<string>en</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
-	<key>CFBundleIcons</key>
-	<dict/>
 	<key>CFBundleIdentifier</key>
-	<string>com.andbeyond.jamesvalaitis.${PRODUCT_NAME:rfc1034identifier}</string>
+	<string>co.andbeyond.makeamealofit</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

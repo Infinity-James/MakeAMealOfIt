@@ -10,7 +10,17 @@
 
 @required
 
+/**
+ *	Called when a view controller was added to recipe search view.
+ *
+ *	@param	viewController				The view controller which was added to the our child view.
+ */
 - (void)addedViewController:(UIViewController *)viewController;
+/**
+ *	Called when a search was executed and returned with the results dictionary.
+ *
+ *	@param	results						The dictionary of results from the yummly response.
+ */
 - (void)searchExecutedForResults:(NSDictionary *)results;
 
 @end

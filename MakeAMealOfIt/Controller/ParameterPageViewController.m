@@ -119,7 +119,7 @@
  */
 - (void)excludeSelected
 {
-	if ([self.delegate parameterPageViewController:self selectedParameterAtIndex:self.highlightedOptionIndex included:NO])
+	if ([self.delegate parameterPageViewController:self selectedMetadata:self.optionTitles[self.highlightedOptionIndex] included:NO])
 		[self animateSelectedLabel];
 	
 }
@@ -129,7 +129,7 @@
  */
 - (void)includeSelected
 {
-	if ([self.delegate parameterPageViewController:self selectedParameterAtIndex:self.highlightedOptionIndex included:YES])
+	if ([self.delegate parameterPageViewController:self selectedMetadata:self.optionTitles[self.highlightedOptionIndex] included:YES])
 		[self animateSelectedLabel];
 }
 
@@ -159,6 +159,7 @@
 	{
 		_includeExcludeControl			= [[IncludeExcludeControl alloc] init];
 		_includeExcludeControl.delegate	= self;
+		[YummlyMetadata canMetadataBeExcluded:self.optionCategoryTitle] ?  [_includeExcludeControl enableExcludeButton] : [_includeExcludeControl deactivateExcludeButton];
 		
 		_includeExcludeControl.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self.view addSubview:_includeExcludeControl];
@@ -204,7 +205,7 @@
 				[optionTitles addObject:option[kYummlyMetadataShortDescriptionKey]];
 			else if (option[kYummlyMetadataDescriptionKey])
 				[optionTitles addObject:option[kYummlyMetadataDescriptionKey]];
-		_optionTitles					= optionTitles;
+		_optionTitles					= [optionTitles sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
 	}
 	
 	return _optionTitles;
@@ -237,7 +238,8 @@
 - (void)setOptionCategoryTitle:(NSString *)optionCategoryTitle
 {
 	//	set the label's text with the new option category title
-	self.optionLabel.text				= _optionCategoryTitle		= optionCategoryTitle;
+	_optionCategoryTitle				= optionCategoryTitle;
+	self.optionLabel.text				= [_optionCategoryTitle capitalizedString];
 }
 
 /**
