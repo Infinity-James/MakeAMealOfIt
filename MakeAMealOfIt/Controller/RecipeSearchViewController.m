@@ -272,6 +272,7 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 		_clearSearchButton.titleLabel.textAlignment	= NSTextAlignmentCenter;
 		[_clearSearchButton setTitle:@"Reset Search" forState:UIControlStateNormal];
 		[_clearSearchButton setTitleColor:[UIColor colorWithRed:0.8f green:0.3f blue:0.3f alpha:1.0f] forState:UIControlStateNormal];
+		_clearSearchButton.opaque					= YES;
 		
 		[_clearSearchButton addTarget:self action:@selector(resetSearchTapped) forControlEvents:UIControlEventTouchUpInside];
 		
@@ -296,6 +297,7 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 		_ingredientsTableView.bounces			= NO;
 		_ingredientsTableView.backgroundColor	= [UIColor whiteColor];
 		_ingredientsTableView.backgroundView	= nil;
+		_ingredientsTableView.opaque			= YES;
 		
 		//	we are in complete control of this table view
 		_ingredientsTableView.dataSource		= self;
@@ -323,6 +325,7 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 	{
 		_recipeSearchView				= [[RecipeSearchView alloc] init];
 		_recipeSearchView.delegate		= self;
+		_recipeSearchView.opaque		= YES;
 		
 		_recipeSearchView.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self.view addSubview:_recipeSearchView];

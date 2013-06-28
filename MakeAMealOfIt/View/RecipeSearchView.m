@@ -134,6 +134,7 @@
 		_searchButton					= [[UIButton alloc] init];
 		[_searchButton setTitle:@"Search" forState:UIControlStateNormal];
 		_searchButton.contentEdgeInsets	= UIEdgeInsetsMake(0.0f, 14.0f, 0.0f, 14.0f);
+		_searchButton.opaque			= YES;
 		[ThemeManager customiseButton:_searchButton withTheme:nil];
 		[_searchButton addTarget:self action:@selector(searchButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 		[_searchButton sizeToFit];
@@ -157,6 +158,7 @@
 		_searchPhraseField				= [[UITextField alloc] init];
 		_searchPhraseField.borderStyle	= UITextBorderStyleNone;
 		_searchPhraseField.delegate		= self;
+		_searchPhraseField.opaque		= YES;
 		_searchPhraseField.placeholder	= [[NSString alloc] initWithFormat:@"%@...", self.foods[arc4random() % self.foods.count]];
 		[_searchPhraseField setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
 		[_searchPhraseField setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
