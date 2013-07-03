@@ -25,7 +25,13 @@
     self.window.backgroundColor			= [UIColor whiteColor];
 	self.window.tintColor				= kYummlyColourMain;
 	
-	
+	//	set up shared cache for url requests
+	NSArray *directories				= [[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask];
+	NSString *path						= [[(NSURL *)directories[0] URLByAppendingPathComponent:@"NSURLCache"] absoluteString];
+	NSURLCache *URLCache				= [[NSURLCache alloc] initWithMemoryCapacity:4 * 1024 * 1024
+														 diskCapacity:20 * 1024 * 1024
+															 diskPath:path];
+	[NSURLCache setSharedURLCache:URLCache];
 	
 	self.slideOutVC						= [[SlideOutNavigationController alloc] init];
 	self.window.rootViewController		= self.slideOutVC.mainViewController;

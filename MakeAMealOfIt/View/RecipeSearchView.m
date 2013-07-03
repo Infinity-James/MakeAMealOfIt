@@ -91,7 +91,7 @@
 	//	add the search field
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(<=20)-[searchField]-(==20)-[searchButton]" options:NSLayoutFormatAlignAllTrailing metrics:nil views:self.viewsDictionary];
 	[self addConstraints:constraints];
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=10)-[searchField(<=300)]" options:NSLayoutFormatAlignAllCenterX metrics:nil views:self.viewsDictionary];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=20)-[searchField(<=300)]" options:NSLayoutFormatAlignAllCenterX metrics:nil views:self.viewsDictionary];
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:[searchField(>=200)]" options:kNilOptions metrics:nil views:self.viewsDictionary];
 	[self addConstraints:constraints];
 	constraint							= [NSLayoutConstraint constraintWithItem:self.searchPhraseField attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1.0f constant:0.0f];

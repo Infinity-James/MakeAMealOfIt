@@ -65,8 +65,11 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 
 #pragma mark - Private Properties
 
+/**	The dictionary of details to be used when attributing Yummly for this recipe.	*/
 @property (nonatomic, readwrite, strong)	NSDictionary	*attributionDictionary;
+/**	An array of ingredients for the recipe.	*/
 @property (nonatomic, readwrite, strong)	NSArray			*ingredientLines;
+/**	*/
 @property (nonatomic, readwrite, strong)	NSDictionary	*flavourDictionary;
 @property (nonatomic, readwrite, assign)	NSUInteger		numberOfServings;
 @property (nonatomic, readwrite, assign)	CGFloat			rating;

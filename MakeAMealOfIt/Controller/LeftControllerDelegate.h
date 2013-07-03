@@ -14,6 +14,8 @@ typedef void(^LeftControllerDataModified)(NSDictionary *modifiedIngredient);
 
 static NSString *const kAddedSelections		= @"AddedSelections";
 static NSString *const kAllSelections		= @"AllSelections";
+static NSString *const kExcludedSelections	= @"ExcludedSelections";
+static NSString *const kIncludedSelections	= @"IncludedSelections";
 static NSString *const kRemovedSelections	= @"RemovedSelections";
 
 @protocol LeftControllerDelegate <NSObject>

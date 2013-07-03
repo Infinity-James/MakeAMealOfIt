@@ -15,6 +15,10 @@
 
 #pragma mark - Private Properties
 
+/**	The Make A Meal Of It logo in an image view.	*/
+@property (nonatomic, strong)	UIImageView		*appLogo;
+/**	A label with the name of the app; Make A Meal Of It; on it.	*/
+@property (nonatomic, strong)	UILabel			*appName;
 /**	A dictionary with stuff to include in the attribution.	*/
 @property (nonatomic, strong)	NSDictionary	*attributionDictionary;
 /**	This label simply attributes Yummly for the data.	*/
@@ -46,6 +50,14 @@
 	NSLog(@"Attribution URL: %@", self.attributionURL);
 }
 
+/**
+ *
+ */
+- (void)openCompanyURL
+{
+	
+}
+
 #pragma mark - Autolayout Methods
 
 /**
@@ -64,22 +76,36 @@
 	
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:[developerLabel]|"
 																options:kNilOptions
-																metrics:Nil
+																metrics:nil
 																  views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:[developerLabel]-|"
 																options:kNilOptions
-																metrics:Nil
+																metrics:nil
 																  views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
-	
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:[companyLabel]|"
+																options:kNilOptions
+																metrics:nil
+																  views:self.viewsDictionary];
+	[self.view addConstraints:constraints];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(Panel)-[companyLabel]"
+																options:kNilOptions
+																metrics:@{ @"Panel" : @(kPanelWidth + 10.0f) }
+																  views:self.viewsDictionary];
+	[self.view addConstraints:constraints];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:[attributionText]-(>=20)-|"
+																options:kNilOptions
+																metrics:nil
+																  views:self.viewsDictionary];
+	[self.view addConstraints:constraints];
 	constraint							= [NSLayoutConstraint constraintWithItem:self.yummlyButton
 													attribute:NSLayoutAttributeCenterX
 													relatedBy:NSLayoutRelationEqual
 													   toItem:self.view
 													attribute:NSLayoutAttributeCenterX
 												   multiplier:1.0f
-													 constant:0.0f];
+													 constant:20.0f];
 	[self.view addConstraint:constraint];
 	constraint							= [NSLayoutConstraint constraintWithItem:self.yummlyButton
 													attribute:NSLayoutAttributeWidth
@@ -97,9 +123,22 @@
 												   multiplier:1.0f
 													 constant:44.0f];
 	[self.yummlyButton addConstraint:constraint];
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[attributionText]-[yummlyButton]"
+	constraint							= [NSLayoutConstraint constraintWithItem:self.appLogo
+													attribute:NSLayoutAttributeHeight
+													relatedBy:NSLayoutRelationEqual
+													   toItem:self.appLogo
+													attribute:NSLayoutAttributeWidth
+												   multiplier:1.0f
+													 constant:0.0f];
+	[self.appLogo addConstraint:constraint];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:[appLogo]-(>=20)-|"
+																options:kNilOptions
+																metrics:nil
+																  views:self.viewsDictionary];
+	[self.view addConstraints:constraints];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[appName]-[appLogo]-[attributionText]-[yummlyButton]"
 																options:NSLayoutFormatAlignAllCenterX
-																metrics:Nil
+																metrics:nil
 																  views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
 }
@@ -132,6 +171,50 @@
 #pragma mark - Setter & Getter Methods
 
 /**
+ *	The Make A Meal Of It logo in an image view.
+ *
+ *	@return	A fully initialise UIImageView with a set image.
+ */
+- (UIImageView *)appLogo
+{
+	if (!_appLogo)
+	{
+		UIImage *logoImage				= [UIImage imageNamed:@"logo_makeamealofit"];
+		_appLogo						= [[UIImageView alloc] initWithImage:logoImage];
+		
+		_appLogo.translatesAutoresizingMaskIntoConstraints	= NO;
+		[self.view addSubview:_appLogo];
+	}
+	
+	return _appLogo;
+}
+
+/**
+ *	A label with the name of the app; Make A Meal Of It; on it.
+ *
+ *	@return	A label stylised to represent this app's name.
+ */
+- (UILabel *)appName
+{
+	if (!_appName)
+	{
+		_appName						= [[UILabel alloc] init];
+		_appName.backgroundColor		= [UIColor clearColor];
+		_appName.font					= kYummlyBolderFontWithSize(18.0f);
+		_appName.lineBreakMode			= NSLineBreakByWordWrapping;
+		_appName.numberOfLines			= 0;
+		_appName.text					= @"Make A Meal Of It";
+		_appName.textAlignment			= NSTextAlignmentCenter;
+		_appName.textColor				= kYummlyColourMain;
+		
+		_appName.translatesAutoresizingMaskIntoConstraints	= NO;
+		[self.view addSubview:_appName];
+	}
+	
+	return _appName;
+}
+
+/**
  *	This dictionary holds all of the details to attribute Yummly.
  *
  *	@return	A dictionary with a logo URL, attribution text, and URL to the Yummly website in it.
@@ -160,7 +243,11 @@
 	{
 		_attributionText				= [[UILabel alloc] init];
 		_attributionText.backgroundColor= [UIColor clearColor];
+		_attributionText.font			= kYummlyFontWithSize(14.0f);
+		_attributionText.lineBreakMode	= NSLineBreakByWordWrapping;
+		_attributionText.numberOfLines	= 0;
 		_attributionText.text			= self.attributionDictionary[kYummlyAttributionTextKey];
+		_attributionText.textAlignment	= NSTextAlignmentCenter;
 		_attributionText.textColor		= kYummlyColourMain;
 		
 		_attributionText.translatesAutoresizingMaskIntoConstraints	= NO;
@@ -196,6 +283,22 @@
 	{
 		_companyLabel					= [[UILabel alloc] init];
 		
+		UIColor *andColour				= [[UIColor alloc] initWithRed:185.0f / 255.0f green:46.0f / 255.0f blue:0.0f alpha:1.0f];
+		
+		NSMutableAttributedString *company = [[NSMutableAttributedString alloc] initWithString:@"&Beyond"
+																					attributes:@{	NSTextEffectAttributeName	: NSTextEffectLetterpressStyle,
+																									NSFontAttributeName			: kYummlyFontWithSize(14.0f)}];
+		[company addAttribute:NSForegroundColorAttributeName
+						value:andColour
+						range:NSMakeRange(0, 1)];
+		[company addAttribute:NSForegroundColorAttributeName
+						value:[UIColor blackColor]
+						range:NSMakeRange(1, 6)];
+		
+		_companyLabel.attributedText	= company;
+		_companyLabel.opaque			= YES;
+		[_companyLabel sizeToFit];
+		
 		_companyLabel.translatesAutoresizingMaskIntoConstraints		= NO;
 		[self.view addSubview:_companyLabel];
 	}
@@ -221,6 +324,7 @@
 																						NSFontAttributeName				: [UIFont fontWithName:@"Futura-Medium"
 																																 size:14.0f]}];
 		_developerLabel.attributedText	= developer;
+		_developerLabel.opaque			= YES;
 		[_developerLabel sizeToFit];
 		
 		_developerLabel.translatesAutoresizingMaskIntoConstraints	= NO;
@@ -237,7 +341,9 @@
  */
 - (NSDictionary *)viewsDictionary
 {
-	return @{	@"attributionText"	: self.attributionText,
+	return @{	@"appLogo"			: self.appLogo,
+				@"appName"			: self.appName,
+				@"attributionText"	: self.attributionText,
 				@"companyLabel"		: self.companyLabel,
 				@"developerLabel"	: self.developerLabel,
 				@"yummlyButton"		: self.yummlyButton		};
@@ -254,6 +360,7 @@
 	{
 		_yummlyButton					= [[UIButton alloc] init];
 		[_yummlyButton addTarget:self action:@selector(openAttributionURL) forControlEvents:UIControlEventTouchUpInside];
+		_yummlyButton.imageView.contentMode	= UIViewContentModeCenter;
 		
 		_yummlyButton.translatesAutoresizingMaskIntoConstraints		= NO;
 		[self.view addSubview:_yummlyButton];

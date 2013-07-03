@@ -30,13 +30,13 @@ NS_ENUM(NSUInteger, ControllerViewTags)
 #define PanGestureCleared(panGesture)	abs(panGesture.view.center.x - self.centreViewController.view.bounds.size.width / 2) > \
 										(self.centreViewController.view.bounds.size.width / 2)
 
-static CGFloat const kCornerRadius		= 04.00f;
-static CGFloat const kShrinkDuration	= 00.50f;
-static CGFloat const kSlideTiming		= 00.50f;
+static CGFloat const kCornerRadius			= 04.00f;
+static NSTimeInterval const kShrinkDuration	= 00.50f;
+static NSTimeInterval const kSlideTiming	= 00.50f;
 
-static NSString *const kCentreVCKey		= @"Centre";
-static NSString *const kLeftVCKey		= @"Left";
-static NSString *const kRightVCKey		= @"Right";
+static NSString *const kCentreVCKey			= @"Centre";
+static NSString *const kLeftVCKey			= @"Left";
+static NSString *const kRightVCKey			= @"Right";
 
 #pragma mark - Main View Controller Private Class Extension
 
@@ -120,20 +120,19 @@ static NSString *const kRightVCKey		= @"Right";
 - (void)movePanel:(UIPanGestureRecognizer *)gesture
 {
 	//	stop any animations that may already be occuring in this view
-	[gesture.view.layer removeAllAnimations];
-	
-	[self.centreViewController resignFirstResponder];
+	//	[gesture.view.layer removeAllAnimations];
 
-	//	get the current velocity of the gesture
-	CGPoint velocity					= [gesture velocityInView:gesture.view];
+	//	get the current translation of the gesture
+	//CGPoint velocity					= [gesture velocityInView:gesture.view];
+	CGPoint translation					= [gesture translationInView:gesture.view];
 	
 	//	handle the gesture depending on what state it is in
 	switch (gesture.state)
 	{
-		case UIGestureRecognizerStateBegan:		[self panGestureBegan:gesture withVelocity:velocity];									break;
-		case UIGestureRecognizerStateChanged:	[self panGestureChanged:gesture withVelocity:velocity];									break;
-		case UIGestureRecognizerStateEnded:		[self panGestureEnded:gesture withVelocity:velocity];									break;
-		default:																														break;
+		case UIGestureRecognizerStateBegan:		[self panGestureBegan:gesture withTranslation:translation];			break;
+		case UIGestureRecognizerStateChanged:	[self panGestureChanged:gesture withTranslation:translation];		break;
+		case UIGestureRecognizerStateEnded:		[self panGestureEnded:gesture withTranslation:translation];			break;
+		default:																									break;
 	}
 }
 
@@ -202,6 +201,8 @@ static NSString *const kRightVCKey		= @"Right";
 	[self.view addSubview:viewController.view];
 	[self.view sendSubviewToBack:childView];
 	
+	self.centreViewController.view.layer.shouldRasterize	= YES;
+	
 	//	we get the centre frame offset to the left and get the default animation duration
 	CGRect centreFrame								= kCentreViewFrame;
 	centreFrame.origin.x							= self.view.bounds.size.width;
@@ -231,6 +232,7 @@ static NSString *const kRightVCKey		= @"Right";
 		//	if it is a pop we have done everything we need to do and now call the completion handler
 		if (!forwards)
 		{
+			self.centreViewController.view.layer.shouldRasterize	= NO;
 			[self resetMainView];
 			[childView removeFromSuperview];
 			completionHandler(finished);
@@ -239,14 +241,18 @@ static NSString *const kRightVCKey		= @"Right";
 		{
 			//	bring the view controller we're pushing to the front
 			[self.view bringSubviewToFront:childView];
+			
+			childView.layer.shouldRasterize			= YES;
+			
 			//	animate the pushing view controller sliding in
 			[UIView animateWithDuration:kSlideTiming animations:
 			^{
-				childView.frame							= kCentreViewFrame;
+				childView.frame						= kCentreViewFrame;
 			}
 							 completion:^(BOOL finished)
 			{
 				//	remove the pushing subview and call the completion handler
+				childView.layer.shouldRasterize		= NO;
 				[childView removeFromSuperview];
 				completionHandler(finished);
 			}];
@@ -263,6 +269,8 @@ static NSString *const kRightVCKey		= @"Right";
 	if (!childView)										return;
 	[self.view sendSubviewToBack:childView];
 	
+	self.centreViewController.view.layer.shouldRasterize	= YES;
+	
 	CGRect centreFrame					= kCentreViewFrame;
 	
 	centreFrame.origin.x				= - self.view.bounds.size.width + kPanelWidth;
@@ -274,6 +282,8 @@ static NSString *const kRightVCKey		= @"Right";
 	}
 					 completion:^(BOOL finished)
 	{
+		self.centreViewController.view.layer.shouldRasterize	= NO;
+		
 		if (finished)
 		{
 			[self.centreViewController setRightButtonTag:kButtonInUse];
@@ -291,6 +301,8 @@ static NSString *const kRightVCKey		= @"Right";
 	if (!childView)										return;
 	[self.view sendSubviewToBack:childView];
 	
+	self.centreViewController.view.layer.shouldRasterize	= YES;
+	
 	CGRect centreFrame					= kCentreViewFrame;
 	
 	centreFrame.origin.x				= self.view.bounds.size.width - kPanelWidth;
@@ -302,6 +314,8 @@ static NSString *const kRightVCKey		= @"Right";
 	}
 					 completion:^(BOOL finished)
 	{
+		self.centreViewController.view.layer.shouldRasterize	= NO;
+		
 		if (finished)
 		{
 			[self.centreViewController setLeftButtonTag:kButtonInUse];
@@ -315,15 +329,18 @@ static NSString *const kRightVCKey		= @"Right";
  */
 - (void)movePanelToOriginalPosition
 {
+	self.centreViewController.view.layer.shouldRasterize	= YES;
+	
 	[UIView animateWithDuration:kSlideTiming
 						  delay:0.0f
-						options:UIViewAnimationOptionBeginFromCurrentState
+						options:kNilOptions
 					 animations:
 	^{
 		self.centreViewController.view.frame	= kCentreViewFrame;
 	}
 					 completion:^(BOOL finished)
 	{
+		self.centreViewController.view.layer.shouldRasterize	= NO;
 		[self resetMainView];
 	}];
 }
@@ -336,12 +353,14 @@ static NSString *const kRightVCKey		= @"Right";
  *	@param	panGesture					The gesture object representing the gesture.
  *	@param	velocity					The velocity of the gesture in the view.
  */
-- (void)panGestureBegan:(UIPanGestureRecognizer *)panGesture withVelocity:(CGPoint)velocity
+- (void)panGestureBegan:(UIPanGestureRecognizer *)panGesture withTranslation:(CGPoint)translation
 {
 	UIView *childView;
+	panGesture.view.layer.shouldRasterize	= YES;
+	[self.centreViewController resignFirstResponder];
 	
 	//	if the velocity is right we check if we can show the left panel
-	if (velocity.x > 0)
+	if (translation.x > 0)
 	{
 		if (!self.showingRightPanel && self.leftViewControllerClass)
 			childView					= self.leftPanelView;
@@ -365,22 +384,24 @@ static NSString *const kRightVCKey		= @"Right";
  *	@param	panGesture					The gesture object representing the gesture.
  *	@param	velocity					The velocity of the gesture in the view.
  */
-- (void)panGestureChanged:(UIPanGestureRecognizer *)panGesture withVelocity:(CGPoint)velocity
-{
-	CGPoint translation					= [panGesture translationInView:panGesture.view];
-	
-	//	if the velocity is right we react accordingly and same for left
-	if (velocity.x > 0)
+- (void)panGestureChanged:(UIPanGestureRecognizer *)panGesture withTranslation:(CGPoint)translation
+{	
+	//	if the velocity is to the right, and the right panel is not showing, do we have a left view to show?
+	if (translation.x > 0 && !self.showingRightPanel)
 	{
-		if (!self.leftViewControllerClass && !self.showingRightPanel)
+		//	if we don't, we prevent the pan
+		if (!self.leftViewControllerClass)
 		{
 			[self movePanelToOriginalPosition];
 			return;
 		}
 	}
-	else
+	
+	//	if to the left, and the left panel isn't showing, do we have a right view to show?
+	else if (translation.y < 0 && !self.showingLeftPanel)
 	{
-		if (!self.rightViewControllerClass && !self.showingLeftPanel)
+		//	if we don't, we prevent the pan
+		if (!self.rightViewControllerClass)
 		{
 			[self movePanelToOriginalPosition];
 			return;
@@ -409,7 +430,7 @@ static NSString *const kRightVCKey		= @"Right";
  *	@param	panGesture					The gesture object representing the gesture.
  *	@param	velocity					The velocity of the gesture in the view.
  */
-- (void)panGestureEnded:(UIPanGestureRecognizer *)panGesture withVelocity:(CGPoint)velocity
+- (void)panGestureEnded:(UIPanGestureRecognizer *)panGesture withTranslation:(CGPoint)translation
 {
 	//	if the velocity is right we react accordingly and same for left
 	//if (velocity.x > 0);
@@ -428,6 +449,8 @@ static NSString *const kRightVCKey		= @"Right";
 		else if (self.showingRightPanel)
 			[self movePanelLeft];
 	}
+	
+	panGesture.view.layer.shouldRasterize	= NO;
 	
 	[self.centreViewController.view addMotionEffect:self.centreViewParallaxEffect];
 }
@@ -645,7 +668,11 @@ static NSString *const kRightVCKey		= @"Right";
 		}
 	};
 
+	//	set the cnetre view controll tag
 	_centreViewController.view.tag		= kCentreViewTag;
+	
+	//	set the rasterisation scale to be the scale of the creen itself (avoid low resolution bitmap)
+	_centreViewController.view.layer.rasterizationScale	= [UIScreen mainScreen].scale;
 	
 	//	this parallax effect is specific to the centre view
 	[_centreViewController.view addMotionEffect:self.centreViewParallaxEffect];
@@ -795,6 +822,8 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
  */
 - (void)resetMainView
 {
+	self.centreViewController.view.layer.shouldRasterize	= NO;
+	
 	//	remove left view and reset variables
 	if (self.leftViewController)
 	{

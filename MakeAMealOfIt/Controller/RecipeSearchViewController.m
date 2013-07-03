@@ -16,7 +16,14 @@
 
 #pragma mark - Constants & Static Variables
 
-static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
+static NSString *const kCellIdentifier		= @"ChosenIngredientsCellIdentifier";
+static NSString *const kHeaderIdentifier	= @"ChosenIngredientsHeaderIdentifier";
+
+enum SectionIndex
+{
+	kSectionExcludedIndex		= 0,
+	kSectionIncludedIndex		= 1
+};
 
 #pragma mark - Recipe Search View Controller Private Class Extension
 
@@ -26,14 +33,16 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 
 /**	A button that allows the user to reset the entire search.	*/
 @property (nonatomic, strong)	UIButton					*clearSearchButton;
-/**	The table view representing the chosen ingredients for the recipe search.	*/
-@property (nonatomic, strong)	UITableView					*ingredientsTableView;
+/**	A bool indicating whether this centre view has been slid at least once.	*/
+@property (nonatomic, assign)	BOOL						hasBeenSlid;
+/**	A dictionary of ingredients to be either included or excluded.	*/
+@property (nonatomic, strong)	NSMutableDictionary			*selectedIngredients;
+/**	The table view representing the included or excluded ingredients for the recipe search.	*/
+@property (nonatomic, strong)	UITableView					*tableView;
 /**	A block to call when any left controller sata has been modified in this view controller.	*/
 @property (nonatomic, copy)		LeftControllerDataModified	modifiedIngredients;
 /**	This is the main view that allows the user to search.	*/
 @property (nonatomic, strong)	RecipeSearchView			*recipeSearchView;
-/**	An array of ingredients to include in the recipes we search for.	*/
-@property (nonatomic, strong)	NSMutableArray				*selectedIngredients;
 
 @end
 
@@ -77,6 +86,30 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 }
 
 /**
+ *	Sets the tag of the button to the left of the toolbar.
+ *
+ *	@param	tag							Should be kButtonInUse for when button has been tapped, and kButtonNotInUse otherwise.
+ */
+- (void)setLeftButtonTag:(NSUInteger)tag
+{
+	if (tag == kButtonInUse)
+		self.hasBeenSlid				= YES;
+	[super setLeftButtonTag:tag];
+}
+
+/**
+ *	Sets the tag of the button to the right of the toolbar.
+ *
+ *	@param	tag							Should be kButtonInUse for when button has been tapped, and kButtonNotInUse otherwise.
+ */
+- (void)setRightButtonTag:(NSUInteger)tag
+{
+	if (tag == kButtonInUse)
+		self.hasBeenSlid				= YES;
+	[super setLeftButtonTag:tag];
+}
+
+/**
  *	Called when the global Yummly Request object has been reset.
  *
  *	@param	notification				The object containing a name, an object, and an optional dictionary.
@@ -94,7 +127,7 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 		
 		dispatch_async(dispatch_get_main_queue(),
 		^{
-			[self.ingredientsTableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationLeft];
+			[self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationLeft];
 		});
 	});
 }
@@ -133,6 +166,24 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 	[self.view addConstraints:constraints];
 	
 	[self.view bringSubviewToFront:self.toolbar];
+}
+
+#pragma mark - Convenience & Helper Methods
+
+/**
+ *	Conveniently returns the correcr array for the given section.
+ *
+ *	@param	section						The section of a table or collection view requesting an array.
+ *
+ *	@return	An array of ingredients relevant to the section.
+ */
+- (NSArray *)ingredientsArrayForSection:(NSUInteger)section
+{
+	if (section == kSectionExcludedIndex)
+		return self.selectedIngredients[kExcludedSelections];
+	else if (section == kSectionIncludedIndex)
+		return self.selectedIngredients[kIncludedSelections];
+	return nil;
 }
 
 #pragma mark - Initialisation
@@ -200,27 +251,48 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 - (void)leftController:(UIViewController *)leftViewController
  updatedWithSelections:(NSDictionary *)selections
 {
-	NSArray *addedSelections			= selections[kAddedSelections];
-	NSArray *removedSelections			= selections[kRemovedSelections];
+	NSDictionary *addedSelections		= selections[kAddedSelections];
+	NSDictionary *removedSelections		= selections[kRemovedSelections];
+	
+	NSMutableArray *excludedIngredients	= [self.selectedIngredients[kExcludedSelections] mutableCopy];
+	NSMutableArray *includedIngredients	= [self.selectedIngredients[kIncludedSelections] mutableCopy];
 	
 	//	asynchronously add the selections to the yummly request and update our array for the table view
 	dispatch_async(dispatch_queue_create("Updating Yummly Request", NULL),
 	^{
 		if (addedSelections)
 		{
-			[self.selectedIngredients addObjectsFromArray:addedSelections];
-			for (NSDictionary *ingredientDictionary in addedSelections)
+			NSArray *addedExcluded		= addedSelections[kExcludedSelections];
+			NSArray *addedIncluded		= addedSelections[kIncludedSelections];
+			
+			[excludedIngredients addObjectsFromArray:addedExcluded];
+			[includedIngredients addObjectsFromArray:addedIncluded];
+			
+			for (NSDictionary *ingredientDictionary in addedExcluded)
+				[appDelegate.yummlyRequest addExcludedIngredient:ingredientDictionary[kYummlyMetadataDescriptionKey]];
+			for (NSDictionary *ingredientDictionary in addedIncluded)
 				[appDelegate.yummlyRequest addDesiredIngredient:ingredientDictionary[kYummlyMetadataDescriptionKey]];
 		}
+		
 		if (removedSelections)
 		{
-			[self.selectedIngredients removeObjectsInArray:removedSelections];
-			for (NSDictionary *ingredientDictionary in removedSelections)
+			NSArray *removedExcluded	= removedSelections[kExcludedSelections];
+			NSArray *removedIncluded	= removedSelections[kIncludedSelections];
+			
+			[excludedIngredients removeObjectsInArray:removedExcluded];
+			[includedIngredients removeObjectsInArray:removedIncluded];
+			
+			for (NSDictionary *ingredientDictionary in removedExcluded)
+				[appDelegate.yummlyRequest removeExcludedIngredient:ingredientDictionary[kYummlyMetadataDescriptionKey]];
+			for (NSDictionary *ingredientDictionary in removedIncluded)
 				[appDelegate.yummlyRequest removeDesiredIngredient:ingredientDictionary[kYummlyMetadataDescriptionKey]];
 		}
 		
+		self.selectedIngredients[kExcludedSelections]	= excludedIngredients;
+		self.selectedIngredients[kIncludedSelections]	= includedIngredients;
+		
 		//	reload the table view on the main thread
-		[self.ingredientsTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+		[self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 	});
 }
 
@@ -288,29 +360,31 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
  *
  *	@return	An initialised and designed table view for use showing included ingredients.
  */
-- (UITableView *)ingredientsTableView
+- (UITableView *)tableView
 {
 	//	use lazy instantiation to set up the table view
-	if (!_ingredientsTableView)
+	if (!_tableView)
 	{
-		_ingredientsTableView					= [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStyleGrouped];
-		_ingredientsTableView.bounces			= NO;
-		_ingredientsTableView.backgroundColor	= [UIColor whiteColor];
-		_ingredientsTableView.backgroundView	= nil;
-		_ingredientsTableView.opaque			= YES;
+		_tableView					= [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+		_tableView.bounces			= NO;
+		_tableView.backgroundColor	= [UIColor whiteColor];
+		_tableView.backgroundView	= nil;
+		_tableView.opaque			= YES;
+		_tableView.separatorColor	= [UIColor clearColor];
+		_tableView.separatorStyle	= UITableViewCellSeparatorStyleNone;
 		
 		//	we are in complete control of this table view
-		_ingredientsTableView.dataSource		= self;
-		_ingredientsTableView.delegate			= self;
+		_tableView.dataSource		= self;
+		_tableView.delegate			= self;
 		
 		//	the only type of cell this table view uses is the standard one
-		[_ingredientsTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kCellIdentifier];
+		[_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kCellIdentifier];
 		
-		_ingredientsTableView.translatesAutoresizingMaskIntoConstraints	= NO;
-		[self.view addSubview:_ingredientsTableView];
+		_tableView.translatesAutoresizingMaskIntoConstraints	= NO;
+		[self.view addSubview:_tableView];
 	}
 	
-	return _ingredientsTableView;
+	return _tableView;
 }
 
 /**
@@ -339,10 +413,11 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
  *
  *	@return	An array of ingredients to include in the recipes we search for.
  */
-- (NSMutableArray *)selectedIngredients
+- (NSMutableDictionary *)selectedIngredients
 {
 	if (!_selectedIngredients)
-		_selectedIngredients			= [[NSMutableArray alloc] init];
+		_selectedIngredients			= [@{kExcludedSelections: @[],
+											 kIncludedSelections: @[]	} mutableCopy];
 	
 	return _selectedIngredients;
 }
@@ -356,7 +431,7 @@ static NSString *const kCellIdentifier	= @"ChosenIngredientsCellIdentifier";
 {
 	return @{	@"clearSearchButton": self.clearSearchButton,
 				@"recipeSearchView"	: self.recipeSearchView,
-				@"tableView"		: self.ingredientsTableView,
+				@"tableView"		: self.tableView,
 				@"toolbar"			: self.toolbar};
 }
 
@@ -403,7 +478,7 @@ willDismissWithButtonIndex:(NSInteger)buttonIndex
  */
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-	return 1;
+	return 2;
 }
 
 /**
@@ -417,7 +492,20 @@ willDismissWithButtonIndex:(NSInteger)buttonIndex
 {
 	UITableViewCell *cell				= [tableView dequeueReusableCellWithIdentifier:kCellIdentifier forIndexPath:indexPath];
 	
-	cell.textLabel.text					= [self.selectedIngredients[indexPath.row][kYummlyMetadataDescriptionKey] capitalizedString];
+	NSArray *arrayForSection			= [self ingredientsArrayForSection:indexPath.section];
+	NSString *cellText;
+	
+	if (arrayForSection.count)
+		cellText						= [arrayForSection[indexPath.row][kYummlyMetadataDescriptionKey] capitalizedString];
+	else if (indexPath.section == kSectionExcludedIndex)
+		cellText						= @"← Include / Exclude Ingredients",
+		cell.textLabel.textAlignment	= NSTextAlignmentLeft;
+	else if (indexPath.section == kSectionIncludedIndex)
+		cellText						= @"Allergy & Dietary Requirements + More →",
+		cell.textLabel.textAlignment	= NSTextAlignmentRight;
+	
+	cell.textLabel.text					= cellText;
+	
 	cell.selectionStyle					= UITableViewCellSelectionStyleNone;
 	
 	return cell;
@@ -432,7 +520,12 @@ willDismissWithButtonIndex:(NSInteger)buttonIndex
 - (NSInteger)tableView:(UITableView *)tableView
  numberOfRowsInSection:(NSInteger)section
 {
-	return self.selectedIngredients.count;
+	if (!self.hasBeenSlid)
+		return 1;
+	
+	NSArray *arrayForSection			= [self ingredientsArrayForSection:section];
+	
+	return arrayForSection.count;
 }
 
 #pragma mark - UITableViewDelegate Methods
@@ -446,7 +539,36 @@ willDismissWithButtonIndex:(NSInteger)buttonIndex
 - (void)	  tableView:(UITableView *)tableView
 didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	self.modifiedIngredients(self.selectedIngredients[indexPath.row]);
+}
+
+/**
+ *	Asks the delegate for a view object to display in the header of the specified section of the table view.
+ *
+ *	@param	tableView					The table-view object asking for the view object.
+ *	@param	section						An index number identifying a section of tableView .
+ *
+ *	@return	A view object to be displayed in the header of section.
+ */
+- (UIView *)tableView:(UITableView *)tableView
+viewForHeaderInSection:(NSInteger)section
+{
+	//	get header view object and then just set the title
+	UITableViewHeaderFooterView *headerView		= [self.tableView dequeueReusableHeaderFooterViewWithIdentifier:kHeaderIdentifier];
+	if (!headerView)
+		headerView							= [[UITableViewHeaderFooterView alloc] initWithReuseIdentifier:kHeaderIdentifier];
+	
+	if ([self ingredientsArrayForSection:section].count == 0)
+		headerView.backgroundView				= nil,
+		headerView.contentView.backgroundColor	= [UIColor clearColor],
+		headerView.textLabel.backgroundColor	= [UIColor clearColor];
+	else
+	{
+		headerView.textLabel.text				= section == kSectionExcludedIndex ? @"Excluded" : @"Required";
+		headerView.contentView.backgroundColor	= [[UIColor alloc] initWithRed:0.2f green:0.2f blue:0.2f alpha:1.0f];
+		headerView.textLabel.textColor			= [UIColor whiteColor];
+	}
+	
+	return headerView;
 }
 
 /**

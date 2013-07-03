@@ -37,7 +37,7 @@
 	NSArray *constraints;
 	NSLayoutConstraint *constraint;
 	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[metadataLabel]-[metadataTypeLabel(==40)]-|"
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[metadataLabel]-[metadataTypeLabel(==45)]-|"
 																options:NSLayoutFormatAlignAllTop | NSLayoutFormatAlignAllBottom
 																metrics:nil
 																  views:self.viewsDictionary];

@@ -7,6 +7,7 @@
 //
 
 #import "CupboardViewController.h"
+#import "IngredientTableViewCell.h"
 #import "YummlyMetadata.h"
 
 @import QuartzCore;
@@ -235,9 +236,9 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
  *	@param	isSelected					whether the index path item was selected or deselected
  *	@param	indexPath					index path representing the item that was selected or deselected
  */
-- (void)   tableView:(UITableView *)tableView
-			selected:(BOOL)isSelected
-		   indexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView
+		 selected:(BOOL)isSelected
+		indexPath:(NSIndexPath *)indexPath
 {
 	//	asynchronously update the left controller with the selected ingredient dictionary
 	dispatch_async(dispatch_queue_create("Updating Selections", NULL),
@@ -263,19 +264,22 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 	for (NSIndexPath *selectedIndexPath in [tableView indexPathsForSelectedRows])
 		[allSelections addObject:[self ingredientDictionaryForIndexPath:selectedIndexPath inTableView:tableView]];
 	
-	NSArray *addedSelections;
-	NSArray *removedSelections;
+	NSArray *update						= @[ingredientDictionary];
+	
+	NSMutableDictionary *addedSelections		= [@{kExcludedSelections	: @[],
+													 kIncludedSelections	: @[]} mutableCopy];
+	NSMutableDictionary *removedSelections		= [@{kExcludedSelections	: @[],
+													 kIncludedSelections	: @[]} mutableCopy];
+	
 	
 	//	update the array appropriately according to whether it is selected or not
 	if (!isSelected)
 	{
-		addedSelections					= @[];
-		removedSelections				= @[ingredientDictionary];
+		removedSelections[kIncludedSelections]	= update;
 	}
 	else
 	{
-		addedSelections					= @[ingredientDictionary];
-		removedSelections				= @[];
+		addedSelections[kIncludedSelections]	= update;
 	}
 	
 	//	make a dictionary with the updates to send to the left view controller
@@ -346,6 +350,39 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 			
 			//	if both or neither are numbers we sort normally
 			return [stringA compare:stringB options:NSDiacriticInsensitiveSearch|NSCaseInsensitiveSearch];
+		};
+	}
+	
+	return _prioritiseLettersComparator;
+}
+
+/**
+ *	The getter for the comparator to use when sorting things for the table view.
+ *
+ *	@return	A comparator block that sorts letter before numbers and punctuation.
+ */
+- (NSComparator)prioritiseLettersInDictionaryComparator
+{
+	if (!_prioritiseLettersComparator)
+	{
+		_prioritiseLettersComparator	= ^NSComparisonResult(NSDictionary *ingredientDictionaryA, NSDictionary *ingredientDictionaryB)
+		{
+			NSString *ingredientA		= ingredientDictionaryA[kYummlyMetadataDescriptionKey];
+			NSString *ingredientB		= ingredientDictionaryB[kYummlyMetadataDescriptionKey];
+			
+			//	gets whether either first letter is a number
+			BOOL isNumberA				= [[NSCharacterSet decimalDigitCharacterSet] characterIsMember:[ingredientA characterAtIndex:0]];
+			BOOL isNumberB				= [[NSCharacterSet decimalDigitCharacterSet] characterIsMember:[ingredientB characterAtIndex:0]];
+			
+			//	we sort the letter over the number
+			if (!isNumberA && isNumberB)
+				return NSOrderedAscending;
+			
+			else if (isNumberA && !isNumberB)
+				return NSOrderedDescending;
+			
+			//	if both or neither are numbers we sort normally
+			return [ingredientA compare:ingredientB options:NSDiacriticInsensitiveSearch|NSCaseInsensitiveSearch];
 		};
 	}
 	
@@ -477,7 +514,7 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 		_tableView.delegate				= self;
 		[self.view addSubview:_tableView];
 		
-		[_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kCellIdentifier];
+		[_tableView registerClass:[IngredientTableViewCell class] forCellReuseIdentifier:kCellIdentifier];
 		
 		_tableView.translatesAutoresizingMaskIntoConstraints	= NO;
 	}
@@ -551,6 +588,14 @@ shouldReloadTableForSearchString:(NSString *)searchString
 	return self.ingredientsForTableView.count;
 }
 
+
+/**
+ *	Asks the data source to return the titles for the sections for a table view.
+ *
+ *	@param	tableView					The table-view object requesting this information.
+ *
+ *	@return	An array of strings that serve as the title of sections in the table view and appear in the index list on the right side of the table view.
+ */
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
 {
 	if (tableView == self.searchDisplay.searchResultsTableView)
@@ -559,7 +604,13 @@ shouldReloadTableForSearchString:(NSString *)searchString
 	NSMutableArray *capitalisedTitles	= [[NSMutableArray alloc] init];
 	
 	for (NSString *title in self.sectionTitles)
-		[capitalisedTitles addObject:[title capitalizedString]];
+		if ([[NSCharacterSet decimalDigitCharacterSet] characterIsMember:[title characterAtIndex:0]])
+		{
+			if (![capitalisedTitles containsObject:@"#"])
+				[capitalisedTitles addObject:@"#"];
+		}
+		else
+			[capitalisedTitles addObject:[title capitalizedString]];
 	
 	return capitalisedTitles;
 }
