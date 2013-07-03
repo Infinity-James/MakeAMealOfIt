@@ -115,6 +115,8 @@
     if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])
 	{
         [self addPanGestureRecogniser];
+		self.selectionStyle				= UITableViewCellSelectionStyleNone;
+		self.textLabel.backgroundColor	= [UIColor clearColor];
     }
 	
     return self;
@@ -123,15 +125,15 @@
 #pragma mark - Setter & Getter Methods
 
 /**
+ *	The setter for the ingredient dictionary
  *
- *
- *	@param
+ *	@param	ingredientDictionary		The ingredient dictionary that this table view renders.
  */
 - (void)setIngredientDictionary:(NSDictionary *)ingredientDictionary
 {
 	_ingredientDictionary				= ingredientDictionary;
 	
-	self.textLabel.text					= _ingredientDictionary[kYummlyMetadataDescriptionKey];
+	self.textLabel.text					= [_ingredientDictionary[kYummlyMetadataDescriptionKey] capitalizedString];
 }
 
 #pragma mark - UIGestureRecognizer Methods

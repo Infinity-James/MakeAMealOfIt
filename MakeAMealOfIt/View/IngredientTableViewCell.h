@@ -29,6 +29,7 @@
 
 @interface IngredientTableViewCell : UITableViewCell {}
 
+/**	The ingredient dictionary that this table view renders.	*/
 @property (nonatomic, strong)	NSDictionary	*ingredientDictionary;
 
 @end

@@ -496,7 +496,8 @@ willDismissWithButtonIndex:(NSInteger)buttonIndex
 	NSString *cellText;
 	
 	if (arrayForSection.count)
-		cellText						= [arrayForSection[indexPath.row][kYummlyMetadataDescriptionKey] capitalizedString];
+		cellText						= [arrayForSection[indexPath.row][kYummlyMetadataDescriptionKey] capitalizedString],
+		cell.textLabel.textAlignment	= NSTextAlignmentNatural;
 	else if (indexPath.section == kSectionExcludedIndex)
 		cellText						= @"← Include / Exclude Ingredients",
 		cell.textLabel.textAlignment	= NSTextAlignmentLeft;

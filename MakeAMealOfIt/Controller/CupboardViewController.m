@@ -26,13 +26,13 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 /**	*/
 @property (nonatomic, strong)	NSMutableArray				*filteredIngredients;
 /**	*/
-@property (nonatomic, strong)	NSArray						*ingredientsArray;
-/**	*/
 @property (nonatomic, strong)	NSArray						*ingredientsMetadata;
 /**	*/
 @property (nonatomic, strong)	NSMutableDictionary			*ingredientsForTableView;
 /**	A comparator block that sorts letter before numbers and punctuation.	*/
 @property (nonatomic, assign)	NSComparator				prioritiseLettersComparator;
+/**	A comparator block that sorts letter before numbers and punctuation in ingredient dictionaries.	*/
+@property (nonatomic, assign)	NSComparator				prioritiseLettersInDictionaryComparator;
 /**	This search bar will be used to search the ingredients table view.	*/
 @property (nonatomic, strong)	UISearchBar					*searchBar;
 /**	The constraints used to set the search bar on top of the table view.	*/
@@ -109,19 +109,17 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 - (NSIndexPath *)indexPathForIngredientDictionary:(NSDictionary *)ingredientDictionary
 									  inTableView:(UITableView *)tableView
 {
-	NSString *ingredient				= ingredientDictionary[kYummlyMetadataDescriptionKey];
-	
 	if (tableView == self.tableView)
 	{
 		for (NSUInteger sectionTitleIndex = 0; sectionTitleIndex < self.sectionTitles.count; sectionTitleIndex++)
 			for (NSUInteger ingredientIndex = 0; ingredientIndex < ((NSArray *)self.ingredientsForTableView[self.sectionTitles[sectionTitleIndex]]).count; ingredientIndex++)
-				if ([self.ingredientsForTableView[self.sectionTitles[sectionTitleIndex]][ingredientIndex] isEqualToString:ingredient])
+				if ([(NSDictionary *)self.ingredientsForTableView[self.sectionTitles[sectionTitleIndex]][ingredientIndex] isEqualToDictionary:ingredientDictionary])
 					return [NSIndexPath indexPathForRow:ingredientIndex inSection:sectionTitleIndex];
 	}
 	
 	else if (tableView == self.searchDisplay.searchResultsTableView)
 		for (NSUInteger index = 0; index < self.filteredIngredients.count; index++)
-			if ([self.filteredIngredients[index] isEqualToString:ingredient])
+			if ([self.filteredIngredients[index] isEqualToDictionary:ingredientDictionary])
 				return [NSIndexPath indexPathForRow:index inSection:1];
 	
 	return nil;
@@ -138,17 +136,14 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 - (NSDictionary *)ingredientDictionaryForIndexPath:(NSIndexPath *)indexPath
 									   inTableView:(UITableView *)tableView
 {
-	NSString *ingredient;
-	if (tableView == self.tableView)
-		ingredient						= self.ingredientsForTableView[self.sectionTitles[indexPath.section]][indexPath.row];
-	else if (tableView == self.searchDisplay.searchResultsTableView)
-		ingredient						= self.filteredIngredients[indexPath.row];
+	NSDictionary *ingredientDictionary;
 	
-	for (NSDictionary *ingredientDictionary in self.ingredientsMetadata)
-		if ([ingredientDictionary[kYummlyMetadataDescriptionKey] isEqualToString:ingredient])
-			return ingredientDictionary;
+	if (tableView == self.searchDisplay.searchResultsTableView)
+		ingredientDictionary			= self.filteredIngredients[indexPath.row];
+	else
+		ingredientDictionary			= self.ingredientsForTableView[self.sectionTitles[indexPath.section]][indexPath.row];
 	
-	return nil;
+	return ingredientDictionary;
 }
 
 /**
@@ -163,8 +158,8 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 	[self.filteredIngredients removeAllObjects];
 	
 	//	define the predicate according to the search of the user
-	NSPredicate *predicate				= [NSPredicate predicateWithFormat:@"SELF contains[c] %@", searchText];
-	self.filteredIngredients			= [[self.ingredientsArray filteredArrayUsingPredicate:predicate] mutableCopy];
+	NSPredicate *predicate				= [NSPredicate predicateWithFormat:@"SELF.%@ CONTAINS[cd] %@", kYummlyMetadataDescriptionKey, searchText];
+	self.filteredIngredients			= [[self.ingredientsMetadata filteredArrayUsingPredicate:predicate] mutableCopy];
 }
 
 /**
@@ -175,7 +170,7 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 	_searchDisplay.searchResultsDataSource	= self;
 	_searchDisplay.searchResultsDelegate	= self;
 	_searchDisplay.searchResultsTableView.allowsMultipleSelection	= YES;
-	[_searchDisplay.searchResultsTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kCellIdentifier];
+	[_searchDisplay.searchResultsTableView registerClass:[IngredientTableViewCell class] forCellReuseIdentifier:kCellIdentifier];
 }
 
 #pragma mark - Initialisation
@@ -212,41 +207,23 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
  *	This will be responsible for setting up the sections and the index titles for the table view.
  */
 - (void)setupTableViewIndex
-{	
-	for (NSString *ingredient in self.ingredientsArray)
+{
+	for (NSDictionary *ingredientDictionary in self.ingredientsMetadata)
 	{
+		NSString *ingredient			= ingredientDictionary[kYummlyMetadataDescriptionKey];
 		NSString *firstCharacter		= [ingredient substringWithRange:NSMakeRange(0, 1)];
 		NSMutableArray *ingredients		= self.ingredientsForTableView[firstCharacter];
 		
 		if (!ingredients)
 			ingredients					= [[NSMutableArray alloc] init];
 		
-		[ingredients addObject:ingredient];
+		[ingredients addObject:ingredientDictionary];
 		
 		self.ingredientsForTableView[firstCharacter]	= ingredients;
 	}
 }
 
 #pragma mark - Left Delegate Methods
-
-/**
- *	called when an index path was selected or deselected in a table view
- *
- *	@param	tableView					the table view that the index path is inside of
- *	@param	isSelected					whether the index path item was selected or deselected
- *	@param	indexPath					index path representing the item that was selected or deselected
- */
-- (void)tableView:(UITableView *)tableView
-		 selected:(BOOL)isSelected
-		indexPath:(NSIndexPath *)indexPath
-{
-	//	asynchronously update the left controller with the selected ingredient dictionary
-	dispatch_async(dispatch_queue_create("Updating Selections", NULL),
-	^{
-		NSDictionary *ingredientDictionary	= [self ingredientDictionaryForIndexPath:indexPath inTableView:tableView];
-		[self tableView:tableView selected:isSelected ingredientDictionary:ingredientDictionary];
-	});
-}
 
 /**
  *	called when a particular ingredient dictionary was selected in the table view
@@ -261,8 +238,9 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 {
 	//	first get every selected index path and get the corresponding ingredient dictionary
 	NSMutableArray *allSelections		= [[NSMutableArray alloc] init];
+	
 	for (NSIndexPath *selectedIndexPath in [tableView indexPathsForSelectedRows])
-		[allSelections addObject:[self ingredientDictionaryForIndexPath:selectedIndexPath inTableView:tableView]];
+		[allSelections addObject:[self ingredientDictionaryForIndexPath:selectedIndexPath inTableView:tableView]];	
 	
 	NSArray *update						= @[ingredientDictionary];
 	
@@ -327,7 +305,7 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 }
 
 /**
- *	The getter for the comparator to use when sorting things for the table view.
+ *	The getter for the comparator to use when sorting ingredient descriptions for the table view.
  *
  *	@return	A comparator block that sorts letter before numbers and punctuation.
  */
@@ -357,15 +335,15 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 }
 
 /**
- *	The getter for the comparator to use when sorting things for the table view.
+ *	The getter for the comparator to use when sorting ingredient dictionaries for the table view.
  *
- *	@return	A comparator block that sorts letter before numbers and punctuation.
+ *	@return	A comparator block that sorts letter before numbers and punctuation in ingredient dictionaries.
  */
 - (NSComparator)prioritiseLettersInDictionaryComparator
 {
-	if (!_prioritiseLettersComparator)
+	if (!_prioritiseLettersInDictionaryComparator)
 	{
-		_prioritiseLettersComparator	= ^NSComparisonResult(NSDictionary *ingredientDictionaryA, NSDictionary *ingredientDictionaryB)
+		_prioritiseLettersInDictionaryComparator	= ^NSComparisonResult(NSDictionary *ingredientDictionaryA, NSDictionary *ingredientDictionaryB)
 		{
 			NSString *ingredientA		= ingredientDictionaryA[kYummlyMetadataDescriptionKey];
 			NSString *ingredientB		= ingredientDictionaryB[kYummlyMetadataDescriptionKey];
@@ -386,7 +364,7 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 		};
 	}
 	
-	return _prioritiseLettersComparator;
+	return _prioritiseLettersInDictionaryComparator;
 }
 
 /**
@@ -446,30 +424,13 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 }
 
 /**
- *	the setter for the array of ingredient descriptions
- *
- *	@param	ingredientsArray			an unsorted array of ingredient descriptions
- */
-- (void)setIngredientsArray:(NSArray *)ingredientsArray
-{
-	_ingredientsArray					= [ingredientsArray sortedArrayUsingComparator:self.prioritiseLettersComparator];
-}
-
-/**
  *	set the array of dictionaries each holding an ingredient object
  *
  *	@param	ingredientsMetadata		the array of ingredient dictionaries
  */
 - (void)setIngredientsMetadata:(NSArray *)ingredientsMetadata
 {
-	_ingredientsMetadata			= ingredientsMetadata;
-	
-	NSMutableArray *unsortedIngredients	= [[NSMutableArray alloc] init];
-	
-	for (NSDictionary *ingredientDictionary in _ingredientsMetadata)
-		[unsortedIngredients addObject:ingredientDictionary[kYummlyMetadataDescriptionKey]];
-	
-	self.ingredientsArray			= unsortedIngredients;
+	_ingredientsMetadata			= [ingredientsMetadata sortedArrayUsingComparator:self.prioritiseLettersInDictionaryComparator];
 }
 
 /**
@@ -624,15 +585,9 @@ shouldReloadTableForSearchString:(NSString *)searchString
 - (UITableViewCell *)tableView:(UITableView *)tableView
 		 cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	UITableViewCell *cell				= [tableView dequeueReusableCellWithIdentifier:kCellIdentifier forIndexPath:indexPath];
+	IngredientTableViewCell *cell		= [tableView dequeueReusableCellWithIdentifier:kCellIdentifier forIndexPath:indexPath];
 	
-	if (tableView == self.searchDisplay.searchResultsTableView)
-		cell.textLabel.text				= [self.filteredIngredients[indexPath.row] capitalizedString];
-	else
-		cell.textLabel.text				= [self.ingredientsForTableView[self.sectionTitles[indexPath.section]][indexPath.row] capitalizedString];
-	
-	cell.textLabel.backgroundColor		= [UIColor clearColor];
-	cell.selectionStyle					= UITableViewCellSelectionStyleNone;
+	cell.ingredientDictionary			= [self ingredientDictionaryForIndexPath:indexPath inTableView:tableView];
 	
 	return cell;
 }
@@ -648,8 +603,6 @@ shouldReloadTableForSearchString:(NSString *)searchString
 {
 	if (tableView == self.searchDisplay.searchResultsTableView)
 		return self.filteredIngredients.count;
-	
-	
 	
 	return ((NSArray *)self.ingredientsForTableView[self.sectionTitles[section]]).count;
 }
@@ -680,14 +633,18 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 - (void)		tableView:(UITableView *)tableView
 didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	UITableViewCell *cell				= [tableView cellForRowAtIndexPath:indexPath];
+	IngredientTableViewCell *cell		= (IngredientTableViewCell *)[tableView cellForRowAtIndexPath:indexPath];
 	
 	[UIView animateWithDuration:0.5f animations:
 	^{
 		[ThemeManager customiseTableViewCell:cell withTheme:nil];
 	}];
 	
-	[self tableView:tableView selected:NO indexPath:indexPath];
+	//	asynchronously update the left controller with the selected ingredient dictionary
+	dispatch_async(dispatch_queue_create("Updating Selections", NULL),
+	^{
+		[self tableView:tableView selected:NO ingredientDictionary:cell.ingredientDictionary];
+	});
 }
 
 /**
@@ -699,15 +656,20 @@ didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
 - (void)	  tableView:(UITableView *)tableView
 didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	UITableViewCell *cell				= [tableView cellForRowAtIndexPath:indexPath];
+	IngredientTableViewCell *cell		= (IngredientTableViewCell *)[tableView cellForRowAtIndexPath:indexPath];
 	
 	[UIView animateWithDuration:0.5f animations:
 	^{
-		cell.backgroundColor				= kYummlyColourMain;
-		cell.textLabel.textColor			= [UIColor whiteColor];
+		cell.backgroundColor			= kYummlyColourMain;
+		cell.textLabel.textColor		= [UIColor whiteColor];
 	}];
 	
-	[self tableView:tableView selected:YES indexPath:indexPath];
+	//	asynchronously update the left controller with the selected ingredient dictionary
+	dispatch_async(dispatch_queue_create("Updating Selections", NULL),
+	^{
+		[self tableView:tableView selected:YES ingredientDictionary:cell.ingredientDictionary];
+	});
+	
 }
 
 /**
