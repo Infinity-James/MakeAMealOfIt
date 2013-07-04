@@ -19,15 +19,15 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 
 #pragma mark - Cupboard View Controller Private Class Extension
 
-@interface CupboardViewController () <UISearchBarDelegate, UISearchDisplayDelegate, UITableViewDataSource, UITableViewDelegate> {}
+@interface CupboardViewController () <IngredientTableViewCellDelegate, UISearchBarDelegate, UISearchDisplayDelegate, UITableViewDataSource, UITableViewDelegate> {}
 
 #pragma mark - Private Properties
 
-/**	*/
-@property (nonatomic, strong)	NSMutableArray				*filteredIngredients;
-/**	*/
+/**	An array of ingredient dictionaries filtered by the user's search.	*/
+@property (nonatomic, strong)	NSArray						*filteredIngredients;
+/**	An array of all of ingredient dictionaries.	*/
 @property (nonatomic, strong)	NSArray						*ingredientsMetadata;
-/**	*/
+/**	A dictionary of all of the ingredients, with each one under a key of it's first letter.	*/
 @property (nonatomic, strong)	NSMutableDictionary			*ingredientsForTableView;
 /**	A comparator block that sorts letter before numbers and punctuation.	*/
 @property (nonatomic, assign)	NSComparator				prioritiseLettersComparator;
@@ -37,12 +37,12 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 @property (nonatomic, strong)	UISearchBar					*searchBar;
 /**	The constraints used to set the search bar on top of the table view.	*/
 @property (nonatomic, strong)	NSArray						*searchBarConstraints;
-/**	*/
+/**	This is the controller, handling presentation of results from the user's search. */
 @property (nonatomic, strong)	UISearchDisplayController	*searchDisplay;
-/**	*/
+/**	An array of the titles to be used for the sections in the table view.	*/
 @property (nonatomic, strong)	NSArray						*sectionTitles;
 /**	*/
-@property (nonatomic, strong)	NSMutableArray				*selectedIndices;
+@property (nonatomic, strong)	NSMutableDictionary			*selectedIngredients;
 /**	*/
 @property (nonatomic, strong)	UITableView					*tableView;
 /**	*/
@@ -68,6 +68,9 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 		[self.tableView deselectRowAtIndexPath:selectedIndexPath animated:YES];
 		[self tableView:self.tableView didDeselectRowAtIndexPath:selectedIndexPath];
 	}
+	
+	self.selectedIngredients		= nil;
+	[self.tableView reloadData];
 }
 
 #pragma mark - Autolayout Methods
@@ -155,11 +158,11 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 - (void)filterContentForSearchText:(NSString *)searchText inScope:(NSString *)scope
 {
 	//	first remove all past search results
-	[self.filteredIngredients removeAllObjects];
+	self.filteredIngredients			= @[];
 	
 	//	define the predicate according to the search of the user
 	NSPredicate *predicate				= [NSPredicate predicateWithFormat:@"SELF.%@ CONTAINS[cd] %@", kYummlyMetadataDescriptionKey, searchText];
-	self.filteredIngredients			= [[self.ingredientsMetadata filteredArrayUsingPredicate:predicate] mutableCopy];
+	self.filteredIngredients			= [self.ingredientsMetadata filteredArrayUsingPredicate:predicate];
 }
 
 /**
@@ -171,6 +174,101 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 	_searchDisplay.searchResultsDelegate	= self;
 	_searchDisplay.searchResultsTableView.allowsMultipleSelection	= YES;
 	[_searchDisplay.searchResultsTableView registerClass:[IngredientTableViewCell class] forCellReuseIdentifier:kCellIdentifier];
+}
+
+#pragma mark - IngredientTableViewCellDelegate Methods
+
+/**
+ *	Sent to the delegate when a cell has been told to exclude it's ingredient.
+ *
+ *	@param	ingredientTableViewCell		The ingredient cell that has been updated in some way (included or excluded, or an undo of either).
+ */
+- (void)ingredientCellUpdated:(IngredientTableViewCell *)ingredientTableViewCell
+{
+	//	get the array of included and excluded ingredient dictionaries
+	NSMutableArray *included			= [self.selectedIngredients[kIncludedSelections] mutableCopy];
+	NSMutableArray *excluded			= [self.selectedIngredients[kExcludedSelections] mutableCopy];
+	
+	//	get the table view to use when updating
+	UITableView *tableView				= self.searchDisplay.searchResultsTableView ? self.searchDisplay.searchResultsTableView : self.tableView;
+	
+	//	create some boolean values to set when updating the selection
+	__block BOOL excludedUpdate			= NO;
+	__block BOOL includedUpdate			= NO;
+	__block BOOL selected				= NO;
+	
+	//	asynchronously update everything to keep work off main thread
+	dispatch_async(dispatch_queue_create("Updating Selections", NULL),
+	^{
+		if (ingredientTableViewCell.included && ![included containsObject:ingredientTableViewCell.ingredientDictionary])
+		{
+			//	add the selection to the dictionary
+			[included addObject:ingredientTableViewCell.ingredientDictionary];
+			
+			//	specify the ingredient was selected
+			selected					= YES;
+			
+			//	flag that this ingredient's included status was updated
+			includedUpdate				= YES;
+		}
+		
+		else if (!ingredientTableViewCell.included && [included containsObject:ingredientTableViewCell.ingredientDictionary])
+		{
+			//	remove the selection from the dictionary
+			[included removeObject:ingredientTableViewCell.ingredientDictionary];
+			
+			//	specify the ingredient was removed
+			selected					= NO;
+			
+			//	flag that this ingredient's included status was updated
+			includedUpdate				= YES;
+		}
+		
+		//	update the dictionary with the new inclusions
+		self.selectedIngredients[kIncludedSelections]	= included;
+		
+		if (includedUpdate)
+			//	update the left controller with the selected / unselected ingredient dictionary
+			[self tableView:tableView
+				   selected:selected
+	   ingredientDictionary:ingredientTableViewCell.ingredientDictionary
+				 forSection:kIncludedSelections];
+		
+		if (ingredientTableViewCell.excluded && ![excluded containsObject:ingredientTableViewCell.ingredientDictionary])
+		{
+			//	add the selection to the dictionary
+			[excluded addObject:ingredientTableViewCell.ingredientDictionary];
+			
+			//	specify the ingredient was selected
+			selected					= YES;
+			
+			//	flag that this ingredient's excluded status was updated
+			excludedUpdate				= YES;
+		}
+		
+		else if (!ingredientTableViewCell.excluded && [excluded containsObject:ingredientTableViewCell.ingredientDictionary])
+		{
+			//	remove the selection from the dictionary
+			[excluded removeObject:ingredientTableViewCell.ingredientDictionary];
+			
+			//	specify the ingredient was removed
+			selected					= NO;
+			
+			//	flag that this ingredient's excluded status was updated
+			excludedUpdate				= YES;
+		}
+		
+		//	update the dictionary with the new exclusions
+		self.selectedIngredients[kExcludedSelections]	= excluded;
+		
+		if (excludedUpdate)
+			//	update the left controller with the selected / unselected ingredient dictionary
+			[self tableView:tableView
+				   selected:selected
+	   ingredientDictionary:ingredientTableViewCell.ingredientDictionary
+				 forSection:kExcludedSelections];
+	});
+	
 }
 
 #pragma mark - Initialisation
@@ -226,21 +324,26 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 #pragma mark - Left Delegate Methods
 
 /**
- *	called when a particular ingredient dictionary was selected in the table view
+ *	Called when a particular ingredient dictionary was selected in the table view.
  *
- *	@param	tableView					the table view object wherein the ingredient dictionary was selected
- *	@param	isSelected					whether the ingredient dictionary was selected or deselected
- *	@param	ingredientDictionary		the ingredient dictionary that was either selected or deselected
+ *	@param	tableView					The table view object wherein the ingredient dictionary was selected.
+ *	@param	isSelected					Whether the ingredient dictionary was selected or deselected.
+ *	@param	ingredientDictionary		The ingredient dictionary that was either selected or deselected.
+ *	@param	inclusionExclusionKey		Either kExcludedSelections to exclude the dictionary, or kIncludedSelections to include it.
  */
 - (void)   tableView:(UITableView *)tableView
 			selected:(BOOL)isSelected
 ingredientDictionary:(NSDictionary *)ingredientDictionary
+		  forSection:(NSString *)inclusionExclusionKey
 {
-	//	first get every selected index path and get the corresponding ingredient dictionary
-	NSMutableArray *allSelections		= [[NSMutableArray alloc] init];
+	//	initialise arrays to hold every selected ingredient, included or excluded
+	NSMutableArray *allExcluded			= [[NSMutableArray alloc] init];
+	NSMutableArray *allIncluded			= [[NSMutableArray alloc] init];
 	
-	for (NSIndexPath *selectedIndexPath in [tableView indexPathsForSelectedRows])
-		[allSelections addObject:[self ingredientDictionaryForIndexPath:selectedIndexPath inTableView:tableView]];	
+	for (NSDictionary *ingredientDictionary in self.selectedIngredients[kExcludedSelections])
+		[allExcluded addObject:ingredientDictionary];
+	for (NSDictionary *ingredientDictionary in self.selectedIngredients[kIncludedSelections])
+		[allIncluded addObject:ingredientDictionary];
 	
 	NSArray *update						= @[ingredientDictionary];
 	
@@ -249,20 +352,22 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 	NSMutableDictionary *removedSelections		= [@{kExcludedSelections	: @[],
 													 kIncludedSelections	: @[]} mutableCopy];
 	
-	
-	//	update the array appropriately according to whether it is selected or not
-	if (!isSelected)
+	if (inclusionExclusionKey == kExcludedSelections || inclusionExclusionKey == kIncludedSelections)
 	{
-		removedSelections[kIncludedSelections]	= update;
-	}
-	else
-	{
-		addedSelections[kIncludedSelections]	= update;
+		//	update the array appropriately according to whether it is selected or not
+		if (!isSelected)
+		{
+			removedSelections[inclusionExclusionKey]	= update;
+		}
+		else
+		{
+			addedSelections[inclusionExclusionKey]		= update;
+		}
 	}
 	
 	//	make a dictionary with the updates to send to the left view controller
 	NSDictionary *updates				= @{kAddedSelections	: addedSelections,
-											kAllSelections		: allSelections,
+											kAllSelections		: @{kExcludedSelections: allExcluded,	kIncludedSelections: allIncluded},
 											kRemovedSelections	: removedSelections};
 	
 	//	make sure this is performed on the main thread
@@ -275,18 +380,22 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 #pragma mark - Setter & Getter Methods
 
 /**
- *	an array of the ingredients filtered according to the search fo the user
+ *	An array of the ingredients filtered according to the search for the user.
+ *
+ *	@return	An initialised and empty array to be used to hold the user's search results.
  */
-- (NSMutableArray *)filteredIngredients
+- (NSArray *)filteredIngredients
 {
 	if (!_filteredIngredients)
-		_filteredIngredients			= [[NSMutableArray alloc] init];
+		_filteredIngredients			= @[];
 	
 	return _filteredIngredients;
 }
 
 /**
- *	this dictionary will hold the sections and the objects pertaining to that section
+ *	This dictionary will hold the sections and the objects pertaining to that section.
+ *
+ *	@return	A dictionary of all of the ingredients, with each one under a key of it's first letter.
  */
 - (NSMutableDictionary *)ingredientsForTableView
 {
@@ -390,7 +499,9 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 }
 
 /**
- *	the search display controller handling the searches of our table view
+ *	The search display controller handling the searches of our table view.
+ *
+ *	@return	An initialised and configured UISearchDisplayController.
  */
 - (UISearchDisplayController *)searchDisplay
 {
@@ -405,31 +516,36 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 }
 
 /**
- *	this is used to give the ingredients dictionary a convenient way to access the keys is a sorted way
+ *	An array of first letters for each ingredient to be used as sections.
  */
 - (NSArray *)sectionTitles
 {
+	//	a sorted array of section titles
 	return [self.ingredientsForTableView.allKeys sortedArrayUsingComparator:self.prioritiseLettersComparator];
 }
 
 /**
- *	an array holding all of the indices of the selected rows in our table view
+ *	A dictionationary holding all of the indices of the selected rows in our table view.
+ *
+ *	@return	A dictionary of all the currentl selected indices, kExcludedSelections for excluded ones, and kIncludedSelections for included ones.
  */
-- (NSMutableArray *)selectedIndices
+- (NSMutableDictionary *)selectedIngredients
 {
-	if (!_selectedIndices)
-		_selectedIndices				= [[NSMutableArray alloc] init];
+	if (!_selectedIngredients)
+		_selectedIngredients				= [@{ kExcludedSelections	: @[],
+											  kIncludedSelections	: @[]} mutableCopy];
 	
-	return _selectedIndices;
+	return _selectedIngredients;
 }
 
 /**
- *	set the array of dictionaries each holding an ingredient object
+ *	Set the array of dictionaries each holding an ingredient object.
  *
- *	@param	ingredientsMetadata		the array of ingredient dictionaries
+ *	@param	ingredientsMetadata		The array of ingredient dictionaries.
  */
 - (void)setIngredientsMetadata:(NSArray *)ingredientsMetadata
 {
+	//	sort the ingredients dictionary before adding them
 	_ingredientsMetadata			= [ingredientsMetadata sortedArrayUsingComparator:self.prioritiseLettersInDictionaryComparator];
 }
 
@@ -452,11 +568,11 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 			dispatch_async(dispatch_queue_create("Modifying Selections", NULL),
 			^{
 				NSIndexPath *indexPath		= [weakSelf indexPathForIngredientDictionary:modifiedIngredient inTableView:weakSelf.tableView];
+				IngredientTableViewCell *cell	= (IngredientTableViewCell *)[weakSelf.tableView cellForRowAtIndexPath:indexPath];
 				
 				dispatch_async(dispatch_get_main_queue(),
 				^{
-					[weakSelf.tableView deselectRowAtIndexPath:indexPath animated:YES];
-					[weakSelf tableView:weakSelf.tableView didDeselectRowAtIndexPath:indexPath];
+					cell.included	= cell.excluded	= NO;
 				});
 			});
 		}];
@@ -589,6 +705,14 @@ shouldReloadTableForSearchString:(NSString *)searchString
 	
 	cell.ingredientDictionary			= [self ingredientDictionaryForIndexPath:indexPath inTableView:tableView];
 	
+	if ([self.selectedIngredients[kIncludedSelections] containsObject:cell.ingredientDictionary])
+		cell.included					= YES;
+	
+	else if ([self.selectedIngredients[kExcludedSelections] containsObject:cell.ingredientDictionary])
+		cell.excluded					= YES;
+	
+	cell.delegate						= self;
+	
 	return cell;
 }
 
@@ -618,59 +742,9 @@ shouldReloadTableForSearchString:(NSString *)searchString
   willDisplayCell:(UITableViewCell *)cell
 forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	//	background colour has to be set here
-	[ThemeManager customiseTableViewCell:cell withTheme:nil];
 }
 
 #pragma mark - UITableViewDelegate Methods
-
-/**
- *	tells the delegate that the specified row is now deselected
- *
- *	@param	tableView					table-view object informing the delegate about the row deselection
- *	@param	indexPath					the index path of the cell that was selected
- */
-- (void)		tableView:(UITableView *)tableView
-didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-	IngredientTableViewCell *cell		= (IngredientTableViewCell *)[tableView cellForRowAtIndexPath:indexPath];
-	
-	[UIView animateWithDuration:0.5f animations:
-	^{
-		[ThemeManager customiseTableViewCell:cell withTheme:nil];
-	}];
-	
-	//	asynchronously update the left controller with the selected ingredient dictionary
-	dispatch_async(dispatch_queue_create("Updating Selections", NULL),
-	^{
-		[self tableView:tableView selected:NO ingredientDictionary:cell.ingredientDictionary];
-	});
-}
-
-/**
- *	tells the delegate that the specified row is now selected
- *
- *	@param	tableView					table-view object informing the delegate about the new row selection
- *	@param	indexPath					index path locating the new selected row in table view
- */
-- (void)	  tableView:(UITableView *)tableView
-didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-	IngredientTableViewCell *cell		= (IngredientTableViewCell *)[tableView cellForRowAtIndexPath:indexPath];
-	
-	[UIView animateWithDuration:0.5f animations:
-	^{
-		cell.backgroundColor			= kYummlyColourMain;
-		cell.textLabel.textColor		= [UIColor whiteColor];
-	}];
-	
-	//	asynchronously update the left controller with the selected ingredient dictionary
-	dispatch_async(dispatch_queue_create("Updating Selections", NULL),
-	^{
-		[self tableView:tableView selected:YES ingredientDictionary:cell.ingredientDictionary];
-	});
-	
-}
 
 /**
  *	Asks the delegate for the height to use for a row in a specified location.

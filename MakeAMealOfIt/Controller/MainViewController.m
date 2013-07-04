@@ -774,6 +774,24 @@ static NSString *const kRightVCKey			= @"Right";
 #pragma mark - UIGestureRecogniserDelegate Methods
 
 /**
+ *	Asks the view if the gesture recognizer should be allowed to continue tracking touch events.
+ *
+ *	@param	gestureRecognizer			The gesture recognizer that is attempting to transition out of the UIGestureRecognizerStatePossible state.
+ *
+ *	@return	YES if the gesture recognizer should continue tracking touch events and use them to trigger a gesture, NO otherwise.
+ */
+- (BOOL)gestureRecognizerShouldBegin:(UIPanGestureRecognizer *)gestureRecognizer
+{
+	CGPoint translation					= [gestureRecognizer translationInView:gestureRecognizer.view];
+	
+	//	check for horizontal gesture
+	if (fabsf(translation.x) > fabsf(translation.y))
+		return YES;
+	
+	return NO;
+}
+
+/**
  *	Ask the delegate if a gesture recognizer should receive an object representing a touch.
  *
  *	@param	gestureRecognizer			An instance of a subclass of the abstract base class UIGestureRecognizer.

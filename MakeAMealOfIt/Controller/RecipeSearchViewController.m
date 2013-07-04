@@ -106,7 +106,7 @@ enum SectionIndex
 {
 	if (tag == kButtonInUse)
 		self.hasBeenSlid				= YES;
-	[super setLeftButtonTag:tag];
+	[super setRightButtonTag:tag];
 }
 
 /**
@@ -118,12 +118,17 @@ enum SectionIndex
 {
 	dispatch_async(dispatch_queue_create("Ingredients Clearer", NULL),
 	^{
-		NSUInteger rowCount					= self.selectedIngredients.count;
-		NSMutableArray *indexPaths			= [[NSMutableArray alloc] initWithCapacity:rowCount];
-		for (NSUInteger index = 0; index < rowCount; index++)
-			[indexPaths addObject:[NSIndexPath indexPathForRow:index inSection:0]];
+		NSUInteger excludedCount			= ((NSArray *)self.selectedIngredients[kExcludedSelections]).count;
+		NSUInteger includedCount			= ((NSArray *)self.selectedIngredients[kIncludedSelections]).count;
 		
-		[self.selectedIngredients removeAllObjects];
+		NSMutableArray *indexPaths			= [[NSMutableArray alloc] initWithCapacity:excludedCount + includedCount];
+		
+		for (NSUInteger index = 0; index < excludedCount; index++)
+			[indexPaths addObject:[NSIndexPath indexPathForRow:index inSection:kSectionExcludedIndex]];
+		for (NSUInteger index = 0; index < includedCount; index++)
+			[indexPaths addObject:[NSIndexPath indexPathForRow:index inSection:kSectionIncludedIndex]];
+		
+		self.selectedIngredients			= nil;
 		
 		dispatch_async(dispatch_get_main_queue(),
 		^{
@@ -258,7 +263,7 @@ enum SectionIndex
 	NSMutableArray *includedIngredients	= [self.selectedIngredients[kIncludedSelections] mutableCopy];
 	
 	//	asynchronously add the selections to the yummly request and update our array for the table view
-	dispatch_async(dispatch_queue_create("Updating Yummly Request", NULL),
+	dispatch_sync(dispatch_queue_create("Updating Yummly Request", NULL),
 	^{
 		if (addedSelections)
 		{
@@ -366,7 +371,6 @@ enum SectionIndex
 	if (!_tableView)
 	{
 		_tableView					= [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
-		_tableView.bounces			= NO;
 		_tableView.backgroundColor	= [UIColor whiteColor];
 		_tableView.backgroundView	= nil;
 		_tableView.opaque			= YES;
@@ -482,6 +486,23 @@ willDismissWithButtonIndex:(NSInteger)buttonIndex
 }
 
 /**
+ *	Asks the data source to verify that the given row is editable.
+ *
+ *	@param	tableView					The table-view object requesting this information.
+ *	@param	indexPath					An index path locating a row in tableView.
+ *
+ *	@return	YES if the row indicated by indexPath is editable; otherwise, NO.
+ */
+- (BOOL)	tableView:(UITableView *)tableView
+canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	if ([self ingredientsArrayForSection:indexPath.section].count == 0)
+		return NO;
+	
+	return YES;
+}
+
+/**
  *	Asks the data source for a cell to insert in a particular location of the table view.
  *
  *	@param	tableView					A table-view object requesting the cell.
@@ -510,6 +531,33 @@ willDismissWithButtonIndex:(NSInteger)buttonIndex
 	cell.selectionStyle					= UITableViewCellSelectionStyleNone;
 	
 	return cell;
+}
+
+
+/**
+ *	Asks the data source to commit the insertion or deletion of a specified row in the receiver.
+ *
+ *	@param	tableView					The table-view object requesting the insertion or deletion.
+ *	@param	editingStyle				The cell editing style corresponding to a insertion or deletion requested for the row specified by indexPath.
+ *	@param	indexPath					An index path locating the row in tableView.
+ */
+- (void) tableView:(UITableView *)				tableView
+commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
+ forRowAtIndexPath:(NSIndexPath *)				indexPath
+{
+	if (!self.hasBeenSlid)				return;
+	
+	NSString *key						= indexPath.section == kSectionExcludedIndex ? kExcludedSelections : kIncludedSelections;
+	NSDictionary *ingredientDictionary	= ((NSArray *)self.selectedIngredients[key])[indexPath.row];
+	
+	if (editingStyle == UITableViewCellEditingStyleDelete)
+	{
+		NSMutableArray *ingredientsArray= [self.selectedIngredients[key] mutableCopy];
+		[ingredientsArray removeObjectAtIndex:indexPath.row];
+		self.selectedIngredients[key]	= ingredientsArray;
+		[self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationLeft];
+		self.modifiedIngredients(ingredientDictionary);
+	}
 }
 
 /**
@@ -560,7 +608,7 @@ viewForHeaderInSection:(NSInteger)section
 	
 	if ([self ingredientsArrayForSection:section].count == 0)
 		headerView.backgroundView				= nil,
-		headerView.contentView.backgroundColor	= [UIColor clearColor],
+		headerView.contentView.backgroundColor	= [UIColor whiteColor],
 		headerView.textLabel.backgroundColor	= [UIColor clearColor];
 	else
 	{

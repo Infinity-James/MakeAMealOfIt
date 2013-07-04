@@ -6,22 +6,20 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
+@class IngredientTableViewCell;
+
 @protocol IngredientTableViewCellDelegate <NSObject>
+
+#pragma mark - Required Methods
 
 @required
 
 /**
  *	Sent to the delegate when a cell has been told to exclude it's ingredient.
  *
- *	@param	ingredientDictionary				The ingredient dictionary presented by the cell which has been excluded.
+ *	@param	ingredientTableViewCell		The ingredient cell that has been updated in some way (included or excluded, or an undo of either).
  */
-- (void)ingredientItemExcluded:(NSDictionary *)ingredientDictionary;
-/**
- *	Sent to the delegate when a cell has been told to include it's ingredient.
- *
- *	@param	ingredientDictionary				The ingredient dictionary presented by the cell which has been oncluded.
- */
-- (void)ingredientItemIncluded:(NSDictionary *)ingredientDictionary;
+- (void)ingredientCellUpdated:(IngredientTableViewCell *)ingredientTableViewCell;
 
 @end
 
@@ -29,6 +27,14 @@
 
 @interface IngredientTableViewCell : UITableViewCell {}
 
+#pragma mark - Public Properties
+
+/**	The delegate for this ingredient table view cell.	*/
+@property (nonatomic, weak)		id <IngredientTableViewCellDelegate>	delegate;
+/**	Whether the ingredient dictionary rendered by us is marked excluded.	*/
+@property (nonatomic, assign)	BOOL			excluded;
+/**	Whether the ingredient dictionary rendered by us is marked included.	*/
+@property (nonatomic, assign)	BOOL			included;
 /**	The ingredient dictionary that this table view renders.	*/
 @property (nonatomic, strong)	NSDictionary	*ingredientDictionary;
 
