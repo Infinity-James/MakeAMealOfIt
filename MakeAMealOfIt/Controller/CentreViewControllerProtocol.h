@@ -25,8 +25,11 @@ typedef NS_ENUM (NSUInteger, MoveDestination)
 	MovingViewOriginalPosition
 };
 
+
+
 /**	A block to be used when the centre view wants to slide in a direction.	*/
 typedef void(^MovingView)(MoveDestination movingDestination);
+typedef void(^SetMenuState)(SideControllerState desiredMenuState);
 
 #pragma mark - Centre View Controller Protocol
 
@@ -37,9 +40,12 @@ typedef void(^MovingView)(MoveDestination movingDestination);
 #pragma mark - Required Properties
 
 /**	The button that will indicate a view has been pushed on top of another view	*/
-@property (nonatomic, strong)	UIBarButtonItem	*backButton;
+@property (nonatomic, strong)	UIBarButtonItem		*backButton;
+/**	The current state of the main view controller.	*/
+@property (nonatomic, assign)	SideControllerState	menuState;
 /**	A block to be used when the centre view wants to slide in a direction.	*/
-@property (nonatomic, copy)		MovingView		movingViewBlock;
+@property (nonatomic, copy)		MovingView			movingViewBlock;
+@property (nonatomic, copy)		SetMenuState		setMenuState;
 
 #pragma mark - Requires Methods
 

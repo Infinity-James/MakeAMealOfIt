@@ -226,8 +226,6 @@
 {
 	[super beginTrackingWithTouch:touch withEvent:event];
 	
-	[[NSNotificationCenter defaultCenter] postNotificationName:kSubviewTrackingTouch object:@YES];
-	
 	CGPoint touchPoint					= [touch locationInView:self];
 	
 	//	filter out touchs too close to centre of wheel
@@ -290,8 +288,6 @@
 - (void)endTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
 {
 	[super endTrackingWithTouch:touch withEvent:event];
-	
-	[[NSNotificationCenter defaultCenter] postNotificationName:kSubviewTrackingTouch object:@NO];
 	
 	//	get current container rotation and initialise new value
 	CGFloat radians						= atan2f(_container.transform.b, _container.transform.a);

@@ -87,10 +87,7 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 - (void)addToolbarItemsAnimated:(BOOL)animate
 {
 	//	if our back button property is set we use that, otherwise we just use a blank bar button item
-	if (self.backButton)
-		self.leftButton					= self.backButton;
-	else
-		self.leftButton					= [[UIBarButtonItem alloc] init];
+	self.leftButton					= [[UIBarButtonItem alloc] init];
 	
 	//	this flexible space neatly separates the bar button items
 	UIBarButtonItem *flexibleSpace		= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
@@ -404,13 +401,12 @@ didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
 - (void)  collectionView:(UICollectionView *)collectionView
 didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-	self.backButton						= nil;
 	RecipeDetailsViewController *recipeVC	= [[RecipeDetailsViewController alloc] initWithRecipeID:self.recipes[indexPath.row][kYummlyMatchIDKey]
 																					  andRecipeName:self.recipes[indexPath.row][kYummlyMatchRecipeNameKey]];
 	
 	YummlyAttributionViewController *attributionVC	= [[YummlyAttributionViewController alloc] init];
 	
-	[appDelegate.slideOutVC showCentreViewController:recipeVC withRightViewController:attributionVC];
+	//[appDelegate.slideOutVC showCentreViewController:recipeVC withRightViewController:attributionVC];
 }
 
 #pragma mark - UICollectionViewDelegateFlowLayout Methods

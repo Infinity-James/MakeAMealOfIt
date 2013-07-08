@@ -18,89 +18,6 @@
 
 @implementation UICentreViewController {}
 
-#pragma mark - Synthesise Properties
-
-@synthesize backButton					= _backButton;
-@synthesize movingViewBlock				= _movingViewBlock;
-
-#pragma mark - Action & Selector Methods
-
-/**
- *	Called when the button in the toolbar for the left panel is tapped.
- */
-- (void)leftButtonTapped
-{
-	if (!self.movingViewBlock)			return;
-	
-	switch (self.leftButtonTag)
-	{
-		case kButtonInUse:		self.movingViewBlock(MovingViewOriginalPosition);	break;
-		case kButtonNotInUse:	self.movingViewBlock(MovingViewRight);				break;
-		default:																	break;
-	}
-}
-
-/**
- *	Called when the button in the toolbar for the right panel is tapped.
- */
-- (void)rightButtonTapped
-{
-	if (!self.movingViewBlock)			return;
-	
-	switch (self.rightButtonTag)
-	{
-		case kButtonInUse:		self.movingViewBlock(MovingViewOriginalPosition);	break;
-		case kButtonNotInUse:	self.movingViewBlock(MovingViewLeft);				break;
-		default:																	break;
-	}
-}
-
-#pragma mark - CentreViewControllerProtocol Methods
-
-/**
- *	A convenient way to get the left button's tag.
- *
- *	@return	kButtonInUse if the button is in use and kButtonNotInUse if it is not.
- */
-- (NSUInteger)leftButtonTag
-{
-	return self.leftButton.tag;
-}
-
-/**
- *	A convenient way to get the right button's tag.
- *
- *	@return	kButtonInUse if the button is in use and kButtonNotInUse if it is not.
- */
-- (NSUInteger)rightButtonTag
-{
-	return self.rightButton.tag;
-}
-
-/**
- *	Sets the tag of the button to the left of the toolbar.
- *
- *	@param	tag							Should be kButtonInUse for when button has been tapped, and kButtonNotInUse otherwise.
- */
-- (void)setLeftButtonTag:(NSUInteger)tag
-{
-	if (tag == kButtonInUse)
-		[self resignFirstResponder];
-	self.leftButton.tag					= tag;
-}
-
-/**
- *	Sets the tag of the button to the right of the toolbar.
- *
- *	@param	tag							Should be kButtonInUse for when button has been tapped, and kButtonNotInUse otherwise.
- */
-- (void)setRightButtonTag:(NSUInteger)tag
-{
-	if (tag == kButtonInUse)
-		[self resignFirstResponder];
-	self.rightButton.tag				= tag;
-}
-
 #pragma mark - Initialisation
 	
 /**
@@ -113,17 +30,6 @@
 }
 
 #pragma mark - Setter & Getter Methods
-	
-/**
- *	The setter for the back button declared by the centre view protocol and used to transition to previous controller.
- *
- *	@param	backButton					The back button set up by the manager of this controller.
- */
-- (void)setBackButton:(UIBarButtonItem *)backButton
-{
-	_backButton							= backButton;
-	[self addToolbarItemsAnimated:YES];
-}
 
 /**
  *	A toolbar to keep at the top of the view.

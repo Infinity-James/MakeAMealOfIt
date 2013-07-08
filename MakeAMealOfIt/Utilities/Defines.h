@@ -28,7 +28,6 @@ static CGFloat const kPanelWidth		= 60.00f;
 #define kShadowOffset					CGSizeMake(0.0f, 2.0f)
 
 //	notification names
-#define kSubviewTrackingTouch				@"NotificationSubviewTrackingTouch"
 #define kThemeChanged						@"NotificationThemeChanged"
 static NSString *const kNotificationYummlyRequestChanged	= @"NotificationYummlyRequestChanged";
 static NSString *const kNotificationResetSearch				= @"NotificationResetYummlySearch";

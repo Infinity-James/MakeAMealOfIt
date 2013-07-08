@@ -7,6 +7,10 @@
 //
 
 #import "AppDelegate.h"
+#import "CupboardViewController.h"
+#import "ExtraOptionsViewController.h"
+#import "RecipeSearchViewController.h"
+#import "SlideNavigationController.h"
 #import "YummlyTheme.h"
 
 #pragma mark - App Delegate Implementation
@@ -33,8 +37,16 @@
 															 diskPath:path];
 	[NSURLCache setSharedURLCache:URLCache];
 	
-	self.slideOutVC						= [[SlideOutNavigationController alloc] init];
-	self.window.rootViewController		= self.slideOutVC.mainViewController;
+	RecipeSearchViewController *centre	= [[RecipeSearchViewController alloc] init];
+	CupboardViewController *left		= [[CupboardViewController alloc] init];
+	ExtraOptionsViewController*right	= [[ExtraOptionsViewController alloc] init];
+	
+	SlideNavigationController *slideNav	= [[SlideNavigationController alloc] initWithCentreViewController:centre
+																					   leftViewController:left
+																				   andRightViewController:right];
+	
+	
+	self.window.rootViewController		= slideNav;
 	
 	[ThemeManager setSharedTheme:[[YummlyTheme alloc] init]];
 	

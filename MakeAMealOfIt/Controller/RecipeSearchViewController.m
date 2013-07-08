@@ -58,17 +58,15 @@ enum SectionIndex
 - (void)leftButtonTapped
 {
 	[self.recipeSearchView resignFirstResponder];
-	[super leftButtonTapped];
+	if (self.slideNavigationController.controllerState == SlideNavigationSideControllerClosed)
+		[self.slideNavigationController setControllerState:SlideNavigationSideControllerLeftOpen withCompletionHandler:nil];
 }
 
 /**
  *	User has selected the option to reset the search.
  */
 - (void)resetSearchTapped
-{
-	if (self.leftButtonTag == kButtonInUse || self.rightButtonTag == kButtonInUse)
-		return;
-	
+{	
 	//	we make sure that they meant to do this
 	[[[UIActionSheet alloc] initWithTitle:@"Reset Entire Search?"
 								 delegate:self cancelButtonTitle:@"Cancel"
@@ -82,31 +80,8 @@ enum SectionIndex
 - (void)rightButtonTapped
 {
 	[self.recipeSearchView resignFirstResponder];
-	[super rightButtonTapped];
-}
-
-/**
- *	Sets the tag of the button to the left of the toolbar.
- *
- *	@param	tag							Should be kButtonInUse for when button has been tapped, and kButtonNotInUse otherwise.
- */
-- (void)setLeftButtonTag:(NSUInteger)tag
-{
-	if (tag == kButtonInUse)
-		self.hasBeenSlid				= YES;
-	[super setLeftButtonTag:tag];
-}
-
-/**
- *	Sets the tag of the button to the right of the toolbar.
- *
- *	@param	tag							Should be kButtonInUse for when button has been tapped, and kButtonNotInUse otherwise.
- */
-- (void)setRightButtonTag:(NSUInteger)tag
-{
-	if (tag == kButtonInUse)
-		self.hasBeenSlid				= YES;
-	[super setRightButtonTag:tag];
+	if (self.slideNavigationController.controllerState == SlideNavigationSideControllerClosed)
+		[self.slideNavigationController setControllerState:SlideNavigationSideControllerRightOpen withCompletionHandler:nil];
 }
 
 /**
@@ -330,7 +305,9 @@ enum SectionIndex
 	YummlyAttributionViewController *yummlyAttribution	= [[YummlyAttributionViewController alloc] initWithAttributionDictionary:results[kYummlyAttributionDictionaryKey]];
 	
 	//	present the next set of view controllers
-	[appDelegate.slideOutVC showCentreViewController:recipesVC withRightViewController:yummlyAttribution];
+	[self.slideNavigationController pushCentreViewController:recipesVC
+									 withRightViewController:yummlyAttribution
+													animated:YES];
 }
 
 #pragma mark - Setter & Getter Methods

@@ -34,8 +34,7 @@
 		1A8EC544174F4CCA00553857 /* RecipeCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A8EC543174F4CCA00553857 /* RecipeCollectionViewCell.m */; };
 		1A8EC547174F756A00553857 /* TextBackingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A8EC546174F756A00553857 /* TextBackingView.m */; };
 		1A9C84A61742348A006B8664 /* RecipesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9C84A51742348A006B8664 /* RecipesViewController.m */; };
-		1A9C84AE174236C9006B8664 /* SlideOutNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9C84AC174236C9006B8664 /* SlideOutNavigationController.m */; };
-		1A9C84B417423DFD006B8664 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9C84B317423DFD006B8664 /* MainViewController.m */; };
+		1A9C84B417423DFD006B8664 /* SlideNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9C84B317423DFD006B8664 /* SlideNavigationController.m */; };
 		1A9FCF8D1758CE7E00D74485 /* StarRatingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FCF8C1758CE7E00D74485 /* StarRatingView.m */; };
 		1AA236B6177372AB00827C84 /* YummlyAttributionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A84A5AC1765F7CA00E1F818 /* YummlyAttributionViewController.m */; };
 		1AA236B917743D6900827C84 /* YummlySearchResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA236B817743D6900827C84 /* YummlySearchResult.m */; };
@@ -120,10 +119,8 @@
 		1A9C84A41742348A006B8664 /* RecipesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecipesViewController.h; path = Controller/RecipesViewController.h; sourceTree = "<group>"; };
 		1A9C84A51742348A006B8664 /* RecipesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecipesViewController.m; path = Controller/RecipesViewController.m; sourceTree = "<group>"; };
 		1A9C84A8174236C9006B8664 /* CentreViewControllerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CentreViewControllerProtocol.h; path = Controller/CentreViewControllerProtocol.h; sourceTree = "<group>"; };
-		1A9C84AB174236C9006B8664 /* SlideOutNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SlideOutNavigationController.h; path = Controller/SlideOutNavigationController.h; sourceTree = "<group>"; };
-		1A9C84AC174236C9006B8664 /* SlideOutNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SlideOutNavigationController.m; path = Controller/SlideOutNavigationController.m; sourceTree = "<group>"; };
-		1A9C84B217423DF4006B8664 /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainViewController.h; path = Controller/MainViewController.h; sourceTree = "<group>"; };
-		1A9C84B317423DFD006B8664 /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MainViewController.m; path = Controller/MainViewController.m; sourceTree = "<group>"; };
+		1A9C84B217423DF4006B8664 /* SlideNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SlideNavigationController.h; path = Controller/SlideNavigationController.h; sourceTree = "<group>"; };
+		1A9C84B317423DFD006B8664 /* SlideNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SlideNavigationController.m; path = Controller/SlideNavigationController.m; sourceTree = "<group>"; };
 		1A9FCF8B1758CE7E00D74485 /* StarRatingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StarRatingView.h; path = View/StarRatingView.h; sourceTree = "<group>"; };
 		1A9FCF8C1758CE7E00D74485 /* StarRatingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StarRatingView.m; path = View/StarRatingView.m; sourceTree = "<group>"; };
 		1AA236B717743D6900827C84 /* YummlySearchResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YummlySearchResult.h; path = Model/YummlySearchResult.h; sourceTree = "<group>"; };
@@ -236,15 +233,6 @@
 			path = Images;
 			sourceTree = "<group>";
 		};
-		1A8EC53E174E72FE00553857 /* Other Controller */ = {
-			isa = PBXGroup;
-			children = (
-				1A9C84AB174236C9006B8664 /* SlideOutNavigationController.h */,
-				1A9C84AC174236C9006B8664 /* SlideOutNavigationController.m */,
-			);
-			name = "Other Controller";
-			sourceTree = "<group>";
-		};
 		1A8EC53F174E733600553857 /* Right View Controller */ = {
 			isa = PBXGroup;
 			children = (
@@ -296,8 +284,8 @@
 			children = (
 				1A8EC540174E734A00553857 /* Centre View Controller */,
 				1A8EC541174E735D00553857 /* Left View Controller */,
-				1A9C84B217423DF4006B8664 /* MainViewController.h */,
-				1A9C84B317423DFD006B8664 /* MainViewController.m */,
+				1A9C84B217423DF4006B8664 /* SlideNavigationController.h */,
+				1A9C84B317423DFD006B8664 /* SlideNavigationController.m */,
 				1A8EC53F174E733600553857 /* Right View Controller */,
 			);
 			name = "View Controller";
@@ -373,7 +361,6 @@
 		1AD56006171AF36200AE5FED /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				1A8EC53E174E72FE00553857 /* Other Controller */,
 				1A9C84A71742368B006B8664 /* View Controller */,
 			);
 			name = Controllers;
@@ -549,7 +536,7 @@
 				1A8EC532174CC77600553857 /* ExtraOptionsViewController.m in Sources */,
 				1A84A5B6176630D900E1F818 /* IngredientHeaderView.m in Sources */,
 				1AD55FF5171AF33200AE5FED /* main.m in Sources */,
-				1A9C84B417423DFD006B8664 /* MainViewController.m in Sources */,
+				1A9C84B417423DFD006B8664 /* SlideNavigationController.m in Sources */,
 				1A84A59E1765BE1200E1F818 /* NetworkActivityIndicator.m in Sources */,
 				1A6D1189174B6ACE00E0B000 /* ParameterPageViewController.m in Sources */,
 				1A7C1A531757ADA50075AF2D /* Recipe.m in Sources */,
@@ -564,7 +551,6 @@
 				1A6D117D174B4A4200E0B000 /* RotaryWheel.m in Sources */,
 				1A6D117E174B4A4200E0B000 /* Sector.m in Sources */,
 				1A6D1181174B552B00E0B000 /* SegmentView.m in Sources */,
-				1A9C84AE174236C9006B8664 /* SlideOutNavigationController.m in Sources */,
 				1A9FCF8D1758CE7E00D74485 /* StarRatingView.m in Sources */,
 				1A8EC547174F756A00553857 /* TextBackingView.m in Sources */,
 				1AEE007617453D8700B6FC43 /* ThemeManager.m in Sources */,

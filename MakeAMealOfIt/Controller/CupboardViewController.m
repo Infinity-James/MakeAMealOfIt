@@ -808,7 +808,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
-	[self.view setNeedsUpdateConstraints];
+	//[self.view setNeedsUpdateConstraints];
 }
 
 /**

@@ -125,10 +125,7 @@
  */
 - (void)addToolbarItemsAnimated:(BOOL)animate
 {
-	if (self.backButton)
-		self.leftButton					= self.backButton;
-	else
-		self.leftButton					= [[UIBarButtonItem alloc] initWithTitle:@"Left" style:UIBarButtonItemStylePlain target:self action:@selector(leftButtonTapped)];
+	self.leftButton						= [[UIBarButtonItem alloc] initWithTitle:@"Left" style:UIBarButtonItemStylePlain target:self action:@selector(leftButtonTapped)];
 	
 	UIBarButtonItem *flexibleSpace		= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
 	
