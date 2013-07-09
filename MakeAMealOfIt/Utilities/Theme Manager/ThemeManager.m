@@ -301,7 +301,7 @@ static id<Theme> _theme					= nil;
 		theme							= self.sharedTheme;
 	
 	//	customise the tint colour of the switch
-	[switchControl setTintColor:[theme switchTintColour]];
+	//[switchControl setTintColor:[theme switchTintColour]];
 	[switchControl setThumbTintColor:[theme switchThumbTintColor]];
 	[switchControl setOnTintColor:[theme switchOnTintColour]];
 	[switchControl setOnImage:[theme imageForSwitchOn]];

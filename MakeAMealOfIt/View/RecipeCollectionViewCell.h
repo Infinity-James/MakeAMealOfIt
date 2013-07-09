@@ -14,7 +14,11 @@
 
 #pragma mark - Public Properties
 
+/**	The URL of the image currently being fetched for this cell.	*/
+@property (nonatomic, strong)	NSString		*imageURL;
+/**	A view used to display the name and details of the recipe being displayed.	*/
 @property (nonatomic, strong)	TextBackingView	*recipeDetails;
+/**	The image view used to hold a thumbnail of the recipe being displayed.	*/
 @property (nonatomic, strong)	UIImageView		*thumbnailView;
 
 @end

@@ -100,9 +100,10 @@ static NSString *const kRightVCKey			= @"Right";
 
 /**	The view controller centred in this controller.	*/
 @property (nonatomic, strong)				UICentreViewController		*centreViewController;
-
-@property (nonatomic, strong)				UIViewController			*leftImageViewController;
-@property (nonatomic, strong)				UIViewController			*rightImageViewController;
+/**	*/
+@property (nonatomic, strong)				UIView						*leftView;
+/**	*/
+@property (nonatomic, strong)				UIView						*rightView;
 /**	A dictionary of past left, right and centre view controllers.	*/
 @property (nonatomic, strong)				NSMutableArray				*pastViewControllerDictionaries;
 
@@ -951,23 +952,6 @@ static NSString *const kRightVCKey			= @"Right";
 }
 
 #pragma mark - Setter & Getter Methods - UIViewController Properties
-
-- (UIViewController *)leftViewImageController
-{
-	if (!_leftImageViewController)
-	{
-		UIView *leftView					= [self.leftViewController.view snapshotView];
-		_leftImageViewController			= [[UIViewController alloc] init];
-		_leftImageViewController.view.frame	= self.leftViewController.view.frame;
-		_leftImageViewController.view		= leftView;
-		
-		[self.sideContainerView addSubview:_leftImageViewController.view];
-		[self addChildViewController:_leftImageViewController];
-		[_leftImageViewController didMoveToParentViewController:self];
-	}
-	
-	return _leftImageViewController;
-}
 
 /**
  *	This centre view controller is the main controller displayed.

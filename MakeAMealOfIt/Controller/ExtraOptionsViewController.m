@@ -35,8 +35,6 @@ static CGFloat const kParametersControllerHeight	= 340.0f;
 @property (nonatomic, copy)		MetadataNeedsRemoving					removeMetadata;
 /**	This table view will be used to show the user the selected options.	*/
 @property (nonatomic, strong)	UITableView								*tableView;
-/**	A dictionary to be used for auto layout.	*/
-@property (nonatomic, strong)	NSDictionary							*viewsDictionary;
 
 @end
 
@@ -96,17 +94,18 @@ static CGFloat const kParametersControllerHeight	= 340.0f;
 																options:kNilOptions
 																metrics:@{@"Panel": @(kPanelWidth)}
 																  views:self.viewsDictionary];
-	[self.view addConstraints:constraints];
 	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(PanelPlus)-[recipeParameters]-|"
-																options:kNilOptions
-																metrics:@{@"PanelPlus": @(kPanelWidth + 20)}
-																  views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
 	
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[tableView]-|"
 																options:kNilOptions
 																metrics:nil
+																  views:self.viewsDictionary];
+	[self.view addConstraints:constraints];
+	
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(PanelPlus)-[recipeParameters]-|"
+																options:kNilOptions
+																metrics:@{@"PanelPlus": @(kPanelWidth + 20)}
 																  views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
 	
@@ -346,7 +345,9 @@ static CGFloat const kParametersControllerHeight	= 340.0f;
  */
 - (BOOL)metadataIncluded:(NSString *)metadata
 				  ofType:(NSString *)metadataType
-{	
+{
+	NSLog(@"\nTABLE VIEW FRAME: %@\nRECIPE SEARCH PARAMETERS FRAME: %@", NSStringFromCGRect(self.tableView.frame), NSStringFromCGRect(self.recipeParametersController.view.frame));
+	
 	if ([self addMetadata:metadata ofType:metadataType toDictionary:self.includedParameters])
 	{
 		NSUInteger index					= [self.allIncludedMetadata indexOfObject:metadata];

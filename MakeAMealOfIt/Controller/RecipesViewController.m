@@ -27,7 +27,7 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 
 #pragma mark - Private Properties
 
-/**	*/
+/**	Whether this device currently has internet access or not.	*/
 @property (nonatomic, assign)	BOOL					internetAccess;
 /**	The main view that will show the recipes in an elegant way.	*/
 @property (nonatomic, strong)	UICollectionView		*recipesCollectionView;
@@ -308,41 +308,8 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 	
 	cell.recipeDetails.mainLabel.text	= self.recipes[indexPath.row][kYummlyMatchRecipeNameKey];
 	cell.recipeDetails.detailLabel.text	= self.recipes[indexPath.row][kYummlyMatchSourceDisplayNameKey];
-	cell.thumbnailView.image			= nil;
-	[cell.thumbnailView stopAnimating];
 	
-	NSString *smallThumbnailURLString	= ((NSArray *)self.recipes[indexPath.row][kYummlyMatchSmallImageURLsArrayKey]).lastObject;
-	UIImage *cachedThumbnail				= [self.thumbnailCache objectForKey:smallThumbnailURLString];
-	
-	if (!cachedThumbnail)
-	{
-		//	on a separate asynchronous thread we get the url for the image for this cell
-		dispatch_async(dispatch_queue_create("Thumbnail URL Fetcher", NULL),
-		^{
-			NSString *thumbnailURLString= [smallThumbnailURLString stringByReplacingOccurrencesOfString:@".s." withString:@".l."];
-			NSURL *thumbnailURL			= [[NSURL alloc] initWithString:thumbnailURLString];
-			
-			__block NSData *thumbnailData;
-						  
-			//	on a separate thread we synchronously (for chronology) use the url to get the image data and then create an image with it 
-			dispatch_sync(dispatch_queue_create("Thumbnail Data Fetcher", NULL),
-			^{
-				thumbnailData			= [[NSData alloc] initWithContentsOfURL:thumbnailURL];
-				UIImage *thumbnail		= [[UIImage alloc] initWithData:thumbnailData];
-				if (thumbnail)
-					[self.thumbnailCache setObject:thumbnail forKey:smallThumbnailURLString];
-											 
-				//	synchronously update imgae views on main thread so it happens chronologically
-				dispatch_sync(dispatch_get_main_queue(),
-				^{
-					[cell.thumbnailView setImage:thumbnail animated:YES];
-				});
-			});
-		});
-	}
-	
-	else
-		[cell.thumbnailView setImage:cachedThumbnail animated:YES];
+	[self fetchImageForCell:cell atIndexPath:indexPath];
 	
 	return cell;
 }
@@ -406,7 +373,7 @@ didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 	
 	YummlyAttributionViewController *attributionVC	= [[YummlyAttributionViewController alloc] init];
 	
-	//[appDelegate.slideOutVC showCentreViewController:recipeVC withRightViewController:attributionVC];
+	[self.slideNavigationController pushCentreViewController:recipeVC withRightViewController:attributionVC animated:YES];
 }
 
 #pragma mark - UICollectionViewDelegateFlowLayout Methods
@@ -467,6 +434,59 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
     if (y > height + reloadDistance)
         ;
 }*/
+
+#pragma mark - Utility Methods
+
+/**
+ *
+ *
+ *	@param
+ *	@param
+ */
+- (void)fetchImageForCell:(RecipeCollectionViewCell *)recipeCell
+			  atIndexPath:(NSIndexPath *)indexPath
+{
+	//	if there is an image set for this cell we nil it out because it has been reused
+	recipeCell.thumbnailView.image			= nil;
+	[recipeCell.thumbnailView stopAnimating];
+	
+	NSString *smallThumbnailURLString	= ((NSArray *)self.recipes[indexPath.row][kYummlyMatchSmallImageURLsArrayKey]).lastObject;
+	UIImage *cachedThumbnail			= [self.thumbnailCache objectForKey:smallThumbnailURLString];
+	
+	//	set the url for the cell so we can check it later before setting it
+	recipeCell.imageURL					= smallThumbnailURLString;
+	
+	if (!cachedThumbnail)
+	{
+		//	on a separate asynchronous thread we get the url for the image for this recipeCell
+		dispatch_async(dispatch_queue_create("Thumbnail URL Fetcher", NULL),
+		^{
+			NSString *thumbnailURLString= [smallThumbnailURLString stringByReplacingOccurrencesOfString:@".s." withString:@".l."];
+			NSURL *thumbnailURL			= [[NSURL alloc] initWithString:thumbnailURLString];
+						   
+			__block NSData *thumbnailData;
+						   
+			//	on a separate thread we synchronously (for chronology) use the url to get the image data and then create an image with it
+			dispatch_sync(dispatch_queue_create("Thumbnail Data Fetcher", NULL),
+			^{
+				thumbnailData			= [[NSData alloc] initWithContentsOfURL:thumbnailURL];
+				UIImage *thumbnail		= [[UIImage alloc] initWithData:thumbnailData];
+				if (thumbnail)
+					[self.thumbnailCache setObject:thumbnail forKey:smallThumbnailURLString];
+										
+				//	synchronously update imgae views on main thread so it happens chronologically
+				dispatch_sync(dispatch_get_main_queue(),
+				^{
+					if ([recipeCell.imageURL isEqualToString:smallThumbnailURLString])
+						[recipeCell.thumbnailView setImage:thumbnail animated:YES];
+				});
+			});
+		});
+	}
+	
+	else
+		[recipeCell.thumbnailView setImage:cachedThumbnail animated:YES];
+}
 
 #pragma mark - View Lifecycle
 

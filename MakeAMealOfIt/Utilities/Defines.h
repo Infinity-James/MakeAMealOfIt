@@ -22,7 +22,7 @@
 #define isFiveInchDevice				([UIScreen mainScreen].bounds.size.width > 480 || [UIScreen mainScreen].bounds.size.height > 480)
 
 //	general view constants
-static CGFloat const kPanelWidth		= 60.00f;
+static CGFloat const kPanelWidth		= 50.00f;
 #define kShadowBlur						3.0f
 #define kShadowColour					[UIColor colorWithWhite:0.2f alpha:0.5f]
 #define kShadowOffset					CGSizeMake(0.0f, 2.0f)

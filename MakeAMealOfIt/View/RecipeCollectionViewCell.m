@@ -14,8 +14,6 @@
 
 #pragma mark - Private Properties
 
-@property (nonatomic, strong)	NSDictionary	*viewsDictionary;
-
 @end
 
 #pragma mark - Recipe Collection View Cell Implementation
@@ -88,9 +86,9 @@
 #pragma mark - Initialisation
 
 /**
- *	initializes and returns a newly allocated view object with the specified frame rectangle
+ *	Initializes and returns a newly allocated view object with the specified frame rectangle.
  *
- *	@param	frame						frame rectangle for the view, measured in points
+ *	@param	frame						The frame rectangle for the view, measured in points.
  */
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -106,7 +104,9 @@
 #pragma mark - Setter & Getter Methods
 
 /**
- *	the view that will contain the recipe title and source name
+ *	The view that will contain the recipe title and source name.
+ *
+ *	@return	An initialised view specifically for holding the recipe details.
  */
 - (TextBackingView *)recipeDetails
 {
@@ -122,7 +122,9 @@
 }
 
 /**
- *	this thumbnail view will display a small image of the recipe
+ *	This thumbnail view will display a small image of the recipe.
+ *
+ *	@return	An initialised UIImageView added to the content view.
  */
 - (UIImageView *)thumbnailView
 {
@@ -140,7 +142,9 @@
 }
 
 /**
- *	this dictionary is used when laying out constraints
+ *	A dictionary to used when creating visual constraints for this view controller.
+ *
+ *	@return	A dictionary with of views and appropriate keys.
  */
 - (NSDictionary *)viewsDictionary
 {
