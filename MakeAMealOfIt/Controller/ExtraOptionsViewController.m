@@ -714,14 +714,4 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 	[self.view setNeedsUpdateConstraints];
 }
 
-/**
- *	Notifies the view controller that its view is about to layout its subviews.
- */
-- (void)viewWillLayoutSubviews
-{
-	[super viewWillLayoutSubviews];
-	[self.view setNeedsUpdateConstraints];
-}
-
-
 @end

@@ -303,15 +303,6 @@
 	[self getAllOptions];
 }
 
-/**
- *	notifies the view controller that its view is about to layout its subviews
- */
-- (void)viewWillLayoutSubviews
-{
-	[super viewWillLayoutSubviews];
-	[self.view setNeedsUpdateConstraints];
-}
-
 #pragma mark - Yummly Request Management
 
 /**

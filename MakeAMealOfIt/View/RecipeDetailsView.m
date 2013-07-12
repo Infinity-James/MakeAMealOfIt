@@ -114,7 +114,7 @@ static CGFloat const kImageHeight		= 200.0f;
 													attribute:NSLayoutAttributeNotAnAttribute
 												   multiplier:1.0f
 													 constant:kImageHeight];
-	[self.recipeImageView addConstraint:constraint];
+	[self addConstraint:constraint];
 
 	constraint							= [NSLayoutConstraint constraintWithItem:self.recipeImageView
 													attribute:NSLayoutAttributeCenterX
@@ -163,7 +163,6 @@ static CGFloat const kImageHeight		= 200.0f;
 	if (self = [super init])
 	{
 		self.recipe						= recipe;
-		self.recipe.delegate			= self;
 	}
 	
 	return self;
@@ -172,23 +171,33 @@ static CGFloat const kImageHeight		= 200.0f;
 #pragma mark - Recipe Delegate Methods
 
 /**
- *	called when the recipe loaded it's details
+ *	Called when the recipe loaded it's details.
  */
 - (void)recipeDictionaryHasLoaded
 {
-	[self nilifyAllViews];
-	[self.activityIndicatorView startAnimating];
-	dispatch_async(dispatch_queue_create("Recipe Photo Fetcher", NULL),
-	^{
-		UIImage *image					= self.recipe.recipeImage;
+	//static dispatch_once_t onceToken;
+	
+	//dispatch_once(&onceToken,
+	//^{
+		[self nilifyAllViews];
 		
 		dispatch_async(dispatch_get_main_queue(),
 		^{
-			[self.activityIndicatorView stopAnimating];
-			[self.recipeImageView setImage:image animated:YES];
-			[self setNeedsUpdateConstraints];
+			[self.activityIndicatorView startAnimating];
+			
+			dispatch_async(dispatch_queue_create("Recipe Photo Fetcher", NULL),
+			^{
+				UIImage *image					= self.recipe.recipeImage;
+							   
+				dispatch_async(dispatch_get_main_queue(),
+				^{
+					[self.activityIndicatorView stopAnimating];
+					[self.recipeImageView setImage:image animated:YES];
+					[self setNeedsUpdateConstraints];
+				});
+			});
 		});
-	});
+	//});
 }
 
 #pragma mark - Setter & Getter Methods

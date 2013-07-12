@@ -8,6 +8,8 @@
 
 #pragma mark - Right Controller Delegate Protocol
 
+typedef void(^AttributionDictionaryLoaded)(NSDictionary *attributionDictionary);
+
 @protocol RightControllerDelegate <NSObject>
 
 #pragma mark - Required Methods
@@ -31,5 +33,7 @@
  *	@return	A dictionary with the details required for correct attribution for a recipe.
  */
 - (NSDictionary *)attributionDictionaryForCurrentRecipe;
+
+- (void)blockToCallWithAttributionDictionary:(AttributionDictionaryLoaded)attributionDictionaryLoaded;
 
 @end

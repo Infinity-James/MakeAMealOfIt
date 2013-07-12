@@ -89,17 +89,25 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 #pragma mark - Initialisation
 
 /**
+ *
+ */
+- (void)basicInitialisation:(NSString *)recipeID
+{
+	//	store the recipe dictionary results
+	[YummlyAPI asynchronousGetRecipeCallForRecipeID:recipeID withCompletionHandler:^(BOOL success, NSDictionary *results)
+	{
+		self.recipeDictionary		= results;
+	}];
+}
+
+/**
  *	called to initialise a class instance
  */
 - (instancetype)initWithRecipeID:(NSString *)recipeID
 {
 	if (self = [super init])
 	{
-		//	store the recipe dictionary results
-		[YummlyAPI asynchronousGetRecipeCallForRecipeID:recipeID withCompletionHandler:^(BOOL success, NSDictionary *results)
-		 {
-			 self.recipeDictionary		= results;
-		 }];
+		[self basicInitialisation:recipeID];
 	}
 	
 	return self;
@@ -115,11 +123,7 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 	{
 		self.delegate					= delegate;
 		
-		//	store the recipe dictionary results
-		[YummlyAPI asynchronousGetRecipeCallForRecipeID:recipeID withCompletionHandler:^(BOOL success, NSDictionary *results)
-		{
-			self.recipeDictionary		= results;
-		}];
+		[self basicInitialisation:recipeID];
 	}
 	
 	return self;
@@ -210,6 +214,19 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 		_recipeName						= self.recipeDictionary[kYummlyRecipeNameKey];
 	
 	return _recipeName;
+}
+
+/**
+ *
+ *
+ *	@param
+ */
+- (void)setDelegate:(id<RecipeDelegate>)delegate
+{
+	_delegate							= delegate;
+	
+	if (self.recipeDictionary && [_delegate respondsToSelector:@selector(recipeDictionaryHasLoaded)])
+		[self.delegate recipeDictionaryHasLoaded];
 }
 
 /**

@@ -650,17 +650,4 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 	[ThemeManager customiseTableViewCell:cell withTheme:nil];
 }
 
-#pragma mark - View Lifecycle
-
-/**
- *	Notifies the view controller that its view is about to layout its subviews.
- */
-- (void)viewWillLayoutSubviews
-{
-	[super viewWillLayoutSubviews];
-	[self.view setNeedsUpdateConstraints];
-	[self.recipeSearchView setNeedsUpdateConstraints];
-}
-
-
 @end

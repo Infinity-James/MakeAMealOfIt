@@ -10,7 +10,7 @@
 
 #pragma mark - Recipe Details View Public Interface
 
-@interface RecipeDetailsView : UIView  <RecipeDelegate> {}
+@interface RecipeDetailsView : UIView  {}
 
 #pragma mark - Public Properties
 
@@ -19,5 +19,6 @@
 #pragma mark - Public Methods
 
 - (instancetype)initWithRecipe:(Recipe *)recipe;
+- (void)recipeDictionaryHasLoaded;
 
 @end

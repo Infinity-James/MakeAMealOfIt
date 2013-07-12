@@ -40,14 +40,18 @@
 
 @implementation YummlyAttributionViewController {}
 
+#pragma mark - Synthesise Properties
+
+@synthesize attributionDictionary		= _attributionDictionary;
+
 #pragma mark - Action & Selector Methods
 
 /**
  *	Opens a web view with the attribution URL.
  */
 - (void)openAttributionURL
-{
-	NSLog(@"Attribution URL: %@", self.attributionURL);
+{	
+	NSLog(@"\nATTRIBUTION DICTIONARY:\n %@", self.attributionDictionary);
 }
 
 /**
@@ -79,26 +83,31 @@
 																metrics:nil
 																  views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
+	
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:[developerLabel]-|"
 																options:kNilOptions
 																metrics:nil
 																  views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
+	
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:[companyLabel]|"
 																options:kNilOptions
 																metrics:nil
 																  views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
+	
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(Panel)-[companyLabel]"
 																options:kNilOptions
 																metrics:@{ @"Panel" : @(kPanelWidth + 10.0f) }
 																  views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
+	
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:[attributionText]-(>=20)-|"
 																options:kNilOptions
 																metrics:nil
 																  views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
+	
 	constraint							= [NSLayoutConstraint constraintWithItem:self.yummlyButton
 													attribute:NSLayoutAttributeCenterX
 													relatedBy:NSLayoutRelationEqual
@@ -107,6 +116,7 @@
 												   multiplier:1.0f
 													 constant:20.0f];
 	[self.view addConstraint:constraint];
+	
 	constraint							= [NSLayoutConstraint constraintWithItem:self.yummlyButton
 													attribute:NSLayoutAttributeWidth
 													relatedBy:NSLayoutRelationEqual
@@ -157,15 +167,33 @@
 	if (self = [super init])
 	{
 		self.attributionDictionary		= attributionDictionary;
-		
-		//	load the views asynchronously to save everything loading later
-		dispatch_async(dispatch_queue_create("View Loader", NULL),
-		^{
-			[self viewsDictionary];
-		});
 	}
 	
 	return self;
+}
+
+/**
+ *	Loads the subviews and lays out appropriately.
+ */
+- (void)loadSubviews
+{
+	//static dispatch_once_t onceToken;
+	
+	//dispatch_once(&onceToken,
+	//^{
+		dispatch_async(dispatch_queue_create("Logo Fetcher", NULL),
+		^{
+			UIImage *yummlyLogo				= [[UIImage alloc] initWithCGImage:self.yummlyLogo.CGImage
+															scale:self.yummlyLogo.scale * 2.0f
+													  orientation:self.yummlyLogo.imageOrientation];
+			dispatch_async(dispatch_get_main_queue(),
+			^{
+				[self.yummlyButton setImage:yummlyLogo forState:UIControlStateNormal];
+				[self.view setNeedsUpdateConstraints];
+			});
+		});
+	//});
+	
 }
 
 #pragma mark - Setter & Getter Methods
@@ -335,6 +363,38 @@
 }
 
 /**
+ *
+ *
+ *	@param
+ */
+- (void)setAttributionDictionary:(NSDictionary *)attributionDictionary
+{
+	if (!_attributionDictionary && attributionDictionary)
+	{
+		_attributionDictionary				= attributionDictionary;
+		[self loadSubviews];
+	}
+	else
+		_attributionDictionary				= attributionDictionary;
+}
+
+/**
+ *
+ *
+ *	@param
+ */
+- (void)setRightDelegate:(id<RightControllerDelegate>)rightDelegate
+{
+	_rightDelegate						= rightDelegate;
+	
+	if ([_rightDelegate respondsToSelector:@selector(blockToCallWithAttributionDictionary:)])
+		[_rightDelegate blockToCallWithAttributionDictionary:^(NSDictionary *attributionDictionary)
+		{
+			self.attributionDictionary	= attributionDictionary;
+		}];
+}
+
+/**
  *	A dictionary to used when creating visual constraints for this view controller.
  *
  *	@return	A dictionary with of views and appropriate keys.
@@ -383,33 +443,6 @@
 	}
 	
 	return _yummlyLogo;
-}
-
-#pragma mark - View Lifecycle
-
-/**
- *	Called after the controller’s view is loaded into memory.
- */
-- (void)viewDidLoad
-{
-	[super viewDidLoad];
-	
-	dispatch_async(dispatch_queue_create("Logo Fetcher", NULL),
-	^{
-		if ([self.rightDelegate respondsToSelector:@selector(attributionDictionaryForCurrentRecipe)])
-			self.attributionDictionary	= [self.rightDelegate attributionDictionaryForCurrentRecipe];
-		
-		UIImage *yummlyLogo				= [[UIImage alloc] initWithCGImage:self.yummlyLogo.CGImage
-															scale:self.yummlyLogo.scale * 2.0f
-													  orientation:self.yummlyLogo.imageOrientation];
-		dispatch_async(dispatch_get_main_queue(),
-		^{
-			[self.yummlyButton setImage:yummlyLogo forState:UIControlStateNormal];
-			[self.view setNeedsUpdateConstraints];
-		});
-	});
-	
-	
 }
 
 @end

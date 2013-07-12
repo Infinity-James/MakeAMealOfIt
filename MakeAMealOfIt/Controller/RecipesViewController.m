@@ -51,15 +51,6 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 #pragma mark - Action & Selector Methods
 
 /**
- *	Called when the button in the toolbar for the left panel is tapped.
- */
-- (void)leftButtonTapped
-{
-	if (self.slideNavigationController.controllerState == SlideNavigationSideControllerClosed)
-		[self.slideNavigationController setControllerState:SlideNavigationSideControllerLeftOpen withCompletionHandler:nil];
-}
-
-/**
  *	Called when the button in the toolbar for the right panel is tapped.
  */
 - (void)rightButtonTapped
@@ -381,7 +372,9 @@ didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 	
 	YummlyAttributionViewController *attributionVC	= [[YummlyAttributionViewController alloc] init];
 	
-	[self.slideNavigationController pushCentreViewController:recipeVC withRightViewController:attributionVC animated:YES];
+	[self.slideNavigationController pushCentreViewController:recipeVC
+									 withRightViewController:attributionVC
+													animated:YES];
 }
 
 #pragma mark - UICollectionViewDelegateFlowLayout Methods

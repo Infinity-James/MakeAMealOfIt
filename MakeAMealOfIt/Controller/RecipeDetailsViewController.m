@@ -13,20 +13,24 @@
 
 #pragma mark - Recipe Details VC Private Class Extension
 
-@interface RecipeDetailsViewController () {}
+@interface RecipeDetailsViewController () <RecipeDelegate> {}
 
 #pragma mark - Private Properties
 
+/**	*/
+@property (nonatomic, copy)		AttributionDictionaryLoaded	attributionDictionaryLoaded;
+/**	*/
+@property (nonatomic, strong)	Recipe						*recipe;
+/**	*/
+@property (nonatomic, strong)	RecipeDetailsView			*recipeDetailsView;
+/**	*/
+@property (nonatomic, strong)	NSString					*recipeID;
+/**	*/
+@property (nonatomic, strong)	NSString					*recipeName;
 /**	The right toolbar button used to slide in the right view	*/
 @property (nonatomic, strong)	UIBarButtonItem				*rightButton;
 /**	*/
-@property (nonatomic, strong)	RecipeDetailsView		*recipeDetailsView;
-/**	*/
-@property (nonatomic, strong)	NSString				*recipeID;
-/**	*/
-@property (nonatomic, strong)	NSString				*recipeName;
-/**	*/
-@property (nonatomic, strong)	UIScrollView			*scrollView;
+@property (nonatomic, strong)	UIScrollView				*scrollView;
 
 @end
 
@@ -35,17 +39,6 @@
 @implementation RecipeDetailsViewController {}
 
 #pragma mark - Action & Selector Methods
-
-#pragma mark - Action & Selector Methods
-
-/**
- *	Called when the button in the toolbar for the left panel is tapped.
- */
-- (void)leftButtonTapped
-{
-	if (self.slideNavigationController.controllerState == SlideNavigationSideControllerClosed)
-		[self.slideNavigationController setControllerState:SlideNavigationSideControllerLeftOpen withCompletionHandler:nil];
-}
 
 /**
  *	Called when the button in the toolbar for the right panel is tapped.
@@ -71,12 +64,16 @@
 	NSArray *constraints;
 	
 	//	add the collection view to cover the whole main view except for the toolbar
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[scrollView]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[scrollView]|"
+																options:kNilOptions
+																metrics:nil
+																  views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
 	
-	CGFloat toolbarHeight				= self.slideNavigationController.slideNavigationBar.frame.size.height;
-	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(height)-[scrollView]|" options:kNilOptions metrics:@{@"height": @(toolbarHeight)} views:self.viewsDictionary];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==44)-[scrollView]|"
+																options:kNilOptions
+																metrics:nil
+																  views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
 }
 
@@ -111,6 +108,20 @@
 	return self;
 }
 
+#pragma mark - Recipe Delegate Methods
+
+/**
+ *	Called when the recipe loaded it's details.
+ */
+- (void)recipeDictionaryHasLoaded
+{
+	[self.recipeDetailsView recipeDictionaryHasLoaded];
+	
+	//	notify the right view controller that the attribution dictionary has been loaded
+	if (self.attributionDictionaryLoaded)
+		self.attributionDictionaryLoaded(self.recipe.attributionDictionary);
+}
+
 #pragma mark - RightControllerDelegate Methods
 
 /**
@@ -120,7 +131,20 @@
  */
 - (NSDictionary *)attributionDictionaryForCurrentRecipe
 {
-	return self.recipeDetailsView.recipe.attributionDictionary;
+	return self.recipe.attributionDictionary;
+}
+
+/**
+ *
+ *
+ *	@param
+ */
+- (void)blockToCallWithAttributionDictionary:(AttributionDictionaryLoaded)attributionDictionaryLoaded
+{
+	if (self.recipe.attributionDictionary)
+		attributionDictionaryLoaded(self.recipe.attributionDictionary);
+	else
+		self.attributionDictionaryLoaded= attributionDictionaryLoaded;
 }
 
 /**
@@ -144,7 +168,7 @@
 {
 	if (!_recipeDetailsView)
 	{
-		_recipeDetailsView				= [[RecipeDetailsView alloc] initWithRecipe:[[Recipe alloc] initWithRecipeID:self.recipeID]];
+		_recipeDetailsView				= [[RecipeDetailsView alloc] initWithRecipe:self.recipe];
 		_recipeDetailsView.frame		= CGRectMake(0.0f, 0.0f, self.view.bounds.size.width, 500.0f);
 	}
 	
@@ -192,6 +216,17 @@
 }
 
 /**
+ *
+ *
+ *	@param
+ */
+- (void)setRecipeID:(NSString *)recipeID
+{
+	_recipeID							= recipeID;
+	self.recipe							= [[Recipe alloc] initWithRecipeID:_recipeID andDelegate:self];
+}
+
+/**
  *	this is the dictionary of view to apply constraint to
  */
 - (NSDictionary *)viewsDictionary
@@ -209,7 +244,6 @@
 	[super viewWillLayoutSubviews];
 	self.recipeDetailsView.frame		= CGRectMake(0.0f, 0.0f, self.view.bounds.size.width, self.recipeDetailsView.bounds.size.height);
 	self.scrollView.contentSize			= self.recipeDetailsView.bounds.size;
-	[self.recipeDetailsView setNeedsUpdateConstraints];
 	[self addToolbarItemsAnimated:NO];
 }
 

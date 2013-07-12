@@ -808,15 +808,6 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
-	//[self.view setNeedsUpdateConstraints];
-}
-
-/**
- *	notifies the view controller that its view is about to layout its subviews
- */
-- (void)viewWillLayoutSubviews
-{
-	[super viewWillLayoutSubviews];
 	[self.view setNeedsUpdateConstraints];
 }
 

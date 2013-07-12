@@ -60,13 +60,9 @@
 	//	get the context
 	CGContextRef context				= UIGraphicsGetCurrentContext();
 	
-	UIColor *endColour					= kYummlyColourShadowWithAlpha(1.0f);
-	UIColor *startColour				= kYummlyColourMainWithAlpha(0.0f);
+	[kYummlyColourMain setFill];
 	
-	//	----	fiil the rect with a background colour first of all	----
-	
-	//	set fill colour and then fill the rect
-	[UtilityMethodsCG drawLinearGradientInContext:context withRect:rect startColour:startColour.CGColor andEndColour:endColour.CGColor];
+	CGContextFillRect(context, rect);
 }
 
 @end

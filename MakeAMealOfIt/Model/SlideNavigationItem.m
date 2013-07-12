@@ -196,8 +196,8 @@
 	//	if there is a delegate we update it with all of the current properties of this item
 	if (_delegate)
 	{
-		[self updateDelegateAnimated:YES];
 		self.backButton					= [self.delegate backButtonRequestedBySlideNavigationItem:self];
+		[self updateDelegateAnimated:YES];
 	}
 }
 
