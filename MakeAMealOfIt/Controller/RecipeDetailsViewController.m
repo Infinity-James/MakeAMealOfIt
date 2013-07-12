@@ -17,9 +17,15 @@
 
 #pragma mark - Private Properties
 
+/**	The right toolbar button used to slide in the right view	*/
+@property (nonatomic, strong)	UIBarButtonItem				*rightButton;
+/**	*/
 @property (nonatomic, strong)	RecipeDetailsView		*recipeDetailsView;
+/**	*/
 @property (nonatomic, strong)	NSString				*recipeID;
+/**	*/
 @property (nonatomic, strong)	NSString				*recipeName;
+/**	*/
 @property (nonatomic, strong)	UIScrollView			*scrollView;
 
 @end
@@ -28,10 +34,32 @@
 
 @implementation RecipeDetailsViewController {}
 
+#pragma mark - Action & Selector Methods
+
+#pragma mark - Action & Selector Methods
+
+/**
+ *	Called when the button in the toolbar for the left panel is tapped.
+ */
+- (void)leftButtonTapped
+{
+	if (self.slideNavigationController.controllerState == SlideNavigationSideControllerClosed)
+		[self.slideNavigationController setControllerState:SlideNavigationSideControllerLeftOpen withCompletionHandler:nil];
+}
+
+/**
+ *	Called when the button in the toolbar for the right panel is tapped.
+ */
+- (void)rightButtonTapped
+{
+	if (self.slideNavigationController.controllerState == SlideNavigationSideControllerClosed)
+		[self.slideNavigationController setControllerState:SlideNavigationSideControllerRightOpen withCompletionHandler:nil];
+}
+
 #pragma mark - Autolayout Methods
 
 /**
- *	called when the view controller’s view needs to update its constraints
+ *	Called when the view controller’s view needs to update its constraints.
  */
 - (void)updateViewConstraints
 {
@@ -46,111 +74,23 @@
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[scrollView]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
 	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[toolbar]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
-	[self.view addConstraints:constraints];
+	CGFloat toolbarHeight				= self.slideNavigationController.slideNavigationBar.frame.size.height;
 	
-	CGFloat toolbarHeight				= self.toolbarHeight;
-	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[toolbar(height)][scrollView]|" options:kNilOptions metrics:@{@"height": @(toolbarHeight)} views:self.viewsDictionary];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(height)-[scrollView]|" options:kNilOptions metrics:@{@"height": @(toolbarHeight)} views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
-}
-
-#pragma mark - Autorotation
-
-/**
- *	returns a boolean value indicating whether rotation methods are forwarded to child view controllers
- */
-- (BOOL)shouldAutomaticallyForwardRotationMethods
-{
-	return YES;
-}
-
-/**
- *	returns whether the view controller’s contents should auto rotate
- */
-- (BOOL)shouldAutorotate
-{
-	return YES;
-}
-
-/**
- *	sent to the view controller just before the user interface begins rotating
- *
- *	@param	toInterfaceOrientation		new orientation for the user interface
- *	@param	duration					duration of the pending rotation, measured in seconds
- */
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
-								duration:(NSTimeInterval)duration
-{
-}
-
-#pragma mark - CentreViewControllerProtocol Methods
-
-/**
- *	returns the left button tag
- */
-- (NSUInteger)leftButtonTag
-{
-	return self.leftButton.tag;
-}
-
-/**
- *	returns right button tag
- */
-- (NSUInteger)rightButtonTag
-{
-	return self.rightButton.tag;
-}
-
-/**
- *	sets the tag of the button to the left of the toolbar
- */
-- (void)setLeftButtonTag:(NSUInteger)tag
-{
-	self.leftButton.tag					= tag;
-}
-
-/**
- *	sets the tag of the button to the right of the toolbar
- */
-- (void)setRightButtonTag:(NSUInteger)tag
-{
-	self.rightButton.tag				= tag;
 }
 
 #pragma mark - Initialisation
 
 /**
- *	adds toolbar items to our toolbar
+ *	Adds toolbar items to our toolbar.
+ *
+ *	@param	animated					Whether or not the toolbar items should be an animated fashion.
  */
-- (void)addToolbarItemsAnimated:(BOOL)animate
-{
-	self.leftButton						= [[UIBarButtonItem alloc] initWithTitle:@"Left" style:UIBarButtonItemStylePlain target:self action:@selector(leftButtonTapped)];
-	
-	UIBarButtonItem *flexibleSpace		= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-	
-	UILabel *title						= [[UILabel alloc] init];
-	title.backgroundColor				= [UIColor clearColor];
-	
-	NSString *recipeName				= self.recipeName;
-	NSUInteger maximumCharacters		= (self.view.bounds.size.width / 10) - 10;
-	
-	if (recipeName.length > maximumCharacters)
-	{
-		NSRange unneccesaryCharacters	= NSMakeRange(maximumCharacters, recipeName.length - maximumCharacters);
-		recipeName						= [recipeName stringByReplacingCharactersInRange:unneccesaryCharacters withString:@""];
-	}
-	title.text							= recipeName;
-	title.textAlignment					= NSTextAlignmentCenter;
-	[ThemeManager customiseLabel:title withTheme:[[ToolbarLabelYummlyTheme alloc] init]];
-	[title sizeToFit];
-	UIBarButtonItem *titleItem			= [[UIBarButtonItem alloc] initWithCustomView:title];
-	
-	//	the right button for this controller will be used to open an attribution view controller
-	self.rightButton					= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_main_normal_attribution_yummly"]
-															style:UIBarButtonItemStylePlain target:self action:@selector(rightButtonTapped)];
-	
-	[self.toolbar setItems:@[self.leftButton, flexibleSpace, titleItem, flexibleSpace, self.rightButton] animated:animate];
+- (void)addToolbarItemsAnimated:(BOOL)animated
+{	
+	[self.slideNavigationItem setRightBarButtonItem:self.rightButton animated:animated];
+	[self.slideNavigationItem setTitle:self.recipeName animated:animated];
 }
 
 /**
@@ -212,6 +152,26 @@
 }
 
 /**
+ *	The right slide navigation bar button used to slide in the right view.
+ *
+ *	@return	An initialised and targeted UIBarButtonItem to be used as the right bar button item.
+ */
+- (UIBarButtonItem *)rightButton
+{
+	if (!_rightButton)
+	{
+		UIImage *rightButtonImage		= [UIImage imageNamed:@"barbuttonitem_main_normal_selection_yummly"];
+		
+		_rightButton					= [[UIBarButtonItem alloc] initWithImage:rightButtonImage
+															style:UIBarButtonItemStylePlain
+														   target:self
+														   action:@selector(rightButtonTapped)];
+	}
+	
+	return _rightButton;
+}
+
+/**
  *	the scroll view encapsulating the recipe search view
  */
 - (UIScrollView *)scrollView
@@ -236,8 +196,7 @@
  */
 - (NSDictionary *)viewsDictionary
 {
-	return @{	@"scrollView"	: self.scrollView,
-				@"toolbar"		: self.toolbar};
+	return @{	@"scrollView"	: self.scrollView	};
 }
 
 #pragma mark - View Lifecycle

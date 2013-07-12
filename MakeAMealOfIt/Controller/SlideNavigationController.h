@@ -6,6 +6,11 @@
 //  Copyright (c) 2013 Tammy L Coron. All rights reserved.
 //
 
+#import "SlideNavigationBar.h"
+#import "SlideNavigationItemDelegate.h"
+
+@class UICentreViewController;
+
 #pragma mark - Type Definitions
 
 typedef NS_ENUM(NSUInteger, SideControllerState)
@@ -15,11 +20,9 @@ typedef NS_ENUM(NSUInteger, SideControllerState)
 	SlideNavigationSideControllerRightOpen			//	right view is visible
 };
 
-@class UICentreViewController;
-
 #pragma mark - Main View Controller Public Interface
 
-@interface SlideNavigationController : UIViewController {}
+@interface SlideNavigationController : UIViewController <SlideNavigationItemDelegate> {}
 
 #pragma mark - Public Properties - View Controller
 
@@ -27,6 +30,8 @@ typedef NS_ENUM(NSUInteger, SideControllerState)
 @property (nonatomic, strong)	UIViewController	*leftViewController;
 /**	The view controller to have to the right	*/
 @property (nonatomic, strong)	UIViewController	*rightViewController;
+/**	*/
+@property (nonatomic, strong)	SlideNavigationBar	*slideNavigationBar;
 
 #pragma mark - Public Properties - State
 
@@ -57,6 +62,13 @@ typedef NS_ENUM(NSUInteger, SideControllerState)
 					  andRightViewController:(UIViewController *)rightViewController;
 
 #pragma mark - Public Methods - Navigation
+
+/**
+ *	Pops the top centre view controller, along with it's left and right counter parts (not visible), from the navigation stack and updates the display.
+ *
+ *	@param	animated					Set this value to YES to animate the transition, No otherwise.
+ */
+- (void)popCentreViewControllerAnimated:(BOOL)animated;
 
 /**
  *	Pushes a new centre view controller with an accompanying right view controller.

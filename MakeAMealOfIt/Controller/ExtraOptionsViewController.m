@@ -346,8 +346,6 @@ static CGFloat const kParametersControllerHeight	= 340.0f;
 - (BOOL)metadataIncluded:(NSString *)metadata
 				  ofType:(NSString *)metadataType
 {
-	NSLog(@"\nTABLE VIEW FRAME: %@\nRECIPE SEARCH PARAMETERS FRAME: %@", NSStringFromCGRect(self.tableView.frame), NSStringFromCGRect(self.recipeParametersController.view.frame));
-	
 	if ([self addMetadata:metadata ofType:metadataType toDictionary:self.includedParameters])
 	{
 		NSUInteger index					= [self.allIncludedMetadata indexOfObject:metadata];
@@ -485,6 +483,11 @@ static CGFloat const kParametersControllerHeight	= 340.0f;
 		_recipeParametersController.view.layer.shadowOpacity= 1.0f;
 		_recipeParametersController.view.layer.shadowRadius	= 1.0f;
 		
+		/*if (isFourInchDevice)
+			_recipeParametersController.view.frame				= CGRectMake(70.0f, 188.0f, 230.0f, 340.0f);
+		else
+			_recipeParametersController.view.frame				= CGRectMake(70.0f, 100.0f, 230.0f, 340.0f);*/
+		
 		_recipeParametersController.view.translatesAutoresizingMaskIntoConstraints		= NO;
 		[self.view addSubview:_recipeParametersController.view];
 		[self addChildViewController:_recipeParametersController];
@@ -514,6 +517,11 @@ static CGFloat const kParametersControllerHeight	= 340.0f;
 		_tableView.separatorStyle		= UITableViewCellSeparatorStyleNone;
 		
 		[_tableView registerClass:[MetadataCell class] forCellReuseIdentifier:kCellIdentifier];
+		
+		/*if (isFourInchDevice)
+			_tableView.frame			= CGRectMake(50.0f, 0.0f, 270.0f, 508.0f);
+		else
+			_tableView.frame			= CGRectMake(50.0f, 0.0f, 270.0f, 420.0f);*/
 		
 		_tableView.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self.view addSubview:_tableView];

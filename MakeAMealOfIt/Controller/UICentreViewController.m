@@ -18,6 +18,19 @@
 
 @implementation UICentreViewController {}
 
+/**
+ *	Called when the view controller’s view needs to update its constraints.
+ */
+- (void)updateViewConstraints
+{
+	[super updateViewConstraints];
+	
+	//	remove all constraints
+	[self.view removeConstraints:self.view.constraints];
+	
+	[self.view bringSubviewToFront:self.slideNavigationController.slideNavigationBar];
+}
+
 #pragma mark - Initialisation
 	
 /**
@@ -32,37 +45,28 @@
 #pragma mark - Setter & Getter Methods
 
 /**
- *	A toolbar to keep at the top of the view.
  *
- *	@return	A fully initialised toolbar to be used at the top of centre views.
+ *
+ *	@param	slideNavigationController	The nearest ancestor in the view controller hierarchy that's a slide navigation controller.
  */
-- (UIToolbar *)toolbar
+- (void)setSlideNavigationController:(SlideNavigationController *)slideNavigationController
 {
-	//	use lazy instantiation to create and design toolbar at the last minute
-	if (!_toolbar)
-	{
-		_toolbar						= [[UIToolbar alloc] init];
-		_toolbar.clipsToBounds			= NO;
-		_toolbar.translatesAutoresizingMaskIntoConstraints		= NO;
-		_toolbar.translucent			= YES;
-		[self.view addSubview:_toolbar];
-		[self.view bringSubviewToFront:_toolbar];
-	}
+	_slideNavigationController			= slideNavigationController;
 	
-	return _toolbar;
+	[self.slideNavigationItem setDelegate:_slideNavigationController];
 }
 
 /**
- *	Returns the correct height for a toolbar, depending on the orientation.
  *
- *	@return	A smaller height for landscape and taller for portrait.
+ *
+ *	@return
  */
-- (CGFloat)toolbarHeight
-{	
-	if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
-		return 32.0f;
+- (SlideNavigationItem *)slideNavigationItem
+{
+	if (!_slideNavigationItem)
+		_slideNavigationItem			= [[SlideNavigationItem alloc] init];
 	
-	return 44.0f;
+	return _slideNavigationItem;
 }
 
 #pragma mark - View Lifecycle
@@ -81,7 +85,7 @@
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
-	self.view.backgroundColor	= [UIColor whiteColor];
+	self.view.backgroundColor			= [UIColor whiteColor];
 	[self addToolbarItemsAnimated:NO];
 }
 

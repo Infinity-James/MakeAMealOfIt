@@ -35,6 +35,10 @@ enum SectionIndex
 @property (nonatomic, strong)	UIButton					*clearSearchButton;
 /**	A bool indicating whether this centre view has been slid at least once.	*/
 @property (nonatomic, assign)	BOOL						hasBeenSlid;
+/**	The left toolbar button used to slide in the left view.	*/
+@property (nonatomic, strong)	UIBarButtonItem				*leftButton;
+/**	The right toolbar button used to slide in the right view	*/
+@property (nonatomic, strong)	UIBarButtonItem				*rightButton;
 /**	A dictionary of ingredients to be either included or excluded.	*/
 @property (nonatomic, strong)	NSMutableDictionary			*selectedIngredients;
 /**	The table view representing the included or excluded ingredients for the recipe search.	*/
@@ -126,26 +130,34 @@ enum SectionIndex
 	
 	NSArray *constraints;
 	
-	CGFloat toolbarHeight				= self.toolbarHeight;
-	
 	//	add the table view to cover the whole main view except for the toolbar
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[recipeSearchView]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[recipeSearchView]|"
+																options:kNilOptions
+																metrics:nil
+																  views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
 	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[toolbar]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[tableView]|"
+																options:kNilOptions
+																metrics:nil
+																  views:self.viewsDictionary];
+	[self.view addConstraints:constraints];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:[clearSearchButton]-|"
+																options:kNilOptions
+																metrics:nil
+																  views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
 	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[tableView]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(height)-[recipeSearchView(==150)]-[tableView]"
+																options:kNilOptions
+																metrics:@{@"height": @(self.slideNavigationController.slideNavigationBar.frame.size.height + 10.0f)}
+																  views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:[clearSearchButton]-|" options:kNilOptions metrics:nil views:self.viewsDictionary];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:[tableView]-[clearSearchButton]-|"
+																options:kNilOptions
+																metrics:nil
+																  views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
-	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[toolbar(height)][recipeSearchView(==150)]-[tableView]" options:kNilOptions metrics:@{@"height": @(toolbarHeight)} views:self.viewsDictionary];
-	[self.view addConstraints:constraints];
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:[tableView]-[clearSearchButton]-|" options:kNilOptions metrics:nil views:self.viewsDictionary];
-	[self.view addConstraints:constraints];
-	
-	[self.view bringSubviewToFront:self.toolbar];
 }
 
 #pragma mark - Convenience & Helper Methods
@@ -169,6 +181,19 @@ enum SectionIndex
 #pragma mark - Initialisation
 
 /**
+ *	Adds toolbar items to our toolbar.
+ *
+ *	@param	animated					Whether or not the toolbar items should be an animated fashion.
+ */
+- (void)addToolbarItemsAnimated:(BOOL)animated
+{
+	[self.slideNavigationItem setTitle:@"Make A Meal Of It" animated:YES];
+	[self.slideNavigationItem setLeftBarButtonItem:self.leftButton animated:YES];
+	[self.slideNavigationItem setRightBarButtonItem:self.rightButton animated:YES];
+	
+}
+
+/**
  *	Implemented by subclasses to initialize a new object (the receiver) immediately after memory for it has been allocated.
  *
  *	@return	An initialized object.
@@ -181,32 +206,6 @@ enum SectionIndex
 	}
 	
 	return self;
-}
-
-/**
- *	Adds toolbar items to our toolbar.
- *
- *	@param	animate						Whether or not the toolbar items should be an animated fashion.
- */
-- (void)addToolbarItemsAnimated:(BOOL)animate
-{
-	self.leftButton						= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_main_normal_hamburger_yummly"]
-															   style:UIBarButtonItemStylePlain target:self action:@selector(leftButtonTapped)];
-	
-	UIBarButtonItem *flexibleSpace		= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-	
-	UILabel *title						= [[UILabel alloc] init];
-	title.backgroundColor				= [UIColor clearColor];
-	title.text							= @"Make a Meal Of It";
-	title.textAlignment					= NSTextAlignmentCenter;
-	[ThemeManager customiseLabel:title withTheme:[[ToolbarLabelYummlyTheme alloc] init]];
-	[title sizeToFit];
-	UIBarButtonItem *titleItem			= [[UIBarButtonItem alloc] initWithCustomView:title];
-	
-	self.rightButton					= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_main_normal_selection_yummly"]
-															 style:UIBarButtonItemStylePlain target:self action:@selector(rightButtonTapped)];
-	
-	[self.toolbar setItems:@[self.leftButton, flexibleSpace, titleItem, flexibleSpace, self.rightButton] animated:animate];
 }
 
 #pragma mark - Left Controller Delegate Methods
@@ -338,6 +337,46 @@ enum SectionIndex
 }
 
 /**
+ *	The left slide navigation bar button used to slide in the left view.
+ *
+ *	@return	An initialised and targeted UIBarButtonItem to be used as the left bar button item.
+ */
+- (UIBarButtonItem *)leftButton
+{
+	if (!_leftButton)
+	{
+		UIImage *leftButtonImage		= [UIImage imageNamed:@"barbuttonitem_main_normal_hamburger_yummly"];
+		
+		_leftButton						= [[UIBarButtonItem alloc] initWithImage:leftButtonImage
+															style:UIBarButtonItemStylePlain
+														   target:self
+														   action:@selector(leftButtonTapped)];
+	}
+	
+	return _leftButton;
+}
+
+/**
+ *	The right slide navigation bar button used to slide in the right view.
+ *
+ *	@return	An initialised and targeted UIBarButtonItem to be used as the right bar button item.
+ */
+- (UIBarButtonItem *)rightButton
+{
+	if (!_rightButton)
+	{
+		UIImage *rightButtonImage		= [UIImage imageNamed:@"barbuttonitem_main_normal_selection_yummly"];
+		
+		_rightButton					= [[UIBarButtonItem alloc] initWithImage:rightButtonImage
+															style:UIBarButtonItemStylePlain
+														   target:self
+														   action:@selector(rightButtonTapped)];
+	}
+	
+	return _rightButton;
+}
+
+/**
  *	The table view representing the chosen ingredients for the recipe search.
  *
  *	@return	An initialised and designed table view for use showing included ingredients.
@@ -412,8 +451,7 @@ enum SectionIndex
 {
 	return @{	@"clearSearchButton": self.clearSearchButton,
 				@"recipeSearchView"	: self.recipeSearchView,
-				@"tableView"		: self.tableView,
-				@"toolbar"			: self.toolbar};
+				@"tableView"		: self.tableView	};
 }
 
 #pragma mark - UIActionSheetDelegate

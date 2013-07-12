@@ -19,7 +19,7 @@
 
 //	convenience
 #define appDelegate						((AppDelegate *)[UIApplication sharedApplication].delegate)
-#define isFiveInchDevice				([UIScreen mainScreen].bounds.size.width > 480 || [UIScreen mainScreen].bounds.size.height > 480)
+#define isFourInchDevice				([UIScreen mainScreen].bounds.size.width > 480 || [UIScreen mainScreen].bounds.size.height > 480)
 
 //	general view constants
 static CGFloat const kPanelWidth		= 50.00f;

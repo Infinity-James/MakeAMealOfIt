@@ -68,6 +68,8 @@ static NSString *const kRightVCKey			= @"Right";
 
 @interface SlideNavigationController () <UIGestureRecognizerDelegate> {}
 
+#pragma mark - Private Properties
+
 /**	This back button can be set on the centre view controller to manage navigation.	*/
 @property (nonatomic, strong)				UIBarButtonItem				*backButton;
 /**	A motion effect deigned for the centre view controller.	*/
@@ -100,10 +102,6 @@ static NSString *const kRightVCKey			= @"Right";
 
 /**	The view controller centred in this controller.	*/
 @property (nonatomic, strong)				UICentreViewController		*centreViewController;
-/**	*/
-@property (nonatomic, strong)				UIView						*leftView;
-/**	*/
-@property (nonatomic, strong)				UIView						*rightView;
 /**	A dictionary of past left, right and centre view controllers.	*/
 @property (nonatomic, strong)				NSMutableArray				*pastViewControllerDictionaries;
 
@@ -113,11 +111,6 @@ static NSString *const kRightVCKey			= @"Right";
 
 @implementation SlideNavigationController {}
 
-#pragma mark - Synthesise Properties
-
-@synthesize leftViewController			= _leftViewController;
-@synthesize rightViewController			= _rightViewController;
-
 #pragma mark - Action & Selector Methods
 
 /**
@@ -125,19 +118,15 @@ static NSString *const kRightVCKey			= @"Right";
  */
 - (void)backButtonPressed
 {
-	//	remove the tap gesture recogniser from the view now that it is not needed
-	[self.previousTapGestureRecogniser.view removeGestureRecognizer:self.previousTapGestureRecogniser];
-	
-	//	gets the dictionary of view controller we want to transition to
-	NSDictionary *desiredVCDictionary	= [self.pastViewControllerDictionaries lastObject];
-	[self.pastViewControllerDictionaries removeObjectAtIndex:self.pastViewControllerDictionaries.count - 1];
-	
-	//	set the new view controllers to the current view controller except for the centre
-	UIViewController *newCentreVC		= desiredVCDictionary[kCentreVCKey];
-	self.leftViewController				= desiredVCDictionary[kLeftVCKey];
-	self.rightViewController			= desiredVCDictionary[kRightVCKey];
-	
-	NSLog(@"New Centre View Controller: %@", newCentreVC);
+	[self popCentreViewControllerAnimated:YES];
+}
+
+/**
+ *
+ */
+- (void)debug
+{
+	NSLog(@"Centre View Controller: %@", self.centreViewController);
 }
 
 #pragma mark - Animation & Customisation
@@ -605,7 +594,7 @@ static NSString *const kRightVCKey			= @"Right";
 - (void)previousViewTapped:(UITapGestureRecognizer *)tapGestureRecogniser
 {
 	//	act as though the user wants to go back to the previous view
-	[self backButtonPressed];
+	[self popCentreViewControllerAnimated:YES];
 }
 
 #pragma mark - Initialisation
@@ -660,6 +649,72 @@ static NSString *const kRightVCKey			= @"Right";
 #pragma mark - Navigation
 
 /**
+ *	Pops the top centre view controller, along with it's left and right counter parts (not visible), from the navigation stack and updates the display.
+ *
+ *	@param	animated					Set this value to YES to animate the transition, No otherwise.
+ */
+- (void)popCentreViewControllerAnimated:(BOOL)animated
+{
+	//	set up a frame for the old centre controller outside, to the right, of the screen
+	CGRect removedCentreFrame			= kCentreViewFrame;
+	removedCentreFrame.origin.x			= self.centreViewController.view.frame.size.width;
+	
+	//	get all of the old view controllers to a dictionary
+	NSDictionary *pastViewControllers	= [self.pastViewControllerDictionaries lastObject];
+	[self.pastViewControllerDictionaries removeLastObject];
+	
+	//	bring the left view controller to the front of the side view so that when revealed it is the visible view
+	[self prepareLeftViewToShow];
+	
+	//	calculate how long the old centre view should slide off for
+	NSTimeInterval animationDuration	= [self animationDurationFromStartPosition:self.centreViewController.view.frame.origin.x
+																  toEndPosition:removedCentreFrame.origin.x];
+	
+	//	create a frame for the side view to imitate the centre view
+	CGRect newCentreFrame				= kCentreViewFrame;
+	newCentreFrame.origin.y				= -10.0f;
+	
+	[UIView animateWithDuration:animationDuration
+					 animations:
+	^{
+		//	animate the current centre sliding out
+		self.centreViewController.view.frame		= removedCentreFrame;
+	}
+					completion:^(BOOL finished)
+	{
+		[UIView animateWithDuration:kMaxAnimationDuration
+						  animations:
+		^{
+			//	animate the new centre view sliding in over it
+			self.leftViewController.view.frame		= newCentreFrame;
+		}
+						completion:^(BOOL finished)
+		{
+			//	nil out the left view so that the centre view is not removed when it is set
+			self.leftViewController						= nil;
+			
+			//	the controller is not closed
+			self.controllerState						= SlideNavigationSideControllerClosed;
+			
+			//	set frame to normal before we set it as centre controller
+			UICentreViewController *newCentreVC			= pastViewControllers[kCentreVCKey];
+			newCentreVC.view.frame						= kCentreViewFrame;
+			
+			//	add all of the new view controllers (the old left view controller becomes the new centre view controller)
+			self.centreViewController					= newCentreVC;
+			self.leftViewController						= pastViewControllers[kLeftVCKey];
+			self.rightViewController					= pastViewControllers[kRightVCKey];
+			
+			[self.view bringSubviewToFront:self.centreViewController.view];
+			
+			//	we add a special gesture recogniser for the old centre so that the user can tap on it to return to it
+			if (self.pastViewControllerDictionaries.count)
+				[self.leftViewController.view addGestureRecognizer:self.previousTapGestureRecogniser];
+		}];
+	}];
+}
+
+/**
  *	Pushes a new centre view controller with an accompanying right view controller.
  *
  *	@param	pushedCentreViewController	The view controller to be set as the new centre view controller.
@@ -670,45 +725,56 @@ static NSString *const kRightVCKey			= @"Right";
 		 withRightViewController:(UIViewController *)rightViewController
 						animated:(BOOL)animated
 {
-	CGRect newCentreFrame				= kCentreViewFrame;
-	newCentreFrame.origin.x				= self.centreViewController.view.frame.size.width;
+	//	set up a frame for the new centre controller outside, to the right, of the screen
+	CGRect newCentreFrame					= kCentreViewFrame;
+	newCentreFrame.origin.x					= self.centreViewController.view.frame.size.width;
 	pushedCentreViewController.view.frame	= newCentreFrame;
 	
+	//	add the centre view to this view and bring it to the front
 	[self.view addSubview:pushedCentreViewController.view];
 	[self addChildViewController:pushedCentreViewController];
 	[pushedCentreViewController didMoveToParentViewController:self];
-	
 	[self.view bringSubviewToFront:pushedCentreViewController.view];
 	
-	[UIView animateWithDuration:1.0f
+	[UIView animateWithDuration:kMaxAnimationDuration
 					 animations:
-	 ^{
-		 self.centreViewController.view.frame	= kSideViewFrame;
-	 }
+	^{
+		//	animate the current centre view shrinking
+		self.centreViewController.view.frame		= kSideViewFrame;
+	}
 					 completion:^(BOOL finished)
-	 {
-		 [UIView animateWithDuration:1.0f
+	{
+		[UIView animateWithDuration:kMaxAnimationDuration
 						  animations:
-		  ^{
-			  pushedCentreViewController.view.frame	= kCentreViewFrame;
-		  }
-						  completion:^(BOOL finished)
-		  {
-			  NSMutableDictionary *pastViewControllers	= [[NSMutableDictionary alloc] init];
-			  if (self.centreViewController)
-				  pastViewControllers[kCentreVCKey]		= self.centreViewController;
-			  if (self.leftViewController)
-				  pastViewControllers[kLeftVCKey]			= self.leftViewController;
-			  if (self.rightViewController)
-				  pastViewControllers[kRightVCKey]		= self.rightViewController;
-			  
-			  [self.pastViewControllerDictionaries addObject:pastViewControllers];
-			  
-			  
-			  self.centreViewController		= pushedCentreViewController;
-			  self.rightViewController		= rightViewController;
-		  }];
-	 }];
+		^{
+			//	animate the new centre view sliding in over it
+			pushedCentreViewController.view.frame	= kCentreViewFrame;
+		}
+						 completion:^(BOOL finished)
+		{
+			[self removeOurChildViewController:pushedCentreViewController];
+			
+			//	add all of the old view controllers to a dictionary
+			NSMutableDictionary *pastViewControllers	= [[NSMutableDictionary alloc] init];
+			if (self.centreViewController)
+				pastViewControllers[kCentreVCKey]		= self.centreViewController;
+			if (self.leftViewController)
+				pastViewControllers[kLeftVCKey]			= self.leftViewController;
+			if (self.rightViewController)
+				pastViewControllers[kRightVCKey]		= self.rightViewController;
+			
+			//	add the dictionary to the array of old view controllers
+			[self.pastViewControllerDictionaries addObject:pastViewControllers];
+			
+			//	add all of the new view controllers (the old centre view controller becomes the new left view controller)
+			self.centreViewController					= pushedCentreViewController;
+			self.rightViewController					= rightViewController;
+			self.leftViewController						= pastViewControllers[kCentreVCKey];
+			
+			//	we add a special gesture recogniser for the old centre so that the user can tap on it to return to it
+			[self.leftViewController.view addGestureRecognizer:self.previousTapGestureRecogniser];
+		}];
+	}];
 }
 
 #pragma mark - Setter & Getter Methods - Other Properties
@@ -809,6 +875,19 @@ static NSString *const kRightVCKey			= @"Right";
 	void (^innerCompletion)()			=
 	^{
 		_controllerState					= controllerState;
+		
+		if (_controllerState == SlideNavigationSideControllerClosed)
+			//self.centreViewController.view.layer.shouldRasterize= NO,
+			self.leftViewController.view.layer.shouldRasterize	= YES,
+			self.rightViewController.view.layer.shouldRasterize	= YES;
+		else if (_controllerState == SlideNavigationSideControllerLeftOpen)
+			//self.centreViewController.view.layer.shouldRasterize= YES,
+			self.leftViewController.view.layer.shouldRasterize	= NO,
+			self.rightViewController.view.layer.shouldRasterize	= YES;
+		else if (_controllerState == SlideNavigationSideControllerRightOpen)
+			//self.centreViewController.view.layer.shouldRasterize= YES,
+			self.leftViewController.view.layer.shouldRasterize	= YES,
+			self.rightViewController.view.layer.shouldRasterize	= NO;
 		
 		if (completionHandler)
 			completionHandler();
@@ -942,13 +1021,34 @@ static NSString *const kRightVCKey			= @"Right";
 	if (!_sideContainerView)
 	{
 		_sideContainerView				= [[UIView alloc] init];
+		_sideContainerView.clipsToBounds= NO;
 		_sideContainerView.frame		= kSideViewFrame;
 		_sideContainerView.autoresizingMask	= UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+		
+		[_sideContainerView addMotionEffect:self.childViewParallaxEffect];
 		
 		[self.view insertSubview:_sideContainerView atIndex:0];
 	}
 	
 	return _sideContainerView;
+}
+
+/**
+ *	The slide navigation bar for the currently presented centre view controller.
+ *
+ *	@return	A fully initialise slide nagivation bar
+ */
+- (SlideNavigationBar *)slideNavigationBar
+{
+	if (!_slideNavigationBar)
+	{
+		_slideNavigationBar						= [[SlideNavigationBar alloc] init];
+		
+		_slideNavigationBar.clipsToBounds		= NO;
+		_slideNavigationBar.translucent			= YES;
+	}
+	
+	return _slideNavigationBar;
 }
 
 #pragma mark - Setter & Getter Methods - UIViewController Properties
@@ -960,18 +1060,32 @@ static NSString *const kRightVCKey			= @"Right";
  */
 - (void)setCentreViewController:(UICentreViewController *)centreViewController
 {
-	[_centreViewController.view removeGestureRecognizer:self.panGestureRecogniser];
-	[_centreViewController.view removeGestureRecognizer:self.centreTapGestureRecogniser];
+	//	if this view controller is not nil this will handle removing it correctly
 	[self removeOurChildViewController:_centreViewController];
+	[_centreViewController.slideNavigationItem removeDelegate];
 	
 	_centreViewController				= centreViewController;
 	
 	if (!_centreViewController)			return;
 	
+	//	draw the shadow for the centre view
 	[self drawShadow];
+	
+	//	add the slide navigation bar and remove it from it's current superview
+	[self.slideNavigationBar removeFromSuperview];
+	
+	//	nilify the slide navigation bar so it doesn't show old information
+	self.slideNavigationBar				= nil;
 	
 	//	set ourselves as it's slide navigation controller
 	_centreViewController.slideNavigationController	= self;
+	
+	//	add the slide navigation bar to the centre view
+	[_centreViewController.view addSubview:self.slideNavigationBar];
+	[_centreViewController.view bringSubviewToFront:self.slideNavigationBar];
+	
+	//	set the alpha to 0 so that we can fade it in
+	self.slideNavigationBar.alpha		= 0.0f;
 	
 	//	set the cnetre view controll tag
 	_centreViewController.view.tag		= kCentreViewTag;
@@ -979,14 +1093,16 @@ static NSString *const kRightVCKey			= @"Right";
 	//	set the rasterisation scale to be the scale of the creen itself (avoid low resolution bitmap)
 	_centreViewController.view.layer.rasterizationScale	= [UIScreen mainScreen].scale;
 	
-	//	this parallax effect is specific to the centre view
-	[_centreViewController.view addMotionEffect:self.centreViewParallaxEffect];
-	
-	//	animate the setting of the frame
+	//	animate the setting of the frame and fade in the slide navigation bar
 	[UIView animateWithDuration:1.0f animations:
 	^{
-		 _centreViewController.view.frame= kCentreViewFrame;
+		 _centreViewController.view.frame	= kCentreViewFrame;
+		self.slideNavigationBar.alpha		= 1.0f;
+		
 	}];
+	
+	//	this parallax effect is specific to the centre view
+	[_centreViewController.view addMotionEffect:self.centreViewParallaxEffect];
 	
 	//	add the pan gesture recogniser allowing the sliding of the view
 	[_centreViewController.view addGestureRecognizer:self.panGestureRecogniser];
@@ -1006,6 +1122,7 @@ static NSString *const kRightVCKey			= @"Right";
  */
 - (void)setLeftViewController:(UIViewController *)leftViewController
 {
+	//	if this view controller is not nil this will handle removing it correctly
 	[self removeOurChildViewController:_leftViewController];
 	
 	_leftViewController					= leftViewController;
@@ -1015,6 +1132,10 @@ static NSString *const kRightVCKey			= @"Right";
 	if (!_leftViewController)			return;
 	
 	_leftViewController.view.frame		= self.sideContainerView.bounds;
+	
+	//	set the rasterisation scale to be the scale of the screen itself (avoid low resolution bitmap)
+	_leftViewController.view.layer.rasterizationScale	= [UIScreen mainScreen].scale;
+	_leftViewController.view.layer.shouldRasterize		= YES;
 	
 	if ([_leftViewController respondsToSelector:@selector(setLeftDelegate:)] &&
 		[self.centreViewController conformsToProtocol:@protocol(LeftControllerDelegate)])
@@ -1032,6 +1153,7 @@ static NSString *const kRightVCKey			= @"Right";
  */
 - (void)setRightViewController:(UIViewController *)rightViewController
 {
+	//	if this view controller is not nil this will handle removing it correctly
 	[self removeOurChildViewController:_rightViewController];
 	
 	_rightViewController				= rightViewController;
@@ -1041,6 +1163,10 @@ static NSString *const kRightVCKey			= @"Right";
 	if (!_rightViewController)			return;
 	
 	_rightViewController.view.frame		= self.sideContainerView.bounds;
+	
+	//	set the rasterisation scale to be the scale of the screen itself (avoid low resolution bitmap)
+	_rightViewController.view.layer.rasterizationScale	= [UIScreen mainScreen].scale;
+	_rightViewController.view.layer.shouldRasterize		= YES;
 	
 	if ([_rightViewController respondsToSelector:@selector(setRightDelegate:)] &&
 		[self.centreViewController conformsToProtocol:@protocol(RightControllerDelegate)])
@@ -1127,6 +1253,37 @@ static NSString *const kRightVCKey			= @"Right";
 {
 	self.rightViewController.view.hidden			= NO;
 	[self.sideContainerView bringSubviewToFront:self.rightViewController.view];
+}
+
+#pragma mark - SlideItemNavigationDelegate Methods
+
+/**
+ *	The slide navigation item is asking if it needs a back button,
+ *
+ *	@param	slideNavigationItem			The slide navigation item calling this method.
+ *
+ *	@return	An initialised bar button item or nil if it is not needed.
+ */
+- (UIBarButtonItem *)backButtonRequestedBySlideNavigationItem:(SlideNavigationItem *)slideNavigationItem
+{
+	if (self.pastViewControllerDictionaries.count > 0)
+		return self.backButton;
+	
+	return nil;
+}
+
+/**
+ *	The bar button items of a slide navigation bar at a certain position have been set.
+ *
+ *	@param	slideNavigationItem			The slide navigation item calling this method.
+ *	@param	items						The items to update a slide navigation bar with.
+ *	@param	animated					Specify YES to animate the setting of the SlideNavigationBar, NO otherwise.
+ */
+- (void)slideNavigationItem:(SlideNavigationItem *)slideNavigationItem
+				   setItems:(NSArray *)items
+				   animated:(BOOL)animated
+{
+	[self.slideNavigationBar setItems:items animated:animated];
 }
 
 #pragma mark - UIGestureRecogniserDelegate Methods
@@ -1232,6 +1389,15 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 - (void)removeOurChildViewController:(UIViewController *)childViewController
 {
 	if (!childViewController)			return;
+	
+	for (UIGestureRecognizer *gestureRecogniser in childViewController.view.gestureRecognizers)
+		[childViewController.view removeGestureRecognizer:gestureRecogniser];
+	
+	for (UIMotionEffect *motionEffect in childViewController.view.motionEffects)
+		[childViewController.view removeMotionEffect:motionEffect];
+	
+	childViewController.view.layer.shadowOpacity	= 0.0f;
+	childViewController.view.layer.shadowRadius		= 0.0f;
 	
 	[childViewController willMoveToParentViewController:nil];
 	[childViewController.view removeFromSuperview];

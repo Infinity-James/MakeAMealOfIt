@@ -47,6 +47,8 @@
 		1AD55FFB171AF33200AE5FED /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AD55FFA171AF33200AE5FED /* Default.png */; };
 		1AD55FFD171AF33200AE5FED /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AD55FFC171AF33200AE5FED /* Default@2x.png */; };
 		1AD55FFF171AF33200AE5FED /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AD55FFE171AF33200AE5FED /* Default-568h@2x.png */; };
+		1AD8C914178C003500E56DCA /* SlideNavigationItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD8C913178C003500E56DCA /* SlideNavigationItem.m */; };
+		1AD8C918178C1FDF00E56DCA /* SlideNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD8C917178C1FDF00E56DCA /* SlideNavigationBar.m */; };
 		1AE89C84177AF4F6001C356A /* MetadataCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE89C83177AF4F6001C356A /* MetadataCell.m */; };
 		1AE8DB7D176B2281008C5D36 /* YummlyThemeImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AE8DB7C176B2281008C5D36 /* YummlyThemeImages.xcassets */; };
 		1AEE005717424E2E00B6FC43 /* CupboardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEE005617424E2E00B6FC43 /* CupboardViewController.m */; };
@@ -118,7 +120,6 @@
 		1A8EC546174F756A00553857 /* TextBackingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TextBackingView.m; path = View/TextBackingView.m; sourceTree = "<group>"; };
 		1A9C84A41742348A006B8664 /* RecipesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecipesViewController.h; path = Controller/RecipesViewController.h; sourceTree = "<group>"; };
 		1A9C84A51742348A006B8664 /* RecipesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecipesViewController.m; path = Controller/RecipesViewController.m; sourceTree = "<group>"; };
-		1A9C84A8174236C9006B8664 /* CentreViewControllerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CentreViewControllerProtocol.h; path = Controller/CentreViewControllerProtocol.h; sourceTree = "<group>"; };
 		1A9C84B217423DF4006B8664 /* SlideNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SlideNavigationController.h; path = Controller/SlideNavigationController.h; sourceTree = "<group>"; };
 		1A9C84B317423DFD006B8664 /* SlideNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SlideNavigationController.m; path = Controller/SlideNavigationController.m; sourceTree = "<group>"; };
 		1A9FCF8B1758CE7E00D74485 /* StarRatingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StarRatingView.h; path = View/StarRatingView.h; sourceTree = "<group>"; };
@@ -139,6 +140,11 @@
 		1AD55FFA171AF33200AE5FED /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		1AD55FFC171AF33200AE5FED /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		1AD55FFE171AF33200AE5FED /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		1AD8C912178C003500E56DCA /* SlideNavigationItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SlideNavigationItem.h; path = Model/SlideNavigationItem.h; sourceTree = "<group>"; };
+		1AD8C913178C003500E56DCA /* SlideNavigationItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SlideNavigationItem.m; path = Model/SlideNavigationItem.m; sourceTree = "<group>"; };
+		1AD8C915178C0D1B00E56DCA /* SlideNavigationItemDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SlideNavigationItemDelegate.h; path = Model/SlideNavigationItemDelegate.h; sourceTree = "<group>"; };
+		1AD8C916178C1FDF00E56DCA /* SlideNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SlideNavigationBar.h; path = View/SlideNavigationBar.h; sourceTree = "<group>"; };
+		1AD8C917178C1FDF00E56DCA /* SlideNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SlideNavigationBar.m; path = View/SlideNavigationBar.m; sourceTree = "<group>"; };
 		1AE89C82177AF4F6001C356A /* MetadataCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MetadataCell.h; path = View/MetadataCell.h; sourceTree = "<group>"; };
 		1AE89C83177AF4F6001C356A /* MetadataCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MetadataCell.m; path = View/MetadataCell.m; sourceTree = "<group>"; };
 		1AE8DB7C176B2281008C5D36 /* YummlyThemeImages.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = YummlyThemeImages.xcassets; path = Yummly/YummlyThemeImages.xcassets; sourceTree = "<group>"; };
@@ -254,7 +260,6 @@
 		1A8EC540174E734A00553857 /* Centre View Controller */ = {
 			isa = PBXGroup;
 			children = (
-				1A9C84A8174236C9006B8664 /* CentreViewControllerProtocol.h */,
 				1A70C0B71754FAAE004FEEF6 /* RecipeDetailsViewController.h */,
 				1A70C0B81754FAAE004FEEF6 /* RecipeDetailsViewController.m */,
 				1AEE006D1745314F00B6FC43 /* RecipeSearchViewController.h */,
@@ -381,6 +386,9 @@
 		1AEE006217427E3400B6FC43 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				1AD8C912178C003500E56DCA /* SlideNavigationItem.h */,
+				1AD8C913178C003500E56DCA /* SlideNavigationItem.m */,
+				1AD8C915178C0D1B00E56DCA /* SlideNavigationItemDelegate.h */,
 				1A7C1A511757ADA50075AF2D /* Recipe.h */,
 				1A7C1A521757ADA50075AF2D /* Recipe.m */,
 				1A70C0B117535F55004FEEF6 /* YummlyMetadata.h */,
@@ -396,6 +404,8 @@
 		1AEE00681743F42400B6FC43 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				1AD8C916178C1FDF00E56DCA /* SlideNavigationBar.h */,
+				1AD8C917178C1FDF00E56DCA /* SlideNavigationBar.m */,
 				1A347612177837B100E723CD /* IncludeExcludeControl.h */,
 				1A347613177837B100E723CD /* IncludeExcludeControl.m */,
 				1A84A5B4176630D900E1F818 /* IngredientHeaderView.h */,
@@ -489,6 +499,11 @@
 			attributes = {
 				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = "&Beyond";
+				TargetAttributes = {
+					1AD55FE4171AF33200AE5FED = {
+						DevelopmentTeam = ZFDEX86BMA;
+					};
+				};
 			};
 			buildConfigurationList = 1AD55FE0171AF33200AE5FED /* Build configuration list for PBXProject "MakeAMealOfIt" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -529,14 +544,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				1AD55FF9171AF33200AE5FED /* AppDelegate.m in Sources */,
-				1A347614177837B100E723CD /* IncludeExcludeControl.m in Sources */,
 				1AEE005717424E2E00B6FC43 /* CupboardViewController.m in Sources */,
-				1AA236B917743D6900827C84 /* YummlySearchResult.m in Sources */,
 				1AEE007517453D8700B6FC43 /* DefaultTheme.m in Sources */,
 				1A8EC532174CC77600553857 /* ExtraOptionsViewController.m in Sources */,
+				1AD8C918178C1FDF00E56DCA /* SlideNavigationBar.m in Sources */,
+				1A347614177837B100E723CD /* IncludeExcludeControl.m in Sources */,
 				1A84A5B6176630D900E1F818 /* IngredientHeaderView.m in Sources */,
 				1AD55FF5171AF33200AE5FED /* main.m in Sources */,
-				1A9C84B417423DFD006B8664 /* SlideNavigationController.m in Sources */,
+				1AE89C84177AF4F6001C356A /* MetadataCell.m in Sources */,
 				1A84A59E1765BE1200E1F818 /* NetworkActivityIndicator.m in Sources */,
 				1A6D1189174B6ACE00E0B000 /* ParameterPageViewController.m in Sources */,
 				1A7C1A531757ADA50075AF2D /* Recipe.m in Sources */,
@@ -551,6 +566,8 @@
 				1A6D117D174B4A4200E0B000 /* RotaryWheel.m in Sources */,
 				1A6D117E174B4A4200E0B000 /* Sector.m in Sources */,
 				1A6D1181174B552B00E0B000 /* SegmentView.m in Sources */,
+				1A9C84B417423DFD006B8664 /* SlideNavigationController.m in Sources */,
+				1AD8C914178C003500E56DCA /* SlideNavigationItem.m in Sources */,
 				1A9FCF8D1758CE7E00D74485 /* StarRatingView.m in Sources */,
 				1A8EC547174F756A00553857 /* TextBackingView.m in Sources */,
 				1AEE007617453D8700B6FC43 /* ThemeManager.m in Sources */,
@@ -564,7 +581,7 @@
 				1A5DB82D1782E7E90027B9B0 /* IngredientTableViewCell.m in Sources */,
 				1AEE005D17425BC100B6FC43 /* YummlyAPI.m in Sources */,
 				1AA236B6177372AB00827C84 /* YummlyAttributionViewController.m in Sources */,
-				1AE89C84177AF4F6001C356A /* MetadataCell.m in Sources */,
+				1AA236B917743D6900827C84 /* YummlySearchResult.m in Sources */,
 				1A70C0B317535F55004FEEF6 /* YummlyMetadata.m in Sources */,
 				1AEE006117427E2F00B6FC43 /* YummlyRequest.m in Sources */,
 				1AEE007917453F3A00B6FC43 /* YummlyTheme.m in Sources */,
@@ -650,6 +667,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer: James Valaitis (8F4TSZFEKS)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: James Valaitis (8F4TSZFEKS)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MakeAMealOfIt/MakeAMealOfIt-Prefix.pch";
 				INFOPLIST_FILE = "MakeAMealOfIt/MakeAMealOfIt-Info.plist";
@@ -666,6 +685,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer: James Valaitis (8F4TSZFEKS)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: James Valaitis (8F4TSZFEKS)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MakeAMealOfIt/MakeAMealOfIt-Prefix.pch";
 				INFOPLIST_FILE = "MakeAMealOfIt/MakeAMealOfIt-Info.plist";

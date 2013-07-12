@@ -31,6 +31,8 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 @property (nonatomic, assign)	BOOL					internetAccess;
 /**	The main view that will show the recipes in an elegant way.	*/
 @property (nonatomic, strong)	UICollectionView		*recipesCollectionView;
+/**	The right slide navigation bar button used to slide in the right view.	*/
+@property (nonatomic, strong)	UIBarButtonItem			*rightButton;
 /**	The cache used to store thumbnail images for the recipes.	*/
 @property (nonatomic, strong)	NSCache					*thumbnailCache;
 /**	A dictionary to used when creating visual constraints for this view controller.	*/
@@ -46,6 +48,26 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 
 @synthesize searchPhrase				= _searchPhrase;
 
+#pragma mark - Action & Selector Methods
+
+/**
+ *	Called when the button in the toolbar for the left panel is tapped.
+ */
+- (void)leftButtonTapped
+{
+	if (self.slideNavigationController.controllerState == SlideNavigationSideControllerClosed)
+		[self.slideNavigationController setControllerState:SlideNavigationSideControllerLeftOpen withCompletionHandler:nil];
+}
+
+/**
+ *	Called when the button in the toolbar for the right panel is tapped.
+ */
+- (void)rightButtonTapped
+{
+	if (self.slideNavigationController.controllerState == SlideNavigationSideControllerClosed)
+		[self.slideNavigationController setControllerState:SlideNavigationSideControllerRightOpen withCompletionHandler:nil];
+}
+
 #pragma mark - Autolayout Methods
 
 /**
@@ -60,20 +82,17 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 	
 	NSArray *constraints;
 	
-	//	get the correct height of the toolbar
-	CGFloat toolbarHeight				= self.toolbarHeight;
-	
 	//	add the collection view to cover the whole main view underlapping the toolbar
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[collectionView]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[collectionView]|"
+																options:kNilOptions
+																metrics:nil
+																  views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
 	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[toolbar]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
-	[self.view addConstraints:constraints];
-	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[toolbar(height)]" options:kNilOptions metrics:@{@"height": @(toolbarHeight)} views:self.viewsDictionary];
-	[self.view addConstraints:constraints];
-	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[collectionView]|" options:kNilOptions metrics:nil views:self.viewsDictionary];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[collectionView]|"
+																options:kNilOptions
+																metrics:nil
+																  views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
 }
 
@@ -82,42 +101,12 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 /**
  *	Adds toolbar items to our toolbar.
  *
- *	@param	animate						Whether or not the toolbar items should be an animated fashion.
+ *	@param	animated					Whether or not the toolbar items should be an animated fashion.
  */
-- (void)addToolbarItemsAnimated:(BOOL)animate
+- (void)addToolbarItemsAnimated:(BOOL)animated
 {
-	//	if our back button property is set we use that, otherwise we just use a blank bar button item
-	self.leftButton					= [[UIBarButtonItem alloc] init];
-	
-	//	this flexible space neatly separates the bar button items
-	UIBarButtonItem *flexibleSpace		= [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-	
-	//	this label will be used as the title in the toolbar
-	UILabel *title						= [[UILabel alloc] init];
-	title.backgroundColor				= [UIColor clearColor];
-	
-	//	we use the search phrase for the title and calculate the maximum number of character able to be displayed in the title
-	NSString *searchTitle				= self.searchPhrase;
-	NSUInteger maximumCharacters		= (self.view.bounds.size.width / 10) - 10;
-	
-	//	limit the title using the calculated number of character
-	if (searchTitle.length > maximumCharacters)
-	{
-		NSRange unneccesaryCharacters	= NSMakeRange(maximumCharacters, searchTitle.length - maximumCharacters);
-		searchTitle						= [searchTitle stringByReplacingCharactersInRange:unneccesaryCharacters withString:@""];
-	}
-	//	use the title in the label, customise it, and then make a bar button item with it
-	title.text							= searchTitle;
-	title.textAlignment					= NSTextAlignmentCenter;
-	[ThemeManager customiseLabel:title withTheme:[[ToolbarLabelYummlyTheme alloc] init]];
-	[title sizeToFit];
-	UIBarButtonItem *titleItem			= [[UIBarButtonItem alloc] initWithCustomView:title];
-	
-	//	the right button for this controller will be used to open an attribution view controller
-	self.rightButton					= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_main_normal_attribution_yummly"]
-															style:UIBarButtonItemStylePlain target:self action:@selector(rightButtonTapped)];
-	
-	[self.toolbar setItems:@[self.leftButton, flexibleSpace, titleItem, flexibleSpace, self.rightButton] animated:animate];
+	[self.slideNavigationItem setTitle:self.searchPhrase animated:animated];
+	[self.slideNavigationItem setRightBarButtonItem:self.rightButton animated:animated];
 }
 
 /**
@@ -209,6 +198,26 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 }
 
 /**
+ *	The right slide navigation bar button used to slide in the right view.
+ *
+ *	@return	An initialised and targeted UIBarButtonItem to be used as the right bar button item.
+ */
+- (UIBarButtonItem *)rightButton
+{
+	if (!_rightButton)
+	{
+		UIImage *rightButtonImage		= [UIImage imageNamed:@"barbuttonitem_main_normal_attribution_yummly"];
+		
+		_rightButton					= [[UIBarButtonItem alloc] initWithImage:rightButtonImage
+															style:UIBarButtonItemStylePlain
+														   target:self
+														   action:@selector(rightButtonTapped)];
+	}
+	
+	return _rightButton;
+}
+
+/**
  *	The search phrase pertaining to the array of recipes to display.
  *
  *	@return	Either a valid search phrase or an empty string, but never a nil object.
@@ -270,8 +279,7 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
  */
 - (NSDictionary *)viewsDictionary
 {
-	return @{	@"collectionView"	: self.recipesCollectionView,
-				@"toolbar"			: self.toolbar};
+	return @{	@"collectionView"	: self.recipesCollectionView	};
 }
 
 #pragma mark - UICollectionViewDataSource Methods
@@ -407,7 +415,7 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 				  layout:(UICollectionViewLayout *)collectionViewLayout
   sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-	if (isFiveInchDevice)
+	if (isFourInchDevice)
 		return CGSizeMake(250.0f, 250.0f);
 	else
 		return CGSizeMake(210.0f, 210.0f);
