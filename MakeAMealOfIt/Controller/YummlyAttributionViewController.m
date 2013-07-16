@@ -9,6 +9,11 @@
 #import "YummlyAttributionViewController.h"
 #import "YummlySearchResult.h"
 
+#pragma mark - Constants & Static Variables
+
+static NSString *const kCompanyURLString	= @"http://james.dontexist.net/AndBeyond/";
+static NSString *const kDeveloperURLString	= @"http://andbeyond.co";
+
 #pragma mark - Yummly Attribution VC Private Class Extension
 
 @interface YummlyAttributionViewController () {}
@@ -16,23 +21,25 @@
 #pragma mark - Private Properties
 
 /**	The Make A Meal Of It logo in an image view.	*/
-@property (nonatomic, strong)	UIImageView		*appLogo;
+@property (nonatomic, strong)	UIImageView				*appLogo;
 /**	A label with the name of the app; Make A Meal Of It; on it.	*/
-@property (nonatomic, strong)	UILabel			*appName;
+@property (nonatomic, strong)	UILabel					*appName;
 /**	A dictionary with stuff to include in the attribution.	*/
-@property (nonatomic, strong)	NSDictionary	*attributionDictionary;
+@property (nonatomic, strong)	NSDictionary			*attributionDictionary;
 /**	This label simply attributes Yummly for the data.	*/
-@property (nonatomic, strong)	UILabel			*attributionText;
+@property (nonatomic, strong)	UILabel					*attributionText;
 /**	This URL opens the Yummly website with a specific search or recipe.	*/
-@property (nonatomic, strong)	NSURL			*attributionURL;
+@property (nonatomic, strong)	NSURL					*attributionURL;
 /**	The label that for my company.	*/
-@property (nonatomic, strong)	UILabel			*companyLabel;
+@property (nonatomic, strong)	UILabel					*companyLabel;
 /**	The label I will use to show that I made it.	*/
-@property (nonatomic, strong)	UILabel			*developerLabel;
+@property (nonatomic, strong)	UILabel					*developerLabel;
+/**	A tap gesture recogniser intended to open a url when triggered.	*/
+@property (nonatomic, strong)	UITapGestureRecognizer	*urlGestureRecogniser;
 /**	When clicked on it will open the Yuumly attribution URL in a web view of some sort.	*/
-@property (nonatomic, strong)	UIButton		*yummlyButton;
+@property (nonatomic, strong)	UIButton				*yummlyButton;
 /**	An image of the Yummly logo.	*/
-@property (nonatomic, strong)	UIImage			*yummlyLogo;
+@property (nonatomic, strong)	UIImage					*yummlyLogo;
 
 @end
 
@@ -51,15 +58,28 @@
  */
 - (void)openAttributionURL
 {	
-	NSLog(@"\nATTRIBUTION DICTIONARY:\n %@", self.attributionDictionary);
+	NSLog(@"\nATTRIBUTION URL:\n %@", self.attributionURL);
+	
+	if ([self.rightDelegate respondsToSelector:@selector(openURL:withRightViewController:)])
+		[self.rightDelegate openURL:self.attributionURL withRightViewController:nil];
 }
 
 /**
+ *	Opens a URL for a given gesture recogniser in a web view of some sort.
  *
+ *	@param	gestureRecogniser			The gesture recogniser responsible for calling this method.
  */
-- (void)openCompanyURL
+- (void)openURL:(UITapGestureRecognizer *)gestureRecogniser
 {
+	NSString *urlString;
 	
+	if (gestureRecogniser.view == self.companyLabel)
+		urlString						= kCompanyURLString;
+	else if (gestureRecogniser.view == self.developerLabel)
+		urlString						= kDeveloperURLString;
+		
+	if ([self.rightDelegate respondsToSelector:@selector(openURL:withRightViewController:)])
+		[self.rightDelegate openURL:[[NSURL alloc] initWithString:urlString] withRightViewController:nil];
 }
 
 #pragma mark - Autolayout Methods
@@ -177,26 +197,20 @@
  */
 - (void)loadSubviews
 {
-	//static dispatch_once_t onceToken;
-	
-	//dispatch_once(&onceToken,
-	//^{
-		dispatch_async(dispatch_queue_create("Logo Fetcher", NULL),
+	dispatch_async(dispatch_queue_create("Logo Fetcher", NULL),
+	^{
+		UIImage *yummlyLogo				= [[UIImage alloc] initWithCGImage:self.yummlyLogo.CGImage
+														scale:self.yummlyLogo.scale * 2.0f
+												  orientation:self.yummlyLogo.imageOrientation];
+		dispatch_async(dispatch_get_main_queue(),
 		^{
-			UIImage *yummlyLogo				= [[UIImage alloc] initWithCGImage:self.yummlyLogo.CGImage
-															scale:self.yummlyLogo.scale * 2.0f
-													  orientation:self.yummlyLogo.imageOrientation];
-			dispatch_async(dispatch_get_main_queue(),
-			^{
-				[self.yummlyButton setImage:yummlyLogo forState:UIControlStateNormal];
-				[self.view setNeedsUpdateConstraints];
-			});
+			[self.yummlyButton setImage:yummlyLogo forState:UIControlStateNormal];
+			[self.view setNeedsUpdateConstraints];
 		});
-	//});
-	
+	});
 }
 
-#pragma mark - Setter & Getter Methods
+#pragma mark - Property Accessor Methods - Getters
 
 /**
  *	The Make A Meal Of It logo in an image view.
@@ -262,7 +276,7 @@
 /**
  *	Acts as a label to attribute Yummly and also allow the user to navigate to the Yummly website.
  *
- *	@return	A long button that when pressed will navigate to the Yummly website. 
+ *	@return	A long button that when pressed will navigate to the Yummly website.
  */
 - (UILabel *)attributionText
 {
@@ -309,13 +323,13 @@
 {
 	if (!_companyLabel)
 	{
-		_companyLabel					= [[UILabel alloc] init];
+		_companyLabel						= [[UILabel alloc] init];
 		
-		UIColor *andColour				= [[UIColor alloc] initWithRed:185.0f / 255.0f green:46.0f / 255.0f blue:0.0f alpha:1.0f];
+		UIColor *andColour					= [[UIColor alloc] initWithRed:185.0f / 255.0f green:46.0f / 255.0f blue:0.0f alpha:1.0f];
 		
-		NSMutableAttributedString *company = [[NSMutableAttributedString alloc] initWithString:@"&Beyond"
+		NSMutableAttributedString *company	= [[NSMutableAttributedString alloc] initWithString:@"&Beyond"
 																					attributes:@{	NSTextEffectAttributeName	: NSTextEffectLetterpressStyle,
-																									NSFontAttributeName			: kYummlyFontWithSize(14.0f)}];
+																									NSFontAttributeName			: kYummlyFontWithSize(14.0f)	}];
 		[company addAttribute:NSForegroundColorAttributeName
 						value:andColour
 						range:NSMakeRange(0, 1)];
@@ -323,9 +337,12 @@
 						value:[UIColor blackColor]
 						range:NSMakeRange(1, 6)];
 		
-		_companyLabel.attributedText	= company;
-		_companyLabel.opaque			= YES;
+		_companyLabel.attributedText			= company;
+		_companyLabel.opaque					= YES;
+		_companyLabel.userInteractionEnabled	= YES;
 		[_companyLabel sizeToFit];
+		
+		[_companyLabel addGestureRecognizer:self.urlGestureRecogniser];
 		
 		_companyLabel.translatesAutoresizingMaskIntoConstraints		= NO;
 		[self.view addSubview:_companyLabel];
@@ -353,7 +370,10 @@
 																																 size:14.0f]}];
 		_developerLabel.attributedText	= developer;
 		_developerLabel.opaque			= YES;
+		_developerLabel.userInteractionEnabled	= YES;
 		[_developerLabel sizeToFit];
+		
+		[_developerLabel addGestureRecognizer:self.urlGestureRecogniser];
 		
 		_developerLabel.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self.view addSubview:_developerLabel];
@@ -363,35 +383,16 @@
 }
 
 /**
+ *	A tap gesture recogniser to be added to views that open URLs when tapped on.
  *
- *
- *	@param
+ *	@return	A UITapGestureRecogniser intended to open a url when triggered.
  */
-- (void)setAttributionDictionary:(NSDictionary *)attributionDictionary
+- (UITapGestureRecognizer *)urlGestureRecogniser
 {
-	if (!_attributionDictionary && attributionDictionary)
-	{
-		_attributionDictionary				= attributionDictionary;
-		[self loadSubviews];
-	}
-	else
-		_attributionDictionary				= attributionDictionary;
-}
-
-/**
- *
- *
- *	@param
- */
-- (void)setRightDelegate:(id<RightControllerDelegate>)rightDelegate
-{
-	_rightDelegate						= rightDelegate;
+	_urlGestureRecogniser			= [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(openURL:)];
+	_urlGestureRecogniser.numberOfTapsRequired	= 1;
 	
-	if ([_rightDelegate respondsToSelector:@selector(blockToCallWithAttributionDictionary:)])
-		[_rightDelegate blockToCallWithAttributionDictionary:^(NSDictionary *attributionDictionary)
-		{
-			self.attributionDictionary	= attributionDictionary;
-		}];
+	return _urlGestureRecogniser;
 }
 
 /**
@@ -443,6 +444,40 @@
 	}
 	
 	return _yummlyLogo;
+}
+
+#pragma mark - Property Accessor Methods - Setters
+
+/**
+ *
+ *
+ *	@param
+ */
+- (void)setAttributionDictionary:(NSDictionary *)attributionDictionary
+{
+	if (!_attributionDictionary && attributionDictionary)
+	{
+		_attributionDictionary			= attributionDictionary;
+		[self loadSubviews];
+	}
+	else
+		_attributionDictionary			= attributionDictionary;
+}
+
+/**
+ *	Called when our right controller delegate is set.
+ *
+ *	@param	rightDelegate				An NSObject adhering to our LeftControllerDelegate protocol.
+ */
+- (void)setRightDelegate:(id<RightControllerDelegate>)rightDelegate
+{
+	_rightDelegate						= rightDelegate;
+	
+	if ([_rightDelegate respondsToSelector:@selector(blockToCallWithAttributionDictionary:)])
+		[_rightDelegate blockToCallWithAttributionDictionary:^(NSDictionary *attributionDictionary)
+		{
+			self.attributionDictionary	= attributionDictionary;
+		}];
 }
 
 @end

@@ -13,6 +13,7 @@
 #import "RecipesViewController.h"
 #import "ToolbarLabelYummlyTheme.h"
 #import "UIImageView+Animation.h"
+#import "WebViewController.h"
 #import "YummlyAttributionViewController.h"
 #import "YummlyRequest.h"
 
@@ -152,6 +153,21 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 			[weakSelf.recipesCollectionView insertItemsAtIndexPaths:indexPaths];
 		});
 	}];
+}
+
+#pragma mark - RightControllerDelegate Methods
+
+/**
+ *	Instructs the centre view controller to open a URL in a web view of some sort.
+ *
+ *	@param	url							An NSURL to open in some sort of web view.
+ *	@param	rightViewController			The new right view controller to present alongside the URL in a web view of some sort.
+ */
+- (void)openURL:(NSURL *)url withRightViewController:(UIViewController *)rightViewController
+{
+	WebViewController *webViewController= [[WebViewController alloc] initWithURL:url];
+	
+	[self.slideNavigationController pushCentreViewController:webViewController withRightViewController:rightViewController animated:YES];
 }
 
 #pragma mark - Setter & Getter Methods
@@ -414,41 +430,19 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 		return CGSizeMake(210.0f, 210.0f);
 }
 
-#pragma mark - UIScrollViewDelegate Methods
-
-/**
- *	Tells the delegate when the user scrolls the content view within the receiver.
- *
- *	@param	scrollView					The scroll-view object in which the scrolling occurred.
- *
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
-	CGPoint offset						= scrollView.contentOffset;
-    CGRect bounds						= scrollView.bounds;
-    CGSize size							= scrollView.contentSize;
-    UIEdgeInsets inset					= scrollView.contentInset;
-    CGFloat y							= offset.y + bounds.size.height - inset.bottom;
-    CGFloat height							= size.height;
-	
-    CGFloat reloadDistance				= 10;
-	
-    if (y > height + reloadDistance)
-        ;
-}*/
-
 #pragma mark - Utility Methods
 
 /**
+ *	Fetches the recipe thumbnail for a given cell at a specific index path.
  *
- *
- *	@param
- *	@param
+ *	@param	recipeCell					This is the cell for which we are fetching the image.
+ *	@param	indexPath					The index path of the cell which we are getting an image for.
  */
 - (void)fetchImageForCell:(RecipeCollectionViewCell *)recipeCell
 			  atIndexPath:(NSIndexPath *)indexPath
 {
 	//	if there is an image set for this cell we nil it out because it has been reused
-	recipeCell.thumbnailView.image			= nil;
+	recipeCell.thumbnailView.image		= nil;
 	[recipeCell.thumbnailView stopAnimating];
 	
 	NSString *smallThumbnailURLString	= ((NSArray *)self.recipes[indexPath.row][kYummlyMatchSmallImageURLsArrayKey]).lastObject;
@@ -462,6 +456,10 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 		//	on a separate asynchronous thread we get the url for the image for this recipeCell
 		dispatch_async(dispatch_queue_create("Thumbnail URL Fetcher", NULL),
 		^{
+			//	if the image url for this cell has changed since we started fetching it we return
+			if (![recipeCell.imageURL isEqualToString:smallThumbnailURLString])
+				return;
+			
 			NSString *thumbnailURLString= [smallThumbnailURLString stringByReplacingOccurrencesOfString:@".s." withString:@".l."];
 			NSURL *thumbnailURL			= [[NSURL alloc] initWithString:thumbnailURLString];
 						   
@@ -470,10 +468,15 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 			//	on a separate thread we synchronously (for chronology) use the url to get the image data and then create an image with it
 			dispatch_sync(dispatch_queue_create("Thumbnail Data Fetcher", NULL),
 			^{
+				//	if the image url for this cell has changed since we started fetching it we return
+				if (![recipeCell.imageURL isEqualToString:smallThumbnailURLString])
+					return;
+				
 				thumbnailData			= [[NSData alloc] initWithContentsOfURL:thumbnailURL];
 				UIImage *thumbnail		= [[UIImage alloc] initWithData:thumbnailData];
 				if (thumbnail)
 					[self.thumbnailCache setObject:thumbnail forKey:smallThumbnailURLString];
+				
 										
 				//	synchronously update imgae views on main thread so it happens chronologically
 				dispatch_sync(dispatch_get_main_queue(),

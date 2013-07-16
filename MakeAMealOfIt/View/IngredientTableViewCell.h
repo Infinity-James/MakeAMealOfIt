@@ -27,6 +27,27 @@
 
 @interface IngredientTableViewCell : UITableViewCell {}
 
+#pragma mark - Public Methods
+
+/**
+ *	A special setter for the excluded property of this cell.
+ *
+ *	@param	excluded					Whether or not the user wants to exclude this ingredient from the search.
+ *	@param	updateDelegate				Whether or not to inform the delegate that this cell has been updated.
+ */
+- (void)setExcluded:(BOOL)excluded
+			updated:(BOOL)updateDelegate
+		   animated:(BOOL)animated;
+/**
+ *	A special setter for the included property of this cell.
+ *
+ *	@param	included					Whether or not the user wants to include this ingredient from the search.
+ *	@param	updateDelegate				Whether or not to inform the delegate that this cell has been updated.
+ */
+- (void)setIncluded:(BOOL)included
+			updated:(BOOL)updateDelegate
+		   animated:(BOOL)animated;
+
 #pragma mark - Public Properties
 
 /**	The delegate for this ingredient table view cell.	*/

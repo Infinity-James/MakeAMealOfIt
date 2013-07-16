@@ -121,14 +121,6 @@ static NSString *const kRightVCKey			= @"Right";
 	[self popCentreViewControllerAnimated:YES];
 }
 
-/**
- *
- */
-- (void)debug
-{
-	NSLog(@"Centre View Controller: %@", self.centreViewController);
-}
-
 #pragma mark - Animation & Customisation
 
 /**
@@ -362,6 +354,7 @@ static NSString *const kRightVCKey			= @"Right";
 - (void)handlePan:(UIPanGestureRecognizer *)gestureRecogniser
 {
 	UIView *centreView					= self.centreViewController.view;
+	[centreView endEditing:YES];
 	
 	//	if the gesture just began we grab the origin of the centre view and set the direction to none
 	if (gestureRecogniser.state == UIGestureRecognizerStateBegan)
@@ -426,7 +419,7 @@ static NSString *const kRightVCKey			= @"Right";
 - (void)handlePanLeft:(UIPanGestureRecognizer *)gestureRecogniser
 {
 	//	if the pan gesture is to the left whilst closed but there is no right view to show we return
-	if (!self.rightViewController && self.controllerState != SlideNavigationSideControllerClosed)
+	if (!self.rightViewController && self.controllerState == SlideNavigationSideControllerClosed)
 		return;
 	
 	UIView *centreView					= self.centreViewController.view;
@@ -510,7 +503,7 @@ static NSString *const kRightVCKey			= @"Right";
 - (void)handlePanRight:(UIPanGestureRecognizer *)gestureRecogniser
 {
 	//	if the pan gesture is to the right whilst closed but there is no left view to show we return
-	if (!self.leftViewController && self.controllerState != SlideNavigationSideControllerClosed)
+	if (!self.leftViewController && self.controllerState == SlideNavigationSideControllerClosed)
 		return;
 	
 	UIView *centreView					= self.centreViewController.view;
@@ -730,6 +723,8 @@ static NSString *const kRightVCKey			= @"Right";
 	newCentreFrame.origin.x					= self.centreViewController.view.frame.size.width;
 	pushedCentreViewController.view.frame	= newCentreFrame;
 	
+	self.controllerState					= SlideNavigationSideControllerClosed;
+	
 	//	add the centre view to this view and bring it to the front
 	[self.view addSubview:pushedCentreViewController.view];
 	[self addChildViewController:pushedCentreViewController];
@@ -877,17 +872,29 @@ static NSString *const kRightVCKey			= @"Right";
 		_controllerState					= controllerState;
 		
 		if (_controllerState == SlideNavigationSideControllerClosed)
-			//self.centreViewController.view.layer.shouldRasterize= NO,
-			self.leftViewController.view.layer.shouldRasterize	= YES,
-			self.rightViewController.view.layer.shouldRasterize	= YES;
+		{
+			//self.centreViewController.view.layer.shouldRasterize	= NO;
+			[self.leftViewController.view endEditing:YES];
+			[self.rightViewController.view endEditing:YES];
+			self.leftViewController.view.layer.shouldRasterize		= YES;
+			self.rightViewController.view.layer.shouldRasterize		= YES;
+		}
 		else if (_controllerState == SlideNavigationSideControllerLeftOpen)
-			//self.centreViewController.view.layer.shouldRasterize= YES,
-			self.leftViewController.view.layer.shouldRasterize	= NO,
-			self.rightViewController.view.layer.shouldRasterize	= YES;
+		{
+			[self.centreViewController.view endEditing:YES];
+			self.centreViewController.hasBeenSlid					= YES;
+			//self.centreViewController.view.layer.shouldRasterize	= YES;
+			self.leftViewController.view.layer.shouldRasterize		= NO;
+			self.rightViewController.view.layer.shouldRasterize		= YES;
+		}
 		else if (_controllerState == SlideNavigationSideControllerRightOpen)
-			//self.centreViewController.view.layer.shouldRasterize= YES,
-			self.leftViewController.view.layer.shouldRasterize	= YES,
-			self.rightViewController.view.layer.shouldRasterize	= NO;
+		{
+			[self.centreViewController.view endEditing:YES];
+			self.centreViewController.hasBeenSlid					= YES;
+			//self.centreViewController.view.layer.shouldRasterize	= YES;
+			self.leftViewController.view.layer.shouldRasterize		= YES;
+			self.rightViewController.view.layer.shouldRasterize		= NO;
+		}
 		
 		if (completionHandler)
 			completionHandler();

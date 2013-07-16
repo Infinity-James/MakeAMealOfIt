@@ -9,6 +9,7 @@
 #import "RecipeDetailsViewController.h"
 #import "RecipeDetailsView.h"
 #import "ToolbarLabelYummlyTheme.h"
+#import "WebViewController.h"
 #import "YummlyAPI.h"
 
 #pragma mark - Recipe Details VC Private Class Extension
@@ -17,19 +18,19 @@
 
 #pragma mark - Private Properties
 
-/**	*/
+/**	A block to call when the recipe's attribution view controller has loaded.	*/
 @property (nonatomic, copy)		AttributionDictionaryLoaded	attributionDictionaryLoaded;
-/**	*/
+/**	The object representing the recipe to be shown by this view controller.	*/
 @property (nonatomic, strong)	Recipe						*recipe;
-/**	*/
+/**	The main view that will display the details of the recipe.	*/
 @property (nonatomic, strong)	RecipeDetailsView			*recipeDetailsView;
-/**	*/
+/**	The ID of the recipe this view controller will show through it's views.	*/
 @property (nonatomic, strong)	NSString					*recipeID;
-/**	*/
+/**	The name of the recipe being presented by this view controller.	*/
 @property (nonatomic, strong)	NSString					*recipeName;
 /**	The right toolbar button used to slide in the right view	*/
 @property (nonatomic, strong)	UIBarButtonItem				*rightButton;
-/**	*/
+/**	The scroll view encapsulating the recipe details view.	*/
 @property (nonatomic, strong)	UIScrollView				*scrollView;
 
 @end
@@ -94,7 +95,7 @@
  *	Called to initialise an instance of this class with an ID of a recipe to present as well as it's name.
  *
  *	@param	recipeID					The ID of the recipe this view controller will show through it's views.
- *	@param	recipeName					The name of the recipe this view controller wil show.
+ *	@param	recipeName					The name of the recipe this view controller will show.
  */
 - (instancetype)initWithRecipeID:(NSString *)recipeID
 				   andRecipeName:(NSString *)recipeName
@@ -120,6 +121,9 @@
 	//	notify the right view controller that the attribution dictionary has been loaded
 	if (self.attributionDictionaryLoaded)
 		self.attributionDictionaryLoaded(self.recipe.attributionDictionary);
+	
+	self.recipeDetailsView.frame		= CGRectMake(0.0f, 0.0f, self.recipeDetailsView.intrinsicContentSize.width,
+													 self.recipeDetailsView.intrinsicContentSize.height);
 }
 
 #pragma mark - RightControllerDelegate Methods
@@ -135,9 +139,9 @@
 }
 
 /**
+ *	Sent to the delegate with a block that should be called when the attribution dictionary has been loaded.
  *
- *
- *	@param
+ *	@param	attributionDictionaryLoaded	A block to be called with a loaded attribution dictionary.
  */
 - (void)blockToCallWithAttributionDictionary:(AttributionDictionaryLoaded)attributionDictionaryLoaded
 {
@@ -148,28 +152,31 @@
 }
 
 /**
- *	Called when the user has updated selections available in the right view controller/
+ *	Instructs the centre view controller to open a URL in a web view of some sort.
  *
- *	@param	rightViewController			The right view updated with selections.
- *	@param	selections					A dictionary of selection updates in the right view controller.
+ *	@param	url							An NSURL to open in some sort of web view.
+ *	@param	rightViewController			The new right view controller to present alongside the URL in a web view of some sort.
  */
-- (void)rightController:(UIViewController *)rightViewController
-  updatedWithSelections:(NSDictionary *)selections
+- (void)openURL:(NSURL *)url withRightViewController:(UIViewController *)rightViewController
 {
+	WebViewController *webViewController= [[WebViewController alloc] initWithURL:url];
 	
+	[self.slideNavigationController pushCentreViewController:webViewController withRightViewController:rightViewController animated:YES];
 }
 
 #pragma mark - Setter & Getter Methods
 
 /**
- *	this view lives inside of the scroll view and shows everything to do with the selected recipe
+ *	The main view that will display the details of the recipe.
+ *
+ *	@return	An initialised view specially configured to display a recipe.
  */
 - (RecipeDetailsView *)recipeDetailsView
 {
 	if (!_recipeDetailsView)
 	{
 		_recipeDetailsView				= [[RecipeDetailsView alloc] initWithRecipe:self.recipe];
-		_recipeDetailsView.frame		= CGRectMake(0.0f, 0.0f, self.view.bounds.size.width, 500.0f);
+		//_recipeDetailsView.frame		= CGRectMake(0.0f, 0.0f, self.view.bounds.size.width, 700.0f);
 	}
 	
 	return _recipeDetailsView;
@@ -196,7 +203,9 @@
 }
 
 /**
- *	the scroll view encapsulating the recipe search view
+ *	The scroll view encapsulating the recipe details view.
+ *
+ *	@return	An initialised UIScrollView holding the recipeDetailsView.
  */
 - (UIScrollView *)scrollView
 {
@@ -216,18 +225,25 @@
 }
 
 /**
+ *	The setter of the ID for the recipe to be displayed.
  *
- *
- *	@param
+ *	@param	recipeID					The ID of the recipe this view controller will show through it's views.
  */
 - (void)setRecipeID:(NSString *)recipeID
 {
+	if ([_recipeID isEqualToString:recipeID])
+		return;
+	
 	_recipeID							= recipeID;
+	
+	//	initialise the recipe object with the given ID
 	self.recipe							= [[Recipe alloc] initWithRecipeID:_recipeID andDelegate:self];
 }
 
 /**
- *	this is the dictionary of view to apply constraint to
+ *	A dictionary to used when creating visual constraints for this view controller.
+ *
+ *	@return	A dictionary with of views and appropriate keys.
  */
 - (NSDictionary *)viewsDictionary
 {
@@ -237,7 +253,7 @@
 #pragma mark - View Lifecycle
 
 /**
- *	notifies the view controller that its view is about to layout its subviews
+ *	Notifies the view controller that its view is about to layout its subviews.
  */
 - (void)viewWillLayoutSubviews
 {

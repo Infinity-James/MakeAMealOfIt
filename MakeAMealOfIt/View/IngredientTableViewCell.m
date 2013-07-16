@@ -132,8 +132,6 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 	//	indicate whether the item has been pulled far enough to trigger something
 	self.excludeLabel.textColor = self.removeLabelRight.textColor	= self.excludeOnDragRelease ? kExcludeColour : [UIColor blackColor];
 	self.includeLabel.textColor = self.removeLabelLeft.textColor	= self.includeOnDragRelease ? kIncludeColour : [UIColor blackColor];
-	
-	NSLog(@"\nExclude Label: %u\nInclude Label: %u\n Remove Left: %u\n Remove Right: %u", self.excludeLabel.hidden, self.includeLabel.hidden, self.removeLabelLeft.hidden, self.removeLabelRight.hidden);
 }
 
 /**
@@ -150,6 +148,9 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 		[self setExcluded:!self.excluded updated:YES animated:YES];
 	if (self.includeOnDragRelease)
 		[self setIncluded:!self.included updated:YES animated:YES];
+	
+	self.excludeOnDragRelease			= NO;
+	self.includeOnDragRelease			= NO;
 	
 	[UIView animateWithDuration:0.2f
 					 animations:

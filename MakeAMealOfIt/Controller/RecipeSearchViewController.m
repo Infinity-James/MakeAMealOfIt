@@ -27,16 +27,16 @@ enum SectionIndex
 
 #pragma mark - Recipe Search View Controller Private Class Extension
 
-@interface RecipeSearchViewController () <RecipeSearchViewController, UIActionSheetDelegate, UITableViewDataSource, UITableViewDelegate> {}
+@interface RecipeSearchViewController () <RecipeSearchViewController, UIActionSheetDelegate, UIGestureRecognizerDelegate, UITableViewDataSource, UITableViewDelegate> {}
 
 #pragma mark - Private Properties
 
 /**	A button that allows the user to reset the entire search.	*/
 @property (nonatomic, strong)	UIButton					*clearSearchButton;
-/**	A bool indicating whether this centre view has been slid at least once.	*/
-@property (nonatomic, assign)	BOOL						hasBeenSlid;
 /**	The left toolbar button used to slide in the left view.	*/
 @property (nonatomic, strong)	UIBarButtonItem				*leftButton;
+/**	A UITapGestureRecogniser that calls acts as though the user finished editing the search bar.	*/
+@property (nonatomic, strong)	UITapGestureRecognizer		*resignGestureRecogniser;
 /**	The right toolbar button used to slide in the right view	*/
 @property (nonatomic, strong)	UIBarButtonItem				*rightButton;
 /**	A dictionary of ingredients to be either included or excluded.	*/
@@ -270,6 +270,8 @@ enum SectionIndex
 		self.selectedIngredients[kExcludedSelections]	= excludedIngredients;
 		self.selectedIngredients[kIncludedSelections]	= includedIngredients;
 		
+		NSLog(@"Selected Ingredients: %@", self.selectedIngredients);
+		
 		//	reload the table view on the main thread
 		[self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 	});
@@ -354,6 +356,23 @@ enum SectionIndex
 	}
 	
 	return _leftButton;
+}
+
+/**
+ *	The gesture recogniser intended to be attached to every view other than the search view so the bar is resigned appropriately.
+ *
+ *	@return	A UITapGestureRecogniser that calls acts as though the user finished editing the search bar.
+ */
+- (UITapGestureRecognizer *)resignGestureRecogniser
+{
+	if (!_resignGestureRecogniser)
+	{
+		_resignGestureRecogniser		= [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resignFirstResponder)];
+		_resignGestureRecogniser.delegate				= self;
+		_resignGestureRecogniser.numberOfTapsRequired	= 1;
+	}
+	
+	return _resignGestureRecogniser;
 }
 
 /**
@@ -474,6 +493,22 @@ willDismissWithButtonIndex:(NSInteger)buttonIndex
 		;
 }
 
+/**
+ *	Ask the delegate if a gesture recognizer should receive an object representing a touch.
+ *
+ *	@param	gestureRecognizer			An instance of a subclass of the abstract base class UIGestureRecognizer.
+ *	@param	touch						A UITouch object from the current multi-touch sequence.
+ *
+ *	@return	YES to allow the gesture recognizer to examine the touch object, NO to prevent the gesture recognizer from seeing this touch object.
+ */
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+	   shouldReceiveTouch:(UITouch *)touch
+{
+	if (self.slideNavigationController.controllerState == SlideNavigationSideControllerClosed && [gestureRecognizer isKindOfClass:[UITapGestureRecognizer class]])
+		return YES;
+	
+	return NO;
+}
 
 #pragma mark - UIResponder Methods
 
@@ -572,6 +607,10 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
 		self.selectedIngredients[key]	= ingredientsArray;
 		[self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationLeft];
 		self.modifiedIngredients(ingredientDictionary);
+		
+		if (((NSArray *)self.selectedIngredients[key]).count == 0)
+			[self.tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.section]
+						  withRowAnimation:UITableViewRowAnimationFade];
 	}
 }
 
@@ -648,6 +687,16 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	//	background colour has to be set here
 	[ThemeManager customiseTableViewCell:cell withTheme:nil];
+}
+
+/**
+ *	Called after the controller’s view is loaded into memory.
+ */
+- (void)viewDidLoad
+{
+	[super viewDidLoad];
+	
+	[self.tableView addGestureRecognizer:self.resignGestureRecogniser];
 }
 
 @end

@@ -7,9 +7,13 @@
 //
 
 #import "RecipeDetailsView.h"
+#import "RecipeIngredientsController.h"
 #import "StarRatingView.h"
 #import "UIImageView+Animation.h"
 
+#pragma mark - Constants & Static Variables
+
+/**	The height for the image in this view.	*/
 static CGFloat const kImageHeight		= 200.0f;
 
 #pragma mark - Recipe Details View Private Class Extension
@@ -18,11 +22,18 @@ static CGFloat const kImageHeight		= 200.0f;
 
 #pragma mark - Private Properties
 
+/**	Used to show that the recipe image is loading.	*/
 @property (nonatomic, strong)				UIActivityIndicatorView		*activityIndicatorView;
+/**	*/
+@property (nonatomic, strong)				UITableView					*ingredientsTableView;
+/**	An object encapsulating the recipe that this view is showing.	*/
 @property (nonatomic, readwrite, strong)	Recipe						*recipe;
+/**	The view responsible for showing the image of the recipe being displayed.	*/
 @property (nonatomic, strong)				UIImageView					*recipeImageView;
+/**	A controller that will handle displaying the ingredients in the table view properly.	*/
+@property (nonatomic, strong)				RecipeIngredientsController	*recipeIngredientsController;
+/**	A view showing the rating of the recipe being displayed.	*/
 @property (nonatomic, strong)				StarRatingView				*starRatingView;
-@property (nonatomic, strong)				NSDictionary				*viewsDictionary;
 
 @end
 
@@ -33,7 +44,9 @@ static CGFloat const kImageHeight		= 200.0f;
 #pragma mark - Autolayout Methods
 
 /**
- *	returns whether the receiver depends on the constraint-based layout system
+ *	Returns whether the receiver depends on the constraint-based layout system.
+ *
+ *	@return	YES if the view must be in a window using constraint-based layout to function properly, NO otherwise.
  */
 + (BOOL)requiresConstraintBasedLayout
 {
@@ -66,7 +79,7 @@ static CGFloat const kImageHeight		= 200.0f;
 }
 
 /**
- *
+ *	Adds the starRatingView below the recipeImageView.
  */
 - (void)addConstraintsForStarRatingView
 {
@@ -89,6 +102,20 @@ static CGFloat const kImageHeight		= 200.0f;
 												   multiplier:0.2f
 													 constant:0.0f];
 	[self.starRatingView addConstraint:constraint];
+}
+
+/**
+ *	Adds the constraints specific to the table view.
+ */
+- (void)addConstraintsForTableView
+{
+	CGFloat tableViewWidth				= (self.bounds.size.width / 5.0f) * 4.0f;
+	
+	NSArray *constraints				= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[tableView(==tvWidth)]"
+																	  options:kNilOptions
+																	  metrics:@{@"tvWidth": @(tableViewWidth)}
+																		views:self.viewsDictionary];
+	[self addConstraints:constraints];
 }
 
 /**
@@ -131,6 +158,12 @@ static CGFloat const kImageHeight		= 200.0f;
 																  views:self.viewsDictionary];
 	[self addConstraints:constraints];
 	
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:[starRating]-(==20)-[tableView(==tvHeight)]"
+																options:kNilOptions
+																metrics:@{@"tvHeight": @(self.recipeIngredientsController.desiredTableViewHeight)}
+																  views:self.viewsDictionary];
+	[self addConstraints:constraints];
+	
 	constraint							= [NSLayoutConstraint constraintWithItem:self.recipeImageView
 													attribute:NSLayoutAttributeHeight
 													relatedBy:NSLayoutRelationEqual
@@ -142,21 +175,29 @@ static CGFloat const kImageHeight		= 200.0f;
 	
 	[self addConstraintsForActivityIndicatorView];
 	[self addConstraintsForStarRatingView];
+	[self addConstraintsForTableView];
 }
 
 #pragma mark - Convenience & Helper Methods
 
 /**
- *	sets all of the views to nil
+ *	Sets all of the views to nil.
  */
 - (void)nilifyAllViews
 {
+	self.ingredientsTableView			= nil;
 	self.recipeImageView				= nil;
+	self.recipeIngredientsController	= nil;
 }
 
 #pragma mark - Initialisation
+
 /**
- *	called to initialise a class instance
+ *	Implemented by subclasses to initialize a new object (the receiver) immediately after memory for it has been allocated.
+ *
+ *	@param	recipe
+ *
+ *	@return	An initialized object.
  */
 - (instancetype)initWithRecipe:(Recipe *)recipe;
 {
@@ -175,35 +216,32 @@ static CGFloat const kImageHeight		= 200.0f;
  */
 - (void)recipeDictionaryHasLoaded
 {
-	//static dispatch_once_t onceToken;
+	[self nilifyAllViews];
 	
-	//dispatch_once(&onceToken,
-	//^{
-		[self nilifyAllViews];
+	dispatch_async(dispatch_get_main_queue(),
+	^{
+		[self.activityIndicatorView startAnimating];
 		
-		dispatch_async(dispatch_get_main_queue(),
+		dispatch_async(dispatch_queue_create("Recipe Photo Fetcher", NULL),
 		^{
-			[self.activityIndicatorView startAnimating];
-			
-			dispatch_async(dispatch_queue_create("Recipe Photo Fetcher", NULL),
+			UIImage *image					= self.recipe.recipeImage;
+						   
+			dispatch_async(dispatch_get_main_queue(),
 			^{
-				UIImage *image					= self.recipe.recipeImage;
-							   
-				dispatch_async(dispatch_get_main_queue(),
-				^{
-					[self.activityIndicatorView stopAnimating];
-					[self.recipeImageView setImage:image animated:YES];
-					[self setNeedsUpdateConstraints];
-				});
+				[self.activityIndicatorView stopAnimating];
+				[self.recipeImageView setImage:image animated:YES];
+				[self setNeedsUpdateConstraints];
 			});
 		});
-	//});
+	});
 }
 
-#pragma mark - Setter & Getter Methods
+#pragma mark - Property Accessor Methods - Getters
 
 /**
- *	this will indicate that the image view is loading
+ *	The view that shows the user that the recipe image is loading.
+ *
+ *	@return	A UIActivityIndicatorView representing loading.
  */
 - (UIActivityIndicatorView *)activityIndicatorView
 {
@@ -220,7 +258,37 @@ static CGFloat const kImageHeight		= 200.0f;
 }
 
 /**
- *	the image view holding the main image for the recipe being represented
+ *	A table view that will display the ingredients required for the recipe being displayed.
+ *
+ *	@return	An initialised table view ready to display ingredients.
+ */
+- (UITableView *)ingredientsTableView
+{
+	if (!_ingredientsTableView)
+	{
+		_ingredientsTableView			= [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+		
+		if (self.recipe.ingredientLines)
+		{
+			_ingredientsTableView.dataSource	= self.recipeIngredientsController;
+			_ingredientsTableView.delegate		= self.recipeIngredientsController;
+		}
+		
+		_ingredientsTableView.separatorStyle	= UITableViewCellSeparatorStyleNone;
+		
+		[_ingredientsTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kCellIdentifier];
+		
+		_ingredientsTableView.translatesAutoresizingMaskIntoConstraints	= NO;
+		[self addSubview:_ingredientsTableView];
+	}
+	
+	return _ingredientsTableView;
+}
+
+/**
+ *	The view responsible for showing the image of the recipe being displayed.
+ *
+ *
  */
 - (UIImageView *)recipeImageView
 {
@@ -235,6 +303,19 @@ static CGFloat const kImageHeight		= 200.0f;
 	}
 	
 	return _recipeImageView;
+}
+
+/**
+ *	A controller that will handle displaying the ingredients in the table view properly.
+ *
+ *	@return	An initialised RecipeIngredientsController with the ingredients it needs to display in the table view.
+ */
+- (RecipeIngredientsController *)recipeIngredientsController
+{
+	if (!_recipeIngredientsController)
+		_recipeIngredientsController	= [[RecipeIngredientsController alloc] initWithIngredients:self.recipe.ingredientLines];
+	
+	return _recipeIngredientsController;
 }
 
 /**
@@ -260,7 +341,23 @@ static CGFloat const kImageHeight		= 200.0f;
 {
 	return @{	@"activityIndicator"	: self.activityIndicatorView,
 				@"recipeImageView"		: self.recipeImageView,
-				@"starRating"			: self.starRatingView	};
+				@"starRating"			: self.starRatingView,
+				@"tableView"			: self.ingredientsTableView		};
+}
+
+#pragma mark - UIView Methods
+
+/**
+ *	Returns the natural size for the receiving view, considering only properties of the view itself.
+ *
+ *	@return	A size indicating the natural size for the receiving view based on its intrinsic properties.
+ */
+- (CGSize)intrinsicContentSize
+{
+	CGSize contentSize					= self.superview.bounds.size;
+	contentSize.height					= 700.0f + self.recipeIngredientsController.desiredTableViewHeight;
+	
+	return contentSize;
 }
 
 @end

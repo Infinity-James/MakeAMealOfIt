@@ -19,7 +19,7 @@
  *	Called to initialise an instance of this class with an ID of a recipe to present as well as it's name.
  *
  *	@param	recipeID					The ID of the recipe this view controller will show through it's views.
- *	@param	recipeName					The name of the recipe this view controller wil show.
+ *	@param	recipeName					The name of the recipe this view controller will show.
  */
 - (instancetype)initWithRecipeID:(NSString *)recipeID
 				   andRecipeName:(NSString *)recipeName;

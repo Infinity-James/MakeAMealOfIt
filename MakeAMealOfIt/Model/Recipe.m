@@ -69,16 +69,22 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 @property (nonatomic, readwrite, strong)	NSDictionary	*attributionDictionary;
 /**	An array of ingredients for the recipe.	*/
 @property (nonatomic, readwrite, strong)	NSArray			*ingredientLines;
-/**	*/
+/**	A dictionary of the flavours of this recipe.	*/
 @property (nonatomic, readwrite, strong)	NSDictionary	*flavourDictionary;
+/**	The number of servings that this recipe provides.	*/
 @property (nonatomic, readwrite, assign)	NSUInteger		numberOfServings;
+/**	The rating out of five stars for this recipe.	*/
 @property (nonatomic, readwrite, assign)	CGFloat			rating;
-@property (nonatomic, readwrite, strong)	UIImage			*recipeImage;
-@property (nonatomic, readwrite, strong)	NSString		*recipeName;
-@property (nonatomic, readwrite, strong)	NSDictionary	*sourceDictionary;
-@property (nonatomic, readwrite, assign)	NSUInteger		totalCookTime;
-
+/**	The dictionary holding all of the properties of this recipe in a raw form.	*/
 @property (nonatomic, strong)				NSDictionary	*recipeDictionary;
+/**	A large image associated with this recipe.	*/
+@property (nonatomic, readwrite, strong)	UIImage			*recipeImage;
+/**	The name of this recipe.	*/
+@property (nonatomic, readwrite, strong)	NSString		*recipeName;
+/**	A dictionary of detail about the source of this recipe.	*/
+@property (nonatomic, readwrite, strong)	NSDictionary	*sourceDictionary;
+/**	The length of time in seconds required to cook the recipe.	*/
+@property (nonatomic, readwrite, assign)	NSUInteger		totalCookTime;
 
 @end
 
@@ -89,7 +95,9 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 #pragma mark - Initialisation
 
 /**
+ *	Initializes and returns a newly allocated recipe object with a unique ID and delegate.
  *
+ *	@param	recipeID					A unique string for this recipe used when fetching the recipes.
  */
 - (void)basicInitialisation:(NSString *)recipeID
 {
@@ -101,7 +109,11 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 }
 
 /**
- *	called to initialise a class instance
+ *	Initializes and returns a newly allocated recipe object with a unique ID.
+ *
+ *	@param	recipeID					A unique string for this recipe used when fetching the recipes.
+ *
+ *	@return	An initialized object.
  */
 - (instancetype)initWithRecipeID:(NSString *)recipeID
 {
@@ -114,7 +126,13 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 }
 
 /**
- *	called to initialise a class instance
+ *	
+ *	Initializes and returns a newly allocated recipe object with a unique ID and delegate.
+ *
+ *	@param	recipeID					A unique string for this recipe used when fetching the recipes.
+ *	@param	delegate					The delegate interested in knowing the details of this recipe.
+ *
+ *	@return	An initialized object.
  */
 - (instancetype)initWithRecipeID:(NSString *)recipeID
 					 andDelegate:(id <RecipeDelegate>)delegate
@@ -132,7 +150,9 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 #pragma mark - Setter & Getter Methods
 
 /**
- *	this dictionary holds the stuff that attributes yummly for the search
+ *	This dictionary holds the stuff that attributes yummly for the search.
+ *
+ *	@return	A dictionary holding the various objects needed to properly attribute Yummly for a recipe.
  */
 - (NSDictionary *)attributionDictionary
 {
@@ -143,7 +163,9 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 }
 
 /**
- *	the ingredients required for the recipe along with the quantity
+ *	The ingredients required for the recipe along with the quantity.
+ *
+ *	@return	An array of ingredients required for the recipe.
  */
 - (NSArray *)ingredientLines
 {
@@ -154,7 +176,9 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 }
 
 /**
- *	a dictionary containing each flavour and their value for this recipe
+ *	A dictionary containing each flavour and their value for this recipe.
+ *
+ *	@return	An NSDictionary with each flavour as a key, and the value is how much of that flavour the recipe has.
  */
 - (NSDictionary *)flavourDictionary
 {

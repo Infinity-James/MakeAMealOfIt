@@ -6,11 +6,12 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
+#import "RightControllerDelegate.h"
 #import "UICentreViewController.h"
 
 #pragma mark - Recipes View Controller Public Interface
 
-@interface RecipesViewController : UICentreViewController {}
+@interface RecipesViewController : UICentreViewController <RightControllerDelegate> {}
 
 #pragma mark - Public Properties
 

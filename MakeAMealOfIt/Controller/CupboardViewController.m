@@ -33,6 +33,8 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 @property (nonatomic, assign)	NSComparator				prioritiseLettersComparator;
 /**	A comparator block that sorts letter before numbers and punctuation in ingredient dictionaries.	*/
 @property (nonatomic, assign)	NSComparator				prioritiseLettersInDictionaryComparator;
+/**	A UITapGestureRecogniser that calls acts as though the user finished editing the search bar.	*/
+@property (nonatomic, strong)	UITapGestureRecognizer		*resignGestureRecogniser;
 /**	This search bar will be used to search the ingredients table view.	*/
 @property (nonatomic, strong)	UISearchBar					*searchBar;
 /**	The constraints used to set the search bar on top of the table view.	*/
@@ -45,8 +47,6 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 @property (nonatomic, strong)	NSMutableDictionary			*selectedIngredients;
 /**	*/
 @property (nonatomic, strong)	UITableView					*tableView;
-/**	*/
-@property (nonatomic, strong)	NSDictionary				*viewsDictionary;
 
 @end
 
@@ -66,7 +66,6 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 	for (NSIndexPath *selectedIndexPath in self.tableView.indexPathsForSelectedRows)
 	{
 		[self.tableView deselectRowAtIndexPath:selectedIndexPath animated:YES];
-		[self tableView:self.tableView didDeselectRowAtIndexPath:selectedIndexPath];
 	}
 	
 	self.selectedIngredients		= nil;
@@ -477,6 +476,22 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 }
 
 /**
+ *	The gesture recogniser intended to be attached to every view other than the search view so the bar is resigned appropriately.
+ *
+ *	@return	A UITapGestureRecogniser that calls acts as though the user finished editing the search bar.
+ */
+- (UITapGestureRecognizer *)resignGestureRecogniser
+{
+	if (!_resignGestureRecogniser)
+	{
+		_resignGestureRecogniser		= [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(searchBarTextDidEndEditing:)];
+		_resignGestureRecogniser.numberOfTapsRequired	= 1;
+	}
+	
+	return _resignGestureRecogniser;
+}
+
+/**
  *	This search bar will be used to search the ingredients table view.
  *
  *	@return	A fully initialised and customised seach bar.
@@ -488,6 +503,7 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 		_searchBar						= [[UISearchBar alloc] init];
 		_searchBar.delegate				= self;
 		_searchBar.placeholder			= [[NSString alloc] initWithFormat:@"%@...", self.placeholders[arc4random() % self.placeholders.count]];
+		_searchBar.searchBarStyle		= UISearchBarIconSearch;
 		_searchBar.showsScopeBar		= NO;
 		[ThemeManager customiseSearchBar:_searchBar withTheme:nil];
 		
@@ -550,9 +566,9 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 }
 
 /**
- *	called when our left controller delegate is set
+ *	Called when our left controller delegate is set.
  *
- *	@param	leftDelegate			an nsobject adhering to our left controller delegate protocol
+ *	@param	leftDelegate			An NSObject adhering to our LeftControllerDelegate protocol.
  */
 - (void)setLeftDelegate:(id<LeftControllerDelegate>)leftDelegate
 {
@@ -570,23 +586,37 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 				NSIndexPath *indexPath		= [weakSelf indexPathForIngredientDictionary:modifiedIngredient inTableView:weakSelf.tableView];
 				IngredientTableViewCell *cell	= (IngredientTableViewCell *)[weakSelf.tableView cellForRowAtIndexPath:indexPath];
 				
+				//	get the array of included and excluded ingredient dictionaries
+				NSMutableArray *included			= [self.selectedIngredients[kIncludedSelections] mutableCopy];
+				NSMutableArray *excluded			= [self.selectedIngredients[kExcludedSelections] mutableCopy];
+				
+				if (cell.included && [included containsObject:cell.ingredientDictionary])
+					[included removeObject:cell.ingredientDictionary];
+				else if (cell.excluded && [excluded containsObject:cell.ingredientDictionary])
+					[excluded removeObject:cell.ingredientDictionary];
+				
+				self.selectedIngredients[kExcludedSelections]	= excluded;
+				self.selectedIngredients[kIncludedSelections]	= included;
+				
 				dispatch_async(dispatch_get_main_queue(),
 				^{
-					cell.included	= cell.excluded	= NO;
+					cell.excluded	= cell.included	= NO;
+					[self.tableView reloadRowsAtIndexPaths:@[[self.tableView indexPathForCell:cell]] withRowAnimation:UITableViewRowAnimationAutomatic];
 				});
 			});
 		}];
 }
 
 /**
- *	this is the main table view for this view controller
+ *	The table view used to display all of the ingredients.
+ *
+ *	@return	A fully initialised table view added as a subview.
  */
 - (UITableView *)tableView
 {
 	if (!_tableView)
 	{
 		_tableView						= [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
-		_tableView.allowsMultipleSelection	= YES;
 		_tableView.dataSource			= self;
 		_tableView.delegate				= self;
 		[self.view addSubview:_tableView];
@@ -600,7 +630,9 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 }
 
 /**
- *	this is the dictionary of view to apply constraint to
+ *	A dictionary to used when creating visual constraints for this view controller.
+ *
+ *	@return	A dictionary with of views and appropriate keys.
  */
 - (NSDictionary *)viewsDictionary
 {
@@ -611,24 +643,40 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 #pragma mark - UISearchBarDelegate Methods
 
 /**
- *	tells delegate when the user begins editing the search text
+ *	Tells the delegate when the user begins editing the search text.
  *
- *	@param	searchBar					search bar that is being edited
+ *	@param	searchBar					The search bar that is being edited.
  */
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar
 {
 	[searchBar becomeFirstResponder];
 	
 	[self sortOutSearchDisplayControllerTableView];
+	
+	[self.searchDisplay.searchResultsTableView addGestureRecognizer:self.resignGestureRecogniser];
+	[self.tableView addGestureRecognizer:self.resignGestureRecogniser];
+}
+
+/**
+ *	Tells the delegate that the user finished editing the search text.
+ *
+ *	@param	searchBar					The search bar that is being edited.
+ */
+- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar
+{
+	[searchBar resignFirstResponder];
+	
+	[self.searchDisplay.searchResultsTableView removeGestureRecognizer:self.resignGestureRecogniser];
+	[self.tableView removeGestureRecognizer:self.resignGestureRecogniser];
 }
 
 #pragma mark - UISearchDisplayDelegate Methods
 
 /**
- *	asks the delegate if the table view should be reloaded for a given scope
+ *	Asks the delegate if the table view should be reloaded for a given scope.
  *
- *	@param	controller					search display controller for which the receiver is the delegate
- *	@param	searchOption				index of the selected scope button in the search bar
+ *	@param	controller					The search display controller for which the receiver is the delegate.
+ *	@param	searchOption				The index of the selected scope button in the search bar.
  */
 - (BOOL)searchDisplayController:(UISearchDisplayController *)controller
 shouldReloadTableForSearchScope:(NSInteger)searchOption
@@ -637,10 +685,10 @@ shouldReloadTableForSearchScope:(NSInteger)searchOption
 }
 
 /**
- *	asks the delegate if the table view should be reloaded for a given search string
+ *	Asks the delegate if the table view should be reloaded for a given search string.
  *
- *	@param	controller					search display controller for which the receiver is the delegate
- *	@param	searchOption				string in the search bar
+ *	@param	controller					The search display controller for which the receiver is the delegate.
+ *	@param	searchOption				The string in the search bar.
  */
 - (BOOL) searchDisplayController:(UISearchDisplayController *)controller
 shouldReloadTableForSearchString:(NSString *)searchString
@@ -653,9 +701,11 @@ shouldReloadTableForSearchString:(NSString *)searchString
 #pragma mark - UITableViewDataSource Methods
 
 /**
- *	as the data source, we must define how many sections we want the table view to have
+ *	Asks the data source to return the number of sections in the table view.
  *
- *	@param	tableView					the table view for which are defining the sections number
+ *	@param	tableView					The number of sections in tableView. The default value is 1.
+ *
+ *	@return	The number of sections in tableView.
  */
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -665,13 +715,12 @@ shouldReloadTableForSearchString:(NSString *)searchString
 	return self.ingredientsForTableView.count;
 }
 
-
 /**
  *	Asks the data source to return the titles for the sections for a table view.
  *
  *	@param	tableView					The table-view object requesting this information.
  *
- *	@return	An array of strings that serve as the title of sections in the table view and appear in the index list on the right side of the table view.
+ *	@return	An array of strings that serve as the title of sections in the table view and appear in the index list for the table view.
  */
 - (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
 {
@@ -693,10 +742,12 @@ shouldReloadTableForSearchString:(NSString *)searchString
 }
 
 /**
- *	create and return the cells for each row of the table view
+ *	Asks the data source for a cell to insert in a particular location of the table view.
  *
- *	@param	tableView					the table view for which we are creating cells
- *	@param	indexPath					the index path of the row we are creating a cell for
+ *	@param	tableView					A table-view object requesting the cell.
+ *	@param	indexPath					An index path locating a row in tableView.
+ *
+ *	@return	An object inheriting from UITableViewCell that the table view can use for the specified row.
  */
 - (UITableViewCell *)tableView:(UITableView *)tableView
 		 cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -707,9 +758,13 @@ shouldReloadTableForSearchString:(NSString *)searchString
 	
 	if ([self.selectedIngredients[kIncludedSelections] containsObject:cell.ingredientDictionary])
 		cell.included					= YES;
+	else
+		cell.included					= NO;
 	
-	else if ([self.selectedIngredients[kExcludedSelections] containsObject:cell.ingredientDictionary])
+	if ([self.selectedIngredients[kExcludedSelections] containsObject:cell.ingredientDictionary])
 		cell.excluded					= YES;
+	else
+		cell.excluded					= NO;
 	
 	cell.delegate						= self;
 	
@@ -717,10 +772,12 @@ shouldReloadTableForSearchString:(NSString *)searchString
 }
 
 /**
- *	define how many rows for each section there are in this table view
+ *	Tells the data source to return the number of rows in a given section of a table view.
  *
- *	@param	tableView					the table view for which we are creating cells
- *	@param	section						the particular section for which we must define the rows
+ *	@param	tableView					The table-view object requesting this information.
+ *	@param	section						An index number identifying a section in tableView.
+ *
+ *	@return	The number of rows in section.
  */
 - (NSInteger)tableView:(UITableView *)tableView
  numberOfRowsInSection:(NSInteger)section
@@ -729,19 +786,6 @@ shouldReloadTableForSearchString:(NSString *)searchString
 		return self.filteredIngredients.count;
 	
 	return ((NSArray *)self.ingredientsForTableView[self.sectionTitles[section]]).count;
-}
-
-/**
- *	tells the delegate the table view is about to draw a cell for a particular row
- *
- *	@param	tableView					table-view object informing the delegate of this impending event
- *	@param	cell						table-view cell object that table view is going to use when drawing the row
- *	@param	indexPath					index path locating the row in table view
- */
-- (void)tableView:(UITableView *)tableView
-  willDisplayCell:(UITableViewCell *)cell
-forRowAtIndexPath:(NSIndexPath *)indexPath
-{
 }
 
 #pragma mark - UITableViewDelegate Methods
@@ -759,10 +803,12 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 }
 
 /**
- *	asks the delegate for a view object to display in the header of the specified section of the table view
+ *	Asks the delegate for a view object to display in the header of the specified section of the table view.
  *
- *	@param	tableView					table-view object asking for the view object
- *	@param	section						index number identifying a section of table view
+ *	@param	tableView					The table-view object asking for the view object.
+ *	@param	section						An index number identifying a section of tableView .
+ *
+ *	@return	A view object to be displayed in the header of section.
  */
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
@@ -783,15 +829,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 #pragma mark - View Lifecycle
 
 /**
- *	sent to the view controller when the app receives a memory warning
- */
-- (void)didReceiveMemoryWarning
-{
-	[super didReceiveMemoryWarning];
-}
-
-/**
- *	called once this controller's view has been loaded into memory
+ *	Called after the controller’s view is loaded into memory.
  */
 - (void)viewDidLoad
 {
@@ -801,9 +839,9 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 }
 
 /**
- *	notifies the view controller that its view is about to be added to a view hierarchy
+ *	Notifies the view controller that its view is about to be added to a view hierarchy.
  *
- *	@param	animated					whether the view needs to be added to the window with an animation
+ *	@param	animated					If YES, the view is being added to the window using an animation.
  */
 - (void)viewWillAppear:(BOOL)animated
 {

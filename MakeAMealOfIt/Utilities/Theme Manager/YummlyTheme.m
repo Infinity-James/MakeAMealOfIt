@@ -39,11 +39,11 @@
 {
 	NSShadow *shadow					= [[NSShadow alloc] init];
 	shadow.shadowBlurRadius				= kShadowBlur;
-	shadow.shadowColor					= kYummlyColourShadow;
+	shadow.shadowColor					= [[UIColor alloc] initWithRed:0.2f green:0.2f blue:0.2f alpha:1.0f];
 	shadow.shadowOffset					= CGSizeMake(0.0f, 1.0f);
 	
-	return @{	NSFontAttributeName				: [UIFont fontWithName:@"AvenirNext-Regular" size:16.0f],
-				NSForegroundColorAttributeName	: kYummlyColourMain,
+	return @{	NSFontAttributeName				: kYummlyBolderFontWithSize(16.0f),
+				NSForegroundColorAttributeName	: [UIColor whiteColor],
 				NSShadowAttributeName			: shadow};
 }
 
