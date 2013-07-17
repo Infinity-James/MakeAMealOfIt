@@ -17,6 +17,17 @@ NSString *const kCellIdentifier			= @"RecipeIngredientCellIdentifier";
 /**	*/
 static NSString *const kHeaderIdentifier= @"RecipeIngredientsHeaderIdentifier";
 
+#pragma mark - Recipe Ingredients Controller Private Class Extension
+
+@interface RecipeIngredientsController () {}
+
+#pragma mark - Private Properties
+
+/**	*/
+@property (nonatomic, readwrite, assign)	CGFloat	maximumTableViewHeight;
+
+@end
+
 #pragma mark - Recipe Ingredients Controller Implementation
 
 @implementation RecipeIngredientsController {}
@@ -50,7 +61,7 @@ static NSString *const kHeaderIdentifier= @"RecipeIngredientsHeaderIdentifier";
 - (CGFloat)desiredTableViewHeight
 {
 	//	add 20 for the header view height
-	return (self.ingredients.count * kCellHeight) + 20.0f;
+	return (self.ingredients.count * kCellHeight) + 100.0f;
 }
 
 #pragma mark - UITableViewDataSource Methods
@@ -81,9 +92,11 @@ static NSString *const kHeaderIdentifier= @"RecipeIngredientsHeaderIdentifier";
 - (UITableViewCell *)tableView:(UITableView *)tableView
 		 cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	UITableViewCell *cell				= [tableView dequeueReusableCellWithIdentifier:kCellIdentifier forIndexPath:indexPath];
+	RecipeDetailsIngredientCell *cell	= [tableView dequeueReusableCellWithIdentifier:kCellIdentifier forIndexPath:indexPath];
 	
-	cell.textLabel.text					= self.ingredients[indexPath.row];
+	cell.ingredientLine					= self.ingredients[indexPath.row];
+	
+	NSLog(@"\nINGREDIENT: %@", cell.ingredientLine);
 	
 	return cell;
 }
@@ -99,6 +112,8 @@ static NSString *const kHeaderIdentifier= @"RecipeIngredientsHeaderIdentifier";
 - (NSInteger)tableView:(UITableView *)tableView
  numberOfRowsInSection:(NSInteger)section
 {
+	self.maximumTableViewHeight			= 20.0f;
+	
 	return self.ingredients.count;
 }
 
@@ -133,7 +148,19 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 - (CGFloat)	  tableView:(UITableView *)tableView
 heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	return kCellHeight;
+	CGFloat cellHeight					= [RecipeDetailsIngredientCell heightOfCellWithIngredientLine:self.ingredients[indexPath.row]
+																	  withSuperviewWidth:tableView.frame.size.width];
+	
+	self.maximumTableViewHeight			+= cellHeight;
+	
+	NSLog(@"CONTROLLER - MAX TABLE VIEW: %f", self.maximumTableViewHeight);
+	
+	if (indexPath.row + 1 == self.ingredients.count)
+		if ([self.delegate respondsToSelector:@selector(tableViewHeightCalculated)])
+			[self.delegate tableViewHeightCalculated],
+			NSLog(@"SENT HEIGHT: %f", self.maximumTableViewHeight);
+	
+	return cellHeight;
 }
 
 /**

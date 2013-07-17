@@ -8,6 +8,14 @@
 
 #import "Recipe.h"
 
+#pragma mark - 
+
+@protocol RecipeDetailsViewDelegate <NSObject>
+
+- (void)updatedIntrinsicContentSize;
+
+@end
+
 #pragma mark - Recipe Details View Public Interface
 
 @interface RecipeDetailsView : UIView  {}

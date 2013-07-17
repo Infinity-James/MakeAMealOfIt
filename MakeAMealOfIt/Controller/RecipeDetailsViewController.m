@@ -116,14 +116,18 @@
  */
 - (void)recipeDictionaryHasLoaded
 {
+	NSLog(@"BEFORE HEIGHT: %f", self.recipeDetailsView.intrinsicContentSize.height);
+	
 	[self.recipeDetailsView recipeDictionaryHasLoaded];
+	
+	NSLog(@"AFTER HEIGHT: %f", self.recipeDetailsView.intrinsicContentSize.height);
+	
+	self.recipeDetailsView.frame		= CGRectMake(0.0f, 0.0f, self.recipeDetailsView.intrinsicContentSize.width,
+													 self.recipeDetailsView.intrinsicContentSize.height);
 	
 	//	notify the right view controller that the attribution dictionary has been loaded
 	if (self.attributionDictionaryLoaded)
 		self.attributionDictionaryLoaded(self.recipe.attributionDictionary);
-	
-	self.recipeDetailsView.frame		= CGRectMake(0.0f, 0.0f, self.recipeDetailsView.intrinsicContentSize.width,
-													 self.recipeDetailsView.intrinsicContentSize.height);
 }
 
 #pragma mark - RightControllerDelegate Methods

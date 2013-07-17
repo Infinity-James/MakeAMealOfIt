@@ -18,7 +18,7 @@ static CGFloat const kImageHeight		= 200.0f;
 
 #pragma mark - Recipe Details View Private Class Extension
 
-@interface RecipeDetailsView () {}
+@interface RecipeDetailsView () <RecipeIngredientsControllerDelegate> {}
 
 #pragma mark - Private Properties
 
@@ -160,7 +160,7 @@ static CGFloat const kImageHeight		= 200.0f;
 	
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:[starRating]-(==20)-[tableView(==tvHeight)]"
 																options:kNilOptions
-																metrics:@{@"tvHeight": @(self.recipeIngredientsController.desiredTableViewHeight)}
+																metrics:@{@"tvHeight": @(self.recipeIngredientsController.maximumTableViewHeight)}
 																  views:self.viewsDictionary];
 	[self addConstraints:constraints];
 	
@@ -276,7 +276,7 @@ static CGFloat const kImageHeight		= 200.0f;
 		
 		_ingredientsTableView.separatorStyle	= UITableViewCellSeparatorStyleNone;
 		
-		[_ingredientsTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kCellIdentifier];
+		[_ingredientsTableView registerClass:[RecipeDetailsIngredientCell class] forCellReuseIdentifier:kCellIdentifier];
 		
 		_ingredientsTableView.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self addSubview:_ingredientsTableView];
@@ -313,7 +313,10 @@ static CGFloat const kImageHeight		= 200.0f;
 - (RecipeIngredientsController *)recipeIngredientsController
 {
 	if (!_recipeIngredientsController)
+	{
 		_recipeIngredientsController	= [[RecipeIngredientsController alloc] initWithIngredients:self.recipe.ingredientLines];
+		_recipeIngredientsController.delegate	= self;
+	}
 	
 	return _recipeIngredientsController;
 }
@@ -345,6 +348,16 @@ static CGFloat const kImageHeight		= 200.0f;
 				@"tableView"			: self.ingredientsTableView		};
 }
 
+#pragma mark - RecipeIngredientsControllerDelegate Methods
+
+/**
+ *	Sent to the delegate when the maximum height for the table view displaying the ingredient has been calculated.
+ */
+- (void)tableViewHeightCalculated
+{
+	[self setNeedsUpdateConstraints];
+}
+
 #pragma mark - UIView Methods
 
 /**
@@ -355,7 +368,7 @@ static CGFloat const kImageHeight		= 200.0f;
 - (CGSize)intrinsicContentSize
 {
 	CGSize contentSize					= self.superview.bounds.size;
-	contentSize.height					= 700.0f + self.recipeIngredientsController.desiredTableViewHeight;
+	contentSize.height					= 700.0f + self.ingredientsTableView.frame.size.height;
 	
 	return contentSize;
 }
