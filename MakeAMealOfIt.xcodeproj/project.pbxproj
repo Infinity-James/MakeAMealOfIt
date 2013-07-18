@@ -269,8 +269,6 @@
 		1A8EC540174E734A00553857 /* Centre View Controller */ = {
 			isa = PBXGroup;
 			children = (
-				1A64725017946A96004E2F9D /* WebViewController.h */,
-				1A64725117946A96004E2F9D /* WebViewController.m */,
 				1A70C0B71754FAAE004FEEF6 /* RecipeDetailsViewController.h */,
 				1A70C0B81754FAAE004FEEF6 /* RecipeDetailsViewController.m */,
 				1AEE006D1745314F00B6FC43 /* RecipeSearchViewController.h */,
@@ -279,6 +277,8 @@
 				1A9C84A51742348A006B8664 /* RecipesViewController.m */,
 				1A7C1A4E175792210075AF2D /* UICentreViewController.h */,
 				1A7C1A4F175792210075AF2D /* UICentreViewController.m */,
+				1A64725017946A96004E2F9D /* WebViewController.h */,
+				1A64725117946A96004E2F9D /* WebViewController.m */,
 			);
 			name = "Centre View Controller";
 			sourceTree = "<group>";
@@ -300,9 +300,9 @@
 			children = (
 				1A8EC540174E734A00553857 /* Centre View Controller */,
 				1A8EC541174E735D00553857 /* Left View Controller */,
+				1A8EC53F174E733600553857 /* Right View Controller */,
 				1A9C84B217423DF4006B8664 /* SlideNavigationController.h */,
 				1A9C84B317423DFD006B8664 /* SlideNavigationController.m */,
-				1A8EC53F174E733600553857 /* Right View Controller */,
 			);
 			name = "View Controller";
 			sourceTree = "<group>";
@@ -399,11 +399,11 @@
 		1AEE006217427E3400B6FC43 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				1A7C1A511757ADA50075AF2D /* Recipe.h */,
+				1A7C1A521757ADA50075AF2D /* Recipe.m */,
 				1AD8C912178C003500E56DCA /* SlideNavigationItem.h */,
 				1AD8C913178C003500E56DCA /* SlideNavigationItem.m */,
 				1AD8C915178C0D1B00E56DCA /* SlideNavigationItemDelegate.h */,
-				1A7C1A511757ADA50075AF2D /* Recipe.h */,
-				1A7C1A521757ADA50075AF2D /* Recipe.m */,
 				1A70C0B117535F55004FEEF6 /* YummlyMetadata.h */,
 				1A70C0B217535F55004FEEF6 /* YummlyMetadata.m */,
 				1AEE005F17427E2F00B6FC43 /* YummlyRequest.h */,
@@ -417,10 +417,6 @@
 		1AEE00681743F42400B6FC43 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				1A926F9D17967E5500F7568D /* RecipeDetailsIngredientCell.h */,
-				1A926F9E17967E5500F7568D /* RecipeDetailsIngredientCell.m */,
-				1AD8C916178C1FDF00E56DCA /* SlideNavigationBar.h */,
-				1AD8C917178C1FDF00E56DCA /* SlideNavigationBar.m */,
 				1A347612177837B100E723CD /* IncludeExcludeControl.h */,
 				1A347613177837B100E723CD /* IncludeExcludeControl.m */,
 				1A84A5B4176630D900E1F818 /* IngredientHeaderView.h */,
@@ -431,6 +427,8 @@
 				1AE89C83177AF4F6001C356A /* MetadataCell.m */,
 				1A8EC542174F4CCA00553857 /* RecipeCollectionViewCell.h */,
 				1A8EC543174F4CCA00553857 /* RecipeCollectionViewCell.m */,
+				1A926F9D17967E5500F7568D /* RecipeDetailsIngredientCell.h */,
+				1A926F9E17967E5500F7568D /* RecipeDetailsIngredientCell.m */,
 				1A70C0BA175500FF004FEEF6 /* RecipeDetailsView.h */,
 				1A70C0BB175500FF004FEEF6 /* RecipeDetailsView.m */,
 				1AEE00DE17460EA500B6FC43 /* RecipeSearchView.h */,
@@ -443,6 +441,8 @@
 				1A6D117C174B4A4200E0B000 /* Sector.m */,
 				1A6D117F174B552B00E0B000 /* SegmentView.h */,
 				1A6D1180174B552B00E0B000 /* SegmentView.m */,
+				1AD8C916178C1FDF00E56DCA /* SlideNavigationBar.h */,
+				1AD8C917178C1FDF00E56DCA /* SlideNavigationBar.m */,
 				1A9FCF8B1758CE7E00D74485 /* StarRatingView.h */,
 				1A9FCF8C1758CE7E00D74485 /* StarRatingView.m */,
 				1A8EC545174F756A00553857 /* TextBackingView.h */,

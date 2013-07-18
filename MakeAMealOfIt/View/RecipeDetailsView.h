@@ -12,6 +12,13 @@
 
 @protocol RecipeDetailsViewDelegate <NSObject>
 
+#pragma mark - Optional Methods
+
+@optional
+
+/**
+ *	Sent to the delegate when the sender has updated it's intrinsicContentSize.
+ */
 - (void)updatedIntrinsicContentSize;
 
 @end
@@ -22,11 +29,24 @@
 
 #pragma mark - Public Properties
 
+/**	The object interested in updates to this view.	*/
+@property (nonatomic, weak)	id <RecipeDetailsViewDelegate>	delegate;
+/**	An object encapsulating the recipe that this view is showing. */
 @property (nonatomic, readonly, strong)	Recipe	*recipe;
 
 #pragma mark - Public Methods
 
+/**
+ *	Implemented by subclasses to initialize a new object (the receiver) immediately after memory for it has been allocated.
+ *
+ *	@param	recipe						The recipe object being represented by this view.
+ *
+ *	@return	An initialized object.
+ */
 - (instancetype)initWithRecipe:(Recipe *)recipe;
+/**
+ *	Called when the recipe loaded it's details.
+ */
 - (void)recipeDictionaryHasLoaded;
 
 @end

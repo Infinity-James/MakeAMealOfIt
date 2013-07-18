@@ -14,7 +14,7 @@
 
 #pragma mark - Recipe Details VC Private Class Extension
 
-@interface RecipeDetailsViewController () <RecipeDelegate> {}
+@interface RecipeDetailsViewController () <RecipeDelegate, RecipeDetailsViewDelegate> {}
 
 #pragma mark - Private Properties
 
@@ -71,11 +71,22 @@
 																  views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
 	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==44)-[scrollView]|"
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[scrollView]|"
 																options:kNilOptions
 																metrics:nil
 																  views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
+}
+
+#pragma mark - Convenience & Helper Methods
+
+- (void)updateRecipeDetailsViewFrame
+{
+	CGRect recipeDetailsFrame;
+	recipeDetailsFrame.origin			= CGPointZero;
+	recipeDetailsFrame.size				= self.recipeDetailsView.intrinsicContentSize;
+	self.recipeDetailsView.frame		= recipeDetailsFrame;
+	self.scrollView.contentSize			= self.recipeDetailsView.bounds.size;
 }
 
 #pragma mark - Initialisation
@@ -109,25 +120,30 @@
 	return self;
 }
 
-#pragma mark - Recipe Delegate Methods
+#pragma mark - RecipeDelegate Methods
 
 /**
  *	Called when the recipe loaded it's details.
  */
 - (void)recipeDictionaryHasLoaded
-{
-	NSLog(@"BEFORE HEIGHT: %f", self.recipeDetailsView.intrinsicContentSize.height);
-	
+{	
 	[self.recipeDetailsView recipeDictionaryHasLoaded];
 	
-	NSLog(@"AFTER HEIGHT: %f", self.recipeDetailsView.intrinsicContentSize.height);
-	
-	self.recipeDetailsView.frame		= CGRectMake(0.0f, 0.0f, self.recipeDetailsView.intrinsicContentSize.width,
-													 self.recipeDetailsView.intrinsicContentSize.height);
+	[self updateRecipeDetailsViewFrame];
 	
 	//	notify the right view controller that the attribution dictionary has been loaded
 	if (self.attributionDictionaryLoaded)
 		self.attributionDictionaryLoaded(self.recipe.attributionDictionary);
+}
+
+#pragma mark - RecipeDetailsViewDelegate Methods
+
+/**
+ *	Sent to the delegate when the sender has updated it's intrinsicContentSize.
+ */
+- (void)updatedIntrinsicContentSize
+{
+	[self updateRecipeDetailsViewFrame];
 }
 
 #pragma mark - RightControllerDelegate Methods
@@ -180,7 +196,8 @@
 	if (!_recipeDetailsView)
 	{
 		_recipeDetailsView				= [[RecipeDetailsView alloc] initWithRecipe:self.recipe];
-		//_recipeDetailsView.frame		= CGRectMake(0.0f, 0.0f, self.view.bounds.size.width, 700.0f);
+		_recipeDetailsView.delegate		= self;
+		_recipeDetailsView.frame		= self.view.bounds;
 	}
 	
 	return _recipeDetailsView;
@@ -217,7 +234,7 @@
 	{
 		_scrollView						= [[UIScrollView alloc] init];
 		_scrollView.backgroundColor		= [UIColor whiteColor];
-		_scrollView.contentSize			= self.recipeDetailsView.bounds.size;
+		_scrollView.contentInset		= UIEdgeInsetsMake(44.0f, 0.0f, 0.0f, 0.0f);
 		_scrollView.maximumZoomScale	= 1.0f;
 		_scrollView.minimumZoomScale	= 1.0f;
 		
@@ -225,6 +242,7 @@
 		[self.view addSubview:_scrollView];
 		[_scrollView addSubview:self.recipeDetailsView];
 	}
+	
 	return _scrollView;
 }
 
@@ -257,13 +275,14 @@
 #pragma mark - View Lifecycle
 
 /**
- *	Notifies the view controller that its view is about to layout its subviews.
+ *	Notifies the view controller that its view is about to be added to a view hierarchy.
+ *
+ *	@param	animated					If YES, the view is being added to the window using an animation.
  */
-- (void)viewWillLayoutSubviews
+- (void)viewWillAppear:(BOOL)animated
 {
-	[super viewWillLayoutSubviews];
-	self.recipeDetailsView.frame		= CGRectMake(0.0f, 0.0f, self.view.bounds.size.width, self.recipeDetailsView.bounds.size.height);
-	self.scrollView.contentSize			= self.recipeDetailsView.bounds.size;
+	[super viewWillAppear:animated];
+	[self updateRecipeDetailsViewFrame];
 	[self addToolbarItemsAnimated:NO];
 }
 

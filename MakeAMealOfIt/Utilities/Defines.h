@@ -33,6 +33,8 @@ static NSString *const kNotificationYummlyRequestChanged	= @"NotificationYummlyR
 static NSString *const kNotificationResetSearch				= @"NotificationResetYummlySearch";
 
 //	yummly theme constants
+#define kDarkGreyColour					[UIColor colorWithRed:030.0f / 255.0f green:030.0f / 255.0f blue:030.0f / 255.0f alpha:1.000f]
+#define kDarkGreyColourWithAlpha(x)		[UIColor colorWithRed:030.0f / 255.0f green:030.0f / 255.0f blue:030.0f / 255.0f alpha:x]
 #define	kYummlyColourMain				[UIColor colorWithRed:218.0f / 255.0f green:074.0f / 255.0f blue:011.0f / 255.0f alpha:1.000f]
 #define	kYummlyColourShadow				[UIColor colorWithRed:130.0f / 255.0f green:034.0f / 255.0f blue:006.0f / 255.0f alpha:1.000f]
 #define	kYummlyColourMainWithAlpha(x)	[UIColor colorWithRed:218.0f / 255.0f green:074.0f / 255.0f blue:011.0f / 255.0f alpha:x]

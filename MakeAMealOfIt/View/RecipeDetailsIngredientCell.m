@@ -45,7 +45,7 @@
 	[self removeConstraints:self.constraints];
 	[self.contentView removeConstraints:self.constraints];
 	
-	NSArray *constraints				= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[ingredientLabel]-(>=20)-|"
+	NSArray *constraints				= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(==4)-[ingredientLabel]-(>=20)-|"
 																	  options:kNilOptions
 																	  metrics:nil
 																		views:self.viewsDictionary];
@@ -73,7 +73,7 @@
 		_ingredientLabel.lineBreakMode	= NSLineBreakByWordWrapping;
 		_ingredientLabel.numberOfLines	= 0;
 		_ingredientLabel.textAlignment	= NSTextAlignmentLeft;
-		_ingredientLabel.textColor		= kYummlyColourMain;
+		_ingredientLabel.textColor		= kDarkGreyColour;
 		
 		_ingredientLabel.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self.contentView addSubview:_ingredientLabel];
@@ -128,7 +128,7 @@
 													 attributes:nil
 														context:context];
 	
-	return labelRect.size.height + 10.0f;
+	return labelRect.size.height + 8.0f;
 }
 
 @end

@@ -57,9 +57,7 @@ static NSString *const kDeveloperURLString	= @"http://andbeyond.co";
  *	Opens a web view with the attribution URL.
  */
 - (void)openAttributionURL
-{	
-	NSLog(@"\nATTRIBUTION URL:\n %@", self.attributionURL);
-	
+{
 	if ([self.rightDelegate respondsToSelector:@selector(openURL:withRightViewController:)])
 		[self.rightDelegate openURL:self.attributionURL withRightViewController:nil];
 }

@@ -270,8 +270,6 @@ enum SectionIndex
 		self.selectedIngredients[kExcludedSelections]	= excludedIngredients;
 		self.selectedIngredients[kIncludedSelections]	= includedIngredients;
 		
-		NSLog(@"Selected Ingredients: %@", self.selectedIngredients);
-		
 		//	reload the table view on the main thread
 		[self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
 	});

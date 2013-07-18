@@ -10,6 +10,10 @@
 
 @interface StarRatingView : UIView {}
 
+#pragma mark - Public Properties
+
+@property (nonatomic, assign)	CGFloat	rating;
+
 #pragma mark - Public Methods
 
 - (instancetype)initWithRating:(CGFloat)rating;

@@ -96,8 +96,6 @@ static NSString *const kHeaderIdentifier= @"RecipeIngredientsHeaderIdentifier";
 	
 	cell.ingredientLine					= self.ingredients[indexPath.row];
 	
-	NSLog(@"\nINGREDIENT: %@", cell.ingredientLine);
-	
 	return cell;
 }
 
@@ -112,7 +110,7 @@ static NSString *const kHeaderIdentifier= @"RecipeIngredientsHeaderIdentifier";
 - (NSInteger)tableView:(UITableView *)tableView
  numberOfRowsInSection:(NSInteger)section
 {
-	self.maximumTableViewHeight			= 20.0f;
+	self.maximumTableViewHeight			= 30.0f;
 	
 	return self.ingredients.count;
 }
@@ -153,12 +151,9 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 	
 	self.maximumTableViewHeight			+= cellHeight;
 	
-	NSLog(@"CONTROLLER - MAX TABLE VIEW: %f", self.maximumTableViewHeight);
-	
 	if (indexPath.row + 1 == self.ingredients.count)
 		if ([self.delegate respondsToSelector:@selector(tableViewHeightCalculated)])
-			[self.delegate tableViewHeightCalculated],
-			NSLog(@"SENT HEIGHT: %f", self.maximumTableViewHeight);
+			[self.delegate tableViewHeightCalculated];
 	
 	return cellHeight;
 }
@@ -177,6 +172,9 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 	UITableViewHeaderFooterView *headerView	= [tableView dequeueReusableHeaderFooterViewWithIdentifier:kHeaderIdentifier];
 	if (!headerView)
 		headerView							= [[UITableViewHeaderFooterView alloc] initWithReuseIdentifier:kHeaderIdentifier];
+	
+	headerView.contentView.backgroundColor	= kDarkGreyColourWithAlpha(0.5f);
+	headerView.textLabel.textColor			= [UIColor whiteColor];
 	
 	headerView.textLabel.text				= @"Ingredients";
 	
