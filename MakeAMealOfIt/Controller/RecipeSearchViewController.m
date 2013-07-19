@@ -230,48 +230,90 @@ enum SectionIndex
 - (void)leftController:(UIViewController *)leftViewController
  updatedWithSelections:(NSDictionary *)selections
 {
+	//	create variables to know what index paths to reload
+	NSMutableArray *indexPathsToInsert	= [[NSMutableArray alloc] init];
+	NSMutableArray *indexPathsToDelete	= [[NSMutableArray alloc] init];
+	
+	//	get the newly added and removed selections
 	NSDictionary *addedSelections		= selections[kAddedSelections];
 	NSDictionary *removedSelections		= selections[kRemovedSelections];
 	
+	//	get the currently selected included and excluded ingredient dictionaries in arrays
 	NSMutableArray *excludedIngredients	= [self.selectedIngredients[kExcludedSelections] mutableCopy];
 	NSMutableArray *includedIngredients	= [self.selectedIngredients[kIncludedSelections] mutableCopy];
 	
 	//	asynchronously add the selections to the yummly request and update our array for the table view
-	dispatch_sync(dispatch_queue_create("Updating Yummly Request", NULL),
+	dispatch_sync(dispatch_queue_create("Selected Ingredients Updater", NULL),
 	^{
 		if (addedSelections)
 		{
+			//	get the included and excluded selections that have been added
 			NSArray *addedExcluded		= addedSelections[kExcludedSelections];
 			NSArray *addedIncluded		= addedSelections[kIncludedSelections];
 			
+			//	add the newly added ingredient dictionaries to the currently selected ones
 			[excludedIngredients addObjectsFromArray:addedExcluded];
 			[includedIngredients addObjectsFromArray:addedIncluded];
 			
+			//	for every newly added excluded ingredient dictionary we update the yummly request and store it to be inserted into the table view
 			for (NSDictionary *ingredientDictionary in addedExcluded)
+			{
+				[indexPathsToInsert addObject:[NSIndexPath indexPathForRow:[excludedIngredients indexOfObject:ingredientDictionary]
+																 inSection:kSectionExcludedIndex]];
 				[appDelegate.yummlyRequest addExcludedIngredient:ingredientDictionary[kYummlyMetadataDescriptionKey]];
+			}
+			
+			//	for every newly added included ingredient dictionary we update the yummly request and store it to be inserted into the table view
 			for (NSDictionary *ingredientDictionary in addedIncluded)
+			{
+				[indexPathsToInsert addObject:[NSIndexPath indexPathForRow:[includedIngredients indexOfObject:ingredientDictionary]
+																 inSection:kSectionIncludedIndex]];
+				
 				[appDelegate.yummlyRequest addDesiredIngredient:ingredientDictionary[kYummlyMetadataDescriptionKey]];
+			}
 		}
 		
 		if (removedSelections)
 		{
+			//	get the included and excluded selections that have been deleted
 			NSArray *removedExcluded	= removedSelections[kExcludedSelections];
 			NSArray *removedIncluded	= removedSelections[kIncludedSelections];
 			
+			//	for the removed excluded ingredient dictionaries we update the yummly request and store it to be deleted from the table view
+			for (NSDictionary *ingredientDictionary in removedExcluded)
+			{
+				[indexPathsToDelete addObject:[NSIndexPath indexPathForRow:[excludedIngredients indexOfObject:ingredientDictionary]
+																 inSection:kSectionExcludedIndex]];
+				[appDelegate.yummlyRequest removeExcludedIngredient:ingredientDictionary[kYummlyMetadataDescriptionKey]];
+			}
+			
+			//	for the removed included ingredient dictionaries we update the yummly request and store it to be deleted from the table view
+			for (NSDictionary *ingredientDictionary in removedIncluded)
+			{
+				[indexPathsToDelete addObject:[NSIndexPath indexPathForRow:[includedIngredients indexOfObject:ingredientDictionary]
+																 inSection:kSectionIncludedIndex]];
+				[appDelegate.yummlyRequest removeDesiredIngredient:ingredientDictionary[kYummlyMetadataDescriptionKey]];
+			}
+			
+			//	remove the deleted ingredient dictionaries from our currently selected ones now that we know where they were in table view
 			[excludedIngredients removeObjectsInArray:removedExcluded];
 			[includedIngredients removeObjectsInArray:removedIncluded];
-			
-			for (NSDictionary *ingredientDictionary in removedExcluded)
-				[appDelegate.yummlyRequest removeExcludedIngredient:ingredientDictionary[kYummlyMetadataDescriptionKey]];
-			for (NSDictionary *ingredientDictionary in removedIncluded)
-				[appDelegate.yummlyRequest removeDesiredIngredient:ingredientDictionary[kYummlyMetadataDescriptionKey]];
 		}
 		
+		//	store the newly updated ingredient dictionaries for both included and excluded
 		self.selectedIngredients[kExcludedSelections]	= excludedIngredients;
 		self.selectedIngredients[kIncludedSelections]	= includedIngredients;
 		
-		//	reload the table view on the main thread
-		[self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+		//	update the table view on the main thread
+		dispatch_async(dispatch_get_main_queue(),
+		^{
+			if (indexPathsToDelete.count > 0)
+			{
+				[self.tableView deleteRowsAtIndexPaths:indexPathsToDelete withRowAnimation:UITableViewRowAnimationLeft];
+			}
+			if (indexPathsToInsert.count > 0)
+				[self.tableView insertRowsAtIndexPaths:indexPathsToInsert withRowAnimation:UITableViewRowAnimationRight];
+		});
 	});
 }
 
@@ -406,6 +448,7 @@ enum SectionIndex
 		_tableView					= [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
 		_tableView.backgroundColor	= [UIColor whiteColor];
 		_tableView.backgroundView	= nil;
+		_tableView.clipsToBounds	= NO;
 		_tableView.opaque			= YES;
 		_tableView.separatorColor	= [UIColor clearColor];
 		_tableView.separatorStyle	= UITableViewCellSeparatorStyleNone;
@@ -534,23 +577,6 @@ willDismissWithButtonIndex:(NSInteger)buttonIndex
 }
 
 /**
- *	Asks the data source to verify that the given row is editable.
- *
- *	@param	tableView					The table-view object requesting this information.
- *	@param	indexPath					An index path locating a row in tableView.
- *
- *	@return	YES if the row indicated by indexPath is editable; otherwise, NO.
- */
-- (BOOL)	tableView:(UITableView *)tableView
-canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-	if ([self ingredientsArrayForSection:indexPath.section].count == 0)
-		return NO;
-	
-	return YES;
-}
-
-/**
  *	Asks the data source for a cell to insert in a particular location of the table view.
  *
  *	@param	tableView					A table-view object requesting the cell.
@@ -564,15 +590,8 @@ canEditRowAtIndexPath:(NSIndexPath *)indexPath
 	NSArray *arrayForSection			= [self ingredientsArrayForSection:indexPath.section];
 	NSString *cellText;
 	
-	if (arrayForSection.count)
-		cellText						= [arrayForSection[indexPath.row][kYummlyMetadataDescriptionKey] capitalizedString],
-		cell.textLabel.textAlignment	= NSTextAlignmentNatural;
-	else if (indexPath.section == kSectionExcludedIndex)
-		cellText						= @"← Include / Exclude Ingredients",
-		cell.textLabel.textAlignment	= NSTextAlignmentLeft;
-	else if (indexPath.section == kSectionIncludedIndex)
-		cellText						= @"Allergy & Dietary Requirements + More →",
-		cell.textLabel.textAlignment	= NSTextAlignmentRight;
+	cellText						= [arrayForSection[indexPath.row][kYummlyMetadataDescriptionKey] capitalizedString],
+	cell.textLabel.textAlignment	= NSTextAlignmentNatural;
 	
 	cell.textLabel.text					= cellText;
 	
@@ -600,15 +619,7 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
 	
 	if (editingStyle == UITableViewCellEditingStyleDelete)
 	{
-		NSMutableArray *ingredientsArray= [self.selectedIngredients[key] mutableCopy];
-		[ingredientsArray removeObjectAtIndex:indexPath.row];
-		self.selectedIngredients[key]	= ingredientsArray;
-		[self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationLeft];
 		self.modifiedIngredients(ingredientDictionary);
-		
-		if (((NSArray *)self.selectedIngredients[key]).count == 0)
-			[self.tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.section]
-						  withRowAnimation:UITableViewRowAnimationFade];
 	}
 }
 
@@ -621,9 +632,6 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
 - (NSInteger)tableView:(UITableView *)tableView
  numberOfRowsInSection:(NSInteger)section
 {
-	if (!self.hasBeenSlid)
-		return 1;
-	
 	NSArray *arrayForSection			= [self ingredientsArrayForSection:section];
 	
 	return arrayForSection.count;
@@ -658,16 +666,9 @@ viewForHeaderInSection:(NSInteger)section
 	if (!headerView)
 		headerView							= [[UITableViewHeaderFooterView alloc] initWithReuseIdentifier:kHeaderIdentifier];
 	
-	if ([self ingredientsArrayForSection:section].count == 0)
-		headerView.backgroundView				= nil,
-		headerView.contentView.backgroundColor	= [UIColor whiteColor],
-		headerView.textLabel.backgroundColor	= [UIColor clearColor];
-	else
-	{
-		headerView.textLabel.text				= section == kSectionExcludedIndex ? @"Excluded" : @"Required";
-		headerView.contentView.backgroundColor	= [[UIColor alloc] initWithRed:0.2f green:0.2f blue:0.2f alpha:1.0f];
-		headerView.textLabel.textColor			= [UIColor whiteColor];
-	}
+	headerView.textLabel.text				= section == kSectionExcludedIndex ? @"Excluded" : @"Required";
+	headerView.contentView.backgroundColor	= [[UIColor alloc] initWithRed:0.2f green:0.2f blue:0.2f alpha:1.0f];
+	headerView.textLabel.textColor			= [UIColor whiteColor];
 	
 	return headerView;
 }

@@ -157,6 +157,7 @@
 	{
 		_searchPhraseField				= [[UITextField alloc] init];
 		_searchPhraseField.borderStyle	= UITextBorderStyleNone;
+		_searchPhraseField.clearButtonMode	= UITextFieldViewModeWhileEditing;
 		_searchPhraseField.delegate		= self;
 		_searchPhraseField.opaque		= YES;
 		_searchPhraseField.placeholder	= [[NSString alloc] initWithFormat:@"%@...", self.foods[arc4random() % self.foods.count]];

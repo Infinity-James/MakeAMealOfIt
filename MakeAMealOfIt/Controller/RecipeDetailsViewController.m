@@ -196,6 +196,7 @@
 	if (!_recipeDetailsView)
 	{
 		_recipeDetailsView				= [[RecipeDetailsView alloc] initWithRecipe:self.recipe];
+		_recipeDetailsView.clipsToBounds= NO;
 		_recipeDetailsView.delegate		= self;
 		_recipeDetailsView.frame		= self.view.bounds;
 	}
@@ -234,6 +235,7 @@
 	{
 		_scrollView						= [[UIScrollView alloc] init];
 		_scrollView.backgroundColor		= [UIColor whiteColor];
+		//_scrollView.clipsToBounds		= NO;
 		_scrollView.contentInset		= UIEdgeInsetsMake(44.0f, 0.0f, 0.0f, 0.0f);
 		_scrollView.maximumZoomScale	= 1.0f;
 		_scrollView.minimumZoomScale	= 1.0f;

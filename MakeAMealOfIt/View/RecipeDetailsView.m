@@ -24,7 +24,7 @@ static CGFloat const kImageHeight		= 200.0f;
 
 /**	Used to show that the recipe image is loading.	*/
 @property (nonatomic, strong)				UIActivityIndicatorView		*activityIndicatorView;
-/**	*/
+/**	A table view that will display the ingredients required for the recipe being displayed.	*/
 @property (nonatomic, strong)				UITableView					*ingredientsTableView;
 /**	An object encapsulating the recipe that this view is showing.	*/
 @property (nonatomic, readwrite, strong)	Recipe						*recipe;
@@ -32,6 +32,8 @@ static CGFloat const kImageHeight		= 200.0f;
 @property (nonatomic, strong)				UIImageView					*recipeImageView;
 /**	A controller that will handle displaying the ingredients in the table view properly.	*/
 @property (nonatomic, strong)				RecipeIngredientsController	*recipeIngredientsController;
+/**	*/
+@property (nonatomic, strong)				UILabel						*servingsLabel;
 /**	A view showing the rating of the recipe being displayed.	*/
 @property (nonatomic, strong)				StarRatingView				*starRatingView;
 
@@ -91,7 +93,7 @@ static CGFloat const kImageHeight		= 200.0f;
 	
 	CGFloat tableViewWidth				= (self.bounds.size.width / 5.0f) * 3.0f;
 	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[tableView(==tvWidth)]-[starRating]"
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[tableView(==tvWidth)]-(==30)-[starRating]"
 																options:NSLayoutFormatAlignAllTop
 																metrics:@{@"tvWidth": @(tableViewWidth)}
 																  views:self.viewsDictionary];
@@ -233,7 +235,7 @@ static CGFloat const kImageHeight		= 200.0f;
 	{
 		_recipeImageView				= [[UIImageView alloc] init];
 		_recipeImageView.contentMode	= UIViewContentModeScaleToFill;
-		//[_recipeImageView addShadow];
+		[_recipeImageView addShadow];
 		
 		_recipeImageView.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self addSubview:_recipeImageView];
@@ -256,6 +258,26 @@ static CGFloat const kImageHeight		= 200.0f;
 	}
 	
 	return _recipeIngredientsController;
+}
+
+/**
+ *
+ *
+ *	@return
+ */
+- (UILabel *)servingsLabel
+{
+	if (!_servingsLabel)
+	{
+		_servingsLabel					= [[UILabel alloc] init];
+		
+		
+		
+		_servingsLabel.translatesAutoresizingMaskIntoConstraints	= NO;
+		[self addSubview:_servingsLabel];
+	}
+	
+	return _servingsLabel;
 }
 
 /**

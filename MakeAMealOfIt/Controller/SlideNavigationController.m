@@ -467,6 +467,7 @@ static NSString *const kRightVCKey			= @"Right";
 			//	otherwise if the gesture failed or was canceled we keep the controller closed
 			else
 			{
+				self.controllerState	= SlideNavigationSideControllerClosed;
 				self.panGestureVelocity	= 0.0f;
 				[self setCentreViewControllerOffset:0.0f animated:YES withCompletionHandler:nil];
 			}
@@ -551,6 +552,7 @@ static NSString *const kRightVCKey			= @"Right";
 			//	otherwise if the gesture failed or was canceled we keep the controller closed
 			else
 			{
+				self.controllerState	= SlideNavigationSideControllerClosed;
 				self.panGestureVelocity	= 0.0f;
 				[self setCentreViewControllerOffset:0.0f animated:YES withCompletionHandler:nil];
 			}
@@ -876,6 +878,8 @@ static NSString *const kRightVCKey			= @"Right";
 			//self.centreViewController.view.layer.shouldRasterize	= NO;
 			[self.leftViewController.view endEditing:YES];
 			[self.rightViewController.view endEditing:YES];
+			self.leftViewController.view.hidden						= YES;
+			self.rightViewController.view.hidden					= YES;
 			self.leftViewController.view.layer.shouldRasterize		= YES;
 			self.rightViewController.view.layer.shouldRasterize		= YES;
 		}

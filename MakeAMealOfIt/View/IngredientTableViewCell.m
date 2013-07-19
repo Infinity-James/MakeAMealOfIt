@@ -366,7 +366,7 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 			
 	}
 	
-	else
+	else if (!self.included)
 	{
 		if (animated)
 			[UIView animateWithDuration:kSelectionDuration animations:
@@ -419,7 +419,7 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 			[self customiseTableViewCellIncluded];
 	}
 	
-	else
+	else if (!self.excluded)
 	{
 		if (animated)
 			[UIView animateWithDuration:kSelectionDuration animations:

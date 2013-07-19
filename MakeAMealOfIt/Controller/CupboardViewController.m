@@ -43,9 +43,9 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 @property (nonatomic, strong)	UISearchDisplayController	*searchDisplay;
 /**	An array of the titles to be used for the sections in the table view.	*/
 @property (nonatomic, strong)	NSArray						*sectionTitles;
-/**	*/
+/**	An array of currently selected ingredient dictioanries, either included or excluded.	*/
 @property (nonatomic, strong)	NSMutableDictionary			*selectedIngredients;
-/**	*/
+/**	The table view used to display all of the ingredients.	*/
 @property (nonatomic, strong)	UITableView					*tableView;
 
 @end
@@ -111,11 +111,13 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 - (NSIndexPath *)indexPathForIngredientDictionary:(NSDictionary *)ingredientDictionary
 									  inTableView:(UITableView *)tableView
 {
+	NSArray *sectionTitles				= self.sectionTitles;
+	
 	if (tableView == self.tableView)
 	{
-		for (NSUInteger sectionTitleIndex = 0; sectionTitleIndex < self.sectionTitles.count; sectionTitleIndex++)
-			for (NSUInteger ingredientIndex = 0; ingredientIndex < ((NSArray *)self.ingredientsForTableView[self.sectionTitles[sectionTitleIndex]]).count; ingredientIndex++)
-				if ([(NSDictionary *)self.ingredientsForTableView[self.sectionTitles[sectionTitleIndex]][ingredientIndex] isEqualToDictionary:ingredientDictionary])
+		for (NSUInteger sectionTitleIndex = 0; sectionTitleIndex < sectionTitles.count; sectionTitleIndex++)
+			for (NSUInteger ingredientIndex = 0; ingredientIndex < ((NSArray *)self.ingredientsForTableView[sectionTitles[sectionTitleIndex]]).count; ingredientIndex++)
+				if ([(NSDictionary *)self.ingredientsForTableView[sectionTitles[sectionTitleIndex]][ingredientIndex] isEqualToDictionary:ingredientDictionary])
 					return [NSIndexPath indexPathForRow:ingredientIndex inSection:sectionTitleIndex];
 	}
 	
@@ -197,7 +199,7 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 	__block BOOL selected				= NO;
 	
 	//	asynchronously update everything to keep work off main thread
-	dispatch_async(dispatch_queue_create("Updating Selections", NULL),
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
 	^{
 		if (ingredientTableViewCell.included && ![included containsObject:ingredientTableViewCell.ingredientDictionary])
 		{
@@ -568,7 +570,7 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 /**
  *	Called when our left controller delegate is set.
  *
- *	@param	leftDelegate			An NSObject adhering to our LeftControllerDelegate protocol.
+ *	@param	leftDelegate			An NSObject adhering to our LeftControllerDelegate protocol interested in our updates.
  */
 - (void)setLeftDelegate:(id<LeftControllerDelegate>)leftDelegate
 {
@@ -583,25 +585,23 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 		{
 			dispatch_async(dispatch_queue_create("Modifying Selections", NULL),
 			^{
-				NSIndexPath *indexPath		= [weakSelf indexPathForIngredientDictionary:modifiedIngredient inTableView:weakSelf.tableView];
+				NSIndexPath *indexPath			= [weakSelf indexPathForIngredientDictionary:modifiedIngredient
+																		  inTableView:weakSelf.tableView];
 				IngredientTableViewCell *cell	= (IngredientTableViewCell *)[weakSelf.tableView cellForRowAtIndexPath:indexPath];
 				
-				//	get the array of included and excluded ingredient dictionaries
-				NSMutableArray *included			= [self.selectedIngredients[kIncludedSelections] mutableCopy];
-				NSMutableArray *excluded			= [self.selectedIngredients[kExcludedSelections] mutableCopy];
-				
-				if (cell.included && [included containsObject:cell.ingredientDictionary])
-					[included removeObject:cell.ingredientDictionary];
-				else if (cell.excluded && [excluded containsObject:cell.ingredientDictionary])
-					[excluded removeObject:cell.ingredientDictionary];
-				
-				self.selectedIngredients[kExcludedSelections]	= excluded;
-				self.selectedIngredients[kIncludedSelections]	= included;
+				if (!cell)
+					cell						= (IngredientTableViewCell *)[weakSelf tableView:weakSelf.tableView
+																		 cellForRowAtIndexPath:indexPath];
 				
 				dispatch_async(dispatch_get_main_queue(),
 				^{
-					cell.excluded	= cell.included	= NO;
-					[self.tableView reloadRowsAtIndexPaths:@[[self.tableView indexPathForCell:cell]] withRowAnimation:UITableViewRowAnimationAutomatic];
+					if (cell.excluded)
+						[cell setExcluded:NO updated:YES animated:NO];
+					else if (cell.included)
+						[cell setIncluded:NO updated:YES animated:NO];
+					
+					[self.tableView reloadRowsAtIndexPaths:@[indexPath]
+										  withRowAnimation:UITableViewRowAnimationAutomatic];
 				});
 			});
 		}];
@@ -786,6 +786,31 @@ shouldReloadTableForSearchString:(NSString *)searchString
 		return self.filteredIngredients.count;
 	
 	return ((NSArray *)self.ingredientsForTableView[self.sectionTitles[section]]).count;
+}
+
+/**
+ *	Tells the delegate the table view is about to draw a cell for a particular row.
+ *
+ *	@param	tableView					The table-view object informing the delegate of this impending event.
+ *	@param	cell						A table-view cell object that tableView is going to use when drawing the row.
+ *	@param	indexPath					An index path locating the row in tableView.
+ */
+- (void)tableView:(UITableView *)tableView
+  willDisplayCell:(UITableViewCell *)cell
+forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	IngredientTableViewCell *ingredientCell		= (IngredientTableViewCell *)cell;
+	
+	if ([self.selectedIngredients[kIncludedSelections] containsObject:ingredientCell.ingredientDictionary])
+		ingredientCell.included					= YES;
+	else
+		ingredientCell.included					= NO;
+	
+	if ([self.selectedIngredients[kExcludedSelections] containsObject:ingredientCell.ingredientDictionary])
+		ingredientCell.excluded					= YES;
+	else
+		ingredientCell.excluded					= NO;
+	
 }
 
 #pragma mark - UITableViewDelegate Methods

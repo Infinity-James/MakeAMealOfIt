@@ -14,6 +14,7 @@
 
 #pragma mark - Public Properties
 
+/**	An NSObject adhering to our LeftControllerDelegate protocol interested in our updates.	*/
 @property (nonatomic, weak)		id <LeftControllerDelegate>		leftDelegate;
 
 @end
