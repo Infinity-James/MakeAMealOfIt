@@ -121,7 +121,7 @@ NSString *const kYummlyMetadataTypeKey					= @"type";
 		return;
 	}
 	
-	NSArray *newMetadata;
+	NSArray *newMetadata				= @[];
 	
 	//	if a valid key was passed in we fetch that specific metadata
 	if ([[YummlyAPI metadataKeys] containsObject:metadataKey])

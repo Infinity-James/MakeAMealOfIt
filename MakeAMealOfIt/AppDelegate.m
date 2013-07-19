@@ -6,6 +6,10 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
+//	crash reporting and testing
+#import <HockeySDK/HockeySDK.h>
+
+//	other imports
 #import "AppDelegate.h"
 #import "CupboardViewController.h"
 #import "ExtraOptionsViewController.h"
@@ -13,9 +17,17 @@
 #import "SlideNavigationController.h"
 #import "YummlyTheme.h"
 
+#pragma mark - App Delegate Private Class Extension
+
+@interface AppDelegate () <BITCrashManagerDelegate, BITFeedbackComposeViewControllerDelegate, BITHockeyManagerDelegate, BITUpdateManagerDelegate> {}
+
+@end
+
 #pragma mark - App Delegate Implementation
 
 @implementation AppDelegate
+
+#pragma mark - UIApplicationDelegate Methods
 
 /**
  *	Tells the delegate that the launch process is almost done and the app is almost ready to run.
@@ -55,7 +67,29 @@
 	self.yummlyRequest					= [[YummlyRequest alloc] init];
 	self.yummlyRequest.requirePictures	= YES;
 	
+	[[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"co.andbeyond.makeamealofit" delegate:self];
+	[[BITHockeyManager sharedHockeyManager] startManager];
+	
     return YES;
 }
+
+#pragma mark - BITUpdateManager Methods
+
+/**
+ *	Sent to the delegate to get the device identifier.
+ *
+ *	@param	updateManager				The BITUpdateManager instance invoking this delegate.
+ *
+ *	@return	Return the device UDID which is required for beta testing, should return nil for app store configuration.
+ */
+- (NSString *)customDeviceIdentifierForUpdateManager:(BITUpdateManager *)updateManager
+{
+#ifndef CONFIGURATION_AppStore
+	if ([[UIDevice currentDevice] respondsToSelector:@selector(uniqueIdentifier)])
+		return [[UIDevice currentDevice] performSelector:@selector(uniqueIdentifier)];
+#endif
+	return nil;
+}
+
 
 @end

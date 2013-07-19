@@ -445,6 +445,8 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 	recipeCell.thumbnailView.image		= nil;
 	[recipeCell.thumbnailView stopAnimating];
 	
+	NSLog(@"EHHH URL : %@", self.recipes[indexPath.row][kYummlyMatchSmallImageURLsArrayKey]);
+	
 	NSString *smallThumbnailURLString	= ((NSArray *)self.recipes[indexPath.row][kYummlyMatchSmallImageURLsArrayKey]).lastObject;
 	UIImage *cachedThumbnail			= [self.thumbnailCache objectForKey:smallThumbnailURLString];
 	
@@ -462,6 +464,12 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 			
 			NSString *thumbnailURLString= [smallThumbnailURLString stringByReplacingOccurrencesOfString:@".s." withString:@".l."];
 			NSURL *thumbnailURL			= [[NSURL alloc] initWithString:thumbnailURLString];
+			
+			if (!thumbnailURL)
+			{
+				thumbnailURLString			= [thumbnailURLString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+				thumbnailURL				= [[NSURL alloc] initWithString:thumbnailURLString];
+			}
 						   
 			__block NSData *thumbnailData;
 						   
