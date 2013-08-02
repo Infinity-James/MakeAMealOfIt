@@ -42,8 +42,18 @@ typedef NS_OPTIONS(NSUInteger, ControllerPanMode)
 
 #pragma mark - Static & Constant Variables
 
-#define kCentreViewFrame			CGRectMake(self.view.bounds.origin.x, self.view.bounds.origin.y + 20.0f, \
+#ifdef FULLSCREENCENTRE
+
+#define kCentreViewFrame			CGRectMake(self.view.bounds.origin.x, self.view.bounds.origin.y,	\
+self.view.bounds.size.width, self.view.bounds.size.height)
+
+#else
+
+#define kCentreViewFrame			CGRectMake(self.view.bounds.origin.x, self.view.bounds.origin.y + 20.0f,	\
 												self.view.bounds.size.width, self.view.bounds.size.height - 20.0f)
+
+#endif
+
 #define kSideViewFrame				CGRectMake(self.view.bounds.origin.x, self.view.bounds.origin.y + 30.0f, \
 												self.view.bounds.size.width, self.view.bounds.size.height - 40.0f)
 

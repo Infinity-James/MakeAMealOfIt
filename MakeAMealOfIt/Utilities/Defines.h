@@ -9,6 +9,9 @@
 #ifndef Defines_h
 #define Defines_h
 
+//	customisation defines
+//#define	FULLSCREENCENTRE
+
 //	button constants
 #define	kButtonBevelMargin				3.0f
 #define	kButtonHighlightMargin			2.0f

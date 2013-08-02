@@ -67,7 +67,7 @@
 	self.yummlyRequest					= [[YummlyRequest alloc] init];
 	self.yummlyRequest.requirePictures	= YES;
 	
-	[[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"co.andbeyond.makeamealofit" delegate:self];
+	[[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"4bcab055c4b96cfd9451cfc6afacde49" delegate:self];
 	[[BITHockeyManager sharedHockeyManager] startManager];
 	
     return YES;
@@ -88,6 +88,7 @@
 	if ([[UIDevice currentDevice] respondsToSelector:@selector(uniqueIdentifier)])
 		return [[UIDevice currentDevice] performSelector:@selector(uniqueIdentifier)];
 #endif
+	
 	return nil;
 }
 

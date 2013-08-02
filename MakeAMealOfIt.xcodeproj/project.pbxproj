@@ -11,7 +11,6 @@
 		1A16806417998C860020F947 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A16806317998C860020F947 /* CoreText.framework */; };
 		1A16806617998CA70020F947 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A16806517998CA70020F947 /* SystemConfiguration.framework */; };
 		1A16806C179993DB0020F947 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A168068179993DB0020F947 /* HockeySDK.framework */; };
-		1A16806D179993DB0020F947 /* HockeySDK.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1A16806A179993DB0020F947 /* HockeySDK.xcconfig */; };
 		1A16806E179993DB0020F947 /* HockeySDKResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1A16806B179993DB0020F947 /* HockeySDKResources.bundle */; };
 		1A347614177837B100E723CD /* IncludeExcludeControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A347613177837B100E723CD /* IncludeExcludeControl.m */; };
 		1A46523D1770A08A00049B4D /* ResultManagementCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A46523C1770A08A00049B4D /* ResultManagementCell.m */; };
@@ -555,7 +554,7 @@
 		1AD55FDD171AF33200AE5FED /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "&Beyond";
 				TargetAttributes = {
 					1AD55FE4171AF33200AE5FED = {
@@ -605,7 +604,6 @@
 				1AD55FFD171AF33200AE5FED /* Default@2x.png in Resources */,
 				1AD55FFF171AF33200AE5FED /* Default-568h@2x.png in Resources */,
 				1AE8DB7D176B2281008C5D36 /* YummlyThemeImages.xcassets in Resources */,
-				1A16806D179993DB0020F947 /* HockeySDK.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

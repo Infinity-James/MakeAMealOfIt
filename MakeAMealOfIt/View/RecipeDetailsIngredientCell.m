@@ -108,12 +108,12 @@
 #pragma mark - Utility Methods
 
 /**
+ *	Dynamiaclly calculates the desired height of the cell based on the ingredient it will display.
  *
+ *	@param	ingredientLine				The ingredient that will be displayed in the main label of this cell.
+ *	@param	superviewWidth				The width of the superview holding this cell.
  *
- *	@param
- *	@param
- *
- *	@return
+ *	@return	A CGFloat for the desired height of this cell displaying the ingredient (108.0f is the maximum).
  */
 + (CGFloat)heightOfCellWithIngredientLine:(NSString *)ingredientLine
 					   withSuperviewWidth:(CGFloat)superviewWidth

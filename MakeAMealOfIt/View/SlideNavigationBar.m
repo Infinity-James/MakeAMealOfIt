@@ -32,6 +32,15 @@
  */
 - (CGFloat)barHeight
 {
+#ifdef FULLSCREENCENTRE
+	
+	if (UIInterfaceOrientationIsLandscape([UIDevice currentDevice].orientation))
+		return 52.0f;
+	
+	return 64.0f;
+	
+#endif
+	
 	if (UIInterfaceOrientationIsLandscape([UIDevice currentDevice].orientation))
 		return 32.0f;
 	

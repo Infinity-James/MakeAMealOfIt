@@ -33,6 +33,8 @@ enum SectionIndex
 
 /**	A button that allows the user to reset the entire search.	*/
 @property (nonatomic, strong)	UIButton					*clearSearchButton;
+/**	Whether or not the table view should simply be reloaded, or if NO it can be updated in an animated fashion.	*/
+@property (nonatomic, assign)	BOOL						justReload;
 /**	The left toolbar button used to slide in the left view.	*/
 @property (nonatomic, strong)	UIBarButtonItem				*leftButton;
 /**	A UITapGestureRecogniser that calls acts as though the user finished editing the search bar.	*/
@@ -230,21 +232,21 @@ enum SectionIndex
 - (void)leftController:(UIViewController *)leftViewController
  updatedWithSelections:(NSDictionary *)selections
 {
-	//	create variables to know what index paths to reload
-	NSMutableArray *indexPathsToInsert	= [[NSMutableArray alloc] init];
-	NSMutableArray *indexPathsToDelete	= [[NSMutableArray alloc] init];
-	
 	//	get the newly added and removed selections
-	NSDictionary *addedSelections		= selections[kAddedSelections];
-	NSDictionary *removedSelections		= selections[kRemovedSelections];
+	NSDictionary *addedSelections				= selections[kAddedSelections];
+	NSDictionary *removedSelections				= selections[kRemovedSelections];
 	
 	//	get the currently selected included and excluded ingredient dictionaries in arrays
-	NSMutableArray *excludedIngredients	= [self.selectedIngredients[kExcludedSelections] mutableCopy];
-	NSMutableArray *includedIngredients	= [self.selectedIngredients[kIncludedSelections] mutableCopy];
+	__block NSMutableArray *excludedIngredients	= [self.selectedIngredients[kExcludedSelections] mutableCopy];
+	__block NSMutableArray *includedIngredients	= [self.selectedIngredients[kIncludedSelections] mutableCopy];
 	
 	//	asynchronously add the selections to the yummly request and update our array for the table view
 	dispatch_sync(dispatch_queue_create("Selected Ingredients Updater", NULL),
 	^{
+		//	create variables to know what index paths to reload
+		NSMutableArray *indexPathsToInsert	= [[NSMutableArray alloc] init];
+		NSMutableArray *indexPathsToDelete	= [[NSMutableArray alloc] init];
+		
 		if (addedSelections)
 		{
 			//	get the included and excluded selections that have been added
@@ -304,15 +306,31 @@ enum SectionIndex
 		self.selectedIngredients[kExcludedSelections]	= excludedIngredients;
 		self.selectedIngredients[kIncludedSelections]	= includedIngredients;
 		
+		NSDictionary *lastSelectedIngredients				= [self.selectedIngredients copy];
+		
 		//	update the table view on the main thread
 		dispatch_async(dispatch_get_main_queue(),
 		^{
-			if (indexPathsToDelete.count > 0)
+			//	if the index path updates are still accurate we update the table view in an animated fashion
+			if ([lastSelectedIngredients isEqualToDictionary:self.selectedIngredients] && !self.justReload)
 			{
-				[self.tableView deleteRowsAtIndexPaths:indexPathsToDelete withRowAnimation:UITableViewRowAnimationLeft];
+				[self.tableView beginUpdates];
+				if (indexPathsToDelete.count > 0)
+					[self.tableView deleteRowsAtIndexPaths:indexPathsToDelete withRowAnimation:UITableViewRowAnimationLeft];
+				if (indexPathsToInsert.count > 0)
+					[self.tableView insertRowsAtIndexPaths:indexPathsToInsert withRowAnimation:UITableViewRowAnimationRight];
+				[self.tableView endUpdates];
 			}
-			if (indexPathsToInsert.count > 0)
-				[self.tableView insertRowsAtIndexPaths:indexPathsToInsert withRowAnimation:UITableViewRowAnimationRight];
+			
+			//	however, if the index path updates are no longer accurate we just reload the whole table view
+			else
+			{
+				[self.tableView reloadData];
+				//	update whether we should just reload the table view next time
+				//	we might want to do this because the thread that made the changes which effected this update will also now be inaccurate
+				//	therefore we just reload on that thread too, and if this is that thread, is switches the 'justReload' back to NO
+				self.justReload			= !self.justReload;
+			}
 		});
 	});
 }
