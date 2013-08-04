@@ -118,6 +118,26 @@ enum SectionIndex
 	});
 }
 
+/**
+ *	Called when the global Yummly Request object has been altered.
+ *
+ *	@param	notification				The object containing a name, an object, and an optional dictionary.
+ */
+- (void)yummlyRequestHasBeenChanged:(NSNotification *)notification
+{
+	self.clearSearchButton.enabled			= YES;
+}
+
+/**
+ *	Called when the global Yummly Request object is effectively nil.
+ *
+ *	@param	notification				The object containing a name, an object, and an optional dictionary.
+ */
+- (void)yummlyRequestIsEmpty:(NSNotification *)notification
+{
+	self.clearSearchButton.enabled			= NO;
+}
+
 #pragma mark - Autolayout Methods
 
 /**
@@ -204,7 +224,18 @@ enum SectionIndex
 {
 	if (self = [super init])
 	{
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(yummlyRequestHasBeenReset:) name:kNotificationResetSearch object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(yummlyRequestHasBeenReset:)
+													 name:kNotificationResetSearch
+												   object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(yummlyRequestHasBeenChanged:)
+													 name:kNotificationYummlyRequestChanged
+												   object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(yummlyRequestIsEmpty:)
+													 name:kNotificationYummlyRequestEmpty
+												   object:nil];
 	}
 	
 	return self;
@@ -381,10 +412,12 @@ enum SectionIndex
 	if (!_clearSearchButton)
 	{
 		_clearSearchButton							= [[UIButton alloc] init];
+		_clearSearchButton.enabled					= NO;
 		_clearSearchButton.titleLabel.font			= kYummlyBolderFontWithSize(16.0f);
 		_clearSearchButton.titleLabel.textAlignment	= NSTextAlignmentCenter;
 		[_clearSearchButton setTitle:@"Reset Search" forState:UIControlStateNormal];
 		[_clearSearchButton setTitleColor:[UIColor colorWithRed:0.8f green:0.3f blue:0.3f alpha:1.0f] forState:UIControlStateNormal];
+		[_clearSearchButton setTitleColor:[UIColor colorWithRed:0.5f green:0.0f blue:0.0f alpha:0.3f] forState:UIControlStateDisabled];
 		_clearSearchButton.opaque					= YES;
 		
 		[_clearSearchButton addTarget:self action:@selector(resetSearchTapped) forControlEvents:UIControlEventTouchUpInside];
@@ -466,7 +499,7 @@ enum SectionIndex
 		_tableView					= [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
 		_tableView.backgroundColor	= [UIColor whiteColor];
 		_tableView.backgroundView	= nil;
-		_tableView.clipsToBounds	= NO;
+		_tableView.clipsToBounds	= YES;
 		_tableView.opaque			= YES;
 		_tableView.separatorColor	= [UIColor clearColor];
 		_tableView.separatorStyle	= UITableViewCellSeparatorStyleNone;
@@ -546,7 +579,6 @@ willDismissWithButtonIndex:(NSInteger)buttonIndex
 	if (buttonIndex == actionSheet.destructiveButtonIndex)
 	{
 		[appDelegate.yummlyRequest reset];
-		[[NSNotificationCenter defaultCenter] postNotificationName:kNotificationResetSearch object:nil];
 	}
 	else if (buttonIndex == actionSheet.cancelButtonIndex)
 		;

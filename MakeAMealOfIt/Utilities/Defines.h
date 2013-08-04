@@ -10,7 +10,7 @@
 #define Defines_h
 
 //	customisation defines
-//#define	FULLSCREENCENTRE
+#define	FULLSCREENCENTRE
 
 //	button constants
 #define	kButtonBevelMargin				3.0f
@@ -33,6 +33,7 @@ static CGFloat const kPanelWidth		= 50.00f;
 //	notification names
 #define kThemeChanged						@"NotificationThemeChanged"
 static NSString *const kNotificationYummlyRequestChanged	= @"NotificationYummlyRequestChanged";
+static NSString *const kNotificationYummlyRequestEmpty		= @"NotificationYummlyRequestEmpty";
 static NSString *const kNotificationResetSearch				= @"NotificationResetYummlySearch";
 
 //	yummly theme constants

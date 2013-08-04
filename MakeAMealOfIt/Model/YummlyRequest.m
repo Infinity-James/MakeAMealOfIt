@@ -56,7 +56,14 @@ NSString *const kYummlyMinimumKey			= @"min";
 	//	only add the course if it is not nil, has not yet been added, and is a valid course
 	if (desiredCourse && ![self.desiredCourses containsObject:desiredCourse] &&
 		[[YummlyRequest availableCourses] containsObject:desiredCourse])
+	{
+		//	update the key value observations
+		[self willChangeValueForKey:@"desiredCourses"];
+		//	add the actual desire course
 		[self.desiredCourses addObject:desiredCourse];
+		//	update the key value observations
+		[self didChangeValueForKey:@"desiredCourses"];
+	}
 }
 
 /**
@@ -68,7 +75,14 @@ NSString *const kYummlyMinimumKey			= @"min";
 {
 	if (desiredCuisine && ![self.desiredCuisines containsObject:desiredCuisine] &&
 		[[YummlyRequest availableCuisines] containsObject:desiredCuisine])
+	{
+		//	update the key value observations
+		[self willChangeValueForKey:@"desiredCuisines"];
+		//	add the actual desired cuisine
 		[self.desiredCuisines addObject:desiredCuisine];
+		//	update the key value observations
+		[self didChangeValueForKey:@"desiredCuisines"];
+	}
 }
 
 /**
@@ -80,7 +94,14 @@ NSString *const kYummlyMinimumKey			= @"min";
 {
 	if (desiredHoliday && ![self.desiredHolidays containsObject:desiredHoliday] &&
 		[[YummlyRequest availableHolidays] containsObject:desiredHoliday])
+	{
+		//	update the key value observations
+		[self willChangeValueForKey:@"desiredHolidays"];
+		//	add the actual desired holiday
 		[self.desiredHolidays addObject:desiredHoliday];
+		//	update the key value observations
+		[self didChangeValueForKey:@"desiredHolidays"];
+	}
 }
 
 /**
@@ -92,7 +113,14 @@ NSString *const kYummlyMinimumKey			= @"min";
 {
 	if (desiredIngredient && ![self.desiredIngredients containsObject:desiredIngredient] &&
 		[[YummlyRequest availableIngredients] containsObject:desiredIngredient])
+	{
+		//	update the key value observations
+		[self willChangeValueForKey:@"desiredIngredients"];
+		//	add the actual desired ingredient
 		[self.desiredIngredients addObject:desiredIngredient];
+		//	update the key value observations
+		[self didChangeValueForKey:@"desiredIngredients"];
+	}
 }
 
 #pragma mark - Adding Exclusions
@@ -106,7 +134,14 @@ NSString *const kYummlyMinimumKey			= @"min";
 {
 	if (excludedCourse && ![self.excludedCourses containsObject:excludedCourse] &&
 		[[YummlyRequest availableCourses] containsObject:excludedCourse])
+	{
+		//	update the key value observations
+		[self willChangeValueForKey:@"excludedCourses"];
+		//	add the actual excluded course
 		[self.excludedCourses addObject:excludedCourse];
+		//	update the key value observations
+		[self didChangeValueForKey:@"excludedCourses"];
+	}
 }
 
 /**
@@ -118,7 +153,14 @@ NSString *const kYummlyMinimumKey			= @"min";
 {
 	if (excludedCuisine && ![self.excludedCuisines containsObject:excludedCuisine] &&
 		[[YummlyRequest availableCuisines] containsObject:excludedCuisine])
+	{
+		//	update the key value observations
+		[self willChangeValueForKey:@"excludedCuisines"];
+		//	add the actual excluded cuisine
 		[self.excludedCuisines addObject:excludedCuisine];
+		//	update the key value observations
+		[self didChangeValueForKey:@"excludedCuisines"];
+	}
 }
 
 /**
@@ -130,7 +172,14 @@ NSString *const kYummlyMinimumKey			= @"min";
 {
 	if (excludedHoliday && ![self.excludedHolidays containsObject:excludedHoliday] &&
 		[[YummlyRequest availableHolidays] containsObject:excludedHoliday])
-	[	self.excludedHolidays addObject:excludedHoliday];
+	{
+		//	update the key value observations
+		[self willChangeValueForKey:@"excludedHolidays"];
+		//	add the actual excluded holiday
+		[self.excludedHolidays addObject:excludedHoliday];
+		//	update the key value observations
+		[self didChangeValueForKey:@"excludedHolidays"];
+	}
 }
 
 /**
@@ -142,7 +191,14 @@ NSString *const kYummlyMinimumKey			= @"min";
 {
 	if (excludedIngredient && ![self.excludedIngredients containsObject:excludedIngredient] &&
 		[[YummlyRequest availableIngredients] containsObject:excludedIngredient])
+	{
+		//	update the key value observations
+		[self willChangeValueForKey:@"excludedIngredients"];
+		//	add the actual excluded ingredient
 		[self.excludedIngredients addObject:excludedIngredient];
+		//	update the key value observations
+		[self didChangeValueForKey:@"excludedIngredients"];
+	}
 }
 
 #pragma mark - Adding Requirements
@@ -156,7 +212,14 @@ NSString *const kYummlyMinimumKey			= @"min";
 {
 	if (requiredAllergy && ![self.requiredAllergies containsObject:requiredAllergy] &&
 		[[YummlyRequest availableAllergies] containsObject:requiredAllergy])
+	{
+		//	update the key value observations
+		[self willChangeValueForKey:@"requiredAllergies"];
+		//	add the actual required allergy
 		[self.requiredAllergies addObject:requiredAllergy];
+		//	update the key value observations
+		[self didChangeValueForKey:@"requiredAllergies"];
+	}
 }
 
 /**
@@ -168,7 +231,14 @@ NSString *const kYummlyMinimumKey			= @"min";
 {
 	if (requiredDiet && ![self.requiredDiets containsObject:requiredDiet] &&
 		[[YummlyRequest availableDiets] containsObject:requiredDiet])
+	{
+		//	update the key value observations
+		[self willChangeValueForKey:@"requiredDiets"];
+		//	add the actual required diet
 		[self.requiredDiets addObject:requiredDiet];
+		//	update the key value observations
+		[self didChangeValueForKey:@"requiredDiets"];
+	}
 }
 
 #pragma mark - Initialisation
@@ -183,6 +253,7 @@ NSString *const kYummlyMinimumKey			= @"min";
 	if (self = [super init])
 	{
 		[self initialiseArrays];
+		_requirePictures				= YES;
 		[self addObserver:self forKeyPath:@"desiredCourses" options:kNilOptions context:nil];
 		[self addObserver:self forKeyPath:@"desiredCuisines" options:kNilOptions context:nil];
 		[self addObserver:self forKeyPath:@"desiredHolidays" options:kNilOptions context:nil];
@@ -237,8 +308,11 @@ NSString *const kYummlyMinimumKey			= @"min";
 						change:(NSDictionary *)change
 					   context:(void *)context
 {
+	if ([self propertiesAreEmpty])
+		[[NSNotificationCenter defaultCenter] postNotificationName:kNotificationYummlyRequestEmpty object:nil];
 	//	we just post a general notification that this the yummly request has been changed
-	[[NSNotificationCenter defaultCenter] postNotificationName:kNotificationYummlyRequestChanged object:nil];
+	else
+		[[NSNotificationCenter defaultCenter] postNotificationName:kNotificationYummlyRequestChanged object:nil];
 }
 
 #pragma mark - Remove Desires
@@ -251,7 +325,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 - (void)removeDesiredCourse:(NSString *)desiredCourse
 {
 	if (!desiredCourse)					return;
+	[self willChangeValueForKey:@"desiredCourses"];
 	[self.desiredCourses removeObject:desiredCourse];
+	[self didChangeValueForKey:@"desiredCourses"];
 }
 
 /**
@@ -262,7 +338,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 - (void)removeDesiredCuisine:(NSString *)desiredCuisine
 {
 	if (!desiredCuisine)				return;
+	[self willChangeValueForKey:@"desiredCuisines"];
 	[self.desiredCuisines removeObject:desiredCuisine];
+	[self didChangeValueForKey:@"desiredCuisines"];
 }
 
 /**
@@ -273,7 +351,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 - (void)removeDesiredHoliday:(NSString *)desiredHolday
 {
 	if (!desiredHolday)					return;
+	[self willChangeValueForKey:@"desiredHolidays"];
 	[self.desiredHolidays removeObject:desiredHolday];
+	[self didChangeValueForKey:@"desiredHolidays"];
 }
 
 /**
@@ -284,7 +364,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 - (void)removeDesiredIngredient:(NSString *)desiredIngredient
 {
 	if (!desiredIngredient)				return;
+	[self willChangeValueForKey:@"desiredIngredients"];
 	[self.desiredIngredients removeObject:desiredIngredient];
+	[self didChangeValueForKey:@"desiredIngredients"];
 }
 
 #pragma mark - Remove Exclusions
@@ -297,7 +379,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 - (void)removeExcludedCourse:(NSString *)excludedCourse
 {
 	if (!excludedCourse)				return;
+	[self willChangeValueForKey:@"excludedCourses"];
 	[self.excludedCourses removeObject:excludedCourse];
+	[self didChangeValueForKey:@"excludedCourses"];
 }
 
 /**
@@ -308,7 +392,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 - (void)removeExcludedCuisine:(NSString *)excludedCuisine
 {
 	if (!excludedCuisine)				return;
+	[self willChangeValueForKey:@"excludedCuisines"];
 	[self.excludedCuisines removeObject:excludedCuisine];
+	[self didChangeValueForKey:@"excludedCuisines"];
 }
 
 /**
@@ -319,7 +405,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 - (void)removeExcludedHoliday:(NSString *)excludedHoliday
 {
 	if (!excludedHoliday)				return;
+	[self willChangeValueForKey:@"excludedHolidays"];
 	[self.excludedHolidays removeObject:excludedHoliday];
+	[self didChangeValueForKey:@"excludedHolidays"];
 }
 
 /**
@@ -330,7 +418,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 - (void)removeExcludedIngredient:(NSString *)excludedIngredient
 {
 	if (!excludedIngredient)			return;
+	[self willChangeValueForKey:@"excludedIngredients"];
 	[self.excludedIngredients removeObject:excludedIngredient];
+	[self didChangeValueForKey:@"excludedIngredients"];
 }
 
 #pragma mark - Remove Requirements
@@ -343,7 +433,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 - (void)removeRequiredAllergy:(NSString *)requiredAllergy
 {
 	if (!requiredAllergy)				return;
+	[self willChangeValueForKey:@"requiredAllergies"];
 	[self.requiredAllergies removeObject:requiredAllergy];
+	[self didChangeValueForKey:@"requiredAllergies"];
 }
 
 /**
@@ -354,7 +446,9 @@ NSString *const kYummlyMinimumKey			= @"min";
 - (void)removeRequiredDiet:(NSString *)requiredDiet
 {
 	if (!requiredDiet)					return;
+	[self willChangeValueForKey:@"requiredDiets"];
 	[self.requiredDiets removeObject:requiredDiet];
+	[self didChangeValueForKey:@"requiredDiets"];
 }
 
 #pragma mark - Available Metadata Methods
@@ -644,6 +738,39 @@ NSString *const kYummlyMinimumKey			= @"min";
 #pragma mark - Utility Methods
 
 /**
+ *
+ *
+ *	@return
+ */
+- (BOOL)propertiesAreEmpty
+{
+	if (self.searchPhrase && ![self.searchPhrase isEqualToString:@""])
+		return NO;
+	if (self.desiredCourses.count != 0)
+		return NO;
+	if (self.desiredCuisines.count != 0)
+		return NO;
+	if (self.desiredHolidays.count != 0)
+		return NO;
+	if (self.desiredIngredients.count != 0)
+		return NO;
+	if (self.excludedCourses.count != 0)
+		return NO;
+	if (self.excludedCuisines.count != 0)
+		return NO;
+	if (self.excludedHolidays.count != 0)
+		return NO;
+	if (self.excludedIngredients.count != 0)
+		return NO;
+	if (self.requiredAllergies.count != 0)
+		return NO;
+	if (self.requiredDiets.count != 0)
+		return NO;
+	
+	return YES;
+}
+
+/**
  *	Executes this request with all the parameters defined in it.
  *
  *	@param	searchRecipesCallCompleted	The completion handler to call with the results of the request.
@@ -744,7 +871,10 @@ NSString *const kYummlyMinimumKey			= @"min";
 - (void)reset
 {
 	[self initialiseArrays];
+	self.requirePictures				= YES;
 	self.searchPhrase					= nil;
+	[[NSNotificationCenter defaultCenter] postNotificationName:kNotificationResetSearch object:nil];
+	[[NSNotificationCenter defaultCenter] postNotificationName:kNotificationYummlyRequestEmpty object:nil];
 }
 
 @end
