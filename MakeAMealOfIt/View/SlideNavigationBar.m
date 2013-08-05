@@ -19,16 +19,64 @@
 
 @interface SlideNavigationBar () {}
 
-@property (nonatomic, strong)	CALayer			*blurLayer;
-@property (nonatomic, strong)	BlurView		*blurView;
-@property (nonatomic, strong)	UIBarButtonItem	*flexibleSpace;
-@property (nonatomic, strong)	TransparentToolbar		*toolbar;
+@property (nonatomic, strong)	CALayer				*blurLayer;
+@property (nonatomic, strong)	BlurView			*blurView;
+@property (nonatomic, strong)	UIBarButtonItem		*flexibleSpace;
+@property (nonatomic, strong)	TransparentToolbar	*toolbar;
 
 @end
 
 #pragma mark - Slide Navigation Bar Implementation
 
 @implementation SlideNavigationBar {}
+
+#pragma mark - Convenience & Helper Methods
+
+/**
+ *
+ */
+- (void)adjustFrames
+{
+	self.backgroundColor				= [UIColor clearColor];
+	self.frame							= kCorrectSlideBarFrame;
+	self.blurView.frame					= self.bounds;
+	self.toolbar.frame					= kCorrectToolbarFrame;
+	[self bringSubviewToFront:self.toolbar];
+}
+
+#pragma mark - Initialisation
+
+/**
+ *	Implemented by subclasses to initialize a new object (the receiver) immediately after memory for it has been allocated.
+ *
+ *	@return	An initialized object.
+ */
+- (instancetype)init
+{
+	if (self = [super init])
+	{
+		[self adjustFrames];
+	}
+	
+	return self;
+}
+
+/**
+ *	Initializes and returns a newly allocated view object with the specified frame rectangle.
+ *
+ *	@param	frame						The frame rectangle for the view, measured in points.
+ *
+ *	@return	An initialized view object or nil if the object couldn't be created.
+ */
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame])
+	{
+		[self adjustFrames];
+    }
+	
+    return self;
+}
 
 #pragma mark - Property Accessor Methods - Getters
 
@@ -140,11 +188,7 @@
 {
 	[super layoutSubviews];
 	
-	self.backgroundColor				= [UIColor clearColor];
-	self.frame							= kCorrectSlideBarFrame;
-	self.blurView.frame					= self.bounds;
-	self.toolbar.frame					= kCorrectToolbarFrame;
-	[self bringSubviewToFront:self.toolbar];
+	[self adjustFrames];
 }
 
 #pragma mark - View-Related Observation Methods
@@ -157,7 +201,7 @@
 	[super didMoveToSuperview];
 	
 	//	re-calculate frame for new superview
-	self.frame							= kCorrectSlideBarFrame;
+	[self adjustFrames];
 }
 
 @end

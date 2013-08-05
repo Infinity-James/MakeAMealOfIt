@@ -68,6 +68,60 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 	}
 }
 
+/**
+ *
+ *
+ *	@param
+ */
+- (void)handleTap:(UITapGestureRecognizer *)tapGestureRecogniser
+{
+	CGRect originalFrame				= self.frame;
+	CGRect leftFrame					= originalFrame;
+	CGRect rightFrame					= originalFrame;
+	
+	leftFrame.origin.x					+= 100.0f;
+	rightFrame.origin.x					-= 100.0f;
+	
+	[UIView animateWithDuration:0.3f
+						  delay:0.0f
+						options:UIViewAnimationOptionCurveEaseOut
+					 animations:
+	^{
+		self.frame						= leftFrame;
+	}
+					 completion:^(BOOL finished)
+	{
+		[UIView animateWithDuration:0.3f
+							  delay:0.0f
+							options:UIViewAnimationOptionCurveEaseIn
+						 animations:
+		^{
+			 self.frame					= originalFrame;
+		}
+						 completion:^(BOOL finished)
+		{
+			[UIView animateWithDuration:0.3f
+								  delay:0.0f
+								options:UIViewAnimationOptionCurveEaseOut
+							 animations:
+			^{
+				self.frame				= rightFrame;
+			}
+							 completion:^(BOOL finished)
+			{
+				[UIView animateWithDuration:0.3f
+									  delay:0.0f
+									options:UIViewAnimationOptionCurveEaseIn
+								 animations:
+				^{
+					self.frame			= originalFrame;
+				}
+								 completion:NULL];
+			}];
+		 }];
+	}];
+}
+
 #pragma mark - Convenience & Helper Methods
 
 /**
@@ -169,6 +223,10 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 	UIGestureRecognizer *recogniser		= [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
 	recogniser.delegate					= self;
 	[self addGestureRecognizer:recogniser];
+	
+	recogniser							= [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
+	recogniser.delegate					= self;
+	[self addGestureRecognizer:recogniser];
 }
 
 /**
@@ -207,7 +265,7 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
     return self;
 }
 
-#pragma mark - Setter & Getter Methods
+#pragma mark - Property Accessor Methods - Getters
 
 /**
  *	A label used to contextually cue the user that their drag will exclude this item.
@@ -326,6 +384,8 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 	
 	return _removeLabelRight;
 }
+
+#pragma mark - Property Accessor Methods - Setters
 
 /**
  *	The basic setter for the excluded property of this cell.
@@ -460,12 +520,18 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
  *
  *	@return	YES if the gesture recognizer should continue tracking touch events and use them to trigger a gesture, NO otherwise.
  */
-- (BOOL)gestureRecognizerShouldBegin:(UIPanGestureRecognizer *)gestureRecognizer
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
-	CGPoint translation					= [gestureRecognizer translationInView:self.superview];
+	if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]])
+	{
+		CGPoint translation					= [(UIPanGestureRecognizer *)gestureRecognizer translationInView:self.superview];
+		
+		//	check for horizontal gesture
+		if (fabsf(translation.x) > fabsf(translation.y))
+			return YES;
+	}
 	
-	//	check for horizontal gesture
-	if (fabsf(translation.x) > fabsf(translation.y))
+	else if ([gestureRecognizer isKindOfClass:[UITapGestureRecognizer class]])
 		return YES;
 	
 	return NO;

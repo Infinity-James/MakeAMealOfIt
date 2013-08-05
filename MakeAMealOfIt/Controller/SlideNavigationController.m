@@ -1115,7 +1115,7 @@ static NSString *const kRightVCKey			= @"Right";
 	_centreViewController.view.layer.rasterizationScale	= [UIScreen mainScreen].scale;
 	
 	//	animate the setting of the frame and fade in the slide navigation bar
-	[UIView animateWithDuration:1.0f animations:
+	[UIView animateWithDuration:0.5f animations:
 	^{
 		 _centreViewController.view.frame	= kCentreViewFrame;
 		self.slideNavigationBar.alpha		= 1.0f;

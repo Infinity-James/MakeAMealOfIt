@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "BlurView.h"
 #import "ParameterPageViewController.h"
 #import "RecipeSearchParametersViewController.h"
 #import "YummlySearchResult.h"
@@ -18,6 +19,8 @@
 
 #pragma mark - Private Properties
 
+/**	*/
+@property (nonatomic, strong)	BlurView				*blurView;
 /**	A dictionary defining the options aviable in each page.	*/
 @property (nonatomic, strong)	NSDictionary			*optionsDictionary;
 /**	A page view controller that displays the spinning wheels.	*/
@@ -48,6 +51,15 @@
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[pageView]|" options:kNilOptions
 																metrics:nil views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
+	
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[blurView]|"
+																	  options:kNilOptions
+																	  metrics:nil
+																		views:self.viewsDictionary]];
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[blurView]|"
+																	  options:kNilOptions
+																	  metrics:nil
+																		views:self.viewsDictionary]];
 }
 
 #pragma mark - Convenience & Helper Methods
@@ -126,7 +138,26 @@
 		return [self.delegate metadataExcluded:metadata ofType:metadataType];
 }
 
-#pragma mark - Setter & Getter Methods
+#pragma mark - Property Accessor Methods - Getters
+
+/**
+ *	This blur view will be used as a backgroundview.
+ *
+ *	@return
+ */
+- (BlurView *)blurView
+{
+	if (!_blurView)
+	{
+		_blurView						= [[BlurView alloc] init];
+		
+		_blurView.translatesAutoresizingMaskIntoConstraints	= NO;
+		[self.view addSubview:_blurView];
+		[self.view sendSubviewToBack:_blurView];
+	}
+	
+	return _blurView;
+}
 
 /**
  *	This options dictionary defines the options aviable in each page.
@@ -159,6 +190,7 @@
 																			   options:@{UIPageViewControllerOptionSpineLocationKey:@(UIPageViewControllerSpineLocationMin)}];
 		if (self.optionsDictionary.count > 0)
 		{
+			_pageViewController.view.backgroundColor= [UIColor clearColor];
 			_pageViewController.dataSource			= self;
 			_pageViewController.delegate			= self;
 			ParameterPageViewController *firstPage	= [[ParameterPageViewController alloc] init];
@@ -180,10 +212,23 @@
 }
 
 /**
+ *	A dictionary to used when creating visual constraints for this view controller.
+ *
+ *	@return	A dictionary with of views and appropriate keys.
+ */
+- (NSDictionary *)viewsDictionary
+{
+	return @{	@"blurView"	: self.blurView,
+				@"pageView"	: self.pageViewController.view};
+}
+
+#pragma mark - Property Accessor Methods - Setters
+
+/**
  *	The setter for the delegate subscribing to the SelectedSearchParametersDelegate protocol.
  *
  *	@param	delegate					The object that wants to be notified when certain pieces of metadata are included / excluded from search.
- */	
+ */
 - (void)setDelegate:(id<SelectedSearchParametersDelegate>)delegate
 {
 	_delegate							= delegate;
@@ -193,19 +238,9 @@
 	
 	if ([_delegate respondsToSelector:@selector(blockToCallToRemoveMetadata:)])
 		[_delegate blockToCallToRemoveMetadata:^(NSString *metadata, NSString *metadataType, BOOL included)
-		{
-			[weakSelf removeMetadata:metadata ofType:metadataType fromIncluded:included];
-		}];
-}
-
-/**
- *	A dictionary to used when creating visual constraints for this view controller.
- *
- *	@return	A dictionary with of views and appropriate keys.
- */
-- (NSDictionary *)viewsDictionary
-{
-	return @{	@"pageView"	: self.pageViewController.view};
+		 {
+			 [weakSelf removeMetadata:metadata ofType:metadataType fromIncluded:included];
+		 }];
 }
 
 #pragma mark - UIPageViewControllerDataSource Methods
@@ -299,6 +334,8 @@
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
+	
+	self.view.backgroundColor			= [UIColor clearColor];
 	
 	[self getAllOptions];
 }

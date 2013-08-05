@@ -264,6 +264,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
+	self.view.backgroundColor			= [UIColor clearColor];
 	self.view.clipsToBounds				= NO;
 	[self.selectionWheel setNeedsLayout];
 }

@@ -184,7 +184,7 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 	{
 		//	create a layout and set the insets appropriately
 		UICollectionViewFlowLayout *layout		= [[UICollectionViewFlowLayout alloc] init];
-		layout.sectionInset						= UIEdgeInsetsMake(40.0f, 20.0f, 20.0f, 20.0f);
+		layout.sectionInset						= UIEdgeInsetsMake(60.0f, 20.0f, 20.0f, 20.0f);
 		//	inialised the collection view, sets this controller as it's datasource and delegate and sets a white background colour
 		_recipesCollectionView					= [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
 		_recipesCollectionView.backgroundColor	= [UIColor whiteColor];
