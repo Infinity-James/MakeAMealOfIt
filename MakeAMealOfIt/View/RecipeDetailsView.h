@@ -12,6 +12,15 @@
 
 @protocol RecipeDetailsViewDelegate <NSObject>
 
+#pragma mark - Required Methods
+
+@required
+
+/**
+ *	Opens the recipe's source website with instructions and other stuff.
+ */
+- (void)openRecipeWebsite;
+
 #pragma mark - Optional Methods
 
 @optional

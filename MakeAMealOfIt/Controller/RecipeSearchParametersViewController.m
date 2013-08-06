@@ -335,8 +335,6 @@
 {
 	[super viewDidLoad];
 	
-	self.view.backgroundColor			= [UIColor clearColor];
-	
 	[self getAllOptions];
 }
 

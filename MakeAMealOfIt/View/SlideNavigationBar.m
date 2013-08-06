@@ -19,9 +19,13 @@
 
 @interface SlideNavigationBar () {}
 
+/**	*/
 @property (nonatomic, strong)	CALayer				*blurLayer;
+/**	*/
 @property (nonatomic, strong)	BlurView			*blurView;
+/**	*/
 @property (nonatomic, strong)	UIBarButtonItem		*flexibleSpace;
+/**	*/
 @property (nonatomic, strong)	TransparentToolbar	*toolbar;
 
 @end
@@ -33,7 +37,7 @@
 #pragma mark - Convenience & Helper Methods
 
 /**
- *
+ *	Sets the frame for this view and all subviews.
  */
 - (void)adjustFrames
 {
@@ -79,6 +83,16 @@
 }
 
 #pragma mark - Property Accessor Methods - Getters
+
+/**
+ *	The slide navigation bar alpha value.
+ *
+ *	@return	A value between 1.0 and 0.0 indicating the alpha level of the slide navigation bar.
+ */
+- (CGFloat)alpha
+{
+	return self.toolbar.alpha;
+}
 
 /**
  *	The blur view to blend in with the toolbar.
@@ -144,9 +158,9 @@
 }
 
 /**
+ *	A Boolean value that indicates this slide navigation bar's translucency.
  *
- *
- *	@return
+ *	@return	YES if this SlideNavigationBar is translucent, NO if not.
  */
 - (BOOL)translucent
 {
@@ -156,9 +170,19 @@
 #pragma mark - Property Accessor Methods - Setters
 
 /**
+ *	The setter for the slide navigation bar's alpha value.
  *
+ *	@param	alpha						The view’s alpha value.
+ */
+- (void)setAlpha:(CGFloat)alpha
+{
+	self.toolbar.alpha					= alpha;
+}
+
+/**
+ *	The setter of whether this view should be translucent or not.
  *
- *	@param
+ *	@param	translucent					The desired Boolean value for the slide navigation bar's translucency.
  */
 - (void)setTranslucent:(BOOL)translucent
 {
@@ -166,6 +190,14 @@
 }
 
 #pragma mark - UIToolbar Methods
+
+/**
+ *	Removes all UIBarButtonItems from this SlideNavigationBar.
+ */
+- (void)removeItems
+{
+	self.toolbar.items					= nil;
+}
 
 /**
  *	Sets the items on the toolbar by animating the changes.
@@ -200,7 +232,6 @@
 {
 	[super didMoveToSuperview];
 	
-	//	re-calculate frame for new superview
 	[self adjustFrames];
 }
 

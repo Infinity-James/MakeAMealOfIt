@@ -36,12 +36,24 @@ static CGFloat const kImageHeight		= 200.0f;
 @property (nonatomic, strong)				UILabel						*servingsLabel;
 /**	A view showing the rating of the recipe being displayed.	*/
 @property (nonatomic, strong)				StarRatingView				*starRatingView;
+/**	*/
+@property (nonatomic, strong)				UIButton					*viewRecipeButton;
 
 @end
 
 #pragma mark - Recipe Details View Implementation
 
 @implementation RecipeDetailsView {}
+
+#pragma mark - Action & Selector Methods
+
+/**
+ *
+ */
+- (void)viewRecipeTapped
+{
+	[self.delegate openRecipeWebsite];
+}
 
 #pragma mark - Autolayout Methods
 
@@ -141,6 +153,29 @@ static CGFloat const kImageHeight		= 200.0f;
 												   multiplier:0.2f
 													 constant:0.0f];
 	[self.starRatingView addConstraint:constraint];
+	
+	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[starRating]-(20)-[servingsLabel]"
+																 options:NSLayoutFormatAlignAllCenterX
+																 metrics:nil
+																   views:self.viewsDictionary]];
+	
+	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[tableView]-(20@500)-[viewRecipeButton]"
+																 options:kNilOptions
+																 metrics:nil
+																   views:self.viewsDictionary]];
+	
+	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[servingsLabel]-(>=20@600)-[viewRecipeButton]"
+																 options:kNilOptions
+																 metrics:nil
+																   views:self.viewsDictionary]];
+	
+	[self addConstraint:[NSLayoutConstraint constraintWithItem:self.viewRecipeButton
+													 attribute:NSLayoutAttributeCenterX
+													 relatedBy:NSLayoutRelationEqual
+														toItem:self
+													 attribute:NSLayoutAttributeCenterX
+													multiplier:1.0f
+													  constant:0.0f]];
 }
 
 #pragma mark - Convenience & Helper Methods
@@ -261,17 +296,18 @@ static CGFloat const kImageHeight		= 200.0f;
 }
 
 /**
+ *	A label indicating the number of servings provided by the recipe.
  *
- *
- *	@return
+ *	@return	An initialised UILabel for telling the user how many servings this recipe provides.
  */
 - (UILabel *)servingsLabel
 {
 	if (!_servingsLabel)
 	{
 		_servingsLabel					= [[UILabel alloc] init];
-		
-		
+		_servingsLabel.font				= kYummlyFontWithSize(12.0f);
+		_servingsLabel.numberOfLines	= 0;
+		_servingsLabel.textAlignment	= NSTextAlignmentCenter;
 		
 		_servingsLabel.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self addSubview:_servingsLabel];
@@ -300,6 +336,30 @@ static CGFloat const kImageHeight		= 200.0f;
 }
 
 /**
+ *	A button which, when tapped on, opens the web-page with the full recipe.
+ *
+ *	@return	An initialised UIButton targeted top open the recipe.
+ */
+- (UIButton *)viewRecipeButton
+{
+	if (!_viewRecipeButton)
+	{
+		_viewRecipeButton					= [UIButton buttonWithType:UIButtonTypeCustom];
+		_viewRecipeButton.hidden			= YES;
+		_viewRecipeButton.titleLabel.font	= kYummlyBolderFontWithSize(14.0f);
+		[_viewRecipeButton setTitle:@"View Recipe" forState:UIControlStateNormal];
+		[_viewRecipeButton setTitleColor:kYummlyColourMain forState:UIControlStateNormal];
+		
+		[_viewRecipeButton addTarget:self action:@selector(viewRecipeTapped) forControlEvents:UIControlEventTouchUpInside];
+		
+		_viewRecipeButton.translatesAutoresizingMaskIntoConstraints	= NO;
+		[self addSubview:_viewRecipeButton];
+	}
+	
+	return _viewRecipeButton;
+}
+
+/**
  *	A dictionary to used when creating visual constraints for this view controller.
  *
  *	@return	A dictionary with of views and appropriate keys.
@@ -308,8 +368,22 @@ static CGFloat const kImageHeight		= 200.0f;
 {
 	return @{	@"activityIndicator"	: self.activityIndicatorView,
 				@"recipeImageView"		: self.recipeImageView,
+				@"servingsLabel"		: self.servingsLabel,
 				@"starRating"			: self.starRatingView,
-				@"tableView"			: self.ingredientsTableView		};
+				@"tableView"			: self.ingredientsTableView,
+				@"viewRecipeButton"		: self.viewRecipeButton			};
+}
+
+#pragma mark - Property Accessor Methods - Setters
+
+/**
+ *	Sets the text of the recipe servings label text with the correct amount of servings for this recipe.
+ *
+ *	@param	servings					The number of servings this recipe provides.
+ */
+- (void)setRecipeServings:(NSUInteger)servings
+{
+	self.servingsLabel.text				= [[NSString alloc] initWithFormat:@"Serves\n%u", servings];
 }
 
 #pragma mark - RecipeIngredientsControllerDelegate Methods
@@ -355,7 +429,6 @@ static CGFloat const kImageHeight		= 200.0f;
 		[self.activityIndicatorView startAnimating];
 		self.starRatingView.rating		= self.recipe.rating;
 		[self.starRatingView setNeedsDisplay];
-		NSLog(@"RATING: %f", self.recipe.rating);
 					   
 		dispatch_async(dispatch_queue_create("Recipe Photo Fetcher", NULL),
 		^{
@@ -363,7 +436,9 @@ static CGFloat const kImageHeight		= 200.0f;
 										  
 			dispatch_async(dispatch_get_main_queue(),
 			^{
+				self.viewRecipeButton.hidden= NO;
 				[self.activityIndicatorView stopAnimating];
+				[self setRecipeServings:self.recipe.numberOfServings];
 				[self.recipeImageView setImage:image animated:YES];
 				[self setNeedsUpdateConstraints];
 			});

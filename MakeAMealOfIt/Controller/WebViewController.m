@@ -107,6 +107,7 @@
 	if (!_webView)
 	{
 		_webView						= [[UIWebView alloc] init];
+		_webView.scalesPageToFit		= YES;
 		
 		_webView.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self.view addSubview:_webView];

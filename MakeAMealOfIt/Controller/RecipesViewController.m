@@ -424,6 +424,8 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 				  layout:(UICollectionViewLayout *)collectionViewLayout
   sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
+	return CGSizeMake(280.0f, 280.0f);
+	
 	if (isFourInchDevice)
 		return CGSizeMake(250.0f, 250.0f);
 	else

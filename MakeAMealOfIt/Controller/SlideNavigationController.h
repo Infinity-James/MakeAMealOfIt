@@ -11,13 +11,26 @@
 
 @class UICentreViewController;
 
+#pragma mark - Constants & Static Variables
+
+extern NSString *const SlideNavigationStateEventNotification;
+extern NSString *const SlideNavigationStateEventTypeKey;
+
 #pragma mark - Type Definitions
 
-typedef NS_ENUM(NSUInteger, SideControllerState)
+typedef NS_ENUM(NSUInteger, SlideNavigationState)
 {
 	SlideNavigationSideControllerClosed,			//	no side controller is visible
 	SlideNavigationSideControllerLeftOpen,			//	left view is visible
 	SlideNavigationSideControllerRightOpen			//	right view is visible
+};
+
+typedef NS_ENUM(NSUInteger, SlideNavigationStateEvent)
+{
+	SlideNavigationStateEventDidClose,				//	side controllers are not shown
+	SlideNavigationStateEventDidOpen,				//	side controller is visible
+	SlideNavigationStateEventWillClose,				//	side controllers will be hidden
+	SlideNavigationStateEventWillOpen				//	side controller will be shown
 };
 
 #pragma mark - Main View Controller Public Interface
@@ -36,7 +49,7 @@ typedef NS_ENUM(NSUInteger, SideControllerState)
 #pragma mark - Public Properties - State
 
 /**	The current state of if a side view is visible or not.	*/
-@property (nonatomic, readonly, assign)	SideControllerState		controllerState;
+@property (nonatomic, readonly, assign)	SlideNavigationState	controllerState;
 /**	Whether there should be shadows on the view controllers.	*/
 @property (nonatomic, assign)			BOOL					shadowEnabled;
 /**	Whether to simultaneously slide the side views along with the centre view or not.	*/
@@ -76,7 +89,8 @@ typedef NS_ENUM(NSUInteger, SideControllerState)
  *	@param	pushedCentreViewController	The view controller to be set as the new centre view controller.
  *	@param	rightViewController			The new right view controller to be paired with the new centre view controller.
  */
-- (void)pushCentreViewController:(UICentreViewController *)pushedCentreViewController withRightViewController:(UIViewController *)rightViewController animated:(BOOL)animated;
+- (void)pushCentreViewController:(UICentreViewController *)pushedCentreViewController
+		 withRightViewController:(UIViewController *)rightViewController animated:(BOOL)animated;
 
 #pragma mark - Public Methods - State 
 
@@ -86,7 +100,16 @@ typedef NS_ENUM(NSUInteger, SideControllerState)
  *	@param	controllerState				The desired SideControllerState.
  *	@param	completionHandler			The completion handler to be called once the controllerState was set.
  */
-- (void) setControllerState:(SideControllerState)controllerState
+- (void) setControllerState:(SlideNavigationState)controllerState
 	  withCompletionHandler:(void(^)())completionHandler;
+
+#pragma mark - Public Methods - Utility Methods
+
+/**
+ *	A convenient way to find out if the centre view is currently active.
+ *
+ *	@return	Whether the centre view is front and foremost to the user.
+ */
+- (BOOL)centreViewIsActive;
 
 @end

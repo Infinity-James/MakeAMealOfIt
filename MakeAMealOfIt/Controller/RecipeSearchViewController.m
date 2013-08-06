@@ -41,6 +41,8 @@ enum SectionIndex
 @property (nonatomic, strong)	UITapGestureRecognizer		*resignGestureRecogniser;
 /**	The right toolbar button used to slide in the right view	*/
 @property (nonatomic, strong)	UIBarButtonItem				*rightButton;
+/**	*/
+@property (nonatomic, strong)	NSIndexPath					*selectedCellIndexPath;
 /**	A dictionary of ingredients to be either included or excluded.	*/
 @property (nonatomic, strong)	NSMutableDictionary			*selectedIngredients;
 /**	The table view representing the included or excluded ingredients for the recipe search.	*/
@@ -72,7 +74,10 @@ enum SectionIndex
  *	User has selected the option to reset the search.
  */
 - (void)resetSearchTapped
-{	
+{
+	if (![self.slideNavigationController centreViewIsActive])
+		return;
+	
 	//	we make sure that they meant to do this
 	[[[UIActionSheet alloc] initWithTitle:@"Reset Entire Search?"
 								 delegate:self cancelButtonTitle:@"Cancel"
@@ -497,6 +502,8 @@ enum SectionIndex
 	if (!_tableView)
 	{
 		_tableView					= [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+		_tableView.allowsSelection	= YES;
+		_tableView.allowsSelectionDuringEditing	= YES;
 		_tableView.backgroundColor	= [UIColor whiteColor];
 		_tableView.backgroundView	= nil;
 		_tableView.clipsToBounds	= YES;
@@ -565,6 +572,19 @@ enum SectionIndex
 				@"tableView"		: self.tableView	};
 }
 
+#pragma mark - Slide Navigation Controller Lifecycle
+
+/**
+ *	Called when the Slide Navigation Controller's state has been updated.
+ *
+ *	@param	stateEvent					The new state of the Slide Navigation Controller.
+ */
+- (void)slideNavigationControllerStateUpdated:(SlideNavigationStateEvent)stateEvent
+{
+	self.selectedCellIndexPath			= nil;
+	[self.tableView setEditing:NO animated:NO];
+}
+
 #pragma mark - UIActionSheetDelegate
 
 /**
@@ -583,6 +603,8 @@ willDismissWithButtonIndex:(NSInteger)buttonIndex
 	else if (buttonIndex == actionSheet.cancelButtonIndex)
 		;
 }
+
+#pragma mark - UIGestureRecognizerDelegate Methods
 
 /**
  *	Ask the delegate if a gesture recognizer should receive an object representing a touch.
@@ -624,6 +646,23 @@ willDismissWithButtonIndex:(NSInteger)buttonIndex
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
 	return 2;
+}
+
+/**
+ *	Asks the data source to verify that the given row is editable.
+ *
+ *	@param	tableView					The table-view object requesting this information.
+ *	@param	indexPath					An index path locating a row in tableView.
+ *
+ *	@return	YES if the row indicated by indexPath is editable; otherwise, NO.
+ */
+- (BOOL)	tableView:(UITableView *)tableView
+canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	if ([indexPath isEqual:self.selectedCellIndexPath])
+		return YES;
+	
+	return NO;
 }
 
 /**
@@ -669,6 +708,8 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
 	
 	if (editingStyle == UITableViewCellEditingStyleDelete)
 	{
+		self.selectedCellIndexPath		= nil;
+		[self.tableView setEditing:NO animated:NO];
 		self.modifiedIngredients(ingredientDictionary);
 	}
 }
@@ -698,6 +739,43 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
 - (void)	  tableView:(UITableView *)tableView
 didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+	if (!self.selectedCellIndexPath)
+	{
+		self.selectedCellIndexPath			= indexPath;
+		[tableView setEditing:YES animated:YES];
+	}
+	
+	else
+	{
+		if (![indexPath isEqual:self.selectedCellIndexPath])
+		{
+			self.selectedCellIndexPath			= indexPath;
+			[tableView setEditing:NO animated:YES];
+			[tableView setEditing:YES animated:YES];
+		}
+		
+		else
+		{
+			self.selectedCellIndexPath			= nil;
+			[tableView setEditing:NO animated:YES];
+		}
+	}
+	
+	[self resignFirstResponder];
+}
+
+/**
+ *	Asks the delegate for the editing style of a row at a particular location in a table view.
+ *
+ *	@param	tableView					The table-view object requesting this information.
+ *	@param	indexPath					An index path locating a row in tableView.
+ *
+ *	@return	The editing style of the cell for the row identified by indexPath.
+ */
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView
+		   editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	return UITableViewCellEditingStyleDelete;
 }
 
 /**
@@ -745,7 +823,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	[super viewDidLoad];
 	
-	[self.tableView addGestureRecognizer:self.resignGestureRecogniser];
+	//	[self.view addGestureRecognizer:self.resignGestureRecogniser];
 }
 
 @end

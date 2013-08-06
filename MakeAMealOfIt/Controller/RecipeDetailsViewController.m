@@ -139,6 +139,17 @@
 #pragma mark - RecipeDetailsViewDelegate Methods
 
 /**
+ *	Opens the recipe's source website with instructions and other stuff.
+ */
+- (void)openRecipeWebsite
+{
+	NSString *recipeURLString			= self.recipe.sourceDictionary[kYummlyRecipeSourceRecipeURLKey];
+	NSURL *recipeURL					= [[NSURL alloc] initWithString:recipeURLString];
+	WebViewController *webVC			= [[WebViewController alloc] initWithURL:recipeURL];
+	[self.slideNavigationController pushCentreViewController:webVC withRightViewController:nil animated:YES];
+}
+
+/**
  *	Sent to the delegate when the sender has updated it's intrinsicContentSize.
  */
 - (void)updatedIntrinsicContentSize
@@ -236,7 +247,7 @@
 		_scrollView						= [[UIScrollView alloc] init];
 		_scrollView.backgroundColor		= [UIColor whiteColor];
 		//_scrollView.clipsToBounds		= NO;
-		_scrollView.contentInset		= UIEdgeInsetsMake(44.0f, 0.0f, 0.0f, 0.0f);
+		_scrollView.contentInset		= UIEdgeInsetsMake(64.0f, 0.0f, 0.0f, 0.0f);
 		_scrollView.maximumZoomScale	= 1.0f;
 		_scrollView.minimumZoomScale	= 1.0f;
 		

@@ -52,7 +52,7 @@
 													relatedBy:NSLayoutRelationEqual
 													   toItem:self.contentView
 													attribute:NSLayoutAttributeHeight
-												   multiplier:0.4f
+												   multiplier:0.3f
 													 constant:0.0f];
 	[self.contentView addConstraint:constraint];
 	

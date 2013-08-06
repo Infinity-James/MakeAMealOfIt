@@ -464,8 +464,6 @@
 		1AEE00681743F42400B6FC43 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				1ADB9C3417AFBD5200421CC9 /* TransparentToolbar.h */,
-				1ADB9C3517AFBD5200421CC9 /* TransparentToolbar.m */,
 				1ADB9C3117AFADE300421CC9 /* BlurView.h */,
 				1ADB9C3217AFADE300421CC9 /* BlurView.m */,
 				1A347612177837B100E723CD /* IncludeExcludeControl.h */,
@@ -498,6 +496,8 @@
 				1A9FCF8C1758CE7E00D74485 /* StarRatingView.m */,
 				1A8EC545174F756A00553857 /* TextBackingView.h */,
 				1A8EC546174F756A00553857 /* TextBackingView.m */,
+				1ADB9C3417AFBD5200421CC9 /* TransparentToolbar.h */,
+				1ADB9C3517AFBD5200421CC9 /* TransparentToolbar.m */,
 				1A84A59F1765C2E300E1F818 /* YummlyToolbar.h */,
 				1A84A5A01765C2E300E1F818 /* YummlyToolbar.m */,
 			);

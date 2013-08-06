@@ -18,6 +18,10 @@
 #pragma mark - Public Methods
 
 /**
+ *	Removes all UIBarButtonItems from this SlideNavigationBar.
+ */
+- (void)removeItems;
+/**
  *	Sets the items on the toolbar by animating the changes.
  *
  *	@param	items						The items to display on the toolbar.

@@ -23,4 +23,13 @@
 /** The slide navigation item used to represent the view controller in a parent’s toolbar.	*/
 @property (nonatomic, strong)	SlideNavigationItem			*slideNavigationItem;
 
+#pragma mark - Public Methods
+
+/**
+ *	Called when the Slide Navigation Controller's state has been updated.
+ *
+ *	@param	stateEvent					The new state of the Slide Navigation Controller.
+ */
+- (void)slideNavigationControllerStateUpdated:(SlideNavigationStateEvent)stateEvent;	
+
 @end

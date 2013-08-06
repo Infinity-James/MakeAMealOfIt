@@ -74,6 +74,11 @@ static NSString *const kLeftVCKey			= @"Left";
 /**	A key to be used when storing a right view controller into a dictionary.	*/
 static NSString *const kRightVCKey			= @"Right";
 
+/**	*/
+NSString *const SlideNavigationStateEventNotification		= @"SlideNavigationStateNotification";
+/**	*/
+NSString *const SlideNavigationStateEventTypeKey			= @"eventType";
+
 #pragma mark - Main View Controller Private Class Extension
 
 @interface SlideNavigationController () <UIGestureRecognizerDelegate> {}
@@ -87,7 +92,7 @@ static NSString *const kRightVCKey			= @"Right";
 /**	A motion effect designed for the side view controllers*/
 @property (nonatomic, strong)				UIMotionEffectGroup			*childViewParallaxEffect;
 /**	The current state of if a side view is visible or not.	*/
-@property (nonatomic, readwrite, assign)	SideControllerState			controllerState;
+@property (nonatomic, readwrite, assign)	SlideNavigationState		controllerState;
 /**	This enum is used to store in what direction the centre view controller is being panned.	*/
 @property (nonatomic, assign)				ControllerPanDirection		panDirection;
 /**	This will be used to keep track of the starting position of any pan gesture.	*/
@@ -139,7 +144,7 @@ static NSString *const kRightVCKey			= @"Right";
  *	@param	desiredSideControllerState	Whether to close all side controller, or open one of them.
  *	@param	completionHandler			Called at the end of the animations.
  */
-- (void)animateToSideControllerState:(SideControllerState)desiredSideControllerState withCompletionHandler:(void(^)())completionHandler
+- (void)animateToSideControllerState:(SlideNavigationState)desiredSideControllerState withCompletionHandler:(void(^)())completionHandler
 {
 	__weak SlideNavigationController *weakSelf	= self;
 	
@@ -864,7 +869,7 @@ static NSString *const kRightVCKey			= @"Right";
  *
  *	@param	controllerState				The desired SideControllerState.
  */
-- (void)setControllerState:(SideControllerState)controllerState
+- (void)setControllerState:(SlideNavigationState)controllerState
 {
 	[self setControllerState:controllerState withCompletionHandler:nil];
 }
@@ -875,13 +880,17 @@ static NSString *const kRightVCKey			= @"Right";
  *	@param	controllerState				The desired SideControllerState.
  *	@param	completionHandler			The completion handler to be called once the controllerState was set.
  */
-- (void) setControllerState:(SideControllerState)controllerState
-	  withCompletionHandler:(void (^)())completionHandler
+- (void)setControllerState:(SlideNavigationState)controllerState
+	 withCompletionHandler:(void (^)())completionHandler
 {
 	//	create a block to be executed once the views have been moved appropriately
 	void (^innerCompletion)()			=
 	^{
-		_controllerState					= controllerState;
+		_controllerState				= controllerState;
+		
+		SlideNavigationStateEvent controllerStateEvent			= [self centreViewIsActive] ? SlideNavigationStateEventDidClose : SlideNavigationStateEventDidOpen;
+		
+		[self sendStateEventNotification:controllerStateEvent];
 		
 		if (_controllerState == SlideNavigationSideControllerClosed)
 		{
@@ -913,6 +922,9 @@ static NSString *const kRightVCKey			= @"Right";
 		if (completionHandler)
 			completionHandler();
 	};
+	
+	SlideNavigationStateEvent controllerStateEvent	= controllerState == SlideNavigationSideControllerClosed ? SlideNavigationStateEventWillClose : SlideNavigationStateEventWillOpen;
+	[self sendStateEventNotification:controllerStateEvent];
 	
 	[self animateToSideControllerState:controllerState withCompletionHandler:innerCompletion];
 }
@@ -1095,8 +1107,8 @@ static NSString *const kRightVCKey			= @"Right";
 	//	add the slide navigation bar and remove it from it's current superview
 	[self.slideNavigationBar removeFromSuperview];
 	
-	//	nilify the slide navigation bar so it doesn't show old information
-	self.slideNavigationBar				= nil;
+	//	remove all of the old UIBarButtonItems
+	[self.slideNavigationBar removeItems];
 	
 	//	set ourselves as it's slide navigation controller
 	_centreViewController.slideNavigationController	= self;
@@ -1148,6 +1160,7 @@ static NSString *const kRightVCKey			= @"Right";
 	
 	_leftViewController					= leftViewController;
 	
+	_leftViewController.view.hidden		= YES;
 	_leftViewController.view.tag		= kLeftViewTag;
 	
 	if (!_leftViewController)			return;
@@ -1179,6 +1192,7 @@ static NSString *const kRightVCKey			= @"Right";
 	
 	_rightViewController				= rightViewController;
 	
+	_rightViewController.view.hidden	= YES;
 	_rightViewController.view.tag		= kRightViewTag;
 	
 	if (!_rightViewController)			return;
@@ -1367,7 +1381,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 	return YES;
 }
 
-#pragma mark - Utility Methods - Calculation
+#pragma mark - Utility Methods
 
 /**
  *	Calculates the duration of animation with the given positions.
@@ -1398,6 +1412,30 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 		
 	//	return either the duration, or the maximum length if calculated duration is too long
 	return MIN(duration, kMaxAnimationDuration);
+}
+
+/**
+ *	A convenient way to find out if the centre view is currently active.
+ *
+ *	@return	Whether the centre view is front and foremost to the user.
+ */
+- (BOOL)centreViewIsActive
+{
+	return self.controllerState == SlideNavigationSideControllerClosed;
+}
+
+/**
+ *	Posts a notification with a certain state event.
+ *
+ *	@param	stateEvent					The state event to post a notification with.
+ */
+- (void)sendStateEventNotification:(SlideNavigationStateEvent)stateEvent
+{
+    NSDictionary *userInfo				= @{SlideNavigationStateEventTypeKey	: @(stateEvent)};
+	
+    [[NSNotificationCenter defaultCenter] postNotificationName:SlideNavigationStateEventNotification
+                                                        object:self
+                                                      userInfo:userInfo];
 }
 
 #pragma mark - View Controller Containment

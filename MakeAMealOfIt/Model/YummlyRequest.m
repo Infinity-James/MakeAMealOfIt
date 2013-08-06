@@ -261,7 +261,7 @@ NSString *const kYummlyMinimumKey			= @"min";
 		[self addObserver:self forKeyPath:@"excludedCourses" options:kNilOptions context:nil];
 		[self addObserver:self forKeyPath:@"excludedCuisines" options:kNilOptions context:nil];
 		[self addObserver:self forKeyPath:@"excludedHolidays" options:kNilOptions context:nil];
-		[self addObserver:self forKeyPath:@"desiredIngredients" options:kNilOptions context:nil];
+		[self addObserver:self forKeyPath:@"excludedIngredients" options:kNilOptions context:nil];
 		[self addObserver:self forKeyPath:@"flavourDictionary" options:kNilOptions context:nil];
 		[self addObserver:self forKeyPath:@"requiredAllergies" options:kNilOptions context:nil];
 		[self addObserver:self forKeyPath:@"requiredDiets" options:kNilOptions context:nil];

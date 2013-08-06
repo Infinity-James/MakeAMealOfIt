@@ -478,16 +478,8 @@ static CGFloat const kParametersControllerHeight	= 340.0f;
 	{
 		_recipeParametersController							= [[RecipeSearchParametersViewController alloc] init];
 		_recipeParametersController.delegate				= self;
-		//_recipeParametersController.view.layer.opacity		= 0.9f;
-		//_recipeParametersController.view.layer.shadowColor	= [[UIColor alloc] initWithRed:0.2f green:0.2f blue:0.2f alpha:1.0f].CGColor;
-		//_recipeParametersController.view.layer.shadowOffset	= CGSizeMake(0.5f, -0.5f);
-		//_recipeParametersController.view.layer.shadowOpacity= 1.0f;
-		//_recipeParametersController.view.layer.shadowRadius	= 1.0f;
-		
-		/*if (isFourInchDevice)
-			_recipeParametersController.view.frame				= CGRectMake(70.0f, 188.0f, 230.0f, 340.0f);
-		else
-			_recipeParametersController.view.frame				= CGRectMake(70.0f, 100.0f, 230.0f, 340.0f);*/
+		_recipeParametersController.view.backgroundColor	= [UIColor whiteColor];
+		_recipeParametersController.view.layer.opacity		= 0.9f;
 		
 		_recipeParametersController.view.translatesAutoresizingMaskIntoConstraints		= NO;
 		[self.view addSubview:_recipeParametersController.view];
