@@ -58,6 +58,7 @@
 		1AD8C918178C1FDF00E56DCA /* SlideNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD8C917178C1FDF00E56DCA /* SlideNavigationBar.m */; };
 		1ADB9C3317AFADE300421CC9 /* BlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ADB9C3217AFADE300421CC9 /* BlurView.m */; };
 		1ADB9C3617AFBD5200421CC9 /* TransparentToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ADB9C3517AFBD5200421CC9 /* TransparentToolbar.m */; };
+		1ADFC56517B2B31800CFA246 /* SafariActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ADFC56417B2B31800CFA246 /* SafariActivity.m */; };
 		1AE89C84177AF4F6001C356A /* MetadataCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE89C83177AF4F6001C356A /* MetadataCell.m */; };
 		1AE8DB7D176B2281008C5D36 /* YummlyThemeImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AE8DB7C176B2281008C5D36 /* YummlyThemeImages.xcassets */; };
 		1AEE005717424E2E00B6FC43 /* CupboardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEE005617424E2E00B6FC43 /* CupboardViewController.m */; };
@@ -169,6 +170,8 @@
 		1ADB9C3217AFADE300421CC9 /* BlurView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BlurView.m; path = View/BlurView.m; sourceTree = "<group>"; };
 		1ADB9C3417AFBD5200421CC9 /* TransparentToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TransparentToolbar.h; path = View/TransparentToolbar.h; sourceTree = "<group>"; };
 		1ADB9C3517AFBD5200421CC9 /* TransparentToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TransparentToolbar.m; path = View/TransparentToolbar.m; sourceTree = "<group>"; };
+		1ADFC56317B2B31800CFA246 /* SafariActivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SafariActivity.h; path = Model/SafariActivity.h; sourceTree = "<group>"; };
+		1ADFC56417B2B31800CFA246 /* SafariActivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SafariActivity.m; path = Model/SafariActivity.m; sourceTree = "<group>"; };
 		1AE89C82177AF4F6001C356A /* MetadataCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MetadataCell.h; path = View/MetadataCell.h; sourceTree = "<group>"; };
 		1AE89C83177AF4F6001C356A /* MetadataCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MetadataCell.m; path = View/MetadataCell.m; sourceTree = "<group>"; };
 		1AE8DB7C176B2281008C5D36 /* YummlyThemeImages.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = YummlyThemeImages.xcassets; path = Yummly/YummlyThemeImages.xcassets; sourceTree = "<group>"; };
@@ -446,6 +449,8 @@
 		1AEE006217427E3400B6FC43 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				1ADFC56317B2B31800CFA246 /* SafariActivity.h */,
+				1ADFC56417B2B31800CFA246 /* SafariActivity.m */,
 				1A7C1A511757ADA50075AF2D /* Recipe.h */,
 				1A7C1A521757ADA50075AF2D /* Recipe.m */,
 				1AD8C912178C003500E56DCA /* SlideNavigationItem.h */,
@@ -651,6 +656,7 @@
 				1AD55FF5171AF33200AE5FED /* main.m in Sources */,
 				1AE89C84177AF4F6001C356A /* MetadataCell.m in Sources */,
 				1A84A59E1765BE1200E1F818 /* NetworkActivityIndicator.m in Sources */,
+				1ADFC56517B2B31800CFA246 /* SafariActivity.m in Sources */,
 				1A6D1189174B6ACE00E0B000 /* ParameterPageViewController.m in Sources */,
 				1A7C1A531757ADA50075AF2D /* Recipe.m in Sources */,
 				1A8EC544174F4CCA00553857 /* RecipeCollectionViewCell.m in Sources */,

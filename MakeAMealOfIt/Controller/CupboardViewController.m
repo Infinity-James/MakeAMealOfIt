@@ -617,6 +617,7 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 	if (!_tableView)
 	{
 		_tableView						= [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+		_tableView.allowsSelection		= NO;
 		_tableView.dataSource			= self;
 		_tableView.delegate				= self;
 		[self.view addSubview:_tableView];

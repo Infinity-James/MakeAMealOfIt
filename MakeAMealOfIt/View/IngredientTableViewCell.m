@@ -69,12 +69,13 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 }
 
 /**
+ *	Handles a tap gesture recogniser.
  *
- *
- *	@param
+ *	@param	tapGestureRecogniser		The recogniser sending this message.
  */
 - (void)handleTap:(UITapGestureRecognizer *)tapGestureRecogniser
 {
+	//	create the frames for the various positions of the cell throughout the animation
 	CGRect originalFrame				= self.frame;
 	CGRect leftFrame					= originalFrame;
 	CGRect rightFrame					= originalFrame;
@@ -82,6 +83,7 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 	leftFrame.origin.x					+= 100.0f;
 	rightFrame.origin.x					-= 100.0f;
 	
+	//	start the animation by showing the left cue of the cell
 	[UIView animateWithDuration:0.3f
 						  delay:0.0f
 						options:UIViewAnimationOptionCurveEaseOut
@@ -91,6 +93,7 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 	}
 					 completion:^(BOOL finished)
 	{
+		//	return the cell to the original position
 		[UIView animateWithDuration:0.3f
 							  delay:0.0f
 							options:UIViewAnimationOptionCurveEaseIn
@@ -100,6 +103,7 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 		}
 						 completion:^(BOOL finished)
 		{
+			//	now show the right cue of the cell
 			[UIView animateWithDuration:0.3f
 								  delay:0.0f
 								options:UIViewAnimationOptionCurveEaseOut
@@ -109,6 +113,7 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 			}
 							 completion:^(BOOL finished)
 			{
+				//	return the cell to the original position
 				[UIView animateWithDuration:0.3f
 									  delay:0.0f
 									options:UIViewAnimationOptionCurveEaseIn
@@ -162,6 +167,23 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 {
 	//	if the gesture has started we record the current centre location
 	self.originalCentre					= self.center;
+	
+	NSLog(@"Exclude Label: %@", self.excludeLabel.text);
+	NSLog(@"Exclude Label Colour: %@", self.excludeLabel.textColor);
+	NSLog(@"Exclude Label Hidden: %u", self.excludeLabel.hidden);
+	NSLog(@"Exclude Label Frame: %@", NSStringFromCGRect(self.excludeLabel.frame));
+	NSLog(@"Remove Exclude Label: %@", self.removeLabelRight.text);
+	NSLog(@"Remove Exclude Label Colour: %@", self.removeLabelRight.textColor);
+	NSLog(@"Remove Exclude Label Hidden: %u", self.removeLabelRight.hidden);
+	NSLog(@"Remove Exclude Label Frame: %@", NSStringFromCGRect(self.removeLabelRight.frame));
+	NSLog(@"Include Label: %@", self.includeLabel.text);
+	NSLog(@"Include Label Colour: %@", self.includeLabel.textColor);
+	NSLog(@"Include Label Hidden: %u", self.includeLabel.hidden);
+	NSLog(@"Include Label Frame: %@", NSStringFromCGRect(self.includeLabel.frame));
+	NSLog(@"Remove Include Label: %@", self.removeLabelLeft.text);
+	NSLog(@"Remove Include Label Colour: %@", self.removeLabelLeft.textColor);
+	NSLog(@"Remove Include Label Hidden: %u", self.removeLabelLeft.hidden);
+	NSLog(@"Remove Include Label Frame: %@", NSStringFromCGRect(self.removeLabelLeft.frame));
 }
 
 /**
@@ -258,6 +280,7 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 	{
         [self addPanGestureRecogniser];
 		[ThemeManager customiseTableViewCell:self withTheme:nil];
+		self.clipsToBounds				= NO;
 		self.selectionStyle				= UITableViewCellSelectionStyleNone;
 		self.textLabel.backgroundColor	= [UIColor clearColor];
     }
@@ -547,8 +570,8 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 	[super layoutSubviews];
 	
 	//	ensure the the layers are the same size as our main layer
-	self.excludedLayer.frame			= self.bounds;
-	self.includedLayer.frame			= self.bounds;
+	//self.excludedLayer.frame			= self.bounds;
+	//self.includedLayer.frame			= self.bounds;
 	
 	//	add the labels to the sides of the cell
 	self.excludeLabel.frame				= CGRectMake(self.bounds.size.width + kCuesMargin, 0.0f, kCuesWidth, self.bounds.size.height);
