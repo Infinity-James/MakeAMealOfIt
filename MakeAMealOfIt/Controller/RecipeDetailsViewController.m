@@ -146,7 +146,8 @@
 	NSString *recipeURLString			= self.recipe.sourceDictionary[kYummlyRecipeSourceRecipeURLKey];
 	NSURL *recipeURL					= [[NSURL alloc] initWithString:recipeURLString];
 	WebViewController *webVC			= [[WebViewController alloc] initWithURL:recipeURL];
-	[self.slideNavigationController pushCentreViewController:webVC withRightViewController:nil animated:YES];
+	//[self.slideNavigationController pushCentreViewController:webVC withRightViewController:nil animated:YES];
+	[self presentViewController:webVC animated:YES completion:nil];
 }
 
 /**

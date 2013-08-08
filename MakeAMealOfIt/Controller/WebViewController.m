@@ -15,6 +15,8 @@
 
 #pragma mark - Private Properties
 
+/**	The button that allows the user to dismiss this view controller.	*/
+@property (nonatomic, strong)	UIBarButtonItem	*doneButton;
 /**	An item that separate the UIBarButtonItems neatly.	*/
 @property (nonatomic, strong)	UIBarButtonItem	*flexibleSpace;
 /**	A button that allows the user to go forward to the next page.	*/
@@ -51,6 +53,15 @@
 	UIActivityViewController *activity	= [[UIActivityViewController alloc] initWithActivityItems:@[initialTextString, self.url]
 																		   applicationActivities:@[safariActivity]];
 	[self presentViewController:activity animated:YES completion:nil];
+}
+
+/**
+ *	If this WebViewController is being modally present, this will dismiss it.
+ */
+- (void)doneTapped
+{
+	if (self.presentingViewController)
+		[self dismissViewControllerAnimated:YES completion:nil];
 }
 
 /**
@@ -128,6 +139,25 @@
 }
 
 #pragma mark - Property Accessor Methods - Getters
+
+/**
+ *
+ *
+ *	@return
+ */
+- (UIBarButtonItem *)doneButton
+{
+	if (!_doneButton)
+	{
+		_doneButton						= [[UIBarButtonItem alloc] initWithTitle:@"Done"
+															style:UIBarButtonItemStylePlain
+														   target:self
+														   action:@selector(doneTapped)];
+		
+	}
+	
+	return _doneButton;
+}
 
 /**
  *	An item that separates the UIBarButtonItems neatly.
@@ -266,14 +296,30 @@
 #pragma mark - View Lifecycle
 
 /**
+ *	Notifies the view controller that its view is about to be added to a view hierarchy.
+ *
+ *	@param	animated					If YES, the view is being added to the window using an animation.
+ */
+- (void)viewWillAppear:(BOOL)animated
+{
+	[super viewWillAppear:animated];
+	
+	NSMutableArray *toolbarItems		= [@[self.previousPageButton, self.flexibleSpace, self.nextPageButton,
+											 self.flexibleSpace, self.shareButton] mutableCopy];
+	
+	if (self.presentingViewController)
+		[toolbarItems addObjectsFromArray:@[self.flexibleSpace, self.doneButton]];
+	
+	[self.toolbar setItems:toolbarItems
+				  animated:YES];
+}
+
+/**
  *	Called after the controller’s view is loaded into memory.
  */
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
-	
-	[self.toolbar setItems:@[self.previousPageButton, self.flexibleSpace, self.nextPageButton, self.flexibleSpace, self.shareButton]
-				  animated:YES];
 }
 
 @end

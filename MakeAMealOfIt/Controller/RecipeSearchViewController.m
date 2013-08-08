@@ -367,6 +367,16 @@ enum SectionIndex
 				//	therefore we just reload on that thread too, and if this is that thread, is switches the 'justReload' back to NO
 				self.justReload			= !self.justReload;
 			}
+			
+			//	we do this to reload the section headers
+			NSTimeInterval delayInSeconds	= 0.5f;
+			dispatch_time_t delayDispatch	= dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+			
+			dispatch_after(delayDispatch, dispatch_get_main_queue(), ^(void)
+			{
+				[self.tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)]
+							  withRowAnimation:UITableViewRowAnimationFade];
+			});
 		});
 	});
 }
@@ -776,6 +786,25 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 		   editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	return UITableViewCellEditingStyleDelete;
+}
+
+/**
+ *	Asks the delegate for the height to use for the header of a particular section.
+ *
+ *	@param	tableView					The table-view object requesting this information.
+ *	@param	section						An index number identifying a section of tableView.
+ *
+ *	@return	A floating-point value that specifies the height (in points) of the header for section.
+ */
+- (CGFloat)	   tableView:(UITableView *)tableView
+heightForHeaderInSection:(NSInteger)section
+{
+	NSArray *ingredientsArray			= [self ingredientsArrayForSection:section];
+	
+	if (ingredientsArray.count > 0)
+		return 20.0f;
+	
+	return 0.0f;
 }
 
 /**
