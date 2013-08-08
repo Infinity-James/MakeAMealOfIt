@@ -6,33 +6,37 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
+#import "NetworkActivityIndicator.h"
+#import "PullToRefreshView.h"
 #import "SafariActivity.h"
 #import "WebViewController.h"
 
 #pragma mark - Web View Controller Private Class Extension
 
-@interface WebViewController ()  {}
+@interface WebViewController () <PullToRefreshDelegate, UIWebViewDelegate>  {}
 
 #pragma mark - Private Properties
 
 /**	The button that allows the user to dismiss this view controller.	*/
-@property (nonatomic, strong)	UIBarButtonItem	*doneButton;
+@property (nonatomic, strong)	UIBarButtonItem			*doneButton;
 /**	An item that separate the UIBarButtonItems neatly.	*/
-@property (nonatomic, strong)	UIBarButtonItem	*flexibleSpace;
+@property (nonatomic, strong)	UIBarButtonItem			*flexibleSpace;
 /**	A button that allows the user to go forward to the next page.	*/
-@property (nonatomic, strong)	UIBarButtonItem	*nextPageButton;
+@property (nonatomic, strong)	UIBarButtonItem			*nextPageButton;
 /**	A button that allows the user to go back to the previous page.	*/
-@property (nonatomic, strong)	UIBarButtonItem	*previousPageButton;
+@property (nonatomic, strong)	UIBarButtonItem			*previousPageButton;
+/**	A few that allows the user to refresh the current web page.	*/
+@property (nonatomic, strong)	PullToRefreshView		*pullToRefreshView;
 /**	A button that allows the user to go refresh the current page.	*/
-@property (nonatomic, strong)	UIBarButtonItem	*refreshPageButton;
+@property (nonatomic, strong)	UIBarButtonItem			*refreshPageButton;
 /**	A button that allows the user to go share the current page.	*/
-@property (nonatomic, strong)	UIBarButtonItem	*shareButton;
+@property (nonatomic, strong)	UIBarButtonItem			*shareButton;
 /**	A button that allows the user to stop loading the current page.	*/
-@property (nonatomic, strong)	UIBarButtonItem	*stopButton;
+@property (nonatomic, strong)	UIBarButtonItem			*stopButton;
 /**	A toolbar used for navigation of the webView.	*/
-@property (nonatomic, strong)	UIToolbar		*toolbar;
+@property (nonatomic, strong)	UIToolbar				*toolbar;
 /**	The view responsible for displaying given URLs and them main view of this view controller.	*/
-@property (nonatomic, strong)	UIWebView		*webView;
+@property (nonatomic, strong)	UIWebView				*webView;
 
 @end
 
@@ -119,6 +123,17 @@
 	[self.view bringSubviewToFront:self.toolbar];
 }
 
+#pragma mark - Convenience & Helper Methods
+
+/**
+ *	Updates the status of the toolbar UIBarButtonItems.
+ */
+- (void)updateToolbarButtons
+{
+	self.nextPageButton.enabled			= self.webView.canGoForward;
+	self.previousPageButton.enabled		= self.webView.canGoBack;
+}
+
 #pragma mark - Initialisation
 
 /**
@@ -141,9 +156,9 @@
 #pragma mark - Property Accessor Methods - Getters
 
 /**
+ *	The button that allows the user to dismiss this view controller.
  *
- *
- *	@return
+ *	@return	A UIBarButtonItem to be added to the toolbar if this view has been presented in a modal fashion.
  */
 - (UIBarButtonItem *)doneButton
 {
@@ -266,7 +281,12 @@
 	if (!_webView)
 	{
 		_webView						= [[UIWebView alloc] init];
+		_webView.delegate				= self;
 		_webView.scalesPageToFit		= YES;
+		
+		self.pullToRefreshView			= [[PullToRefreshView alloc] initWithScrollView:_webView.scrollView];
+		self.pullToRefreshView.delegate	= self;
+		[_webView.scrollView addSubview:self.pullToRefreshView];
 		
 		_webView.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self.view addSubview:_webView];
@@ -293,6 +313,57 @@
 	[self.webView loadRequest:urlRequest];
 }
 
+#pragma mark - PullToRefreshDelegate Methods
+
+/**
+ *	Sent to the delegate when the pull to refresh has been triggered.
+ *
+ *	@param	pullToRefreshView			The view requesting the refresh.
+ */
+- (void)pullToRefreshViewRequestingRefresh:(PullToRefreshView *)pullToRefreshView
+{
+	[self.webView reload];
+}
+
+#pragma mark - UIWebViewDelegate Methods
+
+/**
+ *	Sent if a web view failed to load a frame.
+ *
+ *	@param	webView						The web view that failed to load a frame.
+ *	@param	error						The error that occurred during loading.
+ */
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
+{
+	[NetworkActivityIndicator stop];
+	[self updateToolbarButtons];
+	[self.pullToRefreshView endRefresh];
+}
+
+/**
+ *	Sent after a web view finishes loading a frame.
+ *
+ *	@param	webView						The web view has finished loading.
+ */
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
+	[NetworkActivityIndicator stop];
+	[self updateToolbarButtons];
+	[self.pullToRefreshView endRefresh];
+}
+
+/**
+ *	Sent after a web view starts loading a frame.
+ *
+ *	@param	webView						The web view that has begun loading a new frame.
+
+ */
+- (void)webViewDidStartLoad:(UIWebView *)webView
+{
+	[NetworkActivityIndicator start];
+	[self updateToolbarButtons];
+}
+
 #pragma mark - View Lifecycle
 
 /**
@@ -312,6 +383,8 @@
 	
 	[self.toolbar setItems:toolbarItems
 				  animated:YES];
+	
+	[self updateToolbarButtons];
 }
 
 /**
@@ -320,6 +393,14 @@
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
+}
+
+/**
+ *	Notifies the view controller that its view is about to layout its subviews.
+ */
+- (void)viewWillLayoutSubviews
+{
+	[super viewWillLayoutSubviews];
 }
 
 @end

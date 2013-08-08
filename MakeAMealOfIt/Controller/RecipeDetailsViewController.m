@@ -145,9 +145,8 @@
 {
 	NSString *recipeURLString			= self.recipe.sourceDictionary[kYummlyRecipeSourceRecipeURLKey];
 	NSURL *recipeURL					= [[NSURL alloc] initWithString:recipeURLString];
-	WebViewController *webVC			= [[WebViewController alloc] initWithURL:recipeURL];
-	//[self.slideNavigationController pushCentreViewController:webVC withRightViewController:nil animated:YES];
-	[self presentViewController:webVC animated:YES completion:nil];
+	
+	[self openURL:recipeURL withRightViewController:nil];
 }
 
 /**
@@ -193,7 +192,10 @@
 {
 	WebViewController *webViewController= [[WebViewController alloc] initWithURL:url];
 	
-	[self.slideNavigationController pushCentreViewController:webViewController withRightViewController:rightViewController animated:YES];
+	[self.slideNavigationController setControllerState:SlideNavigationSideControllerClosed withCompletionHandler:
+	^{
+		[self presentViewController:webViewController animated:YES completion:nil];
+	}];
 }
 
 #pragma mark - Setter & Getter Methods

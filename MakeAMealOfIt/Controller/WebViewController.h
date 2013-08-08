@@ -14,8 +14,6 @@
 
 #pragma mark - Public Properties
 
-/**	*/
-@property (nonatomic, assign)	BOOL	modallyPresented;
 /**	The URL that should be shown in the web view of this view controller.	*/
 @property (nonatomic, copy)		NSURL	*url;
 

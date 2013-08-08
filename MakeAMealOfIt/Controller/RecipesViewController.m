@@ -167,7 +167,11 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 {
 	WebViewController *webViewController= [[WebViewController alloc] initWithURL:url];
 	
-	[self.slideNavigationController pushCentreViewController:webViewController withRightViewController:rightViewController animated:YES];
+	//[self.slideNavigationController pushCentreViewController:webViewController withRightViewController:rightViewController animated:YES];
+	[self.slideNavigationController setControllerState:SlideNavigationSideControllerClosed withCompletionHandler:
+	^{
+		[self presentViewController:webViewController animated:YES completion:nil];
+	}];
 }
 
 #pragma mark - Setter & Getter Methods

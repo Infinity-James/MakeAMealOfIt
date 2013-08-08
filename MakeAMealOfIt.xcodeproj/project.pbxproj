@@ -13,6 +13,8 @@
 		1A16806C179993DB0020F947 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A168068179993DB0020F947 /* HockeySDK.framework */; };
 		1A16806E179993DB0020F947 /* HockeySDKResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1A16806B179993DB0020F947 /* HockeySDKResources.bundle */; };
 		1A347614177837B100E723CD /* IncludeExcludeControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A347613177837B100E723CD /* IncludeExcludeControl.m */; };
+		1A36943117B3B0BB00EBA0E9 /* PullToRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A36943017B3B0BB00EBA0E9 /* PullToRefreshView.m */; };
+		1A36943417B3D6EC00EBA0E9 /* AudioManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A36943317B3D6EC00EBA0E9 /* AudioManager.m */; };
 		1A46523D1770A08A00049B4D /* ResultManagementCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A46523C1770A08A00049B4D /* ResultManagementCell.m */; };
 		1A46523F1772E89100049B4D /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A46523E1772E89100049B4D /* Icons.xcassets */; };
 		1A5DB82D1782E7E90027B9B0 /* IngredientTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5DB82C1782E7E90027B9B0 /* IngredientTableViewCell.m */; };
@@ -82,6 +84,10 @@
 		1A16806B179993DB0020F947 /* HockeySDKResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = HockeySDKResources.bundle; sourceTree = "<group>"; };
 		1A347612177837B100E723CD /* IncludeExcludeControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IncludeExcludeControl.h; path = View/IncludeExcludeControl.h; sourceTree = "<group>"; };
 		1A347613177837B100E723CD /* IncludeExcludeControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IncludeExcludeControl.m; path = View/IncludeExcludeControl.m; sourceTree = "<group>"; };
+		1A36942F17B3B0BB00EBA0E9 /* PullToRefreshView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PullToRefreshView.h; path = View/PullToRefreshView.h; sourceTree = "<group>"; };
+		1A36943017B3B0BB00EBA0E9 /* PullToRefreshView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PullToRefreshView.m; path = View/PullToRefreshView.m; sourceTree = "<group>"; };
+		1A36943217B3D6EC00EBA0E9 /* AudioManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioManager.h; path = "Utilities/Audio Manager/AudioManager.h"; sourceTree = "<group>"; };
+		1A36943317B3D6EC00EBA0E9 /* AudioManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AudioManager.m; path = "Utilities/Audio Manager/AudioManager.m"; sourceTree = "<group>"; };
 		1A46523B1770A08A00049B4D /* ResultManagementCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResultManagementCell.h; path = View/ResultManagementCell.h; sourceTree = "<group>"; };
 		1A46523C1770A08A00049B4D /* ResultManagementCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ResultManagementCell.m; path = View/ResultManagementCell.m; sourceTree = "<group>"; };
 		1A46523E1772E89100049B4D /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Icons.xcassets; sourceTree = "<group>"; };
@@ -237,6 +243,15 @@
 				1A168067179993DB0020F947 /* HockeySDK.embeddedframework */,
 			);
 			name = Vendor;
+			sourceTree = "<group>";
+		};
+		1A36943517B3D6F100EBA0E9 /* Audio Manager */ = {
+			isa = PBXGroup;
+			children = (
+				1A36943217B3D6EC00EBA0E9 /* AudioManager.h */,
+				1A36943317B3D6EC00EBA0E9 /* AudioManager.m */,
+			);
+			name = "Audio Manager";
 			sourceTree = "<group>";
 		};
 		1A4652401773254F00049B4D /* Definitions */ = {
@@ -437,6 +452,7 @@
 		1AEE005E17425BC700B6FC43 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				1A36943517B3D6F100EBA0E9 /* Audio Manager */,
 				1A6D1182174B55E900E0B000 /* Core Graphics */,
 				1A4652401773254F00049B4D /* Definitions */,
 				1A84A59B1765BE1200E1F818 /* Network Activity Indicator */,
@@ -503,6 +519,8 @@
 				1A8EC546174F756A00553857 /* TextBackingView.m */,
 				1ADB9C3417AFBD5200421CC9 /* TransparentToolbar.h */,
 				1ADB9C3517AFBD5200421CC9 /* TransparentToolbar.m */,
+				1A36942F17B3B0BB00EBA0E9 /* PullToRefreshView.h */,
+				1A36943017B3B0BB00EBA0E9 /* PullToRefreshView.m */,
 				1A84A59F1765C2E300E1F818 /* YummlyToolbar.h */,
 				1A84A5A01765C2E300E1F818 /* YummlyToolbar.m */,
 			);
@@ -657,8 +675,10 @@
 				1AE89C84177AF4F6001C356A /* MetadataCell.m in Sources */,
 				1A84A59E1765BE1200E1F818 /* NetworkActivityIndicator.m in Sources */,
 				1ADFC56517B2B31800CFA246 /* SafariActivity.m in Sources */,
+				1A36943417B3D6EC00EBA0E9 /* AudioManager.m in Sources */,
 				1A6D1189174B6ACE00E0B000 /* ParameterPageViewController.m in Sources */,
 				1A7C1A531757ADA50075AF2D /* Recipe.m in Sources */,
+				1A36943117B3B0BB00EBA0E9 /* PullToRefreshView.m in Sources */,
 				1A8EC544174F4CCA00553857 /* RecipeCollectionViewCell.m in Sources */,
 				1A70C0BC175500FF004FEEF6 /* RecipeDetailsView.m in Sources */,
 				1A70C0B91754FAAE004FEEF6 /* RecipeDetailsViewController.m in Sources */,
