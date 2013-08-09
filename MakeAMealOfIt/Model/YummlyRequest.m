@@ -873,7 +873,7 @@ NSString *const kYummlyMinimumKey			= @"min";
 	[self initialiseArrays];
 	self.requirePictures				= YES;
 	self.searchPhrase					= nil;
-	[[NSNotificationCenter defaultCenter] postNotificationName:kNotificationResetSearch object:nil];
+	[[NSNotificationCenter defaultCenter] postNotificationName:kNotificationYummlyRequestReset object:nil];
 	[[NSNotificationCenter defaultCenter] postNotificationName:kNotificationYummlyRequestEmpty object:nil];
 }
 

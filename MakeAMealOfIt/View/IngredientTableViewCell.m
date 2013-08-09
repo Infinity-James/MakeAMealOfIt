@@ -134,7 +134,7 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
  */
 - (void)customiseTableViewCellDefault
 {
-	self.backgroundColor		= [UIColor whiteColor];
+	self.backgroundColor				= [UIColor whiteColor];
 	[ThemeManager customiseTableViewCell:self withTheme:nil];
 }
 
@@ -231,7 +231,7 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 	[UIView animateWithDuration:0.2f
 					 animations:
 	^{
-		self.frame					= originalFrame;
+		self.frame						= originalFrame;
 	}];
 }
 
@@ -260,7 +260,7 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 {
 	UILabel *cueLabel					= [[UILabel alloc] initWithFrame:CGRectNull];
 	cueLabel.backgroundColor			= [UIColor clearColor];
-    cueLabel.font						= [UIFont boldSystemFontOfSize:12.0];
+    cueLabel.font						= [UIFont fontWithName:@"Futura" size:FontSizeForTextStyle(UIFontTextStyleCaption1)];
 	cueLabel.textColor					= [UIColor blackColor];
     return cueLabel;
 }
@@ -283,7 +283,7 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 		self.clipsToBounds				= NO;
 		self.selectionStyle				= UITableViewCellSelectionStyleNone;
 		self.textLabel.backgroundColor	= [UIColor clearColor];
-    }
+	}
 	
     return self;
 }
@@ -578,6 +578,18 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 	self.includeLabel.frame				= CGRectMake(-(kCuesMargin + kCuesWidth), 0.0f, kCuesWidth, self.bounds.size.height);
 	self.removeLabelLeft.frame			= self.includeLabel.frame;
 	self.removeLabelRight.frame			= self.excludeLabel.frame;
+}
+
+#pragma mark - Utility Methods
+
+/**
+ *
+ *
+ *	@return	A CGFloat for the height of this cell.
+ */
++ (CGFloat)desiredHeightForCell
+{
+	return 25.0f;
 }
 
 @end

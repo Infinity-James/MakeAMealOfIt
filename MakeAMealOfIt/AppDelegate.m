@@ -27,6 +27,17 @@
 
 @implementation AppDelegate
 
+#pragma mark - Action & Selector Methods
+
+/**
+ *
+ */
+- (void)preferredTextSizeChanged
+{
+	[ThemeManager setSharedTheme:[[YummlyTheme alloc] init]];
+	[[NSNotificationCenter defaultCenter] postNotificationName:kNotificationTextSizeChanged object:nil];
+}
+
 #pragma mark - UIApplicationDelegate Methods
 
 /**
@@ -63,6 +74,11 @@
 	[ThemeManager setSharedTheme:[[YummlyTheme alloc] init]];
 	
 	[self.window makeKeyAndVisible];
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(preferredTextSizeChanged)
+												 name:UIContentSizeCategoryDidChangeNotification
+											   object:nil];
 	
 	self.yummlyRequest					= [[YummlyRequest alloc] init];
 	

@@ -248,6 +248,7 @@ static CGFloat const kImageHeight		= 200.0f;
 			_ingredientsTableView.delegate		= self.recipeIngredientsController;
 		}
 		
+		_ingredientsTableView.allowsSelection	= NO;
 		_ingredientsTableView.separatorStyle	= UITableViewCellSeparatorStyleNone;
 		
 		[_ingredientsTableView registerClass:[RecipeDetailsIngredientCell class] forCellReuseIdentifier:kCellIdentifier];
@@ -393,11 +394,10 @@ static CGFloat const kImageHeight		= 200.0f;
  */
 - (void)tableViewHeightCalculated
 {
-	if ([self.delegate respondsToSelector:@selector(updatedIntrinsicContentSize)])
-		[self.delegate updatedIntrinsicContentSize];
-	
 	self.starRatingView.hidden			= NO;
 	[self setNeedsUpdateConstraints];
+	if ([self.delegate respondsToSelector:@selector(updatedIntrinsicContentSize)])
+		[self.delegate updatedIntrinsicContentSize];
 }
 
 #pragma mark - UIView Methods
@@ -410,7 +410,11 @@ static CGFloat const kImageHeight		= 200.0f;
 - (CGSize)intrinsicContentSize
 {
 	CGSize contentSize					= self.superview.bounds.size;
-	contentSize.height					= self.recipeImageView.frame.size.height + self.recipeIngredientsController.maximumTableViewHeight + 300.0f;
+	CGFloat viewsSum					= self.recipeImageView.bounds.size.height;
+	viewsSum							+= MAX(self.recipeIngredientsController.maximumTableViewHeight, self.starRatingView.bounds.size.height);
+	viewsSum							+= self.viewRecipeButton.bounds.size.height;
+	viewsSum							+= 100.0f;
+	contentSize.height					= viewsSum;
 	
 	return contentSize;
 }

@@ -85,7 +85,7 @@
 	if (!_metadataLabel)
 	{
 		_metadataLabel					= [[UILabel alloc] init];
-		_metadataLabel.font				= [UIFont fontWithName:@"AvenirNext-Regular" size:14.0f];
+		_metadataLabel.font				= kYummlyFontWithSize(FontSizeForTextStyle(UIFontTextStyleFootnote));
 		_metadataLabel.textAlignment	= NSTextAlignmentLeft;
 		_metadataLabel.textColor		= kYummlyColourMain;
 		_metadataLabel.shadowColor		= kYummlyColourShadow;
@@ -108,7 +108,7 @@
 	if (!_metadataTypeLabel)
 	{
 		_metadataTypeLabel				= [[UILabel alloc] init];
-		_metadataTypeLabel.font			= [UIFont fontWithName:@"AvenirNext-Regular" size:12.0f];
+		_metadataTypeLabel.font			= kYummlyFontWithSize(FontSizeForTextStyle(UIFontTextStyleCaption1));
 		_metadataTypeLabel.textAlignment= NSTextAlignmentLeft;
 		_metadataTypeLabel.textColor	= kYummlyColourShadow;
 		_metadataTypeLabel.shadowColor	= [[UIColor alloc] initWithRed:0.2f green:0.2f blue:0.2f alpha:1.0f];

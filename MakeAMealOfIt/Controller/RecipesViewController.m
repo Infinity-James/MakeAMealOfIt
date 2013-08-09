@@ -129,16 +129,22 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 	//	uses the global yummly request to get more results for out view
 	[appDelegate.yummlyRequest getMoreResults:^(BOOL success, NSDictionary *results)
 	{
-		if (!success)
+		NSArray *moreRecipes			= results[kYummlyMatchesArrayKey];
+		
+		if (!success || moreRecipes.count == 0)
 		{
-			self.internetAccess			= NO;
-			[self.recipesCollectionView deleteItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:self.recipes.count inSection:0]]];
+			dispatch_async(dispatch_get_main_queue(),
+			^{
+				self.internetAccess		= NO;
+				[self.recipesCollectionView deleteItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:self.recipes.count inSection:0]]];
+				return;
+			});
 		}
 		
 		//	adds the newly fetched results to the recipe array
 		NSUInteger recipesCount			= weakSelf.recipes.count;
 		NSMutableArray *allRecipes		= [weakSelf.recipes mutableCopy];
-		[allRecipes addObjectsFromArray:results[kYummlyMatchesArrayKey]];
+		[allRecipes addObjectsFromArray:moreRecipes];
 		weakSelf.recipes				= allRecipes;
 		
 		//	get an array of index paths to 'insert' into the collection view

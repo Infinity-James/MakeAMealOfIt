@@ -30,6 +30,12 @@
 #pragma mark - Public Methods
 
 /**
+ *
+ *
+ *	@return	A CGFloat for the height of this cell.
+ */
++ (CGFloat)desiredHeightForCell;
+/**
  *	A special setter for the excluded property of this cell.
  *
  *	@param	excluded					Whether or not the user wants to exclude this ingredient from the search.

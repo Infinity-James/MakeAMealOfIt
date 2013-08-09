@@ -54,7 +54,7 @@ typedef NS_ENUM(NSUInteger, PullToRefreshState)
 /**	Whether this view should be enabled or not.	*/
 @property (nonatomic, assign, getter = isEnabled)	BOOL	enabled;
 /**	The scroll view that this PullToRefreshView is attached to.	*/
-@property (nonatomic, strong)		UIScrollView				*scrollView;
+@property (nonatomic, strong)	UIScrollView				*scrollView;
 /**	The current state of this PullToRefreshView.	*/
 @property (nonatomic, assign)	PullToRefreshState			state;
 /**	The content inset of the scroll view.	*/

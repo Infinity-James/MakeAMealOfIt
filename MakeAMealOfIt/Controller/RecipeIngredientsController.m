@@ -130,7 +130,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 	[ThemeManager customiseTableViewCell:cell withTheme:nil];
 	cell.textLabel.lineBreakMode		= NSLineBreakByWordWrapping;
 	cell.textLabel.numberOfLines		= 0;
-	cell.textLabel.font					= [UIFont fontWithName:cell.textLabel.font.fontName size:12.0f];
+	cell.textLabel.font					= [UIFont fontWithName:cell.textLabel.font.fontName size:FontSizeForTextStyle(UIFontTextStyleCaption1)];
 }
 
 #pragma mark - UITableViewDelegate Methods

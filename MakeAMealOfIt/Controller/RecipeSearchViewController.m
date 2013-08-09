@@ -231,7 +231,7 @@ enum SectionIndex
 	{
 		[[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(yummlyRequestHasBeenReset:)
-													 name:kNotificationResetSearch
+													 name:kNotificationYummlyRequestReset
 												   object:nil];
 		[[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(yummlyRequestHasBeenChanged:)

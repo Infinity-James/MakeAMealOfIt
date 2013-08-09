@@ -57,9 +57,17 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 #pragma mark - Action & Selector Methods
 
 /**
+ *	The user has updated their choice of text size.
+ */
+- (void)textSizeChanged
+{
+	[self.tableView reloadData];
+}
+
+/**
  *	Called when the global Yummly Request object has been reset.
  *
- *	@param	notification				The object containing a name, an object, and an optional dictionary.
+ *	@param	notification			The object containing a name, an object, and an optional dictionary.
  */
 - (void)yummlyRequestHasBeenReset:(NSNotification *)notification
 {
@@ -296,7 +304,14 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 {
 	if (self = [super init])
 	{
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(yummlyRequestHasBeenReset:) name:kNotificationResetSearch object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(yummlyRequestHasBeenReset:)
+													 name:kNotificationYummlyRequestReset
+												   object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(textSizeChanged)
+													 name:kNotificationTextSizeChanged
+												   object:nil];
 	}
 	
 	return self;
@@ -825,7 +840,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 - (CGFloat)	  tableView:(UITableView *)tableView
 heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	return 25.0f;
+	return [IngredientTableViewCell desiredHeightForCell];
 }
 
 /**

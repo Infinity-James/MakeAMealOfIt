@@ -69,7 +69,7 @@
 	if (!_ingredientLabel)
 	{
 		_ingredientLabel				= [[UILabel alloc] init];
-		_ingredientLabel.font			= kYummlyFontWithSize(12.0f);
+		_ingredientLabel.font			= kYummlyFontWithSize(FontSizeForTextStyle(UIFontTextStyleFootnote));
 		_ingredientLabel.lineBreakMode	= NSLineBreakByWordWrapping;
 		_ingredientLabel.numberOfLines	= 0;
 		_ingredientLabel.textAlignment	= NSTextAlignmentLeft;
@@ -118,14 +118,16 @@
 + (CGFloat)heightOfCellWithIngredientLine:(NSString *)ingredientLine
 					   withSuperviewWidth:(CGFloat)superviewWidth
 {
-	CGFloat labelWidth					= superviewWidth - 30.0f;
+	CGFloat labelWidth					= superviewWidth - 24.0f;
 	CGSize labelContraints				= CGSizeMake(labelWidth, 100.0f);
 	
 	NSStringDrawingContext *context		= [[NSStringDrawingContext alloc] init];
 	
+	UIFont *font						= kYummlyFontWithSize(FontSizeForTextStyle(UIFontTextStyleFootnote));
+	
 	CGRect labelRect					= [ingredientLine boundingRectWithSize:labelContraints
 														options:NSStringDrawingUsesLineFragmentOrigin
-													 attributes:nil
+													 attributes:@{NSFontAttributeName: font}
 														context:context];
 	
 	return labelRect.size.height + 8.0f;

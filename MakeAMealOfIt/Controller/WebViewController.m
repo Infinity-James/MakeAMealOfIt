@@ -337,7 +337,7 @@
 {
 	[NetworkActivityIndicator stop];
 	[self updateToolbarButtons];
-	[self.pullToRefreshView endRefresh];
+	//[self.pullToRefreshView endRefresh];
 }
 
 /**
@@ -362,6 +362,9 @@
 {
 	[NetworkActivityIndicator start];
 	[self updateToolbarButtons];
+	
+	if (self.pullToRefreshView.state != PullToRefreshStateLoading)
+		self.pullToRefreshView.state	= PullToRefreshStateLoading;
 }
 
 #pragma mark - View Lifecycle

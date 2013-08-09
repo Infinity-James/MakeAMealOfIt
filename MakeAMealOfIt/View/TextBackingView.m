@@ -71,7 +71,7 @@
 	{
 		_detailLabel					= [[UILabel alloc] init];
 		_detailLabel.backgroundColor	= [UIColor clearColor];
-		_detailLabel.font				= [UIFont fontWithName:@"AvenirNext-Medium" size:8.0f];
+		_detailLabel.font				= kYummlyFontWithSize(FontSizeForTextStyle(UIFontTextStyleCaption2));
 		_detailLabel.textAlignment		= NSTextAlignmentCenter;
 		_detailLabel.textColor			= [UIColor whiteColor];
 		
@@ -92,7 +92,7 @@
 		_mainLabel						= [[UILabel alloc] init];
 		_mainLabel.adjustsFontSizeToFitWidth	= NO;
 		_mainLabel.backgroundColor		= [UIColor clearColor];
-		_mainLabel.font					= [UIFont fontWithName:@"AvenirNext-Medium" size:12.0f];
+		_mainLabel.font					= kYummlyBolderFontWithSize(FontSizeForTextStyle(UIFontTextStyleFootnote));
 		_mainLabel.lineBreakMode		= NSLineBreakByWordWrapping;
 		_mainLabel.numberOfLines		= 0;
 		_mainLabel.textAlignment		= NSTextAlignmentCenter;

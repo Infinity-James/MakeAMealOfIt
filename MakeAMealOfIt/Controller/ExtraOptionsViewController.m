@@ -278,7 +278,7 @@ static CGFloat const kParametersControllerHeight	= 340.0f;
 {
 	if (self = [super init])
 	{
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(yummlyRequestHasBeenReset:) name:kNotificationResetSearch object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(yummlyRequestHasBeenReset:) name:kNotificationYummlyRequestReset object:nil];
 	}
 	
 	return self;

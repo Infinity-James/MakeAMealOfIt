@@ -39,10 +39,10 @@
 {
 	NSShadow *shadow					= [[NSShadow alloc] init];
 	shadow.shadowBlurRadius				= kShadowBlur;
-	shadow.shadowColor					= [UIColor whiteColor];//[[UIColor alloc] initWithRed:0.2f green:0.2f blue:0.2f alpha:1.0f];
-	shadow.shadowOffset					= CGSizeMake(0.0f, 1.0f);
+	shadow.shadowColor					= [UIColor clearColor];//[[UIColor alloc] initWithRed:0.2f green:0.2f blue:0.2f alpha:1.0f];
+	shadow.shadowOffset					= CGSizeMake(0.0f, 0.0f);
 	
-	return @{	NSFontAttributeName				: kYummlyBolderFontWithSize(16.0f),
+	return @{	NSFontAttributeName				: kYummlyFontWithSize(16.0f),
 				NSForegroundColorAttributeName	: kYummlyColourMain,
 				NSShadowAttributeName			: shadow};
 }
@@ -117,7 +117,7 @@
 	shadow.shadowColor					= kYummlyColourShadow;
 	shadow.shadowOffset					= CGSizeMake(0.0f, 1.0f);
 	
-	return @{	NSFontAttributeName				: [UIFont fontWithName:@"AvenirNext-Regular" size:16.0f],
+	return @{	NSFontAttributeName				: kYummlyFontWithSize(FontSizeForTextStyle(UIFontTextStyleBody)),
 				NSForegroundColorAttributeName	: kYummlyColourMain,
 				NSShadowAttributeName			: shadow};
 }
@@ -166,7 +166,7 @@
 	shadow.shadowColor					= kYummlyColourShadow;
 	shadow.shadowOffset					= CGSizeMake(0.0f, 1.0f);
 	
-	return @{	NSFontAttributeName				: [UIFont fontWithName:@"AvenirNext-Regular" size:16.0f],
+	return @{	NSFontAttributeName				: kYummlyFontWithSize(FontSizeForTextStyle(UIFontTextStyleBody)),
 				NSForegroundColorAttributeName	: kYummlyColourMain,
 				NSShadowAttributeName			: shadow};
 }
@@ -433,11 +433,11 @@
 	shadow.shadowOffset					= CGSizeMake(0.0f, 1.0f);
 	
 	if (isSelected)
-		return @{	NSFontAttributeName				: [UIFont fontWithName:@"AvenirNext-Regular" size:14.0f],
+		return @{	NSFontAttributeName				: kYummlyFontWithSize(FontSizeForTextStyle(UIFontTextStyleFootnote)),
 					NSForegroundColorAttributeName	: [UIColor whiteColor],
 					NSShadowAttributeName			: shadow};
 	else
-		return @{	NSFontAttributeName				: [UIFont fontWithName:@"AvenirNext-Regular" size:14.0f],
+		return @{	NSFontAttributeName				: kYummlyFontWithSize(FontSizeForTextStyle(UIFontTextStyleFootnote)),
 					NSForegroundColorAttributeName	: kYummlyColourMain,
 					NSShadowAttributeName			: shadow};
 }
@@ -479,7 +479,7 @@
 	shadow.shadowColor					= kYummlyColourShadow;
 	shadow.shadowOffset					= CGSizeMake(0.0f, 1.0f);
 	
-	return @{	NSFontAttributeName				: [UIFont fontWithName:@"AvenirNext-Regular" size:16.0f],
+	return @{	NSFontAttributeName				: kYummlyFontWithSize(FontSizeForTextStyle(UIFontTextStyleBody)),
 				NSForegroundColorAttributeName	: kYummlyColourMain,
 				NSShadowAttributeName			: shadow};
 }

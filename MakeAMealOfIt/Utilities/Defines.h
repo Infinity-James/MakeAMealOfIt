@@ -34,7 +34,8 @@ static CGFloat const kPanelWidth		= 50.00f;
 #define kThemeChanged						@"NotificationThemeChanged"
 static NSString *const kNotificationYummlyRequestChanged	= @"NotificationYummlyRequestChanged";
 static NSString *const kNotificationYummlyRequestEmpty		= @"NotificationYummlyRequestEmpty";
-static NSString *const kNotificationResetSearch				= @"NotificationResetYummlySearch";
+static NSString *const kNotificationYummlyRequestReset		= @"NotificationYummlyRequestReset";
+static NSString *const kNotificationTextSizeChanged			= @"NotificationTextSizeChanged";
 
 //	yummly theme constants
 #define kDarkGreyColour					[UIColor colorWithRed:030.0f / 255.0f green:030.0f / 255.0f blue:030.0f / 255.0f alpha:1.000f]
@@ -45,5 +46,6 @@ static NSString *const kNotificationResetSearch				= @"NotificationResetYummlySe
 #define	kYummlyColourShadowWithAlpha(x)	[UIColor colorWithRed:130.0f / 255.0f green:034.0f / 255.0f blue:006.0f / 255.0f alpha:x]
 #define kYummlyFontWithSize(x)			[UIFont fontWithName:@"AvenirNext-Regular" size:x]
 #define kYummlyBolderFontWithSize(x)	[UIFont fontWithName:@"AvenirNext-Medium" size:x]
+#define FontSizeForTextStyle(textStyle) [[UIFontDescriptor preferredFontDescriptorWithTextStyle:textStyle].fontAttributes[UIFontDescriptorSizeAttribute] floatValue]
 
 #endif	//	Defines_h

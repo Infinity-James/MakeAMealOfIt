@@ -55,6 +55,16 @@
 }
 
 /**
+ *	The user has updated their choice of text size.
+ */
+- (void)textSizeChanged
+{
+	[ThemeManager customiseButton:self.searchButton withTheme:nil];
+	[ThemeManager customiseTextField:self.searchPhraseField withTheme:nil];
+	[self setNeedsUpdateConstraints];
+}
+
+/**
  *	Called when the global Yummly Request object has been reset.
  *
  *	@param	notification				The object containing a name, an object, and an optional dictionary.
@@ -127,7 +137,11 @@
 	if (self = [super init])
 	{
 		self.backgroundColor			= [UIColor whiteColor];
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(yummlyRequestHasBeenReset:) name:kNotificationResetSearch object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(yummlyRequestHasBeenReset:) name:kNotificationYummlyRequestReset object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(textSizeChanged)
+													 name:kNotificationTextSizeChanged
+												   object:nil];
 	}
 	
 	return self;

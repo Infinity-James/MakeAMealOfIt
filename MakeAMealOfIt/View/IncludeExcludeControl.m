@@ -71,6 +71,16 @@
 	[self.includeButton performSelector:@selector(setHighlighted:) withObject:@NO afterDelay:0.2f];
 }
 
+/**
+ *	The user has updated their choice of text size.
+ */
+- (void)textSizeChanged
+{
+	self.optionLabel.font				= kYummlyFontWithSize(FontSizeForTextStyle(UIFontTextStyleBody));
+	[self setNeedsUpdateConstraints];
+}
+
+
 #pragma mark - Auto Layout Methods
 
 /**
@@ -169,7 +179,6 @@
 	{
 		UITapGestureRecognizer *tapGesture	= [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
 		[self addGestureRecognizer:tapGesture];
-		//self.userInteractionEnabled		= NO;
 	}
 	
 	return self;
@@ -193,9 +202,6 @@
 		_excludeButton.contentHorizontalAlignment	= UIControlContentHorizontalAlignmentCenter;
 		_excludeButton.contentVerticalAlignment		= UIControlContentVerticalAlignmentCenter;
 		
-		//[ThemeManager customiseButton:_excludeButton withTheme:nil];
-		
-		//[_excludeButton addTarget:self action:@selector(excludeButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 		_excludeButton.userInteractionEnabled		= NO;
 		
 		_excludeButton.translatesAutoresizingMaskIntoConstraints	= NO;
@@ -221,9 +227,6 @@
 		_includeButton.contentHorizontalAlignment	= UIControlContentHorizontalAlignmentCenter;
 		_includeButton.contentVerticalAlignment		= UIControlContentVerticalAlignmentCenter;
 		
-		//[ThemeManager customiseButton:_includeButton withTheme:nil];
-		
-		//[_includeButton addTarget:self action:@selector(includeButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 		_includeButton.userInteractionEnabled		= NO;
 		
 		_includeButton.translatesAutoresizingMaskIntoConstraints	= NO;
@@ -246,7 +249,7 @@
 		_optionLabel					= [[UILabel alloc] init];
 		_optionLabel.textAlignment		= NSTextAlignmentCenter;
 		_optionLabel.textColor			= kYummlyColourMain;
-		_optionLabel.font				= kYummlyFontWithSize(16.0f);
+		_optionLabel.font				= kYummlyFontWithSize(FontSizeForTextStyle(UIFontTextStyleBody));
 		
 		_optionLabel.translatesAutoresizingMaskIntoConstraints		= NO;
 		[self addSubview:_optionLabel];

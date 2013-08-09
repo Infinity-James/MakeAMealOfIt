@@ -197,8 +197,12 @@ static id<Theme> _theme					= nil;
 		theme							= self.sharedTheme;
 	
 	//	customise the navigation bar
-	[navigationBar setBackgroundImage:[theme imageForNavigationBarForBarMetrics:UIBarMetricsDefault] forBarMetrics:UIBarMetricsDefault];
-	[navigationBar setBackgroundImage:[theme imageForNavigationBarForBarMetrics:UIBarMetricsLandscapePhone] forBarMetrics:UIBarMetricsLandscapePhone];
+	[navigationBar setBackgroundImage:[theme imageForNavigationBarForBarMetrics:UIBarMetricsDefault]
+						forBarMetrics:UIBarMetricsDefault];
+	
+	[navigationBar setBackgroundImage:[theme imageForNavigationBarForBarMetrics:UIBarMetricsLandscapePhone]
+						forBarMetrics:UIBarMetricsLandscapePhone];
+	
 	[navigationBar setShadowImage:[theme imageForNavigationBarShadow]];
 	[navigationBar setTitleTextAttributes:[theme navigationBarTextDictionary]];
 }
@@ -278,14 +282,28 @@ static id<Theme> _theme					= nil;
 	[stepper setBackgroundImage:[theme imageForStepperSelected] forState:UIControlStateHighlighted];
 	
 	//	customise the dividers of the stepper
-	[stepper setDividerImage:[theme imageForStepperDividerUnselected] forLeftSegmentState:UIControlStateNormal rightSegmentState:UIControlStateNormal];
-	[stepper setDividerImage:[theme imageForStepperDividerSelected] forLeftSegmentState:UIControlStateNormal rightSegmentState:UIControlStateSelected];
-	[stepper setDividerImage:[theme imageForStepperDividerSelected] forLeftSegmentState:UIControlStateSelected rightSegmentState:UIControlStateNormal];
-	[stepper setDividerImage:[theme imageForStepperDividerSelected] forLeftSegmentState:UIControlStateSelected rightSegmentState:UIControlStateSelected];
+	[stepper setDividerImage:[theme imageForStepperDividerUnselected]
+		 forLeftSegmentState:UIControlStateNormal
+		   rightSegmentState:UIControlStateNormal];
+	
+	[stepper setDividerImage:[theme imageForStepperDividerSelected]
+		 forLeftSegmentState:UIControlStateNormal
+		   rightSegmentState:UIControlStateSelected];
+	
+	[stepper setDividerImage:[theme imageForStepperDividerSelected]
+		 forLeftSegmentState:UIControlStateSelected
+		   rightSegmentState:UIControlStateNormal];
+	
+	[stepper setDividerImage:[theme imageForStepperDividerSelected]
+		 forLeftSegmentState:UIControlStateSelected
+		   rightSegmentState:UIControlStateSelected];
 	
 	//	customise the increment and decrement icons
-	[stepper setDecrementImage:[theme imageForStepperDecrement] forState:UIControlStateNormal];
-	[stepper setIncrementImage:[theme imageForStepperIncrement] forState:UIControlStateNormal];
+	[stepper setDecrementImage:[theme imageForStepperDecrement]
+					  forState:UIControlStateNormal];
+	
+	[stepper setIncrementImage:[theme imageForStepperIncrement]
+					  forState:UIControlStateNormal];
 }
 
 /**
