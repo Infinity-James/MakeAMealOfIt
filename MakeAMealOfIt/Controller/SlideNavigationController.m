@@ -126,6 +126,29 @@ NSString *const SlideNavigationStateEventTypeKey			= @"eventType";
 
 @implementation SlideNavigationController {}
 
+#pragma mark - State Preservation & Restoration Methods
+
+/**
+ *	Decodes and restores state-related information for the view controller.
+ *
+ *	@param	coder						The coder object to use to decode the state of the view.
+ */
+- (void)decodeRestorableStateWithCoder:(NSCoder *)coder
+{
+	//self.pastViewControllerDictionaries	= [coder decodeObjectForKey:@"pastViewControllers"];
+	//NSLog(@"PROOF: %@", self.pastViewControllerDictionaries);
+}
+
+/**
+ *	Encodes state-related information for the view controller.
+ *
+ *	@param	coder						The coder object to use to encode the state of the view controller.
+ */
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder
+{
+	//[coder encodeObject:self.pastViewControllerDictionaries forKey:@"pastViewControllers"];
+}
+
 #pragma mark - Action & Selector Methods
 
 /**
@@ -617,6 +640,8 @@ NSString *const SlideNavigationStateEventTypeKey			= @"eventType";
 	//	make sure we have the correct pan direction, and set the default panning
 	self.panDirection					= kPanDirectionNone;
 	self.panMode						= kPanModeDefault;
+	//	this is for state restoration
+	//self.restorationIdentifier			= NSStringFromClass([self class]);
 	//	set the default shadow opacity and the fact that we want shadows
 	self.shadowOpacity					= 0.75f;
 	self.shadowEnabled					= YES;

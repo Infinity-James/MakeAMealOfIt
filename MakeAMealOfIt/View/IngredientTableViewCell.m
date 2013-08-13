@@ -281,6 +281,8 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
         [self addPanGestureRecogniser];
 		[ThemeManager customiseTableViewCell:self withTheme:nil];
 		self.clipsToBounds				= NO;
+		for (UIView *subview in self.subviews)
+			subview.clipsToBounds		= NO;
 		self.selectionStyle				= UITableViewCellSelectionStyleNone;
 		self.textLabel.backgroundColor	= [UIColor clearColor];
 	}

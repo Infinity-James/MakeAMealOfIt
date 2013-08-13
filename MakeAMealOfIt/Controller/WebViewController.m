@@ -147,6 +147,7 @@
 {
 	if (self = [super init])
 	{
+		//self.restorationIdentifier		= NSStringFromClass([self class]);
 		self.url						= url;
 	}
 	

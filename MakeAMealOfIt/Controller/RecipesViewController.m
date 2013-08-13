@@ -111,6 +111,7 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 	if (self = [super init])
 	{
 		self.internetAccess				= YES;
+		//self.restorationIdentifier		= NSStringFromClass([self class]);
 	}
 	
 	return self;

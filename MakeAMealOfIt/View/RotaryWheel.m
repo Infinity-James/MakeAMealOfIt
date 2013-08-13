@@ -134,6 +134,7 @@
 	segmentView.alpha					= kMaximumAlpha;
 	segmentView.selected				= YES;
 	segmentView.transform				= CGAffineTransformScale(segmentView.transform, 1.3f, 1.3f);
+	[_container bringSubviewToFront:segmentView];
 }
 
 /**
@@ -394,6 +395,8 @@
 	}
 	
 	_currentSector						= 0;
+	SegmentView *currentSegment			= [self getSectorByValue:_currentSector];
+	[_container bringSubviewToFront:currentSegment];
 	
 	_container.userInteractionEnabled	= NO;
 	[self addSubview:_container];

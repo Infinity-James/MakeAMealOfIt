@@ -229,6 +229,8 @@ enum SectionIndex
 {
 	if (self = [super init])
 	{
+		//self.restorationIdentifier		= NSStringFromClass([self class]);
+		
 		[[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(yummlyRequestHasBeenReset:)
 													 name:kNotificationYummlyRequestReset

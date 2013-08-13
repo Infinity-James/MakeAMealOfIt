@@ -115,6 +115,7 @@
 	{
 		self.recipeID					= recipeID;
 		self.recipeName					= recipeName;
+		//self.restorationIdentifier		= NSStringFromClass([self class]);
 	}
 	
 	return self;

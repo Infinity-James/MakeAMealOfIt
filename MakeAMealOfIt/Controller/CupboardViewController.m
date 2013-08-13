@@ -840,7 +840,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 - (CGFloat)	  tableView:(UITableView *)tableView
 heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	return [IngredientTableViewCell desiredHeightForCell];
+	return 25.0f;//[IngredientTableViewCell desiredHeightForCell];
 }
 
 /**

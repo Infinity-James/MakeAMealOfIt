@@ -33,36 +33,24 @@
 {
 	if (!_segmentLabel)
 	{
-		_segmentLabel					= [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 35.0f, self.bounds.size.width - 30.0f, self.bounds.size.height - 30.0f)];
+		_segmentLabel					= [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 10.0f,
+																	self.bounds.size.width - 10.0f, self.bounds.size.height - 40.0f)];
 		_segmentLabel.alpha				= 0.0f;
-		_segmentLabel.font				= kYummlyBolderFontWithSize(10.0f);
+		_segmentLabel.backgroundColor	= kDarkGreyColourWithAlpha(0.8f);
+		_segmentLabel.font				= kYummlyBolderFontWithSize(FontSizeForTextStyle(UIFontTextStyleCaption2));
 		_segmentLabel.lineBreakMode		= NSLineBreakByWordWrapping;
 		_segmentLabel.numberOfLines		= 0;
-		_segmentLabel.shadowColor		= [UIColor whiteColor];
 		_segmentLabel.text				= self.segmentTitle;
 		_segmentLabel.textAlignment		= NSTextAlignmentCenter;
-		_segmentLabel.textColor			= [UIColor lightGrayColor];
+		_segmentLabel.textColor			= [UIColor colorWithRed:1.0f green:1.0f blue:1.0f alpha:1.0f];
 		_segmentLabel.transform			= CGAffineTransformMakeRotation(-self.angleOfSegment / 2.0f);
+		
+		[_segmentLabel sizeToFit];
+		
 		[self addSubview:_segmentLabel];
 	}
 	
 	return _segmentLabel;
-}
-
-/**
- *	The setter for title of this segment view.
- *
- *	@param	segmentTitle				The desired title for this segment view.
- */
-- (void)setSegmentTitle:(NSString *)segmentTitle
-{	
-	_segmentTitle						= segmentTitle;
-	//self.segmentLabel.text				= _segmentTitle;
-	/*NSAttributedString *attributedTitle	= [[NSAttributedString alloc] initWithString:_segmentTitle
-																		  attributes:@{	NSForegroundColorAttributeName	: kYummlyColourShadow,
-																						NSFontAttributeName				: kYummlyFontWithSize(18.0f),
-																						NSTextEffectAttributeName		: NSTextEffectLetterpressStyle}];
-	_segmentLabel.attributedText		= attributedTitle;*/
 }
 
 /**

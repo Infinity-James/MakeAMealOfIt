@@ -30,12 +30,31 @@
 #pragma mark - Action & Selector Methods
 
 /**
- *
+ *	Called when the user has updated their preferred text size.
  */
 - (void)preferredTextSizeChanged
 {
 	[ThemeManager setSharedTheme:[[YummlyTheme alloc] init]];
 	[[NSNotificationCenter defaultCenter] postNotificationName:kNotificationTextSizeChanged object:nil];
+}
+
+#pragma mark - BITUpdateManager Methods
+
+/**
+ *	Sent to the delegate to get the device identifier.
+ *
+ *	@param	updateManager				The BITUpdateManager instance invoking this delegate.
+ *
+ *	@return	Return the device UDID which is required for beta testing, should return nil for app store configuration.
+ */
+- (NSString *)customDeviceIdentifierForUpdateManager:(BITUpdateManager *)updateManager
+{
+#ifndef CONFIGURATION_AppStore
+	if ([[UIDevice currentDevice] respondsToSelector:@selector(uniqueIdentifier)])
+		return [[UIDevice currentDevice] performSelector:@selector(uniqueIdentifier)];
+#endif
+	
+	return nil;
 }
 
 #pragma mark - UIApplicationDelegate Methods
@@ -88,24 +107,30 @@
     return YES;
 }
 
-#pragma mark - BITUpdateManager Methods
-
 /**
- *	Sent to the delegate to get the device identifier.
+ *	Asks the delegate whether the app’s saved state information should be restored.
  *
- *	@param	updateManager				The BITUpdateManager instance invoking this delegate.
+ *	@param	The delegating application object.
+ *	@param	The keyed archiver containing the app’s previously saved state information.
  *
- *	@return	Return the device UDID which is required for beta testing, should return nil for app store configuration.
+ *	@return	YES if the app’s state should be restored or NO if it should not.
  */
-- (NSString *)customDeviceIdentifierForUpdateManager:(BITUpdateManager *)updateManager
+- (BOOL)application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder
 {
-#ifndef CONFIGURATION_AppStore
-	if ([[UIDevice currentDevice] respondsToSelector:@selector(uniqueIdentifier)])
-		return [[UIDevice currentDevice] performSelector:@selector(uniqueIdentifier)];
-#endif
-	
-	return nil;
+	return NO;
 }
 
+/**
+ *	Asks the delegate whether the app’s state should be preserved.
+ *
+ *	@param	application					The delegating application object.
+ *	@param	coder						The keyed archiver into which you can put high-level state information.
+ *
+ *	@return	YES if the app’s state should be preserved or NO if it should not.
+ */
+- (BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder
+{
+	return NO;
+}
 
 @end
