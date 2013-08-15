@@ -7,11 +7,11 @@
 //
 
 #import "AppDelegate.h"
-#import "ResultManagementCell.h"
+#import "Reachability.h"
 #import "RecipeCollectionViewCell.h"
 #import "RecipeDetailsViewController.h"
 #import "RecipesViewController.h"
-#import "ToolbarLabelYummlyTheme.h"
+#import "ResultManagementCell.h"
 #import "UIImageView+Animation.h"
 #import "WebViewController.h"
 #import "YummlyAttributionViewController.h"
@@ -30,6 +30,8 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 
 /**	Whether this device currently has internet access or not.	*/
 @property (nonatomic, assign)	BOOL					internetAccess;
+/**	Whether there are more results available to be loaded or not.*/
+@property (nonatomic, assign)	BOOL					moreResultsAvailable;
 /**	The main view that will show the recipes in an elegant way.	*/
 @property (nonatomic, strong)	UICollectionView		*recipesCollectionView;
 /**	The right slide navigation bar button used to slide in the right view.	*/
@@ -111,7 +113,7 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 	if (self = [super init])
 	{
 		self.internetAccess				= YES;
-		//self.restorationIdentifier		= NSStringFromClass([self class]);
+		self.moreResultsAvailable		= YES;
 	}
 	
 	return self;
@@ -136,7 +138,7 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 		{
 			dispatch_async(dispatch_get_main_queue(),
 			^{
-				self.internetAccess		= NO;
+				self.moreResultsAvailable	= NO;
 				[self.recipesCollectionView deleteItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:self.recipes.count inSection:0]]];
 				return;
 			});
@@ -352,7 +354,7 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 	 numberOfItemsInSection:(NSInteger)section
 {
 	//	if there are results being shown, but no internet access, we don't show a 'loading more results' cells
-	if (!self.internetAccess && self.recipes.count != 0)
+	if (!self.moreResultsAvailable && self.recipes.count != 0)
 		return self.recipes.count;
 	
 	//	if there's either no results, or results left to load, we show a loading more results cell or no results cell

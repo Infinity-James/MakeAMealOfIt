@@ -42,6 +42,8 @@
 @property (nonatomic, weak)	id <RecipeDetailsViewDelegate>	delegate;
 /**	An object encapsulating the recipe that this view is showing. */
 @property (nonatomic, readonly, strong)	Recipe	*recipe;
+/**	Whether the view is in a position where, if required, it can indicate any loading.	*/
+@property (nonatomic, assign)			BOOL	canShowLoading;
 
 #pragma mark - Public Methods
 

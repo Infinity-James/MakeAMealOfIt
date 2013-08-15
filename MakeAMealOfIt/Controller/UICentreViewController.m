@@ -27,9 +27,18 @@
  */
 - (void)slideNavigationStateEventOccured:(NSNotification *)notification
 {
+	if (!self.slideNavigationController)			return;
+	
 	NSDictionary *userInfo				= notification.userInfo;
 	SlideNavigationStateEvent event		= [(NSNumber *)userInfo[SlideNavigationStateEventTypeKey] integerValue];
-	[self slideNavigationControllerStateUpdated:event];
+	
+	switch (event)
+	{
+		case SlideNavigationStateEventDidClose:		[self slideNavigationControllerDidClose];	break;
+		case SlideNavigationStateEventDidOpen:		break;
+		case SlideNavigationStateEventWillClose:	break;
+		case SlideNavigationStateEventWillOpen:		break;
+	}
 }
 
 #pragma mark - Autolayout Methods
@@ -52,9 +61,9 @@
 /**
  *	Adds toolbar items to our toolbar.
  *
- *	@param	animate						Whether or not the toolbar items should be an animated fashion.
+ *	@param	animated					Whether or not the toolbar items should be an animated fashion.
  */
-- (void)addToolbarItemsAnimated:(BOOL)animate
+- (void)addToolbarItemsAnimated:(BOOL)animated
 {
 }
 
@@ -79,9 +88,9 @@
 #pragma mark - Property Accessor Methods - Getters
 
 /**
+ *	The slide navigation item used to represent the view controller in a parent’s toolbar.
  *
- *
- *	@return
+ *	@return	An initialised SlideNavigationItem.
  */
 - (SlideNavigationItem *)slideNavigationItem
 {
@@ -108,34 +117,38 @@
 #pragma mark - Slide Navigation Controller Lifecycle
 
 /**
- *	Called when the Slide Navigation Controller's state has been updated.
- *
- *	@param	stateEvent					The new state of the Slide Navigation Controller.
+ *	Notifies the view controller that the parent slideNavigationController has closed all side views.
  */
-- (void)slideNavigationControllerStateUpdated:(SlideNavigationStateEvent)stateEvent
+- (void)slideNavigationControllerDidClose
+{
+	
+}
+
+/**
+ *	Notifies the view controller that the parent slideNavigationController has open a side view.
+ */
+- (void)slideNavigationControllerDidOpen
+{
+	
+}
+
+/**
+ *	Notifies the view controller that the parent slideNavigationController will close all side views.
+ */
+- (void)slideNavigationControllerWillClose
+{
+	
+}
+
+/**
+ *	Notifies the view controller that the parent slideNavigationController will open a side view.
+ */
+- (void)slideNavigationControllerWillOpen
 {
 	
 }
 
 #pragma mark - View Lifecycle
-
-/**
- *	Sent to the view controller when the app receives a memory warning.
- */
-- (void)didReceiveMemoryWarning
-{
-	[super didReceiveMemoryWarning];
-}
-
-/**
- *	Called after the controller’s view is loaded into memory.
- */
-- (void)viewDidLoad
-{
-	[super viewDidLoad];
-	self.view.backgroundColor			= [UIColor whiteColor];
-	[self addToolbarItemsAnimated:NO];
-}
 
 /**
  *	Notifies the view controller that its view is about to be added to a view hierarchy.
@@ -146,6 +159,8 @@
 {
 	[super viewWillAppear:animated];
 	[self.view setNeedsUpdateConstraints];
+	self.view.backgroundColor			= [UIColor whiteColor];
+	[self addToolbarItemsAnimated:NO];
 }
 
 @end

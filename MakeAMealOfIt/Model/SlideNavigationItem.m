@@ -7,7 +7,6 @@
 //
 
 #import "SlideNavigationItem.h"
-#import "ToolbarLabelYummlyTheme.h"
 
 #pragma mark - Slide Navigation Item Private Class Extension
 
@@ -120,9 +119,11 @@
 			self.title					= [self.title stringByReplacingCharactersInRange:removalRange withString:@""];
 		}
 		//	use the title in the label, customise it, and then make a bar button item with it
+		title.font						= kYummlyBolderFontWithSize(FontSizeForTextStyle(UIFontTextStyleHeadline));
 		title.text						= self.title;
 		title.textAlignment				= NSTextAlignmentCenter;
-		[ThemeManager customiseLabel:title withTheme:[[ToolbarLabelYummlyTheme alloc] init]];
+		title.textColor					= kYummlyColourMain;
+		
 		[title sizeToFit];
 		UIBarButtonItem *titleItem		= [[UIBarButtonItem alloc] initWithCustomView:title];
 		

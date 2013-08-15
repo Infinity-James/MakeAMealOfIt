@@ -165,10 +165,11 @@
 	if (!_searchButton)
 	{
 		_searchButton					= [[UIButton alloc] init];
-		[_searchButton setTitle:@"Search" forState:UIControlStateNormal];
 		_searchButton.contentEdgeInsets	= UIEdgeInsetsMake(0.0f, 14.0f, 0.0f, 14.0f);
 		_searchButton.opaque			= YES;
-		[ThemeManager customiseButton:_searchButton withTheme:nil];
+		[_searchButton setTitle:@"Search" forState:UIControlStateNormal];
+		[_searchButton setTitleColor:kYummlyColourMain forState:UIControlStateNormal];
+		[_searchButton setTitleColor:kYummlyColourShadow forState:UIControlStateHighlighted];
 		[_searchButton addTarget:self action:@selector(searchButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 		[_searchButton sizeToFit];
 		
@@ -194,6 +195,7 @@
 		_searchPhraseField.delegate		= self;
 		_searchPhraseField.opaque		= YES;
 		_searchPhraseField.placeholder	= [[NSString alloc] initWithFormat:@"%@...", self.foods[arc4random() % self.foods.count]];
+		_searchPhraseField.returnKeyType= UIReturnKeySearch;
 		[_searchPhraseField setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
 		[_searchPhraseField setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
 		
@@ -272,13 +274,17 @@
 }
 
 /**
- *	asks delegate if the text field should process the pressing of the return button
+ *	Asks the delegate if the text field should process the pressing of the return button.
  *
- *	@param	textField					text field whose return button was pressed
+ *	@param	textField					The text field whose return button was pressed.
+ *
+ *	@return	YES if the text field should implement its default behavior for the return button; otherwise, NO.
  */
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
 	[textField resignFirstResponder];
+	
+	[self searchButtonTapped];
 	
 	return YES;
 }

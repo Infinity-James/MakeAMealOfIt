@@ -240,7 +240,7 @@ static NSString *const kDeveloperURLString	= @"http://andbeyond.co";
 	{
 		_appName						= [[UILabel alloc] init];
 		_appName.backgroundColor		= [UIColor clearColor];
-		_appName.font					= kYummlyBolderFontWithSize(18.0f);
+		_appName.font					= kYummlyBolderFontWithSize(FontSizeForTextStyle(UIFontTextStyleHeadline));
 		_appName.lineBreakMode			= NSLineBreakByWordWrapping;
 		_appName.numberOfLines			= 0;
 		_appName.text					= @"Make A Meal Of It";
@@ -283,7 +283,7 @@ static NSString *const kDeveloperURLString	= @"http://andbeyond.co";
 	{
 		_attributionText				= [[UILabel alloc] init];
 		_attributionText.backgroundColor= [UIColor clearColor];
-		_attributionText.font			= kYummlyFontWithSize(14.0f);
+		_attributionText.font			= kYummlyFontWithSize(FontSizeForTextStyle(UIFontTextStyleBody));
 		_attributionText.lineBreakMode	= NSLineBreakByWordWrapping;
 		_attributionText.numberOfLines	= 0;
 		_attributionText.text			= self.attributionDictionary[kYummlyAttributionTextKey];
@@ -325,9 +325,10 @@ static NSString *const kDeveloperURLString	= @"http://andbeyond.co";
 		
 		UIColor *andColour					= [[UIColor alloc] initWithRed:185.0f / 255.0f green:46.0f / 255.0f blue:0.0f alpha:1.0f];
 		
+		NSDictionary *attributes			= @{NSTextEffectAttributeName	: NSTextEffectLetterpressStyle,
+												NSFontAttributeName			: kYummlyFontWithSize(FontSizeForTextStyle(UIFontTextStyleFootnote))	};
 		NSMutableAttributedString *company	= [[NSMutableAttributedString alloc] initWithString:@"&Beyond"
-																					attributes:@{	NSTextEffectAttributeName	: NSTextEffectLetterpressStyle,
-																									NSFontAttributeName			: kYummlyFontWithSize(14.0f)	}];
+																					attributes:attributes];
 		[company addAttribute:NSForegroundColorAttributeName
 						value:andColour
 						range:NSMakeRange(0, 1)];
@@ -361,11 +362,12 @@ static NSString *const kDeveloperURLString	= @"http://andbeyond.co";
 		_developerLabel					= [[UILabel alloc] init];
 		
 		UIColor *signatureColour		= [[UIColor alloc] initWithRed:175.0f / 255.0f green:124.0f / 255.0f blue:208.0f / 255.0f alpha:1.0f];
+		
+		NSDictionary *attributes		= @{NSForegroundColorAttributeName	: signatureColour,
+											NSTextEffectAttributeName		: NSTextEffectLetterpressStyle,
+											NSFontAttributeName				: [UIFont fontWithName:@"Futura-Medium" size:FontSizeForTextStyle(UIFontTextStyleFootnote)]};
 		NSAttributedString *developer	= [[NSAttributedString alloc] initWithString:@"james valaitis"
-																		attributes:@{	NSForegroundColorAttributeName	: signatureColour,
-																						NSTextEffectAttributeName		: NSTextEffectLetterpressStyle,
-																						NSFontAttributeName				: [UIFont fontWithName:@"Futura-Medium"
-																																 size:14.0f]}];
+																		attributes:attributes];
 		_developerLabel.attributedText	= developer;
 		_developerLabel.opaque			= YES;
 		_developerLabel.userInteractionEnabled	= YES;

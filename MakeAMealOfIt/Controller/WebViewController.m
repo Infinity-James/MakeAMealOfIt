@@ -65,7 +65,10 @@
 - (void)doneTapped
 {
 	if (self.presentingViewController)
+	{
+		[NetworkActivityIndicator stop];
 		[self dismissViewControllerAnimated:YES completion:nil];
+	}
 }
 
 /**

@@ -26,10 +26,26 @@
 #pragma mark - Public Methods
 
 /**
- *	Called when the Slide Navigation Controller's state has been updated.
+ *	Adds toolbar items to our toolbar.
  *
- *	@param	stateEvent					The new state of the Slide Navigation Controller.
+ *	@param	animated					Whether or not the toolbar items should be an animated fashion.
  */
-- (void)slideNavigationControllerStateUpdated:(SlideNavigationStateEvent)stateEvent;	
+- (void)addToolbarItemsAnimated:(BOOL)animated;
+/**
+ *	Notifies the view controller that the parent slideNavigationController has closed all side views.
+ */
+- (void)slideNavigationControllerDidClose;
+/**
+ *	Notifies the view controller that the parent slideNavigationController has open a side view.
+ */
+- (void)slideNavigationControllerDidOpen;
+/**
+ *	Notifies the view controller that the parent slideNavigationController will close all side views.
+ */
+- (void)slideNavigationControllerWillClose;
+/**
+ *	Notifies the view controller that the parent slideNavigationController will open a side view.
+ */
+- (void)slideNavigationControllerWillOpen;
 
 @end

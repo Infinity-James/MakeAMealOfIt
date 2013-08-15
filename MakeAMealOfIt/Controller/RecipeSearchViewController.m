@@ -7,10 +7,11 @@
 //
 
 #import "AppDelegate.h"
+#import "MakeAMealOfItIntroduction.h"
+#import "Reachability.h"
 #import "RecipeSearchView.h"
 #import "RecipeSearchViewController.h"
 #import "RecipesViewController.h"
-#import "ToolbarLabelYummlyTheme.h"
 #import "YummlyAttributionViewController.h"
 #import "YummlySearchResult.h"
 
@@ -51,6 +52,8 @@ enum SectionIndex
 @property (nonatomic, copy)		LeftControllerDataModified	modifiedIngredients;
 /**	This is the main view that allows the user to search.	*/
 @property (nonatomic, strong)	RecipeSearchView			*recipeSearchView;
+/**	A button that allows the user to see the tutorial again.	*/
+@property (nonatomic, strong)	UIButton					*tutorialButton;
 
 @end
 
@@ -93,6 +96,14 @@ enum SectionIndex
 	[self.recipeSearchView resignFirstResponder];
 	if (self.slideNavigationController.controllerState == SlideNavigationSideControllerClosed)
 		[self.slideNavigationController setControllerState:SlideNavigationSideControllerRightOpen withCompletionHandler:nil];
+}
+
+/**
+ *	The user wishes to see the tutorial again.
+ */
+- (void)tutorialTapped
+{
+	[MakeAMealOfItIntroduction showIntroductionViewWithFrame:self.view.superview.bounds inView:self.view.superview];
 }
 
 /**
@@ -185,6 +196,15 @@ enum SectionIndex
 																metrics:nil
 																  views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
+	
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[tutorialButton]-|"
+																	  options:kNilOptions
+																	  metrics:nil
+																		views:self.viewsDictionary]];
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[tutorialButton]"
+																	  options:kNilOptions
+																	  metrics:nil
+																		views:self.viewsDictionary]];
 }
 
 #pragma mark - Convenience & Helper Methods
@@ -417,7 +437,7 @@ enum SectionIndex
 													animated:YES];
 }
 
-#pragma mark - Setter & Getter Methods
+#pragma mark - Property Accessor Methods - Getters
 
 /**
  *	A button that allows the user to reset the entire search.
@@ -573,6 +593,28 @@ enum SectionIndex
 }
 
 /**
+ *	A button that, when tapped, shows the user the intro tutorial.
+ *
+ *	@return
+ */
+- (UIButton *)tutorialButton
+{
+	if (!_tutorialButton)
+	{
+		_tutorialButton					= [[UIButton alloc] init];
+		[_tutorialButton setTitle:@"?" forState:UIControlStateNormal];
+		[_tutorialButton setTitleColor:kYummlyColourMain forState:UIControlStateNormal];
+		[_tutorialButton setTitleColor:kYummlyColourShadow forState:UIControlStateHighlighted];
+		[_tutorialButton addTarget:self action:@selector(tutorialTapped) forControlEvents:UIControlEventTouchUpInside];
+		
+		_tutorialButton.translatesAutoresizingMaskIntoConstraints	= NO;
+		[self.view addSubview:_tutorialButton];
+	}
+	
+	return _tutorialButton;
+}
+
+/**
  *	A dictionary to used when creating visual constraints for this view controller.
  *
  *	@return	A dictionary with of views and appropriate keys.
@@ -581,17 +623,40 @@ enum SectionIndex
 {
 	return @{	@"clearSearchButton": self.clearSearchButton,
 				@"recipeSearchView"	: self.recipeSearchView,
-				@"tableView"		: self.tableView	};
+				@"tableView"		: self.tableView,
+				@"tutorialButton"	: self.tutorialButton	};
 }
 
 #pragma mark - Slide Navigation Controller Lifecycle
 
 /**
- *	Called when the Slide Navigation Controller's state has been updated.
- *
- *	@param	stateEvent					The new state of the Slide Navigation Controller.
+ *	Notifies the view controller that the parent slideNavigationController has closed all side views.
  */
-- (void)slideNavigationControllerStateUpdated:(SlideNavigationStateEvent)stateEvent
+- (void)slideNavigationControllerDidClose
+{
+	
+}
+
+/**
+ *	Notifies the view controller that the parent slideNavigationController has open a side view.
+ */
+- (void)slideNavigationControllerDidOpen
+{
+	
+}
+
+/**
+ *	Notifies the view controller that the parent slideNavigationController will close all side views.
+ */
+- (void)slideNavigationControllerWillClose
+{
+	
+}
+
+/**
+ *	Notifies the view controller that the parent slideNavigationController will open a side view.
+ */
+- (void)slideNavigationControllerWillOpen
 {
 	self.selectedCellIndexPath			= nil;
 	[self.tableView setEditing:NO animated:NO];
@@ -847,14 +912,22 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 	[ThemeManager customiseTableViewCell:cell withTheme:nil];
 }
 
+#pragma mark - View Lifecycle
+
 /**
- *	Called after the controller’s view is loaded into memory.
+ *	Notifies the view controller that its view was added to a view hierarchy.
+ *
+ *	@param	animated					If YES, the view was added to the window using an animation.
  */
-- (void)viewDidLoad
+- (void)viewDidAppear:(BOOL)animated
 {
-	[super viewDidLoad];
+	[super viewDidAppear:animated];
 	
-	//	[self.view addGestureRecognizer:self.resignGestureRecogniser];
+	if (![MakeAMealOfItIntroduction introductionHasBeenShown])
+	{
+		[MakeAMealOfItIntroduction showIntroductionViewWithFrame:self.view.superview.bounds inView:self.view.superview];
+		[MakeAMealOfItIntroduction setIntroductionHasBeenShown:YES];
+	}
 }
 
 @end

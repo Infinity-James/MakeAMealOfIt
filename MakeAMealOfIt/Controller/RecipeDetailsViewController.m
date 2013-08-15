@@ -8,7 +8,6 @@
 
 #import "RecipeDetailsViewController.h"
 #import "RecipeDetailsView.h"
-#import "ToolbarLabelYummlyTheme.h"
 #import "WebViewController.h"
 #import "YummlyAPI.h"
 
@@ -287,6 +286,40 @@
 - (NSDictionary *)viewsDictionary
 {
 	return @{	@"scrollView"	: self.scrollView	};
+}
+
+#pragma mark - Slide Navigation Controller Lifecycle
+
+/**
+ *	Notifies the view controller that the parent slideNavigationController has closed all side views.
+ */
+- (void)slideNavigationControllerDidClose
+{
+	self.recipeDetailsView.canShowLoading	= YES;
+}
+
+/**
+ *	Notifies the view controller that the parent slideNavigationController has open a side view.
+ */
+- (void)slideNavigationControllerDidOpen
+{
+	
+}
+
+/**
+ *	Notifies the view controller that the parent slideNavigationController will close all side views.
+ */
+- (void)slideNavigationControllerWillClose
+{
+	
+}
+
+/**
+ *	Notifies the view controller that the parent slideNavigationController will open a side view.
+ */
+- (void)slideNavigationControllerWillOpen
+{
+	
 }
 
 #pragma mark - View Lifecycle

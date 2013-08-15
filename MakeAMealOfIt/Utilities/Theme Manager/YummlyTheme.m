@@ -43,7 +43,7 @@
 	shadow.shadowOffset					= CGSizeMake(0.0f, 0.0f);
 	
 	return @{	NSFontAttributeName				: kYummlyFontWithSize(16.0f),
-				NSForegroundColorAttributeName	: kYummlyColourMain,
+				NSForegroundColorAttributeName	: kDarkGreyColour,
 				NSShadowAttributeName			: shadow};
 }
 
@@ -115,7 +115,7 @@
 	NSShadow *shadow					= [[NSShadow alloc] init];
 	shadow.shadowBlurRadius				= kShadowBlur;
 	shadow.shadowColor					= kYummlyColourShadow;
-	shadow.shadowOffset					= CGSizeMake(0.0f, 1.0f);
+	shadow.shadowOffset					= CGSizeMake(0.0f, 0.0f);
 	
 	return @{	NSFontAttributeName				: kYummlyFontWithSize(FontSizeForTextStyle(UIFontTextStyleBody)),
 				NSForegroundColorAttributeName	: kYummlyColourMain,
@@ -430,7 +430,7 @@
 	NSShadow *shadow					= [[NSShadow alloc] init];
 	shadow.shadowBlurRadius				= kShadowBlur;
 	shadow.shadowColor					= kYummlyColourShadow;
-	shadow.shadowOffset					= CGSizeMake(0.0f, 1.0f);
+	shadow.shadowOffset					= CGSizeMake(0.0f, 0.0f);
 	
 	if (isSelected)
 		return @{	NSFontAttributeName				: kYummlyFontWithSize(FontSizeForTextStyle(UIFontTextStyleFootnote)),

@@ -32,11 +32,13 @@ static CGFloat const kImageHeight		= 200.0f;
 @property (nonatomic, strong)				UIImageView					*recipeImageView;
 /**	A controller that will handle displaying the ingredients in the table view properly.	*/
 @property (nonatomic, strong)				RecipeIngredientsController	*recipeIngredientsController;
-/**	*/
+/**	A label used to display how many servings this recipe can provide.	*/
 @property (nonatomic, strong)				UILabel						*servingsLabel;
+/**	If YES the view should indicate loading as soon as possible.	*/
+@property (nonatomic, assign)				BOOL						loading;
 /**	A view showing the rating of the recipe being displayed.	*/
 @property (nonatomic, strong)				StarRatingView				*starRatingView;
-/**	*/
+/**	The button that allows the user to view the recipe in it's entirety.	*/
 @property (nonatomic, strong)				UIButton					*viewRecipeButton;
 
 @end
@@ -48,7 +50,7 @@ static CGFloat const kImageHeight		= 200.0f;
 #pragma mark - Action & Selector Methods
 
 /**
- *
+ *	Called when user has tapped the button to view the recipe.
  */
 - (void)viewRecipeTapped
 {
@@ -79,80 +81,71 @@ static CGFloat const kImageHeight		= 200.0f;
 	[self.recipeImageView removeConstraints:self.recipeImageView.constraints];
 	[self.starRatingView removeConstraints:self.starRatingView.constraints];
 	
-	NSArray *constraints;
-	NSLayoutConstraint *constraint;
-	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[recipeImageView]|"
-																options:NSLayoutFormatAlignAllCenterX
-																metrics:nil
-																  views:self.viewsDictionary];
-	[self addConstraints:constraints];
-
-	constraint							= [NSLayoutConstraint constraintWithItem:self.recipeImageView
-													attribute:NSLayoutAttributeCenterX
-													relatedBy:NSLayoutRelationEqual
-													   toItem:self
-													attribute:NSLayoutAttributeCenterX
-												   multiplier:1.0f
-													 constant:0.0f];
-	[self addConstraint:constraint];
-	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[recipeImageView]-[tableView(==tvHeight)]"
-																options:kNilOptions
-																metrics:@{@"tvHeight": @(self.recipeIngredientsController.maximumTableViewHeight)}
-																  views:self.viewsDictionary];
-	[self addConstraints:constraints];
-	
+	CGFloat imageMargin					= 20.0f + (kImageHeight / 2.0f);
 	CGFloat tableViewWidth				= (self.bounds.size.width / 5.0f) * 3.0f;
 	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[tableView(==tvWidth)]-(==30)-[starRating]"
-																options:NSLayoutFormatAlignAllTop
-																metrics:@{@"tvWidth": @(tableViewWidth)}
-																  views:self.viewsDictionary];
-	[self addConstraints:constraints];
+	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[recipeImageView]|"
+																 options:NSLayoutFormatAlignAllCenterX
+																 metrics:nil
+																   views:self.viewsDictionary]];
+
+	[self addConstraint:[NSLayoutConstraint constraintWithItem:self.recipeImageView
+													 attribute:NSLayoutAttributeCenterX
+													 relatedBy:NSLayoutRelationEqual
+														toItem:self
+													 attribute:NSLayoutAttributeCenterX
+													multiplier:1.0f
+													  constant:0.0f]];
 	
-	constraint							= [NSLayoutConstraint constraintWithItem:self.recipeImageView
-													attribute:NSLayoutAttributeHeight
-													relatedBy:NSLayoutRelationEqual
-													   toItem:self.recipeImageView
-													attribute:NSLayoutAttributeWidth
-												   multiplier:1.0f
-													 constant:0.0f];
-	[self.recipeImageView addConstraint:constraint];
+	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[recipeImageView]-[tableView(==tvHeight)]"
+																 options:kNilOptions
+																 metrics:@{@"tvHeight": @(self.recipeIngredientsController.maximumTableViewHeight)}
+																   views:self.viewsDictionary]];
 	
-	CGFloat imageMargin					= 20.0f + (kImageHeight / 2.0f);
 	
-	constraint							= [NSLayoutConstraint constraintWithItem:self.activityIndicatorView
-													attribute:NSLayoutAttributeCenterX
-													relatedBy:NSLayoutRelationEqual
-													   toItem:self
-													attribute:NSLayoutAttributeCenterX
-												   multiplier:1.0f
-													 constant:0.0f];
-	[self addConstraint:constraint];
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(imageMargin)-[activityIndicator]"
-																options:kNilOptions
-																metrics:@{@"imageMargin": @(imageMargin)}
-																  views:self.viewsDictionary];
-	[self addConstraints:constraints];
+	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[tableView(==tvWidth)]-(==30)-[starRating]"
+																 options:NSLayoutFormatAlignAllTop
+																 metrics:@{@"tvWidth": @(tableViewWidth)}
+																   views:self.viewsDictionary]];
 	
-	constraint							= [NSLayoutConstraint constraintWithItem:self.starRatingView
-													attribute:NSLayoutAttributeHeight
-													relatedBy:NSLayoutRelationEqual
-													   toItem:nil
-													attribute:NSLayoutAttributeNotAnAttribute
-												   multiplier:1.0f
-													 constant:kImageHeight];
-	[self.starRatingView addConstraint:constraint];
+	[self addConstraint:[NSLayoutConstraint constraintWithItem:self.recipeImageView
+													 attribute:NSLayoutAttributeHeight
+													 relatedBy:NSLayoutRelationEqual
+														toItem:self.recipeImageView
+													 attribute:NSLayoutAttributeWidth
+													multiplier:1.0f
+													  constant:0.0f]];
 	
-	constraint							= [NSLayoutConstraint constraintWithItem:self.starRatingView
-													attribute:NSLayoutAttributeWidth
-													relatedBy:NSLayoutRelationEqual
-													   toItem:self.starRatingView
-													attribute:NSLayoutAttributeHeight
-												   multiplier:0.2f
-													 constant:0.0f];
-	[self.starRatingView addConstraint:constraint];
+	
+	
+	[self addConstraint:[NSLayoutConstraint constraintWithItem:self.activityIndicatorView
+													 attribute:NSLayoutAttributeCenterX
+													 relatedBy:NSLayoutRelationEqual
+														toItem:self
+													 attribute:NSLayoutAttributeCenterX
+													multiplier:1.0f
+													  constant:0.0f]];
+	
+	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(imageMargin)-[activityIndicator]"
+																 options:kNilOptions
+																 metrics:@{@"imageMargin": @(imageMargin)}
+																   views:self.viewsDictionary]];
+	
+	[self addConstraint:[NSLayoutConstraint constraintWithItem:self.starRatingView
+													 attribute:NSLayoutAttributeHeight
+													 relatedBy:NSLayoutRelationEqual
+														toItem:nil
+													 attribute:NSLayoutAttributeNotAnAttribute
+													multiplier:1.0f
+													  constant:kImageHeight]];
+	
+	[self addConstraint:[NSLayoutConstraint constraintWithItem:self.starRatingView
+													 attribute:NSLayoutAttributeWidth
+													 relatedBy:NSLayoutRelationEqual
+														toItem:self.starRatingView
+													 attribute:NSLayoutAttributeHeight
+													multiplier:0.2f
+													  constant:0.0f]];
 	
 	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[starRating]-(20)-[servingsLabel]"
 																 options:NSLayoutFormatAlignAllCenterX
@@ -164,7 +157,7 @@ static CGFloat const kImageHeight		= 200.0f;
 																 metrics:nil
 																   views:self.viewsDictionary]];
 	
-	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[servingsLabel]-(>=20@600)-[viewRecipeButton]"
+	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[servingsLabel]-(>=10@600)-[viewRecipeButton]"
 																 options:kNilOptions
 																 metrics:nil
 																   views:self.viewsDictionary]];
@@ -176,6 +169,9 @@ static CGFloat const kImageHeight		= 200.0f;
 													 attribute:NSLayoutAttributeCenterX
 													multiplier:1.0f
 													  constant:0.0f]];
+	
+	if (self.loading)
+		self.loading					= NO;
 }
 
 #pragma mark - Convenience & Helper Methods
@@ -306,9 +302,10 @@ static CGFloat const kImageHeight		= 200.0f;
 	if (!_servingsLabel)
 	{
 		_servingsLabel					= [[UILabel alloc] init];
-		_servingsLabel.font				= kYummlyFontWithSize(12.0f);
+		_servingsLabel.font				= kYummlyFontWithSize(FontSizeForTextStyle(UIFontTextStyleCaption2));
 		_servingsLabel.numberOfLines	= 0;
 		_servingsLabel.textAlignment	= NSTextAlignmentCenter;
+		_servingsLabel.textColor		= [[UIColor alloc] initWithRed:046.0f / 255.0f green:136.0f / 255.0f blue:128.0f / 255.0f alpha:1.0f];
 		
 		_servingsLabel.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self addSubview:_servingsLabel];
@@ -347,9 +344,10 @@ static CGFloat const kImageHeight		= 200.0f;
 	{
 		_viewRecipeButton					= [UIButton buttonWithType:UIButtonTypeCustom];
 		_viewRecipeButton.hidden			= YES;
-		_viewRecipeButton.titleLabel.font	= kYummlyBolderFontWithSize(14.0f);
+		_viewRecipeButton.titleLabel.font	= kYummlyBolderFontWithSize(FontSizeForTextStyle(UIFontTextStyleBody));
 		[_viewRecipeButton setTitle:@"View Recipe" forState:UIControlStateNormal];
 		[_viewRecipeButton setTitleColor:kYummlyColourMain forState:UIControlStateNormal];
+		[_viewRecipeButton setTitleColor:kYummlyColourShadow forState:UIControlStateHighlighted];
 		
 		[_viewRecipeButton addTarget:self action:@selector(viewRecipeTapped) forControlEvents:UIControlEventTouchUpInside];
 		
@@ -387,6 +385,45 @@ static CGFloat const kImageHeight		= 200.0f;
 	self.servingsLabel.text				= [[NSString alloc] initWithFormat:@"Serves\n%u", servings];
 }
 
+/**
+ *	Sets whether the view is loading somethings or not.
+ *
+ *	@param	loading						If YES the view should indicate loading as soon as possible.
+ */
+- (void)setLoading:(BOOL)loading
+{
+	_loading							= loading;
+	
+	if (self.canShowLoading)
+	{
+		if (_loading)
+			[self.activityIndicatorView startAnimating];
+		else
+			[self.activityIndicatorView stopAnimating];
+	}
+}
+
+/**
+ *	Sets whether the view can or cannot showing any loading that is occuring.
+ *
+ *	@param	canshowLoading				Whether the view is in a position where, if required, it can indicate any loading.
+ */
+- (void)setCanShowLoading:(BOOL)canShowLoading
+{
+	_canShowLoading						= canShowLoading;
+	
+	if (_canShowLoading)
+	{
+		if (self.loading)
+			[self.activityIndicatorView startAnimating];
+		else
+			[self.activityIndicatorView stopAnimating];
+	}
+	else
+		[self.activityIndicatorView stopAnimating];
+	
+}
+
 #pragma mark - RecipeIngredientsControllerDelegate Methods
 
 /**
@@ -410,10 +447,12 @@ static CGFloat const kImageHeight		= 200.0f;
 - (CGSize)intrinsicContentSize
 {
 	CGSize contentSize					= self.superview.bounds.size;
+	CGFloat tableViewHeight				= self.recipeIngredientsController.maximumTableViewHeight;
+	CGFloat starRatingHeight			= self.starRatingView.bounds.size.height;
 	CGFloat viewsSum					= self.recipeImageView.bounds.size.height;
-	viewsSum							+= MAX(self.recipeIngredientsController.maximumTableViewHeight, self.starRatingView.bounds.size.height);
+	viewsSum							+= MAX(tableViewHeight, starRatingHeight);
 	viewsSum							+= self.viewRecipeButton.bounds.size.height;
-	viewsSum							+= 100.0f;
+	viewsSum							+= tableViewHeight > starRatingHeight ? 60.0f : 90.0f;
 	contentSize.height					= viewsSum;
 	
 	return contentSize;
@@ -430,7 +469,7 @@ static CGFloat const kImageHeight		= 200.0f;
 	
 	dispatch_async(dispatch_get_main_queue(),
 	^{
-		[self.activityIndicatorView startAnimating];
+		self.loading					= YES;
 		self.starRatingView.rating		= self.recipe.rating;
 		[self.starRatingView setNeedsDisplay];
 					   
@@ -441,7 +480,6 @@ static CGFloat const kImageHeight		= 200.0f;
 			dispatch_async(dispatch_get_main_queue(),
 			^{
 				self.viewRecipeButton.hidden= NO;
-				[self.activityIndicatorView stopAnimating];
 				[self setRecipeServings:self.recipe.numberOfServings];
 				[self.recipeImageView setImage:image animated:YES];
 				[self setNeedsUpdateConstraints];

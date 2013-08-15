@@ -562,6 +562,17 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 	return NO;
 }
 
+#pragma mark - UITableViewCell Methods
+
+/**
+ *	Prepares a reusable cell for reuse by the table view's delegate.
+ */
+- (void)prepareForReuse
+{
+	[super prepareForReuse];
+	NSLog(@"REUSED");
+}
+
 #pragma mark - UIView Methods
 
 /**

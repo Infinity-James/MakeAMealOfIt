@@ -59,9 +59,11 @@ self.view.bounds.size.width, self.view.bounds.size.height)
 
 
 /**	The default animation duration for sliding views.	*/
-static NSTimeInterval const kDefaultAnimationDuration	= 00.20f;
+static NSTimeInterval const kAnimationDurationDefault	= 00.20f;
 /**	The maximum time allowed to animate the sliding of a view.	*/
-static NSTimeInterval const kMaxAnimationDuration		= 00.40f;
+static NSTimeInterval const kAnimationDurationMax		= 00.40f;
+/**	The maximum time allowed to animate the pushing or popping of view controllers.	*/
+static NSTimeInterval const kAnimationDurationNavigation= 00.30f;
 /**	The width of a side view.	*/
 static CGFloat const kSideViewWidth						= 270.00f;
 /**	By what fraction the velocity of a gesture should be multiplied.	*/
@@ -717,7 +719,7 @@ NSString *const SlideNavigationStateEventTypeKey			= @"eventType";
 	}
 					completion:^(BOOL finished)
 	{
-		[UIView animateWithDuration:kMaxAnimationDuration
+		[UIView animateWithDuration:kAnimationDurationMax
 						  animations:
 		^{
 			//	animate the new centre view sliding in over it
@@ -726,19 +728,19 @@ NSString *const SlideNavigationStateEventTypeKey			= @"eventType";
 						completion:^(BOOL finished)
 		{
 			//	nil out the left view so that the centre view is not removed when it is set
-			self.leftViewController						= nil;
+			self.leftViewController					= nil;
 			
 			//	the controller is not closed
-			self.controllerState						= SlideNavigationSideControllerClosed;
+			self.controllerState					= SlideNavigationSideControllerClosed;
 			
 			//	set frame to normal before we set it as centre controller
-			UICentreViewController *newCentreVC			= pastViewControllers[kCentreVCKey];
-			newCentreVC.view.frame						= kCentreViewFrame;
+			UICentreViewController *newCentreVC		= pastViewControllers[kCentreVCKey];
+			newCentreVC.view.frame					= kCentreViewFrame;
 			
 			//	add all of the new view controllers (the old left view controller becomes the new centre view controller)
-			self.centreViewController					= newCentreVC;
-			self.leftViewController						= pastViewControllers[kLeftVCKey];
-			self.rightViewController					= pastViewControllers[kRightVCKey];
+			self.centreViewController				= newCentreVC;
+			self.leftViewController					= pastViewControllers[kLeftVCKey];
+			self.rightViewController				= pastViewControllers[kRightVCKey];
 			
 			[self.view bringSubviewToFront:self.centreViewController.view];
 			
@@ -773,7 +775,7 @@ NSString *const SlideNavigationStateEventTypeKey			= @"eventType";
 	[pushedCentreViewController didMoveToParentViewController:self];
 	[self.view bringSubviewToFront:pushedCentreViewController.view];
 	
-	[UIView animateWithDuration:kMaxAnimationDuration
+	[UIView animateWithDuration:kAnimationDurationNavigation
 					 animations:
 	^{
 		//	animate the current centre view shrinking
@@ -781,7 +783,7 @@ NSString *const SlideNavigationStateEventTypeKey			= @"eventType";
 	}
 					 completion:^(BOOL finished)
 	{
-		[UIView animateWithDuration:kMaxAnimationDuration
+		[UIView animateWithDuration:kAnimationDurationNavigation
 						  animations:
 		^{
 			//	animate the new centre view sliding in over it
@@ -807,6 +809,8 @@ NSString *const SlideNavigationStateEventTypeKey			= @"eventType";
 			self.centreViewController					= pushedCentreViewController;
 			self.rightViewController					= rightViewController;
 			self.leftViewController						= pastViewControllers[kCentreVCKey];
+			
+			[self sendStateEventNotification:SlideNavigationStateEventDidClose];
 			
 			//	we add a special gesture recogniser for the old centre so that the user can tap on it to return to it
 			[self.leftViewController.view addGestureRecognizer:self.previousTapGestureRecogniser];
@@ -1432,11 +1436,11 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 	else
 	{
 		CGFloat animationPercent		=  animationPositionDelta == 0.0f ? 0.0f : kSideViewWidth / animationPositionDelta;
-		duration						= kDefaultAnimationDuration * animationPercent;
+		duration						= kAnimationDurationDefault * animationPercent;
 	}
 		
 	//	return either the duration, or the maximum length if calculated duration is too long
-	return MIN(duration, kMaxAnimationDuration);
+	return MIN(duration, kAnimationDurationMax);
 }
 
 /**

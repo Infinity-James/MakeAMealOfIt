@@ -13,6 +13,7 @@
 #import "AppDelegate.h"
 #import "CupboardViewController.h"
 #import "ExtraOptionsViewController.h"
+#import "Reachability.h"
 #import "RecipeSearchViewController.h"
 #import "SlideNavigationController.h"
 #import "YummlyTheme.h"
@@ -36,6 +37,24 @@
 {
 	[ThemeManager setSharedTheme:[[YummlyTheme alloc] init]];
 	[[NSNotificationCenter defaultCenter] postNotificationName:kNotificationTextSizeChanged object:nil];
+}
+
+/**
+ *	Called when internet reachability has changed in some way.
+ *
+ *	@param	notification				The object containing a name, an object, and an optional dictionary.
+ */
+- (void)reachabilityChanged:(NSNotification*)notification
+{
+    Reachability *reachability			= notification.object;
+    
+    if (reachability.isReachable)
+    {
+    }
+	
+    else
+    {
+    }
 }
 
 #pragma mark - BITUpdateManager Methods
@@ -131,6 +150,21 @@
 - (BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder
 {
 	return NO;
+}
+
+/**
+ *	Tells the delegate that the application has become active.
+ *
+ *	@param	application					The singleton application instance.
+ */
+- (void)applicationDidBecomeActive:(UIApplication *)application
+{
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(reachabilityChanged:)
+												 name:kReachabilityChangedNotification
+											   object:nil];
+	Reachability *reachability			= [Reachability reachabilityWithHostname:@"www.yummly.com"];
+	[reachability startNotifier];
 }
 
 @end

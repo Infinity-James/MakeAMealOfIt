@@ -426,7 +426,7 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
  */
 - (NSArray *)placeholders
 {
-	return @[@"Apple", @"Chicken", @"Chili Pepper", @"Cream", @"Flour", @"Fusilli", @"Milk Chocolate", @"Peanut Butter", @"Sugar", @"Vanilla", @"Wine"];
+	return @[@"Apple", @"Chicken", @"Chili Pepper", @"Cream", @"Flour", @"Fusilli", @"Milk Chocolate", @"Oats", @"Peanut Butter", @"Sugar", @"Vanilla"];
 }
 
 /**
@@ -610,6 +610,8 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 				
 				dispatch_async(dispatch_get_main_queue(),
 				^{
+					[self.searchDisplayController setActive:NO animated:YES];
+					
 					if (cell.excluded)
 						[cell setExcluded:NO updated:YES animated:NO];
 					else if (cell.included)
@@ -840,7 +842,7 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 - (CGFloat)	  tableView:(UITableView *)tableView
 heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	return 25.0f;//[IngredientTableViewCell desiredHeightForCell];
+	return [IngredientTableViewCell desiredHeightForCell];
 }
 
 /**
