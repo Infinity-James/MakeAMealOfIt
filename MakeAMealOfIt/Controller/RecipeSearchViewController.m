@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "MakeAMealOfItIntroduction.h"
 #import "Reachability.h"
+#import "RecipeSearchHelpView.h"
 #import "RecipeSearchView.h"
 #import "RecipeSearchViewController.h"
 #import "RecipesViewController.h"
@@ -34,6 +35,10 @@ enum SectionIndex
 
 /**	A button that allows the user to reset the entire search.	*/
 @property (nonatomic, strong)	UIButton					*clearSearchButton;
+/**	The image to be used for the slide cues.	*/
+@property (nonatomic, strong)	UIImage						*cueImage;
+/**	A view configured to display helpful text to the user.	*/
+@property (nonatomic, strong)	RecipeSearchHelpView		*helpView;
 /**	Whether or not the table view should simply be reloaded, or if NO it can be updated in an animated fashion.	*/
 @property (nonatomic, assign)	BOOL						justReload;
 /**	The left toolbar button used to slide in the left view.	*/
@@ -46,6 +51,10 @@ enum SectionIndex
 @property (nonatomic, strong)	NSIndexPath					*selectedCellIndexPath;
 /**	A dictionary of ingredients to be either included or excluded.	*/
 @property (nonatomic, strong)	NSMutableDictionary			*selectedIngredients;
+/**	An image that helps the user realise that they can slide to the left.	*/
+@property (nonatomic, strong)	UIImageView					*slideCueLeft;
+/**	An image that helps the user realise that they can slide to the right.	*/
+@property (nonatomic, strong)	UIImageView					*slideCueRight;
 /**	The table view representing the included or excluded ingredients for the recipe search.	*/
 @property (nonatomic, strong)	UITableView					*tableView;
 /**	A block to call when any left controller sata has been modified in this view controller.	*/
@@ -104,6 +113,8 @@ enum SectionIndex
 - (void)tutorialTapped
 {
 	[MakeAMealOfItIntroduction showIntroductionViewWithFrame:self.view.superview.bounds inView:self.view.superview];
+	
+	NSLog(@"HELP VIEW: %@", NSStringFromCGRect(self.helpView.frame));
 }
 
 /**
@@ -141,7 +152,8 @@ enum SectionIndex
  */
 - (void)yummlyRequestHasBeenChanged:(NSNotification *)notification
 {
-	self.clearSearchButton.enabled			= YES;
+	self.clearSearchButton.enabled		= YES;
+	self.helpView.hidden				= YES;
 }
 
 /**
@@ -151,7 +163,8 @@ enum SectionIndex
  */
 - (void)yummlyRequestIsEmpty:(NSNotification *)notification
 {
-	self.clearSearchButton.enabled			= NO;
+	self.clearSearchButton.enabled		= NO;
+	self.helpView.hidden				= NO;
 }
 
 #pragma mark - Autolayout Methods
@@ -166,36 +179,34 @@ enum SectionIndex
 	//	remove all constraints
 	[self.view removeConstraints:self.view.constraints];
 	
-	NSArray *constraints;
+	CGFloat barHeight					= self.slideNavigationController.slideNavigationBar.frame.size.height + 10.0f;
+	CGSize helpViewSize					= self.helpView.intrinsicContentSize;
 	
 	//	add the table view to cover the whole main view except for the toolbar
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[recipeSearchView]|"
-																options:kNilOptions
-																metrics:nil
-																  views:self.viewsDictionary];
-	[self.view addConstraints:constraints];
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[recipeSearchView]|"
+																	  options:kNilOptions
+																	  metrics:nil
+																		views:self.viewsDictionary]];
+
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[clearSearchButton]-|"
+																	  options:kNilOptions
+																	  metrics:nil
+																		views:self.viewsDictionary]];
 	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[tableView]|"
-																options:kNilOptions
-																metrics:nil
-																  views:self.viewsDictionary];
-	[self.view addConstraints:constraints];
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:[clearSearchButton]-|"
-																options:kNilOptions
-																metrics:nil
-																  views:self.viewsDictionary];
-	[self.view addConstraints:constraints];
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(height)-[recipeSearchView(==150)]-[tableView]"
+																	  options:NSLayoutFormatAlignAllLeft | NSLayoutFormatAlignAllRight
+																	  metrics:@{@"height": @(barHeight)}
+																		views:self.viewsDictionary]];
 	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(height)-[recipeSearchView(==150)]-[tableView]"
-																options:kNilOptions
-																metrics:@{@"height": @(self.slideNavigationController.slideNavigationBar.frame.size.height + 10.0f)}
-																  views:self.viewsDictionary];
-	[self.view addConstraints:constraints];
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:[tableView]-[clearSearchButton]-|"
-																options:kNilOptions
-																metrics:nil
-																  views:self.viewsDictionary];
-	[self.view addConstraints:constraints];
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[helpView(height)]"
+																	  options:kNilOptions
+																	  metrics:@{@"height": @(helpViewSize.height)}
+																		views:self.viewsDictionary]];
+	
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[tableView]-[clearSearchButton]-|"
+																	  options:kNilOptions
+																	  metrics:nil
+																		views:self.viewsDictionary]];
 	
 	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[tutorialButton]-|"
 																	  options:kNilOptions
@@ -205,6 +216,25 @@ enum SectionIndex
 																	  options:kNilOptions
 																	  metrics:nil
 																		views:self.viewsDictionary]];
+	
+	[self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.slideCueLeft
+														  attribute:NSLayoutAttributeCenterY
+														  relatedBy:NSLayoutRelationEqual
+															 toItem:self.view
+														  attribute:NSLayoutAttributeCenterY
+														 multiplier:1.0f
+														   constant:0.0f]];
+	
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[cueLeft]-[helpView]-[cueRight]-|"
+																	  options:NSLayoutFormatAlignAllCenterY
+																	  metrics:nil
+																		views:self.viewsDictionary]];
+	
+
+	
+	[self.view bringSubviewToFront:self.helpView];
+	[self.view bringSubviewToFront:self.slideCueLeft];
+	[self.view bringSubviewToFront:self.slideCueRight];
 }
 
 #pragma mark - Convenience & Helper Methods
@@ -467,6 +497,42 @@ enum SectionIndex
 }
 
 /**
+ *	An image to be used in the slide cues on both sides of the view.
+ *
+ *	@return	An initialised and scaled UIImage.
+ */
+- (UIImage *)cueImage
+{
+	if (!_cueImage)
+	{
+		_cueImage						= [UIImage imageNamed:@"image_slidecue"];
+		_cueImage						= [[UIImage alloc] initWithCGImage:_cueImage.CGImage
+													scale:_cueImage.scale * 4.0f
+											  orientation:_cueImage.imageOrientation];
+	}
+	
+	return _cueImage;
+}
+
+/**
+ *	A view configured to display helpful text to the user.
+ *
+ *	@return	An initialised RecipeSearchHelpView.
+ */
+- (RecipeSearchHelpView *)helpView
+{
+	if (!_helpView)
+	{
+		_helpView						= [[RecipeSearchHelpView alloc] init];
+		
+		_helpView.translatesAutoresizingMaskIntoConstraints	= NO;
+		[self.view addSubview:_helpView];
+	}
+	
+	return _helpView;
+}
+
+/**
  *	The left slide navigation bar button used to slide in the left view.
  *
  *	@return	An initialised and targeted UIBarButtonItem to be used as the left bar button item.
@@ -593,6 +659,44 @@ enum SectionIndex
 }
 
 /**
+ *	A cue to the left of the view that indicates it can be slid right.
+ *
+ *	@return	An initialised UIImageView with an image acting as a cue.
+ */
+- (UIImageView *)slideCueLeft
+{
+	if (!_slideCueLeft)
+	{
+		_slideCueLeft						= [[UIImageView alloc] initWithImage:self.cueImage];
+		_slideCueLeft.contentMode			= UIViewContentModeScaleAspectFit;
+		
+		_slideCueLeft.translatesAutoresizingMaskIntoConstraints		= NO;
+		[self.view addSubview:_slideCueLeft];
+	}
+	
+	return _slideCueLeft;
+}
+
+/**
+ *	A cue to the right of the view that indicates it can be slid left.
+ *
+ *	@return	An initialised UIImageView with an image acting as a cue.
+ */
+- (UIImageView *)slideCueRight
+{
+	if (!_slideCueRight)
+	{
+		_slideCueRight						= [[UIImageView alloc] initWithImage:self.cueImage];
+		_slideCueRight.contentMode			= UIViewContentModeScaleAspectFit;
+		
+		_slideCueRight.translatesAutoresizingMaskIntoConstraints		= NO;
+		[self.view addSubview:_slideCueRight];
+	}
+	
+	return _slideCueRight;
+}
+
+/**
  *	A button that, when tapped, shows the user the intro tutorial.
  *
  *	@return
@@ -622,6 +726,9 @@ enum SectionIndex
 - (NSDictionary *)viewsDictionary
 {
 	return @{	@"clearSearchButton": self.clearSearchButton,
+				@"cueLeft"			: self.slideCueLeft,
+				@"cueRight"			: self.slideCueRight,
+				@"helpView"			: self.helpView,
 				@"recipeSearchView"	: self.recipeSearchView,
 				@"tableView"		: self.tableView,
 				@"tutorialButton"	: self.tutorialButton	};
@@ -650,7 +757,7 @@ enum SectionIndex
  */
 - (void)slideNavigationControllerWillClose
 {
-	
+	self.tutorialButton.enabled			= YES;
 }
 
 /**
@@ -660,6 +767,7 @@ enum SectionIndex
 {
 	self.selectedCellIndexPath			= nil;
 	[self.tableView setEditing:NO animated:NO];
+	self.tutorialButton.enabled			= NO;
 }
 
 #pragma mark - UIActionSheetDelegate

@@ -59,8 +59,9 @@
  */
 - (void)textSizeChanged
 {
-	[ThemeManager customiseButton:self.searchButton withTheme:nil];
 	[ThemeManager customiseTextField:self.searchPhraseField withTheme:nil];
+	[self.searchButton removeFromSuperview];
+	self.searchButton					= nil;
 	[self setNeedsUpdateConstraints];
 }
 

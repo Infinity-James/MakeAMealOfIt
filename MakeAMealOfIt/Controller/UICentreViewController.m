@@ -35,9 +35,9 @@
 	switch (event)
 	{
 		case SlideNavigationStateEventDidClose:		[self slideNavigationControllerDidClose];	break;
-		case SlideNavigationStateEventDidOpen:		break;
-		case SlideNavigationStateEventWillClose:	break;
-		case SlideNavigationStateEventWillOpen:		break;
+		case SlideNavigationStateEventDidOpen:		[self slideNavigationControllerDidOpen];	break;
+		case SlideNavigationStateEventWillClose:	[self slideNavigationControllerWillClose];	break;
+		case SlideNavigationStateEventWillOpen:		[self slideNavigationControllerWillOpen];	break;
 	}
 }
 

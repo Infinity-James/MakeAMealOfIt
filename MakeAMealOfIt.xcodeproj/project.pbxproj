@@ -13,6 +13,7 @@
 		1A16806617998CA70020F947 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A16806517998CA70020F947 /* SystemConfiguration.framework */; };
 		1A16806C179993DB0020F947 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A168068179993DB0020F947 /* HockeySDK.framework */; };
 		1A16806E179993DB0020F947 /* HockeySDKResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1A16806B179993DB0020F947 /* HockeySDKResources.bundle */; };
+		1A2DC92517BE9F8C00BFA035 /* RecipeSearchHelpView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A2DC92417BE9F8C00BFA035 /* RecipeSearchHelpView.m */; };
 		1A347614177837B100E723CD /* IncludeExcludeControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A347613177837B100E723CD /* IncludeExcludeControl.m */; };
 		1A36943117B3B0BB00EBA0E9 /* PullToRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A36943017B3B0BB00EBA0E9 /* PullToRefreshView.m */; };
 		1A36943417B3D6EC00EBA0E9 /* AudioManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A36943317B3D6EC00EBA0E9 /* AudioManager.m */; };
@@ -89,6 +90,8 @@
 		1A168068179993DB0020F947 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HockeySDK.framework; sourceTree = "<group>"; };
 		1A16806A179993DB0020F947 /* HockeySDK.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = HockeySDK.xcconfig; sourceTree = "<group>"; };
 		1A16806B179993DB0020F947 /* HockeySDKResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = HockeySDKResources.bundle; sourceTree = "<group>"; };
+		1A2DC92317BE9F8C00BFA035 /* RecipeSearchHelpView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecipeSearchHelpView.h; path = View/RecipeSearchHelpView.h; sourceTree = "<group>"; };
+		1A2DC92417BE9F8C00BFA035 /* RecipeSearchHelpView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecipeSearchHelpView.m; path = View/RecipeSearchHelpView.m; sourceTree = "<group>"; };
 		1A347612177837B100E723CD /* IncludeExcludeControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IncludeExcludeControl.h; path = View/IncludeExcludeControl.h; sourceTree = "<group>"; };
 		1A347613177837B100E723CD /* IncludeExcludeControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IncludeExcludeControl.m; path = View/IncludeExcludeControl.m; sourceTree = "<group>"; };
 		1A36942F17B3B0BB00EBA0E9 /* PullToRefreshView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PullToRefreshView.h; path = View/PullToRefreshView.h; sourceTree = "<group>"; };
@@ -531,6 +534,8 @@
 				1A5BA16717BCC82800D2B4E4 /* IntroductionHeaderView.m */,
 				1A5BA16917BCD72E00D2B4E4 /* IntroductionPanelView.h */,
 				1A5BA16A17BCD72E00D2B4E4 /* IntroductionPanelView.m */,
+				1A2DC92317BE9F8C00BFA035 /* RecipeSearchHelpView.h */,
+				1A2DC92417BE9F8C00BFA035 /* RecipeSearchHelpView.m */,
 				1A5BA16317BCB88800D2B4E4 /* IntroductionView.h */,
 				1A5BA16417BCB88800D2B4E4 /* IntroductionView.m */,
 				1AE89C82177AF4F6001C356A /* MetadataCell.h */,
@@ -706,6 +711,7 @@
 				1AD55FF9171AF33200AE5FED /* AppDelegate.m in Sources */,
 				1AEE005717424E2E00B6FC43 /* CupboardViewController.m in Sources */,
 				1AEE007517453D8700B6FC43 /* DefaultTheme.m in Sources */,
+				1A2DC92517BE9F8C00BFA035 /* RecipeSearchHelpView.m in Sources */,
 				1A8EC532174CC77600553857 /* ExtraOptionsViewController.m in Sources */,
 				1AD8C918178C1FDF00E56DCA /* SlideNavigationBar.m in Sources */,
 				1A347614177837B100E723CD /* IncludeExcludeControl.m in Sources */,

@@ -38,8 +38,6 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 @property (nonatomic, strong)	UIBarButtonItem			*rightButton;
 /**	The cache used to store thumbnail images for the recipes.	*/
 @property (nonatomic, strong)	NSCache					*thumbnailCache;
-/**	A dictionary to used when creating visual constraints for this view controller.	*/
-@property (nonatomic, strong)	NSDictionary			*viewsDictionary;
 
 @end
 

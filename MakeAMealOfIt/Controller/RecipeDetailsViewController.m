@@ -227,7 +227,7 @@
 {
 	if (!_rightButton)
 	{
-		UIImage *rightButtonImage		= [UIImage imageNamed:@"barbuttonitem_main_normal_selection_yummly"];
+		UIImage *rightButtonImage		= [UIImage imageNamed:@"barbuttonitem_main_normal_attribution_yummly"];
 		
 		_rightButton					= [[UIBarButtonItem alloc] initWithImage:rightButtonImage
 															style:UIBarButtonItemStylePlain
