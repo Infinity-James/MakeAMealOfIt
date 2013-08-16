@@ -14,25 +14,25 @@
 		<key>Description</key>
 		<string>Just type in the recipe you want.</string>
 		<key>Image</key>
-		<string></string>
+		<string>introductionimage_panel2</string>
 		<key>Title</key>
 		<string>Searching</string>
 	</dict>
 	<dict>
 		<key>Image</key>
-		<string></string>
+		<string>introductionimage_panel3</string>
 		<key>Description</key>
-		<string>Sometime you want a specific ingredient, and sometimes you want any recipe without that ingredient. Slide right to include, and left to exclude, an ingredient from the search.</string>
+		<string>Occasionally you crave a specific ingredient, and sometimes you just don&apos;t want a certain thing in your recipes. Swipe right to include, and left to exclude any ingredient.</string>
 		<key>Title</key>
 		<string>Including / Excluding Ingredients</string>
 	</dict>
 	<dict>
 		<key>Image</key>
-		<string></string>
+		<string>introductionimage_panel4</string>
 		<key>Description</key>
-		<string>Wheels can be rotated and the currently selected item can be included or excluded from the search. Maybe you want a gluten-free recipe, or perhaps you really don&apos;t want breakfast recipes. The power is there.</string>
+		<string>Each wheel can be rotated to a filter of your choice, and either required or excluded. Add as many filters as you&apos;d like. Allergies and diets can obviously only be required!</string>
 		<key>Title</key>
-		<string>Respect Allergies or Diets. Specify Courses, Cuisines and Holidays</string>
+		<string>Define Allergies and Diets. Filter Courses, Cuisines and Holidays</string>
 	</dict>
 </array>
 </plist>

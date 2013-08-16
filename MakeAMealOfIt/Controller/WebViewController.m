@@ -172,6 +172,7 @@
 															style:UIBarButtonItemStylePlain
 														   target:self
 														   action:@selector(doneTapped)];
+		_doneButton.tintColor			= kYummlyColourMain;
 		
 	}
 	

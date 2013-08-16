@@ -523,6 +523,10 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 		_searchBar.searchBarStyle		= UISearchBarIconSearch;
 		_searchBar.showsScopeBar		= NO;
 		[ThemeManager customiseSearchBar:_searchBar withTheme:nil];
+		NSDictionary *attributes		= @{NSFontAttributeName				: kYummlyFontWithSize(FontSizeForTextStyle(UIFontTextStyleSubheadline)),
+											NSForegroundColorAttributeName	: [UIColor whiteColor]};
+		[[UIBarButtonItem appearanceWhenContainedIn:[UISearchBar class], nil] setTitleTextAttributes:attributes forState:UIControlStateNormal];
+		
 		
 		_searchBar.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self.view addSubview:_searchBar];

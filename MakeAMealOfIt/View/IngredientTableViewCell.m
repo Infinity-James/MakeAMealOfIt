@@ -167,23 +167,6 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 {
 	//	if the gesture has started we record the current centre location
 	self.originalCentre					= self.center;
-	
-	NSLog(@"Exclude Label: %@", self.excludeLabel.text);
-	NSLog(@"Exclude Label Colour: %@", self.excludeLabel.textColor);
-	NSLog(@"Exclude Label Hidden: %u", self.excludeLabel.hidden);
-	NSLog(@"Exclude Label Frame: %@", NSStringFromCGRect(self.excludeLabel.frame));
-	NSLog(@"Remove Exclude Label: %@", self.removeLabelRight.text);
-	NSLog(@"Remove Exclude Label Colour: %@", self.removeLabelRight.textColor);
-	NSLog(@"Remove Exclude Label Hidden: %u", self.removeLabelRight.hidden);
-	NSLog(@"Remove Exclude Label Frame: %@", NSStringFromCGRect(self.removeLabelRight.frame));
-	NSLog(@"Include Label: %@", self.includeLabel.text);
-	NSLog(@"Include Label Colour: %@", self.includeLabel.textColor);
-	NSLog(@"Include Label Hidden: %u", self.includeLabel.hidden);
-	NSLog(@"Include Label Frame: %@", NSStringFromCGRect(self.includeLabel.frame));
-	NSLog(@"Remove Include Label: %@", self.removeLabelLeft.text);
-	NSLog(@"Remove Include Label Colour: %@", self.removeLabelLeft.textColor);
-	NSLog(@"Remove Include Label Hidden: %u", self.removeLabelLeft.hidden);
-	NSLog(@"Remove Include Label Frame: %@", NSStringFromCGRect(self.removeLabelLeft.frame));
 }
 
 /**
@@ -570,7 +553,6 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 - (void)prepareForReuse
 {
 	[super prepareForReuse];
-	NSLog(@"REUSED");
 }
 
 #pragma mark - UIView Methods

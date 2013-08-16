@@ -128,29 +128,6 @@ NSString *const SlideNavigationStateEventTypeKey			= @"eventType";
 
 @implementation SlideNavigationController {}
 
-#pragma mark - State Preservation & Restoration Methods
-
-/**
- *	Decodes and restores state-related information for the view controller.
- *
- *	@param	coder						The coder object to use to decode the state of the view.
- */
-- (void)decodeRestorableStateWithCoder:(NSCoder *)coder
-{
-	//self.pastViewControllerDictionaries	= [coder decodeObjectForKey:@"pastViewControllers"];
-	//NSLog(@"PROOF: %@", self.pastViewControllerDictionaries);
-}
-
-/**
- *	Encodes state-related information for the view controller.
- *
- *	@param	coder						The coder object to use to encode the state of the view controller.
- */
-- (void)encodeRestorableStateWithCoder:(NSCoder *)coder
-{
-	//[coder encodeObject:self.pastViewControllerDictionaries forKey:@"pastViewControllers"];
-}
-
 #pragma mark - Action & Selector Methods
 
 /**

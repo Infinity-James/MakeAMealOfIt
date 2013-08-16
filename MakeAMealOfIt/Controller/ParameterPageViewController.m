@@ -42,10 +42,15 @@
 	UIImageView *labelImageView				= [self.includeExcludeControl labelImageView];
 	labelImageView.layer.affineTransform	= CGAffineTransformScale(labelImageView.layer.affineTransform, 1.2f, 1.2f);
 	[self.view addSubview:labelImageView];
-	[UIView animateWithDuration:1.0f animations:
+	[UIView animateWithDuration:1.0f
+					 animations:
 	^{
 		labelImageView.center				= CGPointMake(self.view.bounds.size.width * 1.5f, labelImageView.center.y);
 		labelImageView.layer.affineTransform= CGAffineTransformScale(labelImageView.layer.affineTransform, 0.4f, 0.4f);
+	}
+					 completion:^(BOOL finished)
+	{
+		[labelImageView removeFromSuperview];
 	}];
 }
 

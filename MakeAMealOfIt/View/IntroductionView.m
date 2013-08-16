@@ -98,7 +98,7 @@ static NSTimeInterval const kAnimationDurationPresent		= 0.5f;
 																   views:self.viewsDictionary]];
 	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[headerView]-(padding)-[pageControl]"
 																 options:NSLayoutFormatAlignAllCenterX
-																 metrics:@{@"padding": @(kScrollViewHeight - 20.0f)}
+																 metrics:@{@"padding": @(kScrollViewHeight)}
 																   views:self.viewsDictionary]];
 	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[skipButton]-(10)-|"
 																 options:kNilOptions

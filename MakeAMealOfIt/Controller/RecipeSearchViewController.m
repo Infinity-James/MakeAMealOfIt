@@ -42,7 +42,7 @@ enum SectionIndex
 @property (nonatomic, strong)	UITapGestureRecognizer		*resignGestureRecogniser;
 /**	The right toolbar button used to slide in the right view	*/
 @property (nonatomic, strong)	UIBarButtonItem				*rightButton;
-/**	*/
+/**	The index path of the currently selected UITableViewCell.	*/
 @property (nonatomic, strong)	NSIndexPath					*selectedCellIndexPath;
 /**	A dictionary of ingredients to be either included or excluded.	*/
 @property (nonatomic, strong)	NSMutableDictionary			*selectedIngredients;

@@ -34,6 +34,8 @@ static CGFloat const kParametersControllerHeight	= 340.0f;
 @property (nonatomic, strong)	RecipeSearchParametersViewController	*recipeParametersController;
 /**	A block to call with metadata that needs to be removed from the search.	*/
 @property (nonatomic, copy)		MetadataNeedsRemoving					removeMetadata;
+/**	The index path of the currently selected UITableViewCell.	*/
+@property (nonatomic, strong)	NSIndexPath								*selectedCellIndexPath;
 /**	This table view will be used to show the user the selected options.	*/
 @property (nonatomic, strong)	UITableView								*tableView;
 
@@ -186,6 +188,8 @@ static CGFloat const kParametersControllerHeight	= 340.0f;
  */
 - (void)insertIndexPath:(NSIndexPath *)indexPath
 {
+	self.selectedCellIndexPath			= nil;
+	[self.tableView setEditing:NO animated:YES];
 	[self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationRight];
 	[self.tableView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
 }
@@ -503,7 +507,8 @@ static CGFloat const kParametersControllerHeight	= 340.0f;
 	if (!_tableView)
 	{
 		_tableView						= [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
-		_tableView.allowsSelection		= NO;
+		_tableView.allowsSelection		= YES;
+		_tableView.allowsSelectionDuringEditing	= YES;
 		_tableView.backgroundColor		= [UIColor whiteColor];
 		_tableView.contentInset			= UIEdgeInsetsMake(0.0f, 0.0f, kParametersControllerHeight, 0.0f);
 		_tableView.dataSource			= self;
@@ -561,7 +566,10 @@ static CGFloat const kParametersControllerHeight	= 340.0f;
 - (BOOL)	tableView:(UITableView *)tableView
 canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	return YES;
+	if ([indexPath isEqual:self.selectedCellIndexPath])
+		return YES;
+	
+	return NO;
 }
 
 /**
@@ -610,6 +618,9 @@ commitEditingStyle:(UITableViewCellEditingStyle)editingStyle
 		[self removeMetadata:metadataToRemove ofType:metadataType included:included];
 		
 		[self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationLeft];
+		
+		self.selectedCellIndexPath		= nil;
+		[self.tableView setEditing:NO animated:NO];
 	}
 }
 
@@ -658,6 +669,27 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 - (void)	  tableView:(UITableView *)tableView
 didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+	if (!self.selectedCellIndexPath)
+	{
+		self.selectedCellIndexPath			= indexPath;
+		[tableView setEditing:YES animated:YES];
+	}
+	
+	else
+	{
+		if (![indexPath isEqual:self.selectedCellIndexPath])
+		{
+			self.selectedCellIndexPath			= indexPath;
+			[tableView setEditing:NO animated:YES];
+			[tableView setEditing:YES animated:YES];
+		}
+		
+		else
+		{
+			self.selectedCellIndexPath			= nil;
+			[tableView setEditing:NO animated:YES];
+		}
+	}
 }
 
 /**
@@ -671,7 +703,7 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 - (CGFloat)	  tableView:(UITableView *)tableView
 heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	return 20.0f;
+	return 25.0f;
 }
 
 /**

@@ -43,7 +43,7 @@
 	shadow.shadowOffset					= CGSizeMake(0.0f, 0.0f);
 	
 	return @{	NSFontAttributeName				: kYummlyFontWithSize(16.0f),
-				NSForegroundColorAttributeName	: kDarkGreyColour,
+				NSForegroundColorAttributeName	: kYummlyColourMain,
 				NSShadowAttributeName			: shadow};
 }
 
