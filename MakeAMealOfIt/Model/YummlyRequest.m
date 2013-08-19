@@ -55,7 +55,7 @@ NSString *const kYummlyMinimumKey			= @"min";
 {
 	//	only add the course if it is not nil, has not yet been added, and is a valid course
 	if (desiredCourse && ![self.desiredCourses containsObject:desiredCourse] &&
-		[[YummlyRequest availableCourses] containsObject:desiredCourse])
+		[[YummlyRequest availableCourses] containsObject:desiredCourse] && ![self.excludedCourses containsObject:desiredCourse])
 	{
 		//	update the key value observations
 		[self willChangeValueForKey:@"desiredCourses"];
@@ -74,7 +74,7 @@ NSString *const kYummlyMinimumKey			= @"min";
 - (void)addDesiredCuisine:(NSString *)desiredCuisine
 {
 	if (desiredCuisine && ![self.desiredCuisines containsObject:desiredCuisine] &&
-		[[YummlyRequest availableCuisines] containsObject:desiredCuisine])
+		[[YummlyRequest availableCuisines] containsObject:desiredCuisine] && ![self.excludedCuisines containsObject:desiredCuisine])
 	{
 		//	update the key value observations
 		[self willChangeValueForKey:@"desiredCuisines"];
@@ -93,7 +93,7 @@ NSString *const kYummlyMinimumKey			= @"min";
 - (void)addDesiredHoliday:(NSString *)desiredHoliday
 {
 	if (desiredHoliday && ![self.desiredHolidays containsObject:desiredHoliday] &&
-		[[YummlyRequest availableHolidays] containsObject:desiredHoliday])
+		[[YummlyRequest availableHolidays] containsObject:desiredHoliday] && ![self.excludedHolidays containsObject:desiredHoliday])
 	{
 		//	update the key value observations
 		[self willChangeValueForKey:@"desiredHolidays"];
@@ -112,7 +112,7 @@ NSString *const kYummlyMinimumKey			= @"min";
 - (void)addDesiredIngredient:(NSString *)desiredIngredient
 {
 	if (desiredIngredient && ![self.desiredIngredients containsObject:desiredIngredient] &&
-		[[YummlyRequest availableIngredients] containsObject:desiredIngredient])
+		[[YummlyRequest availableIngredients] containsObject:desiredIngredient] && ![self.excludedIngredients containsObject:desiredIngredient])
 	{
 		//	update the key value observations
 		[self willChangeValueForKey:@"desiredIngredients"];
@@ -133,7 +133,7 @@ NSString *const kYummlyMinimumKey			= @"min";
 - (void)addExcludedCourse:(NSString *)excludedCourse
 {
 	if (excludedCourse && ![self.excludedCourses containsObject:excludedCourse] &&
-		[[YummlyRequest availableCourses] containsObject:excludedCourse])
+		[[YummlyRequest availableCourses] containsObject:excludedCourse] && ![self.desiredCourses containsObject:excludedCourse])
 	{
 		//	update the key value observations
 		[self willChangeValueForKey:@"excludedCourses"];
@@ -152,7 +152,7 @@ NSString *const kYummlyMinimumKey			= @"min";
 - (void)addExcludedCuisine:(NSString *)excludedCuisine
 {
 	if (excludedCuisine && ![self.excludedCuisines containsObject:excludedCuisine] &&
-		[[YummlyRequest availableCuisines] containsObject:excludedCuisine])
+		[[YummlyRequest availableCuisines] containsObject:excludedCuisine] && ![self.desiredCuisines containsObject:excludedCuisine])
 	{
 		//	update the key value observations
 		[self willChangeValueForKey:@"excludedCuisines"];
@@ -171,7 +171,7 @@ NSString *const kYummlyMinimumKey			= @"min";
 - (void)addExcludedHoliday:(NSString *)excludedHoliday
 {
 	if (excludedHoliday && ![self.excludedHolidays containsObject:excludedHoliday] &&
-		[[YummlyRequest availableHolidays] containsObject:excludedHoliday])
+		[[YummlyRequest availableHolidays] containsObject:excludedHoliday] && ![self.desiredHolidays containsObject:excludedHoliday])
 	{
 		//	update the key value observations
 		[self willChangeValueForKey:@"excludedHolidays"];
@@ -190,7 +190,7 @@ NSString *const kYummlyMinimumKey			= @"min";
 - (void)addExcludedIngredient:(NSString *)excludedIngredient
 {
 	if (excludedIngredient && ![self.excludedIngredients containsObject:excludedIngredient] &&
-		[[YummlyRequest availableIngredients] containsObject:excludedIngredient])
+		[[YummlyRequest availableIngredients] containsObject:excludedIngredient] && ![self.desiredIngredients containsObject:excludedIngredient])
 	{
 		//	update the key value observations
 		[self willChangeValueForKey:@"excludedIngredients"];

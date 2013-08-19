@@ -182,6 +182,33 @@ static CGFloat const kParametersControllerHeight	= 340.0f;
 }
 
 /**
+ *	A convenient way to find whether a piece of metadata is an a certain dictionary or not.
+ *
+ *	@param	metadata					The metadata to add to the dictionary.
+ *	@param	metadataType				Used as a key under which to add the metadata.
+ *	@param	metadataDictionary			The dictionary to add the metadata to.
+ *
+ *	@return	YES is the metadata was already in the dictionary, and NO if not.
+ */
+- (BOOL)checkIfMetadata:(NSString *)metadata
+				 ofType:(NSString *)metadataType
+		 isInDictionary:(NSDictionary *)metadataDictionary
+{
+	//	gets any existing metadata of the type passed in
+	NSOrderedSet *existingMetadata		= [[NSOrderedSet alloc] initWithArray:metadataDictionary[metadataType]];
+	
+	//	if there is nothing in the set, obviously the metadata can't be there
+	if (existingMetadata.count == 0)	return NO;
+	
+	//	if the metadata is in the set, we return YES
+	if ([existingMetadata containsObject:metadata])
+		return YES;
+	
+	//	if it was not in the set, we return NO
+	return NO;
+}
+
+/**
  *	Inserts a given index path into the table view in an animated way.
  *
  *	@param	indexPath					The index path identifying the row to insert and which section to insert it into.
@@ -312,6 +339,27 @@ static CGFloat const kParametersControllerHeight	= 340.0f;
 - (BOOL)metadataExcluded:(NSString *)metadata
 				  ofType:(NSString *)metadataType
 {
+	if ([self checkIfMetadata:metadata ofType:metadataType isInDictionary:self.includedParameters])
+	{
+		NSUInteger index					= [self.allIncludedMetadata indexOfObject:metadata];
+		NSIndexPath *indexPath				= [NSIndexPath indexPathForRow:index inSection:1];
+		UITableViewCell *cell				= [self.tableView cellForRowAtIndexPath:indexPath];
+		[UIView animateWithDuration:0.2f
+						 animations:
+		 ^{
+			 cell.layer.affineTransform		= CGAffineTransformScale(cell.layer.affineTransform, 1.0f, 1.4f);
+		 }
+						 completion:^(BOOL finished)
+		 {
+			 [UIView animateWithDuration:0.2f animations:
+			  ^{
+				  cell.layer.affineTransform	= CGAffineTransformIdentity;
+			  }];
+		 }];
+		
+		return NO;
+	}
+	
 	if ([self addMetadata:metadata ofType:metadataType toDictionary:self.excludedParameters])
 	{
 		NSUInteger index					= [self.allExcludedMetadata indexOfObject:metadata];
@@ -352,6 +400,28 @@ static CGFloat const kParametersControllerHeight	= 340.0f;
 - (BOOL)metadataIncluded:(NSString *)metadata
 				  ofType:(NSString *)metadataType
 {
+	if ([self checkIfMetadata:metadata ofType:metadata isInDictionary:self.excludedParameters])
+	{
+		
+		NSUInteger index					= [self.allExcludedMetadata indexOfObject:metadata];
+		NSIndexPath *indexPath				= [NSIndexPath indexPathForRow:index inSection:1];
+		UITableViewCell *cell				= [self.tableView cellForRowAtIndexPath:indexPath];
+		[UIView animateWithDuration:0.2f
+						 animations:
+		 ^{
+			 cell.layer.affineTransform		= CGAffineTransformScale(cell.layer.affineTransform, 1.0f, 1.4f);
+		 }
+						 completion:^(BOOL finished)
+		 {
+			 [UIView animateWithDuration:0.2f animations:
+			  ^{
+				  cell.layer.affineTransform	= CGAffineTransformIdentity;
+			  }];
+		 }];
+		
+		return NO;
+	}
+	
 	if ([self addMetadata:metadata ofType:metadataType toDictionary:self.includedParameters])
 	{
 		NSUInteger index					= [self.allIncludedMetadata indexOfObject:metadata];

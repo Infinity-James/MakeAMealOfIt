@@ -83,7 +83,7 @@
 {
 	if (!_helpText)
 	{
-		_helpText					= @"Remember to swipe left for ingredients, or right to filter with allergies, diets, or more.";
+		_helpText					= @"Remember to swipe right for ingredients, or left to filter with allergies, diets, or more.";
 	}
 	
 	return _helpText;

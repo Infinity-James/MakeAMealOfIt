@@ -33,6 +33,8 @@ enum SectionIndex
 
 #pragma mark - Private Properties
 
+/**	An NSLayout constraint with the cues centred.	*/
+@property (nonatomic, strong)	NSLayoutConstraint			*centreCueConstraint;
 /**	A button that allows the user to reset the entire search.	*/
 @property (nonatomic, strong)	UIButton					*clearSearchButton;
 /**	The image to be used for the slide cues.	*/
@@ -51,6 +53,10 @@ enum SectionIndex
 @property (nonatomic, strong)	NSIndexPath					*selectedCellIndexPath;
 /**	A dictionary of ingredients to be either included or excluded.	*/
 @property (nonatomic, strong)	NSMutableDictionary			*selectedIngredients;
+/**	Whether or not to shift the cues up or centre them.	*/
+@property (nonatomic, assign)	BOOL						shiftCuesUp;
+/**	An NSLayout constraint with the cues shifted up.	*/
+@property (nonatomic, strong)	NSArray						*shiftedCueConstraints;
 /**	An image that helps the user realise that they can slide to the left.	*/
 @property (nonatomic, strong)	UIImageView					*slideCueLeft;
 /**	An image that helps the user realise that they can slide to the right.	*/
@@ -113,8 +119,6 @@ enum SectionIndex
 - (void)tutorialTapped
 {
 	[MakeAMealOfItIntroduction showIntroductionViewWithFrame:self.view.superview.bounds inView:self.view.superview];
-	
-	NSLog(@"HELP VIEW: %@", NSStringFromCGRect(self.helpView.frame));
 }
 
 /**
@@ -141,6 +145,7 @@ enum SectionIndex
 		dispatch_async(dispatch_get_main_queue(),
 		^{
 			[self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationLeft];
+			self.shiftCuesUp				= NO;
 		});
 	});
 }
@@ -164,7 +169,12 @@ enum SectionIndex
 - (void)yummlyRequestIsEmpty:(NSNotification *)notification
 {
 	self.clearSearchButton.enabled		= NO;
+	self.helpView.alpha					= 0.0f;
 	self.helpView.hidden				= NO;
+	[UIView animateWithDuration:1.0f animations:
+	^{
+		self.helpView.alpha				= 1.0f;
+	}];
 }
 
 #pragma mark - Autolayout Methods
@@ -217,7 +227,17 @@ enum SectionIndex
 																	  metrics:nil
 																		views:self.viewsDictionary]];
 	
+	[self.view addConstraint:self.centreCueConstraint];
+	
 	[self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.slideCueLeft
+														  attribute:NSLayoutAttributeCenterY
+														  relatedBy:NSLayoutRelationEqual
+															 toItem:self.slideCueRight
+														  attribute:NSLayoutAttributeCenterY
+														 multiplier:1.0f
+														   constant:0.0f]];
+	
+	[self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.helpView
 														  attribute:NSLayoutAttributeCenterY
 														  relatedBy:NSLayoutRelationEqual
 															 toItem:self.view
@@ -226,12 +246,10 @@ enum SectionIndex
 														   constant:0.0f]];
 	
 	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[cueLeft]-[helpView]-[cueRight]-|"
-																	  options:NSLayoutFormatAlignAllCenterY
+																	  options:kNilOptions
 																	  metrics:nil
 																		views:self.viewsDictionary]];
-	
 
-	
 	[self.view bringSubviewToFront:self.helpView];
 	[self.view bringSubviewToFront:self.slideCueLeft];
 	[self.view bringSubviewToFront:self.slideCueRight];
@@ -399,6 +417,11 @@ enum SectionIndex
 		//	update the table view on the main thread
 		dispatch_async(dispatch_get_main_queue(),
 		^{
+			if (excludedIngredients.count > 0 || includedIngredients.count > 0)
+				self.shiftCuesUp						= YES;
+			else
+				[self performSelector:@selector(setShiftCuesUp:) withObject:NO afterDelay:0.5f];
+			
 			//	if the index path updates are still accurate we update the table view in an animated fashion
 			if ([lastSelectedIngredients isEqualToDictionary:self.selectedIngredients] && !self.justReload)
 			{
@@ -421,7 +444,7 @@ enum SectionIndex
 			}
 			
 			//	we do this to reload the section headers
-			NSTimeInterval delayInSeconds	= 0.5f;
+			NSTimeInterval delayInSeconds	= 0.3f;
 			dispatch_time_t delayDispatch	= dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
 			
 			dispatch_after(delayDispatch, dispatch_get_main_queue(), ^(void)
@@ -468,6 +491,25 @@ enum SectionIndex
 }
 
 #pragma mark - Property Accessor Methods - Getters
+
+/**
+ *	A constraint used to centre the sliding cues in the view.
+ *
+ *	@return	An initialised NSLayoutConstraint to centre the cues.
+ */
+- (NSLayoutConstraint *)centreCueConstraint
+{
+	if (!_centreCueConstraint)
+		_centreCueConstraint			= [NSLayoutConstraint constraintWithItem:self.slideCueLeft
+															  attribute:NSLayoutAttributeCenterY
+															  relatedBy:NSLayoutRelationEqual
+																 toItem:self.view
+															  attribute:NSLayoutAttributeCenterY
+															 multiplier:1.0f
+															   constant:0.0f];
+	
+	return _centreCueConstraint;
+}
 
 /**
  *	A button that allows the user to reset the entire search.
@@ -669,12 +711,28 @@ enum SectionIndex
 	{
 		_slideCueLeft						= [[UIImageView alloc] initWithImage:self.cueImage];
 		_slideCueLeft.contentMode			= UIViewContentModeScaleAspectFit;
+		_slideCueLeft.transform				= CGAffineTransformMakeRotation(M_PI);
 		
 		_slideCueLeft.translatesAutoresizingMaskIntoConstraints		= NO;
 		[self.view addSubview:_slideCueLeft];
 	}
 	
 	return _slideCueLeft;
+}
+
+/**
+ *	A constraint used to centre the sliding cues in the view.
+ *
+ *	@return	An initialised NSLayoutConstraint to centre the cues.
+ */
+- (NSArray *)shiftedCueConstraints
+{
+	if (!_shiftedCueConstraints)
+		_shiftedCueConstraints				= [NSLayoutConstraint constraintsWithVisualFormat:@"V:[cueLeft]-(20)-[tableView]"
+																		   options:kNilOptions
+																		   metrics:nil
+																			 views:self.viewsDictionary];
+	return _shiftedCueConstraints;
 }
 
 /**
@@ -734,23 +792,38 @@ enum SectionIndex
 				@"tutorialButton"	: self.tutorialButton	};
 }
 
+#pragma mark - Property Accessor Methods - Setters
+
+/**
+ *	Sets whether the slide cues should be shifted up or down.
+ *
+ *	@param	shiftCuesUp					YES to shift the cues up, NO to centre them.
+ */
+- (void)setShiftCuesUp:(BOOL)shiftCuesUp
+{
+	if (_shiftCuesUp == shiftCuesUp)	return;
+	
+	_shiftCuesUp						= shiftCuesUp;
+	
+	if (_shiftCuesUp)
+	{
+		[self.view removeConstraint:self.centreCueConstraint];
+		[self.view addConstraints:self.shiftedCueConstraints];
+	}
+	
+	else
+	{
+		[self.view removeConstraints:self.shiftedCueConstraints];
+		[self.view addConstraint:self.centreCueConstraint];
+	}
+	
+	[UIView animateWithDuration:0.5f animations:
+	^{
+		[self.view layoutIfNeeded];
+	}];
+}
+
 #pragma mark - Slide Navigation Controller Lifecycle
-
-/**
- *	Notifies the view controller that the parent slideNavigationController has closed all side views.
- */
-- (void)slideNavigationControllerDidClose
-{
-	
-}
-
-/**
- *	Notifies the view controller that the parent slideNavigationController has open a side view.
- */
-- (void)slideNavigationControllerDidOpen
-{
-	
-}
 
 /**
  *	Notifies the view controller that the parent slideNavigationController will close all side views.
