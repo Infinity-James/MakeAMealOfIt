@@ -40,7 +40,6 @@
 		1A7C1A50175792210075AF2D /* UICentreViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7C1A4F175792210075AF2D /* UICentreViewController.m */; };
 		1A7C1A531757ADA50075AF2D /* Recipe.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7C1A521757ADA50075AF2D /* Recipe.m */; };
 		1A84A59E1765BE1200E1F818 /* NetworkActivityIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A84A59D1765BE1200E1F818 /* NetworkActivityIndicator.m */; };
-		1A84A5A11765C2E300E1F818 /* YummlyToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A84A5A01765C2E300E1F818 /* YummlyToolbar.m */; };
 		1A84A5B01765F8CE00E1F818 /* UIRightViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A84A5AF1765F8CE00E1F818 /* UIRightViewController.m */; };
 		1A84A5B31766299800E1F818 /* UILeftViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A84A5B21766299800E1F818 /* UILeftViewController.m */; };
 		1A84A5B6176630D900E1F818 /* IngredientHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A84A5B5176630D900E1F818 /* IngredientHeaderView.m */; };
@@ -144,8 +143,6 @@
 		1A7C1A521757ADA50075AF2D /* Recipe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Recipe.m; path = Model/Recipe.m; sourceTree = "<group>"; };
 		1A84A59C1765BE1200E1F818 /* NetworkActivityIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkActivityIndicator.h; sourceTree = "<group>"; };
 		1A84A59D1765BE1200E1F818 /* NetworkActivityIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetworkActivityIndicator.m; sourceTree = "<group>"; };
-		1A84A59F1765C2E300E1F818 /* YummlyToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YummlyToolbar.h; path = View/YummlyToolbar.h; sourceTree = "<group>"; };
-		1A84A5A01765C2E300E1F818 /* YummlyToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YummlyToolbar.m; path = View/YummlyToolbar.m; sourceTree = "<group>"; };
 		1A84A5AB1765F7CA00E1F818 /* YummlyAttributionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YummlyAttributionViewController.h; path = Controller/YummlyAttributionViewController.h; sourceTree = "<group>"; };
 		1A84A5AC1765F7CA00E1F818 /* YummlyAttributionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YummlyAttributionViewController.m; path = Controller/YummlyAttributionViewController.m; sourceTree = "<group>"; };
 		1A84A5AE1765F8CE00E1F818 /* UIRightViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIRightViewController.h; path = Controller/UIRightViewController.h; sourceTree = "<group>"; };
@@ -404,6 +401,85 @@
 			name = "View Controller";
 			sourceTree = "<group>";
 		};
+		1ACBD2D317C3712D007FB073 /* Cells & Related Views */ = {
+			isa = PBXGroup;
+			children = (
+				1A84A5B4176630D900E1F818 /* IngredientHeaderView.h */,
+				1A84A5B5176630D900E1F818 /* IngredientHeaderView.m */,
+				1A5DB82B1782E7E90027B9B0 /* IngredientTableViewCell.h */,
+				1A5DB82C1782E7E90027B9B0 /* IngredientTableViewCell.m */,
+				1AE89C82177AF4F6001C356A /* MetadataCell.h */,
+				1AE89C83177AF4F6001C356A /* MetadataCell.m */,
+				1A8EC542174F4CCA00553857 /* RecipeCollectionViewCell.h */,
+				1A8EC543174F4CCA00553857 /* RecipeCollectionViewCell.m */,
+				1A926F9D17967E5500F7568D /* RecipeDetailsIngredientCell.h */,
+				1A926F9E17967E5500F7568D /* RecipeDetailsIngredientCell.m */,
+				1A46523B1770A08A00049B4D /* ResultManagementCell.h */,
+				1A46523C1770A08A00049B4D /* ResultManagementCell.m */,
+			);
+			name = "Cells & Related Views";
+			sourceTree = "<group>";
+		};
+		1ACBD2D417C37155007FB073 /* Controls & General Use Views */ = {
+			isa = PBXGroup;
+			children = (
+				1ADB9C3117AFADE300421CC9 /* BlurView.h */,
+				1ADB9C3217AFADE300421CC9 /* BlurView.m */,
+				1A347612177837B100E723CD /* IncludeExcludeControl.h */,
+				1A347613177837B100E723CD /* IncludeExcludeControl.m */,
+				1A36942F17B3B0BB00EBA0E9 /* PullToRefreshView.h */,
+				1A36943017B3B0BB00EBA0E9 /* PullToRefreshView.m */,
+				1A6D1179174B4A4200E0B000 /* RotaryWheel.h */,
+				1A6D117A174B4A4200E0B000 /* RotaryWheel.m */,
+				1A6D117B174B4A4200E0B000 /* Sector.h */,
+				1A6D117C174B4A4200E0B000 /* Sector.m */,
+				1A6D117F174B552B00E0B000 /* SegmentView.h */,
+				1A6D1180174B552B00E0B000 /* SegmentView.m */,
+				1AD8C916178C1FDF00E56DCA /* SlideNavigationBar.h */,
+				1AD8C917178C1FDF00E56DCA /* SlideNavigationBar.m */,
+				1A9FCF8B1758CE7E00D74485 /* StarRatingView.h */,
+				1A9FCF8C1758CE7E00D74485 /* StarRatingView.m */,
+				1A8EC545174F756A00553857 /* TextBackingView.h */,
+				1A8EC546174F756A00553857 /* TextBackingView.m */,
+				1ADB9C3417AFBD5200421CC9 /* TransparentToolbar.h */,
+				1ADB9C3517AFBD5200421CC9 /* TransparentToolbar.m */,
+			);
+			name = "Controls & General Use Views";
+			sourceTree = "<group>";
+		};
+		1ACBD2D517C37173007FB073 /* Introduction View */ = {
+			isa = PBXGroup;
+			children = (
+				1A5BA16617BCC82800D2B4E4 /* IntroductionHeaderView.h */,
+				1A5BA16717BCC82800D2B4E4 /* IntroductionHeaderView.m */,
+				1A5BA16917BCD72E00D2B4E4 /* IntroductionPanelView.h */,
+				1A5BA16A17BCD72E00D2B4E4 /* IntroductionPanelView.m */,
+				1A5BA16317BCB88800D2B4E4 /* IntroductionView.h */,
+				1A5BA16417BCB88800D2B4E4 /* IntroductionView.m */,
+			);
+			name = "Introduction View";
+			sourceTree = "<group>";
+		};
+		1ACBD2D617C3719B007FB073 /* Centre Views */ = {
+			isa = PBXGroup;
+			children = (
+				1A2DC92317BE9F8C00BFA035 /* RecipeSearchHelpView.h */,
+				1A2DC92417BE9F8C00BFA035 /* RecipeSearchHelpView.m */,
+				1AEE00DE17460EA500B6FC43 /* RecipeSearchView.h */,
+				1AEE00DF17460EA500B6FC43 /* RecipeSearchView.m */,
+			);
+			name = "Centre Views";
+			sourceTree = "<group>";
+		};
+		1ACBD2D717C371CA007FB073 /* Right Views */ = {
+			isa = PBXGroup;
+			children = (
+				1A70C0BA175500FF004FEEF6 /* RecipeDetailsView.h */,
+				1A70C0BB175500FF004FEEF6 /* RecipeDetailsView.m */,
+			);
+			name = "Right Views";
+			sourceTree = "<group>";
+		};
 		1AD55FDC171AF33200AE5FED = {
 			isa = PBXGroup;
 			children = (
@@ -522,52 +598,11 @@
 		1AEE00681743F42400B6FC43 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				1ADB9C3117AFADE300421CC9 /* BlurView.h */,
-				1ADB9C3217AFADE300421CC9 /* BlurView.m */,
-				1A347612177837B100E723CD /* IncludeExcludeControl.h */,
-				1A347613177837B100E723CD /* IncludeExcludeControl.m */,
-				1A84A5B4176630D900E1F818 /* IngredientHeaderView.h */,
-				1A84A5B5176630D900E1F818 /* IngredientHeaderView.m */,
-				1A5DB82B1782E7E90027B9B0 /* IngredientTableViewCell.h */,
-				1A5DB82C1782E7E90027B9B0 /* IngredientTableViewCell.m */,
-				1A5BA16617BCC82800D2B4E4 /* IntroductionHeaderView.h */,
-				1A5BA16717BCC82800D2B4E4 /* IntroductionHeaderView.m */,
-				1A5BA16917BCD72E00D2B4E4 /* IntroductionPanelView.h */,
-				1A5BA16A17BCD72E00D2B4E4 /* IntroductionPanelView.m */,
-				1A2DC92317BE9F8C00BFA035 /* RecipeSearchHelpView.h */,
-				1A2DC92417BE9F8C00BFA035 /* RecipeSearchHelpView.m */,
-				1A5BA16317BCB88800D2B4E4 /* IntroductionView.h */,
-				1A5BA16417BCB88800D2B4E4 /* IntroductionView.m */,
-				1AE89C82177AF4F6001C356A /* MetadataCell.h */,
-				1AE89C83177AF4F6001C356A /* MetadataCell.m */,
-				1A36942F17B3B0BB00EBA0E9 /* PullToRefreshView.h */,
-				1A36943017B3B0BB00EBA0E9 /* PullToRefreshView.m */,
-				1A8EC542174F4CCA00553857 /* RecipeCollectionViewCell.h */,
-				1A8EC543174F4CCA00553857 /* RecipeCollectionViewCell.m */,
-				1A926F9D17967E5500F7568D /* RecipeDetailsIngredientCell.h */,
-				1A926F9E17967E5500F7568D /* RecipeDetailsIngredientCell.m */,
-				1A70C0BA175500FF004FEEF6 /* RecipeDetailsView.h */,
-				1A70C0BB175500FF004FEEF6 /* RecipeDetailsView.m */,
-				1AEE00DE17460EA500B6FC43 /* RecipeSearchView.h */,
-				1AEE00DF17460EA500B6FC43 /* RecipeSearchView.m */,
-				1A46523B1770A08A00049B4D /* ResultManagementCell.h */,
-				1A46523C1770A08A00049B4D /* ResultManagementCell.m */,
-				1A6D1179174B4A4200E0B000 /* RotaryWheel.h */,
-				1A6D117A174B4A4200E0B000 /* RotaryWheel.m */,
-				1A6D117B174B4A4200E0B000 /* Sector.h */,
-				1A6D117C174B4A4200E0B000 /* Sector.m */,
-				1A6D117F174B552B00E0B000 /* SegmentView.h */,
-				1A6D1180174B552B00E0B000 /* SegmentView.m */,
-				1AD8C916178C1FDF00E56DCA /* SlideNavigationBar.h */,
-				1AD8C917178C1FDF00E56DCA /* SlideNavigationBar.m */,
-				1A9FCF8B1758CE7E00D74485 /* StarRatingView.h */,
-				1A9FCF8C1758CE7E00D74485 /* StarRatingView.m */,
-				1A8EC545174F756A00553857 /* TextBackingView.h */,
-				1A8EC546174F756A00553857 /* TextBackingView.m */,
-				1ADB9C3417AFBD5200421CC9 /* TransparentToolbar.h */,
-				1ADB9C3517AFBD5200421CC9 /* TransparentToolbar.m */,
-				1A84A59F1765C2E300E1F818 /* YummlyToolbar.h */,
-				1A84A5A01765C2E300E1F818 /* YummlyToolbar.m */,
+				1ACBD2D317C3712D007FB073 /* Cells & Related Views */,
+				1ACBD2D617C3719B007FB073 /* Centre Views */,
+				1ACBD2D417C37155007FB073 /* Controls & General Use Views */,
+				1ACBD2D517C37173007FB073 /* Introduction View */,
+				1ACBD2D717C371CA007FB073 /* Right Views */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -763,7 +798,6 @@
 				1A64725517956A26004E2F9D /* RecipeIngredientsController.m in Sources */,
 				1AEE006117427E2F00B6FC43 /* YummlyRequest.m in Sources */,
 				1AEE007917453F3A00B6FC43 /* YummlyTheme.m in Sources */,
-				1A84A5A11765C2E300E1F818 /* YummlyToolbar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

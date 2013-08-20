@@ -67,7 +67,10 @@
 	if (self.presentingViewController)
 	{
 		[NetworkActivityIndicator stop];
-		[self dismissViewControllerAnimated:YES completion:nil];
+		dispatch_async(dispatch_get_main_queue(),
+		^{
+			[self dismissViewControllerAnimated:YES completion:nil];
+		});
 	}
 }
 

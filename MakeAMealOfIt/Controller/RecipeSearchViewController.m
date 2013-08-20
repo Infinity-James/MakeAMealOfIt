@@ -8,7 +8,6 @@
 
 #import "AppDelegate.h"
 #import "MakeAMealOfItIntroduction.h"
-#import "Reachability.h"
 #import "RecipeSearchHelpView.h"
 #import "RecipeSearchView.h"
 #import "RecipeSearchViewController.h"
@@ -41,6 +40,8 @@ enum SectionIndex
 @property (nonatomic, strong)	UIImage						*cueImage;
 /**	A view configured to display helpful text to the user.	*/
 @property (nonatomic, strong)	RecipeSearchHelpView		*helpView;
+/**	Keeps track of whether there is an internet connection or not.	*/
+@property (nonatomic, assign)	BOOL						internetConnectionExists;
 /**	Whether or not the table view should simply be reloaded, or if NO it can be updated in an animated fashion.	*/
 @property (nonatomic, assign)	BOOL						justReload;
 /**	The left toolbar button used to slide in the left view.	*/
@@ -77,6 +78,26 @@ enum SectionIndex
 @implementation RecipeSearchViewController {}
 
 #pragma mark - Action & Selector Methods
+
+/**
+ *	This message has been sent because the internet connection has been lost.
+ *
+ *	@param	notification				The object containing a name, an object, and an optional dictionary.
+ */
+- (void)internetConnectionLost:(NSNotification *)notification
+{
+	self.internetConnectionExists		= NO;
+}
+
+/**
+ *	This message has been sent if the once lost internet connection has been recovered.
+ *
+ *	@param	notification				The object containing a name, an object, and an optional dictionary.
+ */
+- (void)internetConnectionRecovered:(NSNotification *)notification
+{
+	self.internetConnectionExists		= YES;
+}
 
 /**
  *	Called when the button in the toolbar for the left panel is tapped.
@@ -158,7 +179,6 @@ enum SectionIndex
 - (void)yummlyRequestHasBeenChanged:(NSNotification *)notification
 {
 	self.clearSearchButton.enabled		= YES;
-	self.helpView.hidden				= YES;
 }
 
 /**
@@ -169,12 +189,6 @@ enum SectionIndex
 - (void)yummlyRequestIsEmpty:(NSNotification *)notification
 {
 	self.clearSearchButton.enabled		= NO;
-	self.helpView.alpha					= 0.0f;
-	self.helpView.hidden				= NO;
-	[UIView animateWithDuration:1.0f animations:
-	^{
-		self.helpView.alpha				= 1.0f;
-	}];
 }
 
 #pragma mark - Autolayout Methods
@@ -227,7 +241,10 @@ enum SectionIndex
 																	  metrics:nil
 																		views:self.viewsDictionary]];
 	
-	[self.view addConstraint:self.centreCueConstraint];
+	if (self.shiftCuesUp)
+		[self.view addConstraints:self.shiftedCueConstraints];
+	else
+		[self.view addConstraint:self.centreCueConstraint];
 	
 	[self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.slideCueLeft
 														  attribute:NSLayoutAttributeCenterY
@@ -273,6 +290,33 @@ enum SectionIndex
 	return nil;
 }
 
+/**
+ *	Registers for any notifications that thic view controller wants to observe.
+ */
+- (void)registerForNotifications
+{
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(yummlyRequestHasBeenReset:)
+												 name:kNotificationYummlyRequestReset
+											   object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(yummlyRequestHasBeenChanged:)
+												 name:kNotificationYummlyRequestChanged
+											   object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(yummlyRequestIsEmpty:)
+												 name:kNotificationYummlyRequestEmpty
+											   object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(internetConnectionLost:)
+												 name:kNotificationInternetConnectionLost
+											   object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(internetConnectionRecovered:)
+												 name:kNotificationInternetReconnected
+											   object:nil];
+}
+
 #pragma mark - Initialisation
 
 /**
@@ -297,20 +341,8 @@ enum SectionIndex
 {
 	if (self = [super init])
 	{
-		//self.restorationIdentifier		= NSStringFromClass([self class]);
-		
-		[[NSNotificationCenter defaultCenter] addObserver:self
-												 selector:@selector(yummlyRequestHasBeenReset:)
-													 name:kNotificationYummlyRequestReset
-												   object:nil];
-		[[NSNotificationCenter defaultCenter] addObserver:self
-												 selector:@selector(yummlyRequestHasBeenChanged:)
-													 name:kNotificationYummlyRequestChanged
-												   object:nil];
-		[[NSNotificationCenter defaultCenter] addObserver:self
-												 selector:@selector(yummlyRequestIsEmpty:)
-													 name:kNotificationYummlyRequestEmpty
-												   object:nil];
+		[self registerForNotifications];
+		self.internetConnectionExists	= YES;
 	}
 	
 	return self;
@@ -418,7 +450,10 @@ enum SectionIndex
 		dispatch_async(dispatch_get_main_queue(),
 		^{
 			if (excludedIngredients.count > 0 || includedIngredients.count > 0)
+			{
 				self.shiftCuesUp						= YES;
+				[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(setShiftCuesUp:) object:NO];
+			}
 			else
 				[self performSelector:@selector(setShiftCuesUp:) withObject:NO afterDelay:0.5f];
 			
@@ -476,6 +511,17 @@ enum SectionIndex
  */
 - (void)searchExecutedForResults:(NSDictionary *)results
 {
+	if (!self.internetConnectionExists)
+	{
+		[[[UIAlertView alloc] initWithTitle:@"No Internet Connection"
+									message:@"The search could not be executed due to a lack of internet juice.\nApologies."
+								   delegate:self
+						  cancelButtonTitle:@"Understood"
+						  otherButtonTitles:nil] show];
+		
+		return;
+	}
+	
 	//	set up the next centre view controller with the recipes it needs to display
 	RecipesViewController *recipesVC	= [[RecipesViewController alloc] init];
 	recipesVC.recipes					= results[kYummlyMatchesArrayKey];
@@ -804,6 +850,8 @@ enum SectionIndex
 	if (_shiftCuesUp == shiftCuesUp)	return;
 	
 	_shiftCuesUp						= shiftCuesUp;
+	
+	[self.helpView setHidden:shiftCuesUp animated:YES];
 	
 	if (_shiftCuesUp)
 	{

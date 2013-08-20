@@ -123,6 +123,43 @@
 	return @{@"helpText"	: self.helpTextView	};
 }
 
+#pragma mark - Property Accessor Methods - Setters
+
+/**
+ *	Sets the Boolean value that determines whether the view is hidden.
+ *
+ *	@param	hidden						A Boolean value that determines whether the view is hidden.
+ */
+- (void)setHidden:(BOOL)hidden
+{
+	[self setHidden:hidden animated:NO];
+}
+
+/**
+ *	Sets the Boolean value that determines whether the view is hidden.
+ *
+ *	@param	hidden						A Boolean value that determines whether the view is hidden.
+ *	@param	animated					Whether to animate the hiding of the view.
+ */
+- (void)setHidden:(BOOL)hidden
+		 animated:(BOOL)animated
+{
+	if (!hidden)
+		[super setHidden:hidden];
+	
+	[UIView animateWithDuration:1.0f
+					 animations:
+	^{
+		self.alpha						= hidden ? 0.0f : 1.0f;
+	}
+					 completion:^(BOOL finished)
+	{
+		if (hidden)
+			[super setHidden:hidden];
+	}];
+}
+
+
 #pragma mark - UIView Methods
 
 /**

@@ -126,8 +126,8 @@
 	//	get the context
 	CGContextRef context				= UIGraphicsGetCurrentContext();
 	
-	UIColor *endColour					= kYummlyColourShadowWithAlpha(0.5f);
-	UIColor *startColour				= kYummlyColourMainWithAlpha(0.0f);
+	UIColor *endColour					= kDarkGreyColourWithAlpha(0.5f);
+	UIColor *startColour				= kLightGreyColourWithAlpha(0.1f);
 	
 	//	----	fiil the rect with a background colour first of all	----
 	

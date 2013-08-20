@@ -50,10 +50,12 @@
     
     if (reachability.isReachable)
     {
+		[[NSNotificationCenter defaultCenter] postNotificationName:kNotificationInternetReconnected object:reachability];
     }
 	
     else
     {
+		[[NSNotificationCenter defaultCenter] postNotificationName:kNotificationInternetConnectionLost object:reachability];
     }
 }
 

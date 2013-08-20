@@ -31,7 +31,9 @@ static CGFloat const kPanelWidth		= 50.00f;
 #define kShadowOffset					CGSizeMake(0.0f, 2.0f)
 
 //	notification names
-#define kThemeChanged						@"NotificationThemeChanged"
+static NSString *const kNotificationInternetConnectionLost	= @"NotificationGuysNoMoreInternet";
+static NSString *const kNotificationInternetReconnected		= @"NotificationGuysWeHaveInternet";
+static NSString *const kNotificationThemeChanged			= @"NotificationThemeChanged";
 static NSString *const kNotificationYummlyRequestChanged	= @"NotificationYummlyRequestChanged";
 static NSString *const kNotificationYummlyRequestEmpty		= @"NotificationYummlyRequestEmpty";
 static NSString *const kNotificationYummlyRequestReset		= @"NotificationYummlyRequestReset";
@@ -40,6 +42,8 @@ static NSString *const kNotificationTextSizeChanged			= @"NotificationTextSizeCh
 //	yummly theme constants
 #define kDarkGreyColour					[UIColor colorWithRed:030.0f / 255.0f green:030.0f / 255.0f blue:030.0f / 255.0f alpha:1.000f]
 #define kDarkGreyColourWithAlpha(x)		[UIColor colorWithRed:030.0f / 255.0f green:030.0f / 255.0f blue:030.0f / 255.0f alpha:x]
+#define kLightGreyColour				[[UIColor alloc] initWithRed:165.0f / 255.0f green:165.0f / 255.0f blue:165.0f / 255.0f alpha:1.0f]
+#define kLightGreyColourWithAlpha(x)	[[UIColor alloc] initWithRed:165.0f / 255.0f green:165.0f / 255.0f blue:165.0f / 255.0f alpha:x]
 #define	kYummlyColourMain				[UIColor colorWithRed:218.0f / 255.0f green:074.0f / 255.0f blue:011.0f / 255.0f alpha:1.000f]
 #define	kYummlyColourShadow				[UIColor colorWithRed:130.0f / 255.0f green:034.0f / 255.0f blue:006.0f / 255.0f alpha:1.000f]
 #define	kYummlyColourMainWithAlpha(x)	[UIColor colorWithRed:218.0f / 255.0f green:074.0f / 255.0f blue:011.0f / 255.0f alpha:x]

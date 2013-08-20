@@ -12,7 +12,9 @@
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
+/**	This property contains the window used to present the app’s visual content on the device’s main screen.	*/
 @property (strong, nonatomic)	UIWindow						*window;
+/**	The global YummlyRequest used for the main search of the app.	*/
 @property (strong, nonatomic)	YummlyRequest					*yummlyRequest;
 
 @end

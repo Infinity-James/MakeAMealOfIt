@@ -7,7 +7,6 @@
 //
 
 #import "AppDelegate.h"
-#import "Reachability.h"
 #import "RecipeCollectionViewCell.h"
 #import "RecipeDetailsViewController.h"
 #import "RecipesViewController.h"
@@ -52,6 +51,26 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 #pragma mark - Action & Selector Methods
 
 /**
+ *	This message has been sent because the internet connection has been lost.
+ *
+ *	@param	notification				The object containing a name, an object, and an optional dictionary.
+ */
+- (void)internetConnectionLost:(NSNotification *)notification
+{
+	self.internetAccess					= NO;
+}
+
+/**
+ *	This message has been sent if the once lost internet connection has been recovered.
+ *
+ *	@param	notification				The object containing a name, an object, and an optional dictionary.
+ */
+- (void)internetConnectionRecovered:(NSNotification *)notification
+{
+	self.internetAccess					= YES;
+}
+
+/**
  *	Called when the button in the toolbar for the right panel is tapped.
  */
 - (void)rightButtonTapped
@@ -88,6 +107,40 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 	[self.view addConstraints:constraints];
 }
 
+#pragma mark - Convenience & Helper Methods
+
+/**
+ *	A convenient way to get the correct background colour for a certain index.
+ *
+ *	@param	index						The index of the cell for which to return the colour.
+ *
+ *	@return	An appropriate colour for the given index.
+ */
+- (UIColor *)colourForIndex:(NSUInteger)index
+{
+	if (index % 3 == 0)
+		return [[UIColor alloc] initWithRed:011.0f / 255.0f green:156.0f / 255.0f blue:218.0f / 255.0f alpha:1.0f];
+	else if (index % 3 == 2)
+		return kYummlyColourMain;
+	
+	return kLightGreyColour;
+}
+
+/**
+ *	Adds this view controller as an observer of the appropriate notifications.
+ */
+- (void)registerForNotifications
+{
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(internetConnectionLost:)
+												 name:kNotificationInternetConnectionLost
+											   object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(internetConnectionLost:)
+												 name:kNotificationInternetConnectionLost
+											   object:nil];
+}
+
 #pragma mark - Initialisation
 
 /**
@@ -112,6 +165,7 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 	{
 		self.internetAccess				= YES;
 		self.moreResultsAvailable		= YES;
+		[self registerForNotifications];
 	}
 	
 	return self;
@@ -332,8 +386,10 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 	
 	RecipeCollectionViewCell *cell		= [collectionView dequeueReusableCellWithReuseIdentifier:kCellIdentifier forIndexPath:indexPath];
 	
+	cell.backgroundColor				= [self colourForIndex:indexPath.item];
 	cell.recipeDetails.mainLabel.text	= self.recipes[indexPath.row][kYummlyMatchRecipeNameKey];
 	cell.recipeDetails.detailLabel.text	= self.recipes[indexPath.row][kYummlyMatchSourceDisplayNameKey];
+	
 	
 	[self fetchImageForCell:cell atIndexPath:indexPath];
 	
@@ -374,18 +430,6 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 #pragma mark - UICollectionViewDelegate Methods
 
 /**
- *	Tells the delegate that the item at the specified path was deselected.
- *
- *	@param	collectionview				The collection view object that is notifying you of the selection change.
- *	@param	indexPath					The index path of the cell that was deselected.
- */
-- (void)	collectionView:(UICollectionView *)collectionView
-didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
-{
-	
-}
-
-/**
  *	Tells the delegate that the item at the specified index path was selected.
  *
  *	@param	collectionview				The collection view object that is notifying you of the selection change.
@@ -394,6 +438,16 @@ didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
 - (void)  collectionView:(UICollectionView *)collectionView
 didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+	if (!self.internetAccess)
+	{
+		[[[UIAlertView alloc] initWithTitle:@"Not Going To Happen"
+									message:@"Unfortunately you do not have the internet access required to view this recipe."
+								   delegate:self
+						  cancelButtonTitle:@"Understood"
+						  otherButtonTitles:nil] show];
+		return;
+	}
+	
 	RecipeDetailsViewController *recipeVC	= [[RecipeDetailsViewController alloc] initWithRecipeID:self.recipes[indexPath.row][kYummlyMatchIDKey]
 																					  andRecipeName:self.recipes[indexPath.row][kYummlyMatchRecipeNameKey]];
 	

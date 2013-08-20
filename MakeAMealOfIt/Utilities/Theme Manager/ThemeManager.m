@@ -60,7 +60,7 @@ static id<Theme> _theme					= nil;
 	
 	//	use the navigation bar appearance proxy to change all of the navigation bars and then post the notification
 	[self customiseNavigationBar:[UINavigationBar appearance] withTheme:nil];
-	[[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:kThemeChanged object:nil]];
+	[[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:kNotificationThemeChanged object:nil]];
 	
 	//	use the page control proxy to customise all page controls
 	[self customisePageControl:[UIPageControl appearance] withTheme:nil];
