@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "MakeAMealOfItIntroduction.h"
+#import "OverlayActivityIndicator.h"
 #import "RecipeSearchHelpView.h"
 #import "RecipeSearchView.h"
 #import "RecipeSearchViewController.h"
@@ -32,6 +33,8 @@ enum SectionIndex
 
 #pragma mark - Private Properties
 
+/**	Used to show that the recipe image is loading.	*/
+@property (nonatomic, strong)	OverlayActivityIndicator	*activityIndicatorView;
 /**	An NSLayout constraint with the cues centred.	*/
 @property (nonatomic, strong)	NSLayoutConstraint			*centreCueConstraint;
 /**	A button that allows the user to reset the entire search.	*/
@@ -205,6 +208,7 @@ enum SectionIndex
 	
 	CGFloat barHeight					= self.slideNavigationController.slideNavigationBar.frame.size.height + 10.0f;
 	CGSize helpViewSize					= self.helpView.intrinsicContentSize;
+	CGSize activityIndicatorSize		= self.activityIndicatorView.intrinsicContentSize;
 	
 	//	add the table view to cover the whole main view except for the toolbar
 	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[recipeSearchView]|"
@@ -266,10 +270,34 @@ enum SectionIndex
 																	  options:kNilOptions
 																	  metrics:nil
 																		views:self.viewsDictionary]];
+	
+	[self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.activityIndicatorView
+														  attribute:NSLayoutAttributeCenterX
+														  relatedBy:NSLayoutRelationEqual
+															 toItem:self.view
+														  attribute:NSLayoutAttributeCenterX
+														 multiplier:1.0f
+														   constant:0.0f]];
+	[self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.activityIndicatorView
+														  attribute:NSLayoutAttributeCenterY
+														  relatedBy:NSLayoutRelationEqual
+															 toItem:self.view
+														  attribute:NSLayoutAttributeCenterY
+														 multiplier:1.0f
+														   constant:0.0f]];
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[activityView(==height)]"
+																	  options:kNilOptions
+																	  metrics:@{@"height": @(activityIndicatorSize.height)}
+																		views:self.viewsDictionary]];
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[activityView(==width)]"
+																	  options:kNilOptions
+																	  metrics:@{@"width": @(activityIndicatorSize.width)}
+																		views:self.viewsDictionary]];
 
 	[self.view bringSubviewToFront:self.helpView];
 	[self.view bringSubviewToFront:self.slideCueLeft];
 	[self.view bringSubviewToFront:self.slideCueRight];
+	[self.view bringSubviewToFront:self.activityIndicatorView];
 }
 
 #pragma mark - Convenience & Helper Methods
@@ -505,6 +533,14 @@ enum SectionIndex
 }
 
 /**
+ *	Sent to the delegate when a search will take place.
+ */
+- (void)searchWillExecute
+{
+	[self.activityIndicatorView performSelectorOnMainThread:@selector(startAnimating) withObject:nil waitUntilDone:NO];
+}
+
+/**
  *	Called when a search was executed and returned with the results dictionary.
  *
  *	@param	results						The dictionary of results from the yummly response.
@@ -530,6 +566,8 @@ enum SectionIndex
 	//	set up the next right view controller with the attributions it needs to display
 	YummlyAttributionViewController *yummlyAttribution	= [[YummlyAttributionViewController alloc] initWithAttributionDictionary:results[kYummlyAttributionDictionaryKey]];
 	
+	[self.activityIndicatorView stopAnimating];
+	
 	//	present the next set of view controllers
 	[self.slideNavigationController pushCentreViewController:recipesVC
 									 withRightViewController:yummlyAttribution
@@ -537,6 +575,26 @@ enum SectionIndex
 }
 
 #pragma mark - Property Accessor Methods - Getters
+
+/**
+ *	The view that shows the user that the recipe image is loading.
+ *
+ *	@return	A UIActivityIndicatorView representing loading.
+ */
+- (OverlayActivityIndicator *)activityIndicatorView
+{
+	if (!_activityIndicatorView)
+	{
+		_activityIndicatorView			= [[OverlayActivityIndicator alloc] init];
+		_activityIndicatorView.activityBackgroundColour	= kDarkGreyColourWithAlpha(0.5f);
+		_activityIndicatorView.activityIndicatorColour	= [UIColor whiteColor];
+		
+		_activityIndicatorView.translatesAutoresizingMaskIntoConstraints	= NO;
+		[self.view addSubview:_activityIndicatorView];
+	}
+	
+	return _activityIndicatorView;
+}
 
 /**
  *	A constraint used to centre the sliding cues in the view.
@@ -829,7 +887,8 @@ enum SectionIndex
  */
 - (NSDictionary *)viewsDictionary
 {
-	return @{	@"clearSearchButton": self.clearSearchButton,
+	return @{	@"activityView"		: self.activityIndicatorView,
+				@"clearSearchButton": self.clearSearchButton,
 				@"cueLeft"			: self.slideCueLeft,
 				@"cueRight"			: self.slideCueRight,
 				@"helpView"			: self.helpView,

@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
-#import "NetworkActivityIndicator.h"
+#import "OverlayActivityIndicator.h"
 #import "RecipeDetailsViewController.h"
 #import "RecipeDetailsView.h"
 #import "WebViewController.h"
@@ -18,6 +18,8 @@
 
 #pragma mark - Private Properties
 
+/**	Used to show that the recipe image is loading.	*/
+@property (nonatomic, strong)	OverlayActivityIndicator	*activityIndicatorView;
 /**	A block to call when the recipe's attribution view controller has loaded.	*/
 @property (nonatomic, copy)		AttributionDictionaryLoaded	attributionDictionaryLoaded;
 /**	Keeps track of whether there is an internet connection or not.	*/
@@ -98,6 +100,36 @@
 																metrics:nil
 																  views:self.viewsDictionary];
 	[self.view addConstraints:constraints];
+	
+	[self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.activityIndicatorView
+														  attribute:NSLayoutAttributeCenterX
+														  relatedBy:NSLayoutRelationEqual
+															 toItem:self.view
+														  attribute:NSLayoutAttributeCenterX
+														 multiplier:1.0f
+														   constant:0.0f]];
+	[self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.activityIndicatorView
+														  attribute:NSLayoutAttributeCenterY
+														  relatedBy:NSLayoutRelationEqual
+															 toItem:self.view
+														  attribute:NSLayoutAttributeCenterY
+														 multiplier:1.0f
+														   constant:0.0f]];
+	[self.activityIndicatorView addConstraint:[NSLayoutConstraint constraintWithItem:self.activityIndicatorView
+																		   attribute:NSLayoutAttributeHeight
+																		   relatedBy:NSLayoutRelationEqual
+																			  toItem:nil
+																		   attribute:NSLayoutAttributeNotAnAttribute
+																		  multiplier:1.0f
+																			constant:self.activityIndicatorView.intrinsicContentSize.height]];
+	[self.activityIndicatorView addConstraint:[NSLayoutConstraint constraintWithItem:self.activityIndicatorView
+																		   attribute:NSLayoutAttributeWidth
+																		   relatedBy:NSLayoutRelationEqual
+																			  toItem:nil
+																		   attribute:NSLayoutAttributeNotAnAttribute
+																		  multiplier:1.0f
+																			constant:self.activityIndicatorView.intrinsicContentSize.width]];
+	[self.view bringSubviewToFront:self.activityIndicatorView];
 }
 
 #pragma mark - Convenience & Helper Methods
@@ -186,6 +218,8 @@
  */
 - (void)openRecipeWebsite
 {
+	[self.activityIndicatorView startAnimating];
+	
 	NSString *recipeURLString			= self.recipe.sourceDictionary[kYummlyRecipeSourceRecipeURLKey];
 	NSURL *recipeURL					= [[NSURL alloc] initWithString:recipeURLString];
 	
@@ -240,10 +274,9 @@
 								   delegate:self
 						  cancelButtonTitle:@"Understood"
 						  otherButtonTitles:nil] show];
+		[self.activityIndicatorView stopAnimating];
 		return;
 	}
-	
-	[NetworkActivityIndicator start];
 	
 	WebViewController *webViewController= [[WebViewController alloc] initWithURL:url];
 	
@@ -252,13 +285,35 @@
 	^{
 		dispatch_async(dispatch_get_main_queue(),
 		^{
-			[self presentViewController:webViewController animated:YES completion:nil];
-			[NetworkActivityIndicator stop];
+			[self presentViewController:webViewController animated:YES completion:
+			^{
+				[self.activityIndicatorView performSelectorOnMainThread:@selector(stopAnimating) withObject:nil waitUntilDone:NO];
+			}];
 		});
 	}];
 }
 
-#pragma mark - Setter & Getter Methods
+#pragma mark - Property Accessor Methods - Getters
+
+/**
+ *	The view that shows the user that the recipe image is loading.
+ *
+ *	@return	A UIActivityIndicatorView representing loading.
+ */
+- (OverlayActivityIndicator *)activityIndicatorView
+{
+	if (!_activityIndicatorView)
+	{
+		_activityIndicatorView			= [[OverlayActivityIndicator alloc] init];
+		_activityIndicatorView.activityBackgroundColour	= kDarkGreyColourWithAlpha(0.5f);
+		_activityIndicatorView.activityIndicatorColour	= [UIColor whiteColor];
+		
+		_activityIndicatorView.translatesAutoresizingMaskIntoConstraints	= NO;
+		[self.view addSubview:_activityIndicatorView];
+	}
+	
+	return _activityIndicatorView;
+}
 
 /**
  *	The main view that will display the details of the recipe.

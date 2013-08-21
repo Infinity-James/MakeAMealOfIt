@@ -131,21 +131,21 @@ static CGFloat const kImageHeight		= 200.0f;
 																 metrics:@{@"imageMargin": @(imageMargin)}
 																   views:self.viewsDictionary]];
 	
-	[self addConstraint:[NSLayoutConstraint constraintWithItem:self.starRatingView
-													 attribute:NSLayoutAttributeHeight
-													 relatedBy:NSLayoutRelationEqual
-														toItem:nil
-													 attribute:NSLayoutAttributeNotAnAttribute
-													multiplier:1.0f
-													  constant:kImageHeight]];
+	[self.starRatingView addConstraint:[NSLayoutConstraint constraintWithItem:self.starRatingView
+																	attribute:NSLayoutAttributeHeight
+																	relatedBy:NSLayoutRelationEqual
+																	   toItem:nil
+																	attribute:NSLayoutAttributeNotAnAttribute
+																   multiplier:1.0f
+																	 constant:kImageHeight]];
 	
-	[self addConstraint:[NSLayoutConstraint constraintWithItem:self.starRatingView
-													 attribute:NSLayoutAttributeWidth
-													 relatedBy:NSLayoutRelationEqual
-														toItem:self.starRatingView
-													 attribute:NSLayoutAttributeHeight
-													multiplier:0.2f
-													  constant:0.0f]];
+	[self.starRatingView addConstraint:[NSLayoutConstraint constraintWithItem:self.starRatingView
+																	attribute:NSLayoutAttributeWidth
+																	relatedBy:NSLayoutRelationEqual
+																	   toItem:self.starRatingView
+																	attribute:NSLayoutAttributeHeight
+																   multiplier:0.2f
+																	 constant:0.0f]];
 	
 	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[starRating]-(20)-[servingsLabel]"
 																 options:NSLayoutFormatAlignAllCenterX

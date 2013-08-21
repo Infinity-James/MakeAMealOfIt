@@ -13,9 +13,34 @@
 @implementation UIView (AlphaControl)
 
 /**
- *	sets a view and all of it's subviews to a specified alpha
+ *	Sets the Boolean value that determines whether the view is hidden.
  *
- *	@param	alpha						the alpha value for all of the views
+ *	@param	hidden						A Boolean value that determines whether the view is hidden.
+ *	@param	animated					Whether to animate the hiding of the view.
+ */
+- (void)setHidden:(BOOL)hidden
+		 animated:(BOOL)animated
+{
+	if (!hidden)
+		self.alpha						= 0.0f,
+		self.hidden						= hidden;
+	
+	[UIView animateWithDuration:animated ? 1.0f : 0.0f
+					 animations:
+	 ^{
+		 self.alpha						= hidden ? 0.0f : 1.0f;
+	 }
+					 completion:^(BOOL finished)
+	 {
+		 if (hidden)
+			 self.hidden				= hidden;
+	 }];
+}
+
+/**
+ *	Sets a view and all of it's subviews to a specified alpha.
+ *
+ *	@param	alpha						The alpha value for all of the views.
  */
 - (void)setViewHierarchyAlpha:(CGFloat)alpha
 {

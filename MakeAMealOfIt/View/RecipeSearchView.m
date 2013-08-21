@@ -46,6 +46,9 @@
 	else
 		return;
 	
+	if ([self.delegate respondsToSelector:@selector(searchWillExecute)])
+		[self.delegate searchWillExecute];
+	
 	//	executes the search request
 	[appDelegate.yummlyRequest executeSearchRecipesCallWithCompletionHandler:^(BOOL success, NSDictionary *results)
 	{
@@ -148,7 +151,7 @@
 	return self;
 }
 
-#pragma mark - Setter & Getter Methods
+#pragma mark - Property Accessor Methods - Getters
 
 /**
  *	an array of example foods for the placeholder of the search field
@@ -212,8 +215,8 @@
  */
 - (NSDictionary *)viewsDictionary
 {
-	return @{	@"searchField"		: self.searchPhraseField,
-				@"searchButton"		: self.searchButton};
+	return @{	@"searchField"			: self.searchPhraseField,
+				@"searchButton"			: self.searchButton};
 }
 
 #pragma mark - UIResponder Methods

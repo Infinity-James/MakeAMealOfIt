@@ -6,6 +6,10 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
+#import "OverlayActivityIndicator.h"
+
+#pragma mark - RecipeSearchViewController Protocol
+
 @protocol RecipeSearchViewController <NSObject>
 
 @required
@@ -16,6 +20,10 @@
  *	@param	viewController				The view controller which was added to the our child view.
  */
 - (void)addedViewController:(UIViewController *)viewController;
+/**
+ *	Sent to the delegate when a search will take place.
+ */
+- (void)searchWillExecute;
 /**
  *	Called when a search was executed and returned with the results dictionary.
  *
@@ -31,6 +39,7 @@
 
 #pragma mark - Private Properties
 
-@property (nonatomic, weak)	UIViewController<RecipeSearchViewController>	*delegate;
+/**	This view's delegate interested in the action of this view.	*/
+@property (nonatomic, weak)		UIViewController<RecipeSearchViewController>	*delegate;
 
 @end

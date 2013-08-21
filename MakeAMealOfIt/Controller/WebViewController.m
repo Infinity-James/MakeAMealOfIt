@@ -56,6 +56,7 @@
 	NSString *initialTextString			= self.url.absoluteString;
 	UIActivityViewController *activity	= [[UIActivityViewController alloc] initWithActivityItems:@[initialTextString, self.url]
 																		   applicationActivities:@[safariActivity]];
+
 	[self presentViewController:activity animated:YES completion:nil];
 }
 
@@ -66,10 +67,13 @@
 {
 	if (self.presentingViewController)
 	{
-		[NetworkActivityIndicator stop];
 		dispatch_async(dispatch_get_main_queue(),
 		^{
-			[self dismissViewControllerAnimated:YES completion:nil];
+			[self.webView stopLoading];
+			[self dismissViewControllerAnimated:YES completion:
+			^{
+				[NetworkActivityIndicator forceStop];
+			}];
 		});
 	}
 }
@@ -330,6 +334,7 @@
  */
 - (void)pullToRefreshViewRequestingRefresh:(PullToRefreshView *)pullToRefreshView
 {
+	[self.webView stopLoading];
 	[self.webView reload];
 }
 

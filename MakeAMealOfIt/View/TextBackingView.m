@@ -60,7 +60,7 @@
 	[self addConstraints:constraints];
 }
 
-#pragma mark - Setter & Getter Methods
+#pragma mark - Property Accessor Methods - Getters
 
 /**
  *	the subtitle of this view

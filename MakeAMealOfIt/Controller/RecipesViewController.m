@@ -257,8 +257,8 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 		_recipesCollectionView.delegate			= self;
 		
 		//	registers collection view cell classes that will be used in our collection view
-		[_recipesCollectionView registerClass:[RecipeCollectionViewCell class] forCellWithReuseIdentifier:kCellIdentifier];
 		[_recipesCollectionView registerClass:[ResultManagementCell class] forCellWithReuseIdentifier:kSpecialCellIdentifier];
+		[_recipesCollectionView registerClass:[RecipeCollectionViewCell class] forCellWithReuseIdentifier:kCellIdentifier];
 		
 		//	adds the collection view to the main view set up for use in autolayout
 		_recipesCollectionView.translatesAutoresizingMaskIntoConstraints	= NO;

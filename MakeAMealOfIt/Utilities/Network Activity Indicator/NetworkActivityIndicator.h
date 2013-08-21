@@ -10,7 +10,19 @@
 
 @interface NetworkActivityIndicator : NSObject {}
 
+#pragma mark - Public Methods
+
+/**
+ *	Forces the stopping of the activity indicator, no matter who is waiting for it.
+ */
++ (void)forceStop;
+/**
+ *	Starts the activity indicator.
+ */
 + (void)start;
+/**
+ *	Stops the activity indicator.
+ */
 + (void)stop;
 
 @end

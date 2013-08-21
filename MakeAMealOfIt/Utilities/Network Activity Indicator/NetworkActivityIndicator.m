@@ -12,6 +12,12 @@
 
 #define networkActivityIndicator		[UIApplication sharedApplication].networkActivityIndicatorVisible
 
+#pragma mark - Network Activity Indicator Private Class Extension
+
+@interface NetworkActivityIndicator () {}
+
+@end
+
 #pragma mark - Network Activity Indicator Implementation
 
 @implementation NetworkActivityIndicator {}
@@ -19,9 +25,9 @@
 #pragma mark - Maintenance Methods
 
 /**
- *	changes how many people are using the network activity indicator
+ *	Changes how many people are using the network activity indicator.
  *
- *	@param	
+ *	@param	counterDelta				The amount by which to change to counter.
  */
 + (void)changeCounterBy:(NSUInteger)counterDelta
 {
@@ -49,7 +55,18 @@
 #pragma mark - Network Activity Indicator Methods
 
 /**
- *	starts the activity indicator
+ *	Forces the stopping of the activity indicator, no matter who is waiting for it.
+ */
++ (void)forceStop
+{
+	while (networkActivityIndicator == YES)
+	{
+		[self changeCounterBy:-1];
+	}
+}
+
+/**
+ *	Starts the activity indicator.
  */
 + (void)start
 {
@@ -57,7 +74,7 @@
 }
 
 /**
- *	stops the activity indicator
+ *	Stops the activity indicator.
  */
 + (void)stop
 {
