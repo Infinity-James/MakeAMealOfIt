@@ -8,6 +8,8 @@
 
 #import "OverlayActivityIndicator.h"
 
+@class RecipeSearchView;
+
 #pragma mark - RecipeSearchViewController Protocol
 
 @protocol RecipeSearchViewController <NSObject>
@@ -20,6 +22,14 @@
  *	@param	viewController				The view controller which was added to the our child view.
  */
 - (void)addedViewController:(UIViewController *)viewController;
+/**
+ *	Asks the delegate whether the view is in a position to become the first responder.
+ *
+ *	@param	recipeSearchView			The view asking to become the first responder.
+ *
+ *	@return	YES if the view can become the first responder, NO otherwise.
+ */
+- (BOOL)recipeSearchViewCanBecomeFirstResponder:(RecipeSearchView *)recipeSearchView;
 /**
  *	Sent to the delegate when a search will take place.
  */

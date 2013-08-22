@@ -715,9 +715,19 @@ shouldReloadTableForSearchScope:(NSInteger)searchOption
 - (BOOL) searchDisplayController:(UISearchDisplayController *)controller
 shouldReloadTableForSearchString:(NSString *)searchString
 {
-	[self filterContentForSearchText:searchString inScope:nil];
 	
-	return YES;
+	
+	dispatch_async(dispatch_queue_create("Filtering", NULL),
+	^{
+		[self filterContentForSearchText:searchString inScope:nil];
+		dispatch_async(dispatch_get_main_queue(),
+		^{
+			[NSObject cancelPreviousPerformRequestsWithTarget:self.searchDisplayController.searchResultsTableView];
+			[self.searchDisplayController.searchResultsTableView performSelector:@selector(reloadData) withObject:nil afterDelay:1.0f / searchString.length];
+		});
+	});
+	
+	return NO;
 }
 
 #pragma mark - UITableViewDataSource Methods

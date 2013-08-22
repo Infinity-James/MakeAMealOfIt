@@ -153,34 +153,34 @@ enum SectionIndex
 - (void)yummlyRequestHasBeenReset:(NSNotification *)notification
 {
 	dispatch_async(dispatch_queue_create("Ingredients Clearer", NULL),
-	^{
-		NSUInteger excludedCount			= ((NSArray *)self.selectedIngredients[kExcludedSelections]).count;
-		NSUInteger includedCount			= ((NSArray *)self.selectedIngredients[kIncludedSelections]).count;
-		
-		NSMutableArray *indexPaths			= [[NSMutableArray alloc] initWithCapacity:excludedCount + includedCount];
-		
-		for (NSUInteger index = 0; index < excludedCount; index++)
-			[indexPaths addObject:[NSIndexPath indexPathForRow:index inSection:kSectionExcludedIndex]];
-		for (NSUInteger index = 0; index < includedCount; index++)
-			[indexPaths addObject:[NSIndexPath indexPathForRow:index inSection:kSectionIncludedIndex]];
-		
-		self.selectedIngredients			= nil;
-		
-		dispatch_async(dispatch_get_main_queue(),
-		^{
-			[self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationLeft];
-			//	we do this to reload the section headers
-			NSTimeInterval delayInSeconds	= 0.3f;
-			dispatch_time_t delayDispatch	= dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-			
-			dispatch_after(delayDispatch, dispatch_get_main_queue(), ^(void)
-		   {
-			   [self.tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)]
-							 withRowAnimation:UITableViewRowAnimationFade];
-			   self.shiftCuesUp				= NO;
-		   });
-		});
-	});
+				   ^{
+					   NSUInteger excludedCount			= ((NSArray *)self.selectedIngredients[kExcludedSelections]).count;
+					   NSUInteger includedCount			= ((NSArray *)self.selectedIngredients[kIncludedSelections]).count;
+					   
+					   NSMutableArray *indexPaths			= [[NSMutableArray alloc] initWithCapacity:excludedCount + includedCount];
+					   
+					   for (NSUInteger index = 0; index < excludedCount; index++)
+						   [indexPaths addObject:[NSIndexPath indexPathForRow:index inSection:kSectionExcludedIndex]];
+					   for (NSUInteger index = 0; index < includedCount; index++)
+						   [indexPaths addObject:[NSIndexPath indexPathForRow:index inSection:kSectionIncludedIndex]];
+					   
+					   self.selectedIngredients			= nil;
+					   
+					   dispatch_async(dispatch_get_main_queue(),
+									  ^{
+										  [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationLeft];
+										  //	we do this to reload the section headers
+										  NSTimeInterval delayInSeconds	= 0.3f;
+										  dispatch_time_t delayDispatch	= dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+										  
+										  dispatch_after(delayDispatch, dispatch_get_main_queue(), ^(void)
+														 {
+															 [self.tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)]
+																		   withRowAnimation:UITableViewRowAnimationFade];
+															 self.shiftCuesUp				= NO;
+														 });
+									  });
+				   });
 }
 
 /**
@@ -224,7 +224,7 @@ enum SectionIndex
 																	  options:kNilOptions
 																	  metrics:nil
 																		views:self.viewsDictionary]];
-
+	
 	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[clearSearchButton]-|"
 																	  options:kNilOptions
 																	  metrics:nil
@@ -302,7 +302,7 @@ enum SectionIndex
 																	  options:kNilOptions
 																	  metrics:@{@"width": @(activityIndicatorSize.width)}
 																		views:self.viewsDictionary]];
-
+	
 	[self.view bringSubviewToFront:self.helpView];
 	[self.view bringSubviewToFront:self.slideCueLeft];
 	[self.view bringSubviewToFront:self.slideCueRight];
@@ -417,115 +417,115 @@ enum SectionIndex
 	
 	//	asynchronously add the selections to the yummly request and update our array for the table view
 	dispatch_sync(dispatch_queue_create("Selected Ingredients Updater", NULL),
-	^{
-		//	create variables to know what index paths to reload
-		NSMutableArray *indexPathsToInsert	= [[NSMutableArray alloc] init];
-		NSMutableArray *indexPathsToDelete	= [[NSMutableArray alloc] init];
-		
-		if (addedSelections)
-		{
-			//	get the included and excluded selections that have been added
-			NSArray *addedExcluded		= addedSelections[kExcludedSelections];
-			NSArray *addedIncluded		= addedSelections[kIncludedSelections];
-			
-			//	add the newly added ingredient dictionaries to the currently selected ones
-			[excludedIngredients addObjectsFromArray:addedExcluded];
-			[includedIngredients addObjectsFromArray:addedIncluded];
-			
-			//	for every newly added excluded ingredient dictionary we update the yummly request and store it to be inserted into the table view
-			for (NSDictionary *ingredientDictionary in addedExcluded)
-			{
-				[indexPathsToInsert addObject:[NSIndexPath indexPathForRow:[excludedIngredients indexOfObject:ingredientDictionary]
-																 inSection:kSectionExcludedIndex]];
-				[appDelegate.yummlyRequest addExcludedIngredient:ingredientDictionary[kYummlyMetadataDescriptionKey]];
-			}
-			
-			//	for every newly added included ingredient dictionary we update the yummly request and store it to be inserted into the table view
-			for (NSDictionary *ingredientDictionary in addedIncluded)
-			{
-				[indexPathsToInsert addObject:[NSIndexPath indexPathForRow:[includedIngredients indexOfObject:ingredientDictionary]
-																 inSection:kSectionIncludedIndex]];
-				
-				[appDelegate.yummlyRequest addDesiredIngredient:ingredientDictionary[kYummlyMetadataDescriptionKey]];
-			}
-		}
-		
-		if (removedSelections)
-		{
-			//	get the included and excluded selections that have been deleted
-			NSArray *removedExcluded	= removedSelections[kExcludedSelections];
-			NSArray *removedIncluded	= removedSelections[kIncludedSelections];
-			
-			//	for the removed excluded ingredient dictionaries we update the yummly request and store it to be deleted from the table view
-			for (NSDictionary *ingredientDictionary in removedExcluded)
-			{
-				[indexPathsToDelete addObject:[NSIndexPath indexPathForRow:[excludedIngredients indexOfObject:ingredientDictionary]
-																 inSection:kSectionExcludedIndex]];
-				[appDelegate.yummlyRequest removeExcludedIngredient:ingredientDictionary[kYummlyMetadataDescriptionKey]];
-			}
-			
-			//	for the removed included ingredient dictionaries we update the yummly request and store it to be deleted from the table view
-			for (NSDictionary *ingredientDictionary in removedIncluded)
-			{
-				[indexPathsToDelete addObject:[NSIndexPath indexPathForRow:[includedIngredients indexOfObject:ingredientDictionary]
-																 inSection:kSectionIncludedIndex]];
-				[appDelegate.yummlyRequest removeDesiredIngredient:ingredientDictionary[kYummlyMetadataDescriptionKey]];
-			}
-			
-			//	remove the deleted ingredient dictionaries from our currently selected ones now that we know where they were in table view
-			[excludedIngredients removeObjectsInArray:removedExcluded];
-			[includedIngredients removeObjectsInArray:removedIncluded];
-		}
-		
-		//	store the newly updated ingredient dictionaries for both included and excluded
-		self.selectedIngredients[kExcludedSelections]	= excludedIngredients;
-		self.selectedIngredients[kIncludedSelections]	= includedIngredients;
-		
-		NSDictionary *lastSelectedIngredients				= [self.selectedIngredients copy];
-		
-		//	update the table view on the main thread
-		dispatch_async(dispatch_get_main_queue(),
-		^{
-			if (excludedIngredients.count > 0 || includedIngredients.count > 0)
-			{
-				self.shiftCuesUp						= YES;
-				[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(setShiftCuesUp:) object:NO];
-			}
-			else
-				[self performSelector:@selector(setShiftCuesUp:) withObject:NO afterDelay:0.5f];
-			
-			//	if the index path updates are still accurate we update the table view in an animated fashion
-			if ([lastSelectedIngredients isEqualToDictionary:self.selectedIngredients] && !self.justReload)
-			{
-				[self.tableView beginUpdates];
-				if (indexPathsToDelete.count > 0)
-					[self.tableView deleteRowsAtIndexPaths:indexPathsToDelete withRowAnimation:UITableViewRowAnimationLeft];
-				if (indexPathsToInsert.count > 0)
-					[self.tableView insertRowsAtIndexPaths:indexPathsToInsert withRowAnimation:UITableViewRowAnimationRight];
-				[self.tableView endUpdates];
-			}
-			
-			//	however, if the index path updates are no longer accurate we just reload the whole table view
-			else
-			{
-				[self.tableView reloadData];
-				//	update whether we should just reload the table view next time
-				//	we might want to do this because the thread that made the changes which effected this update will also now be inaccurate
-				//	therefore we just reload on that thread too, and if this is that thread, is switches the 'justReload' back to NO
-				self.justReload			= !self.justReload;
-			}
-			
-			//	we do this to reload the section headers
-			NSTimeInterval delayInSeconds	= 0.3f;
-			dispatch_time_t delayDispatch	= dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-			
-			dispatch_after(delayDispatch, dispatch_get_main_queue(), ^(void)
-			{
-				[self.tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)]
-							  withRowAnimation:UITableViewRowAnimationFade];
-			});
-		});
-	});
+				  ^{
+					  //	create variables to know what index paths to reload
+					  NSMutableArray *indexPathsToInsert	= [[NSMutableArray alloc] init];
+					  NSMutableArray *indexPathsToDelete	= [[NSMutableArray alloc] init];
+					  
+					  if (addedSelections)
+					  {
+						  //	get the included and excluded selections that have been added
+						  NSArray *addedExcluded		= addedSelections[kExcludedSelections];
+						  NSArray *addedIncluded		= addedSelections[kIncludedSelections];
+						  
+						  //	add the newly added ingredient dictionaries to the currently selected ones
+						  [excludedIngredients addObjectsFromArray:addedExcluded];
+						  [includedIngredients addObjectsFromArray:addedIncluded];
+						  
+						  //	for every newly added excluded ingredient dictionary we update the yummly request and store it to be inserted into the table view
+						  for (NSDictionary *ingredientDictionary in addedExcluded)
+						  {
+							  [indexPathsToInsert addObject:[NSIndexPath indexPathForRow:[excludedIngredients indexOfObject:ingredientDictionary]
+																			   inSection:kSectionExcludedIndex]];
+							  [appDelegate.yummlyRequest addExcludedIngredient:ingredientDictionary[kYummlyMetadataDescriptionKey]];
+						  }
+						  
+						  //	for every newly added included ingredient dictionary we update the yummly request and store it to be inserted into the table view
+						  for (NSDictionary *ingredientDictionary in addedIncluded)
+						  {
+							  [indexPathsToInsert addObject:[NSIndexPath indexPathForRow:[includedIngredients indexOfObject:ingredientDictionary]
+																			   inSection:kSectionIncludedIndex]];
+							  
+							  [appDelegate.yummlyRequest addDesiredIngredient:ingredientDictionary[kYummlyMetadataDescriptionKey]];
+						  }
+					  }
+					  
+					  if (removedSelections)
+					  {
+						  //	get the included and excluded selections that have been deleted
+						  NSArray *removedExcluded	= removedSelections[kExcludedSelections];
+						  NSArray *removedIncluded	= removedSelections[kIncludedSelections];
+						  
+						  //	for the removed excluded ingredient dictionaries we update the yummly request and store it to be deleted from the table view
+						  for (NSDictionary *ingredientDictionary in removedExcluded)
+						  {
+							  [indexPathsToDelete addObject:[NSIndexPath indexPathForRow:[excludedIngredients indexOfObject:ingredientDictionary]
+																			   inSection:kSectionExcludedIndex]];
+							  [appDelegate.yummlyRequest removeExcludedIngredient:ingredientDictionary[kYummlyMetadataDescriptionKey]];
+						  }
+						  
+						  //	for the removed included ingredient dictionaries we update the yummly request and store it to be deleted from the table view
+						  for (NSDictionary *ingredientDictionary in removedIncluded)
+						  {
+							  [indexPathsToDelete addObject:[NSIndexPath indexPathForRow:[includedIngredients indexOfObject:ingredientDictionary]
+																			   inSection:kSectionIncludedIndex]];
+							  [appDelegate.yummlyRequest removeDesiredIngredient:ingredientDictionary[kYummlyMetadataDescriptionKey]];
+						  }
+						  
+						  //	remove the deleted ingredient dictionaries from our currently selected ones now that we know where they were in table view
+						  [excludedIngredients removeObjectsInArray:removedExcluded];
+						  [includedIngredients removeObjectsInArray:removedIncluded];
+					  }
+					  
+					  //	store the newly updated ingredient dictionaries for both included and excluded
+					  self.selectedIngredients[kExcludedSelections]	= excludedIngredients;
+					  self.selectedIngredients[kIncludedSelections]	= includedIngredients;
+					  
+					  NSDictionary *lastSelectedIngredients				= [self.selectedIngredients copy];
+					  
+					  //	update the table view on the main thread
+					  dispatch_async(dispatch_get_main_queue(),
+									 ^{
+										 if (excludedIngredients.count > 0 || includedIngredients.count > 0)
+										 {
+											 self.shiftCuesUp						= YES;
+											 [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(setShiftCuesUp:) object:NO];
+										 }
+										 else
+											 [self performSelector:@selector(setShiftCuesUp:) withObject:NO afterDelay:0.5f];
+										 
+										 //	if the index path updates are still accurate we update the table view in an animated fashion
+										 if ([lastSelectedIngredients isEqualToDictionary:self.selectedIngredients] && !self.justReload)
+										 {
+											 [self.tableView beginUpdates];
+											 if (indexPathsToDelete.count > 0)
+												 [self.tableView deleteRowsAtIndexPaths:indexPathsToDelete withRowAnimation:UITableViewRowAnimationLeft];
+											 if (indexPathsToInsert.count > 0)
+												 [self.tableView insertRowsAtIndexPaths:indexPathsToInsert withRowAnimation:UITableViewRowAnimationRight];
+											 [self.tableView endUpdates];
+										 }
+										 
+										 //	however, if the index path updates are no longer accurate we just reload the whole table view
+										 else
+										 {
+											 [self.tableView reloadData];
+											 //	update whether we should just reload the table view next time
+											 //	we might want to do this because the thread that made the changes which effected this update will also now be inaccurate
+											 //	therefore we just reload on that thread too, and if this is that thread, is switches the 'justReload' back to NO
+											 self.justReload			= !self.justReload;
+										 }
+										 
+										 //	we do this to reload the section headers
+										 NSTimeInterval delayInSeconds	= 0.3f;
+										 dispatch_time_t delayDispatch	= dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+										 
+										 dispatch_after(delayDispatch, dispatch_get_main_queue(), ^(void)
+														{
+															[self.tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)]
+																		  withRowAnimation:UITableViewRowAnimationFade];
+														});
+									 });
+				  });
 }
 
 #pragma mark - RecipeSearchViewController Methods
@@ -539,6 +539,24 @@ enum SectionIndex
 {
 	[self addChildViewController:viewController];
 	[viewController didMoveToParentViewController:self];
+}
+
+/**
+ *	Asks the delegate whether the view is in a position to become the first responder.
+ *
+ *	@param	recipeSearchView			The view asking to become the first responder.
+ *
+ *	@return	YES if the view can become the first responder, NO otherwise.
+ */
+- (BOOL)recipeSearchViewCanBecomeFirstResponder:(RecipeSearchView *)recipeSearchVie
+{
+	if (self.slideNavigationController.controllerState != SlideNavigationSideControllerClosed)
+	{
+		[self.slideNavigationController popCentreViewControllerAnimated:YES];
+		return NO;
+	}
+	
+	return YES;
 }
 
 /**
@@ -842,9 +860,9 @@ enum SectionIndex
 {
 	if (!_shiftedCueConstraints)
 		_shiftedCueConstraints				= [NSLayoutConstraint constraintsWithVisualFormat:@"V:[cueLeft]-(20)-[tableView]"
-																		   options:kNilOptions
-																		   metrics:nil
-																			 views:self.viewsDictionary];
+																			options:kNilOptions
+																			metrics:nil
+																			  views:self.viewsDictionary];
 	return _shiftedCueConstraints;
 }
 
@@ -934,9 +952,9 @@ enum SectionIndex
 	}
 	
 	[UIView animateWithDuration:0.5f animations:
-	^{
-		[self.view layoutIfNeeded];
-	}];
+	 ^{
+		 [self.view layoutIfNeeded];
+	 }];
 }
 
 #pragma mark - Slide Navigation Controller Lifecycle

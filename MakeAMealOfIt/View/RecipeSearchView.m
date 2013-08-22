@@ -38,7 +38,7 @@
 	//	if the keyboard is still up we take it down
 	[self.searchPhraseField resignFirstResponder];
 	
-	//	set the yummly request's 
+	//	set the yummly request's
 	appDelegate.yummlyRequest.searchPhrase	= self.searchPhraseField.text;
 	
 	if (!self.searchLoading)
@@ -51,10 +51,10 @@
 	
 	//	executes the search request
 	[appDelegate.yummlyRequest executeSearchRecipesCallWithCompletionHandler:^(BOOL success, NSDictionary *results)
-	{
-		[self.delegate performSelectorOnMainThread:@selector(searchExecutedForResults:) withObject:results waitUntilDone:NO];
-		self.searchLoading				= NO;
-	}];
+	 {
+		 [self.delegate performSelectorOnMainThread:@selector(searchExecutedForResults:) withObject:results waitUntilDone:NO];
+		 self.searchLoading				= NO;
+	 }];
 }
 
 /**
@@ -268,13 +268,15 @@
 }
 
 /**
- *	asks delegate if editing should begin in the specified text field
+ *	Asks the delegate if editing should begin in the specified text field.
  *
- *	@param	textField					text field for which editing is about to begin
+ *	@param	textField					The text field for which editing is about to begin.
+ *
+ *	@return	YES if an editing session should be initiated; otherwise, NO to disallow editing.
  */
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
-	return YES;
+	return [self.delegate recipeSearchViewCanBecomeFirstResponder:self];
 }
 
 /**
@@ -301,18 +303,18 @@
  *
  *	@param	rect						portion of the view’s bounds that needs to be updated
  *
-- (void)drawRect:(CGRect)rect
-{
-	//	get the context
-	CGContextRef context				= UIGraphicsGetCurrentContext();
-	
-	//	----	fiil the rect with a background colour first of all	----
-	
-	//	set fill colour and then fill the rect
-	UIColor *backgroundColour			= [UIColor colorWithRed:1.0f green:0.5f blue:0.0f alpha:1.0f];
-	CGContextSetFillColorWithColor(context, backgroundColour.CGColor);
-	CGContextFillRect(context, self.bounds);
-}*/
+ - (void)drawRect:(CGRect)rect
+ {
+ //	get the context
+ CGContextRef context				= UIGraphicsGetCurrentContext();
+ 
+ //	----	fiil the rect with a background colour first of all	----
+ 
+ //	set fill colour and then fill the rect
+ UIColor *backgroundColour			= [UIColor colorWithRed:1.0f green:0.5f blue:0.0f alpha:1.0f];
+ CGContextSetFillColorWithColor(context, backgroundColour.CGColor);
+ CGContextFillRect(context, self.bounds);
+ }*/
 
 #pragma mark - View-Related Observation Methods
 
