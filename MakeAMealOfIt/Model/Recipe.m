@@ -189,7 +189,9 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 }
 
 /**
- *	the amount of people this recipe serves
+ *	The amount of people this recipe serves.
+ *
+ *	@return	The amount of people this recipe serves.
  */
 - (NSUInteger)numberOfServings
 {
@@ -200,7 +202,9 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 }
 
 /**
- *	the rating of this recipe in stars
+ *	The rating of this recipe out of five.
+ *
+ *	@return	The rating of this recipe out of five.
  */
 - (CGFloat)rating
 {
@@ -211,7 +215,9 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 }
 
 /**
- *	the image for the recipe
+ *	The image for the recipe.
+ *
+ *	@return	A large UIImage for the recipe.
  */
 - (UIImage *)recipeImage
 {
@@ -230,7 +236,9 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 }
 
 /**
- *	returns the name for the recipe
+ *	The name of the recipe.
+ *
+ *	@return The name of the recipe.
  */
 - (NSString *)recipeName
 {
@@ -241,9 +249,9 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 }
 
 /**
+ *	Sets the delegate interested in knowing the details of this recipe.
  *
- *
- *	@param
+ *	@param	delegate					The object interested in knowing the details of this recipe.
  */
 - (void)setDelegate:(id<RecipeDelegate>)delegate
 {
@@ -254,9 +262,9 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 }
 
 /**
- *	sets the recipe dictionary with the dictionary of all the recipe details we fetched
+ *	Sets the recipe dictionary with the dictionary of all the recipe details we fetched.
  *
- *	@param	recipeDictionary			the dictionary with details about the recipe we wanted to fetch
+ *	@param	recipeDictionary			The dictionary with details about the recipe we wanted to fetch.
  */
 - (void)setRecipeDictionary:(NSDictionary *)recipeDictionary
 {
@@ -268,7 +276,9 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 }
 
 /**
- *	the dictionary holding the information about the source of this recipe
+ *	The dictionary holding the information about the source of this recipe.
+ *
+ *	@return	The dictionary holding the information about the source of this recipe.
  */
 - (NSDictionary *)sourceDictionary
 {
@@ -279,7 +289,9 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 }
 
 /**
- *	the amount of time this recipe takes to make (in seconds)
+ *	The amount of time this recipe takes to make (in seconds).
+ *
+ *	@return	The amount of time this recipe takes to make (in seconds).
  */
 - (NSUInteger)totalCookTime
 {

@@ -60,7 +60,7 @@ extern NSString *const kYummlyRecipeSourceWebsiteURLKey;
 @property (nonatomic, readonly, strong)	NSDictionary	*flavourDictionary;
 /**	The number of servings that this recipe provides.	*/
 @property (nonatomic, readonly, assign)	NSUInteger		numberOfServings;
-/**	The rating out of five stars for this recipe.	*/
+/**	The rating out of five for this recipe.	*/
 @property (nonatomic, readonly, assign)	CGFloat			rating;
 /**	A large image associated with this recipe.	*/
 @property (nonatomic, readonly, strong)	UIImage			*recipeImage;

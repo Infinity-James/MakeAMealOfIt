@@ -169,7 +169,16 @@ enum SectionIndex
 		dispatch_async(dispatch_get_main_queue(),
 		^{
 			[self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationLeft];
-			self.shiftCuesUp				= NO;
+			//	we do this to reload the section headers
+			NSTimeInterval delayInSeconds	= 0.3f;
+			dispatch_time_t delayDispatch	= dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+			
+			dispatch_after(delayDispatch, dispatch_get_main_queue(), ^(void)
+		   {
+			   [self.tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, 2)]
+							 withRowAnimation:UITableViewRowAnimationFade];
+			   self.shiftCuesUp				= NO;
+		   });
 		});
 	});
 }

@@ -9,6 +9,7 @@
 #import "RecipeDetailsView.h"
 #import "RecipeIngredientsController.h"
 #import "StarRatingView.h"
+#import "TimerLabel.h"
 #import "UIImageView+Animation.h"
 
 #pragma mark - Constants & Static Variables
@@ -24,8 +25,12 @@ static CGFloat const kImageHeight		= 200.0f;
 
 /**	Used to show that the recipe image is loading.	*/
 @property (nonatomic, strong)				UIActivityIndicatorView		*activityIndicatorView;
+/**	A label used to display the length of time required to cook this recipe.	*/
+@property (nonatomic, strong)				TimerLabel					*cookTimeLabel;
 /**	A table view that will display the ingredients required for the recipe being displayed.	*/
 @property (nonatomic, strong)				UITableView					*ingredientsTableView;
+/**	If YES the view should indicate loading as soon as possible.	*/
+@property (nonatomic, assign)				BOOL						loading;
 /**	An object encapsulating the recipe that this view is showing.	*/
 @property (nonatomic, readwrite, strong)	Recipe						*recipe;
 /**	The view responsible for showing the image of the recipe being displayed.	*/
@@ -34,8 +39,6 @@ static CGFloat const kImageHeight		= 200.0f;
 @property (nonatomic, strong)				RecipeIngredientsController	*recipeIngredientsController;
 /**	A label used to display how many servings this recipe can provide.	*/
 @property (nonatomic, strong)				UILabel						*servingsLabel;
-/**	If YES the view should indicate loading as soon as possible.	*/
-@property (nonatomic, assign)				BOOL						loading;
 /**	A view showing the rating of the recipe being displayed.	*/
 @property (nonatomic, strong)				StarRatingView				*starRatingView;
 /**	The button that allows the user to view the recipe in it's entirety.	*/
@@ -147,8 +150,28 @@ static CGFloat const kImageHeight		= 200.0f;
 																   multiplier:0.2f
 																	 constant:0.0f]];
 	
+	[self.cookTimeLabel addConstraint:[NSLayoutConstraint constraintWithItem:self.cookTimeLabel
+																   attribute:NSLayoutAttributeHeight
+																   relatedBy:NSLayoutRelationEqual
+																	  toItem:nil
+																   attribute:NSLayoutAttributeNotAnAttribute
+																  multiplier:1.0f
+																	constant:32.0f]];
+	
+	[self.cookTimeLabel addConstraint:[NSLayoutConstraint constraintWithItem:self.cookTimeLabel
+																   attribute:NSLayoutAttributeWidth
+																   relatedBy:NSLayoutRelationEqual
+																	  toItem:self.cookTimeLabel
+																   attribute:NSLayoutAttributeHeight
+																  multiplier:1.0f
+																	constant:0.0f]];
+	
 	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[starRating]-(20)-[servingsLabel]"
-																 options:NSLayoutFormatAlignAllCenterX
+																 options:kNilOptions
+																 metrics:nil
+																   views:self.viewsDictionary]];
+	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[servingsLabel]-(8)-[cookTimeLabel]-(24)-|"
+																 options:NSLayoutFormatAlignAllCenterY
 																 metrics:nil
 																   views:self.viewsDictionary]];
 	
@@ -171,7 +194,11 @@ static CGFloat const kImageHeight		= 200.0f;
 													  constant:0.0f]];
 	
 	if (self.loading)
+	{
 		self.loading					= NO;
+		self.viewRecipeButton.hidden	= NO;
+		self.cookTimeLabel.hidden		= NO;
+	}
 }
 
 #pragma mark - Convenience & Helper Methods
@@ -225,6 +252,29 @@ static CGFloat const kImageHeight		= 200.0f;
 	}
 	
 	return _activityIndicatorView;
+}
+
+/**
+ *	A label indicating the number of servings provided by the recipe.
+ *
+ *	@return	An initialised UILabel for telling the user how many servings this recipe provides.
+ */
+- (TimerLabel *)cookTimeLabel
+{
+	if (!_cookTimeLabel)
+	{
+		_cookTimeLabel					= [[TimerLabel alloc] init];
+
+		_cookTimeLabel.font				= kYummlyBolderFontWithSize(FontSizeForTextStyle(UIFontTextStyleCaption2));
+		_cookTimeLabel.hidden			= YES;
+		_cookTimeLabel.numberOfLines	= 0;
+		_cookTimeLabel.textColour		= [[UIColor alloc] initWithRed:046.0f / 255.0f green:136.0f / 255.0f blue:128.0f / 255.0f alpha:1.0f];
+		
+		_cookTimeLabel.translatesAutoresizingMaskIntoConstraints	= NO;
+		[self addSubview:_cookTimeLabel];
+	}
+	
+	return _cookTimeLabel;
 }
 
 /**
@@ -293,7 +343,7 @@ static CGFloat const kImageHeight		= 200.0f;
 }
 
 /**
- *	A label indicating the number of servings provided by the recipe.
+ *	A label indicating the time required to cook this recipe.
  *
  *	@return	An initialised UILabel for telling the user how many servings this recipe provides.
  */
@@ -366,6 +416,7 @@ static CGFloat const kImageHeight		= 200.0f;
 - (NSDictionary *)viewsDictionary
 {
 	return @{	@"activityIndicator"	: self.activityIndicatorView,
+				@"cookTimeLabel"		: self.cookTimeLabel,
 				@"recipeImageView"		: self.recipeImageView,
 				@"servingsLabel"		: self.servingsLabel,
 				@"starRating"			: self.starRatingView,
@@ -374,6 +425,19 @@ static CGFloat const kImageHeight		= 200.0f;
 }
 
 #pragma mark - Property Accessor Methods - Setters
+
+/**
+ *	Sets the text for the recipe cook time labels.
+ *
+ *	@param	cookTime					The cook time in seconds.
+ */
+- (void)setCookTime:(NSUInteger)cookTime
+{
+	NSUInteger cookMinutes				= cookTime / 60;
+	self.cookTimeLabel.text				= [[NSString alloc] initWithFormat:@"%u", cookMinutes];
+	if (cookMinutes > 100)
+		self.cookTimeLabel.font			= kYummlyBolderFontWithSize(FontSizeForTextStyle(UIFontTextStyleCaption2) * 0.8f);
+}
 
 /**
  *	Sets the text of the recipe servings label text with the correct amount of servings for this recipe.
@@ -479,8 +543,8 @@ static CGFloat const kImageHeight		= 200.0f;
 										  
 			dispatch_async(dispatch_get_main_queue(),
 			^{
-				self.viewRecipeButton.hidden= NO;
 				[self setRecipeServings:self.recipe.numberOfServings];
+				[self setCookTime:self.recipe.totalCookTime];
 				[self.recipeImageView setImage:image animated:YES];
 				[self setNeedsUpdateConstraints];
 			});

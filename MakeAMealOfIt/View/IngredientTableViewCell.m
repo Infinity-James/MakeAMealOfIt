@@ -181,8 +181,8 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 	self.center							= CGPointMake(self.originalCentre.x + translation.x, self.originalCentre.y);
 	
 	//	determine whether the cell has been dragged enough to initiate an exclude or include
-	self.excludeOnDragRelease			= self.frame.origin.x < -self.frame.size.width / 2.0f;
-	self.includeOnDragRelease			= self.frame.origin.x > self.frame.size.width / 2.0f;
+	self.excludeOnDragRelease			= self.frame.origin.x < -self.frame.size.width / 2.5f;
+	self.includeOnDragRelease			= self.frame.origin.x > self.frame.size.width / 2.5f;
 	
 	//	fade the contextual cues appropriately
 	CGFloat cueAlpha					= fabsf(self.frame.origin.x) / (self.frame.size.width / 2.0f);
@@ -553,6 +553,7 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 - (void)prepareForReuse
 {
 	[super prepareForReuse];
+	NSLog(@"Ingredient reused.");
 }
 
 #pragma mark - UIView Methods

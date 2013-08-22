@@ -53,6 +53,7 @@
 		1AA236B6177372AB00827C84 /* YummlyAttributionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A84A5AC1765F7CA00E1F818 /* YummlyAttributionViewController.m */; };
 		1AA236B917743D6900827C84 /* YummlySearchResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AA236B817743D6900827C84 /* YummlySearchResult.m */; };
 		1ACBD2DA17C4ADEC007FB073 /* OverlayActivityIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACBD2D917C4ADEC007FB073 /* OverlayActivityIndicator.m */; };
+		1ACBD2DD17C5FE6D007FB073 /* TimerLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACBD2DC17C5FE6D007FB073 /* TimerLabel.m */; };
 		1AD55FE9171AF33200AE5FED /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD55FE8171AF33200AE5FED /* UIKit.framework */; };
 		1AD55FEB171AF33200AE5FED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD55FEA171AF33200AE5FED /* Foundation.framework */; };
 		1AD55FED171AF33200AE5FED /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD55FEC171AF33200AE5FED /* CoreGraphics.framework */; };
@@ -171,6 +172,8 @@
 		1AA236BA1774999100827C84 /* RightControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RightControllerDelegate.h; path = Controller/RightControllerDelegate.h; sourceTree = "<group>"; };
 		1ACBD2D817C4ADEC007FB073 /* OverlayActivityIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OverlayActivityIndicator.h; path = View/OverlayActivityIndicator.h; sourceTree = "<group>"; };
 		1ACBD2D917C4ADEC007FB073 /* OverlayActivityIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OverlayActivityIndicator.m; path = View/OverlayActivityIndicator.m; sourceTree = "<group>"; };
+		1ACBD2DB17C5FE6D007FB073 /* TimerLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimerLabel.h; path = View/TimerLabel.h; sourceTree = "<group>"; };
+		1ACBD2DC17C5FE6D007FB073 /* TimerLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TimerLabel.m; path = View/TimerLabel.m; sourceTree = "<group>"; };
 		1AD55FE5171AF33200AE5FED /* MakeAMealOfIt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MakeAMealOfIt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AD55FE8171AF33200AE5FED /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		1AD55FEA171AF33200AE5FED /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -426,6 +429,8 @@
 		1ACBD2D417C37155007FB073 /* Controls & General Use Views */ = {
 			isa = PBXGroup;
 			children = (
+				1ACBD2DB17C5FE6D007FB073 /* TimerLabel.h */,
+				1ACBD2DC17C5FE6D007FB073 /* TimerLabel.m */,
 				1ADB9C3117AFADE300421CC9 /* BlurView.h */,
 				1ADB9C3217AFADE300421CC9 /* BlurView.m */,
 				1A347612177837B100E723CD /* IncludeExcludeControl.h */,
@@ -755,6 +760,7 @@
 				1ADFC56517B2B31800CFA246 /* SafariActivity.m in Sources */,
 				1A36943417B3D6EC00EBA0E9 /* AudioManager.m in Sources */,
 				1A6D1189174B6ACE00E0B000 /* ParameterPageViewController.m in Sources */,
+				1ACBD2DD17C5FE6D007FB073 /* TimerLabel.m in Sources */,
 				1A7C1A531757ADA50075AF2D /* Recipe.m in Sources */,
 				1A36943117B3B0BB00EBA0E9 /* PullToRefreshView.m in Sources */,
 				1ACBD2DA17C4ADEC007FB073 /* OverlayActivityIndicator.m in Sources */,
