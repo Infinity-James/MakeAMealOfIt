@@ -71,6 +71,8 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
  */
 - (void)yummlyRequestHasBeenReset:(NSNotification *)notification
 {
+	[self.searchDisplayController setActive:NO animated:YES];
+	
 	for (NSIndexPath *selectedIndexPath in self.tableView.indexPathsForSelectedRows)
 	{
 		[self.tableView deselectRowAtIndexPath:selectedIndexPath animated:YES];
@@ -208,75 +210,75 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 	
 	//	asynchronously update everything to keep work off main thread
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
-	^{
-		if (ingredientTableViewCell.included && ![included containsObject:ingredientTableViewCell.ingredientDictionary])
-		{
-			//	add the selection to the dictionary
-			[included addObject:ingredientTableViewCell.ingredientDictionary];
-			
-			//	specify the ingredient was selected
-			selected					= YES;
-			
-			//	flag that this ingredient's included status was updated
-			includedUpdate				= YES;
-		}
-		
-		else if (!ingredientTableViewCell.included && [included containsObject:ingredientTableViewCell.ingredientDictionary])
-		{
-			//	remove the selection from the dictionary
-			[included removeObject:ingredientTableViewCell.ingredientDictionary];
-			
-			//	specify the ingredient was removed
-			selected					= NO;
-			
-			//	flag that this ingredient's included status was updated
-			includedUpdate				= YES;
-		}
-		
-		//	update the dictionary with the new inclusions
-		self.selectedIngredients[kIncludedSelections]	= included;
-		
-		if (includedUpdate)
-			//	update the left controller with the selected / unselected ingredient dictionary
-			[self tableView:tableView
-				   selected:selected
-	   ingredientDictionary:ingredientTableViewCell.ingredientDictionary
-				 forSection:kIncludedSelections];
-		
-		if (ingredientTableViewCell.excluded && ![excluded containsObject:ingredientTableViewCell.ingredientDictionary])
-		{
-			//	add the selection to the dictionary
-			[excluded addObject:ingredientTableViewCell.ingredientDictionary];
-			
-			//	specify the ingredient was selected
-			selected					= YES;
-			
-			//	flag that this ingredient's excluded status was updated
-			excludedUpdate				= YES;
-		}
-		
-		else if (!ingredientTableViewCell.excluded && [excluded containsObject:ingredientTableViewCell.ingredientDictionary])
-		{
-			//	remove the selection from the dictionary
-			[excluded removeObject:ingredientTableViewCell.ingredientDictionary];
-			
-			//	specify the ingredient was removed
-			selected					= NO;
-			
-			//	flag that this ingredient's excluded status was updated
-			excludedUpdate				= YES;
-		}
-		
-		//	update the dictionary with the new exclusions
-		self.selectedIngredients[kExcludedSelections]	= excluded;
-		
-		if (excludedUpdate)
-			//	update the left controller with the selected / unselected ingredient dictionary
-			[self tableView:tableView
-				   selected:selected
-	   ingredientDictionary:ingredientTableViewCell.ingredientDictionary
-				 forSection:kExcludedSelections];
-	});
+				   ^{
+					   if (ingredientTableViewCell.included && ![included containsObject:ingredientTableViewCell.ingredientDictionary])
+					   {
+						   //	add the selection to the dictionary
+						   [included addObject:ingredientTableViewCell.ingredientDictionary];
+						   
+						   //	specify the ingredient was selected
+						   selected					= YES;
+						   
+						   //	flag that this ingredient's included status was updated
+						   includedUpdate				= YES;
+					   }
+					   
+					   else if (!ingredientTableViewCell.included && [included containsObject:ingredientTableViewCell.ingredientDictionary])
+					   {
+						   //	remove the selection from the dictionary
+						   [included removeObject:ingredientTableViewCell.ingredientDictionary];
+						   
+						   //	specify the ingredient was removed
+						   selected					= NO;
+						   
+						   //	flag that this ingredient's included status was updated
+						   includedUpdate				= YES;
+					   }
+					   
+					   //	update the dictionary with the new inclusions
+					   self.selectedIngredients[kIncludedSelections]	= included;
+					   
+					   if (includedUpdate)
+						   //	update the left controller with the selected / unselected ingredient dictionary
+						   [self tableView:tableView
+								  selected:selected
+					  ingredientDictionary:ingredientTableViewCell.ingredientDictionary
+								forSection:kIncludedSelections];
+					   
+					   if (ingredientTableViewCell.excluded && ![excluded containsObject:ingredientTableViewCell.ingredientDictionary])
+					   {
+						   //	add the selection to the dictionary
+						   [excluded addObject:ingredientTableViewCell.ingredientDictionary];
+						   
+						   //	specify the ingredient was selected
+						   selected					= YES;
+						   
+						   //	flag that this ingredient's excluded status was updated
+						   excludedUpdate				= YES;
+					   }
+					   
+					   else if (!ingredientTableViewCell.excluded && [excluded containsObject:ingredientTableViewCell.ingredientDictionary])
+					   {
+						   //	remove the selection from the dictionary
+						   [excluded removeObject:ingredientTableViewCell.ingredientDictionary];
+						   
+						   //	specify the ingredient was removed
+						   selected					= NO;
+						   
+						   //	flag that this ingredient's excluded status was updated
+						   excludedUpdate				= YES;
+					   }
+					   
+					   //	update the dictionary with the new exclusions
+					   self.selectedIngredients[kExcludedSelections]	= excluded;
+					   
+					   if (excludedUpdate)
+						   //	update the left controller with the selected / unselected ingredient dictionary
+						   [self tableView:tableView
+								  selected:selected
+					  ingredientDictionary:ingredientTableViewCell.ingredientDictionary
+								forSection:kExcludedSelections];
+				   });
 	
 }
 
@@ -288,11 +290,11 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 - (void)getIngredientsDictionaries
 {
 	dispatch_async(dispatch_queue_create("Ingredients Fetcher", NULL),
-	^{
-		self.ingredientsMetadata	= [YummlyMetadata allMetadata][kYummlyMetadataIngredients];
-		[self setupTableViewIndex];
-		[self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
-	});
+				   ^{
+					   self.ingredientsMetadata	= [YummlyMetadata allMetadata][kYummlyMetadataIngredients];
+					   [self setupTableViewIndex];
+					   [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+				   });
 }
 
 /**
@@ -388,9 +390,9 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 	
 	//	make sure this is performed on the main thread
 	dispatch_async(dispatch_get_main_queue(),
-	^{
-		[self.leftDelegate leftController:self updatedWithSelections:updates];
-	});
+				   ^{
+					   [self.leftDelegate leftController:self updatedWithSelections:updates];
+				   });
 }
 
 #pragma mark - Setter & Getter Methods
@@ -570,7 +572,7 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 {
 	if (!_selectedIngredients)
 		_selectedIngredients				= [@{ kExcludedSelections	: @[],
-											  kIncludedSelections	: @[]} mutableCopy];
+												  kIncludedSelections	: @[]} mutableCopy];
 	
 	return _selectedIngredients;
 }
@@ -601,31 +603,31 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 	//	if a valid left delegate was set we send it the block to execute if it modifies any of our data
 	if (_leftDelegate)
 		[_leftDelegate blockToExecuteWhenDataModified:^(NSDictionary *modifiedIngredient)
-		{
-			dispatch_async(dispatch_queue_create("Modifying Selections", NULL),
-			^{
-				NSIndexPath *indexPath			= [weakSelf indexPathForIngredientDictionary:modifiedIngredient
-																		  inTableView:weakSelf.tableView];
-				IngredientTableViewCell *cell	= (IngredientTableViewCell *)[weakSelf.tableView cellForRowAtIndexPath:indexPath];
-				
-				if (!cell)
-					cell						= (IngredientTableViewCell *)[weakSelf tableView:weakSelf.tableView
+		 {
+			 dispatch_async(dispatch_queue_create("Modifying Selections", NULL),
+							^{
+								NSIndexPath *indexPath			= [weakSelf indexPathForIngredientDictionary:modifiedIngredient
+																						  inTableView:weakSelf.tableView];
+								IngredientTableViewCell *cell	= (IngredientTableViewCell *)[weakSelf.tableView cellForRowAtIndexPath:indexPath];
+								
+								if (!cell)
+									cell						= (IngredientTableViewCell *)[weakSelf tableView:weakSelf.tableView
 																		 cellForRowAtIndexPath:indexPath];
-				
-				dispatch_async(dispatch_get_main_queue(),
-				^{
-					[self.searchDisplayController setActive:NO animated:YES];
-					
-					if (cell.excluded)
-						[cell setExcluded:NO updated:YES animated:NO];
-					else if (cell.included)
-						[cell setIncluded:NO updated:YES animated:NO];
-					
-					[self.tableView reloadRowsAtIndexPaths:@[indexPath]
-										  withRowAnimation:UITableViewRowAnimationAutomatic];
-				});
-			});
-		}];
+								
+								dispatch_async(dispatch_get_main_queue(),
+											   ^{
+												   [self.searchDisplayController setActive:NO animated:YES];
+												   
+												   if (cell.excluded)
+													   [cell setExcluded:NO updated:YES animated:NO];
+												   else if (cell.included)
+													   [cell setIncluded:NO updated:YES animated:NO];
+												   
+												   [self.tableView reloadRowsAtIndexPaths:@[indexPath]
+																		 withRowAnimation:UITableViewRowAnimationAutomatic];
+											   });
+							});
+		 }];
 }
 
 /**
@@ -718,14 +720,14 @@ shouldReloadTableForSearchString:(NSString *)searchString
 	
 	
 	dispatch_async(dispatch_queue_create("Filtering", NULL),
-	^{
-		[self filterContentForSearchText:searchString inScope:nil];
-		dispatch_async(dispatch_get_main_queue(),
-		^{
-			[NSObject cancelPreviousPerformRequestsWithTarget:self.searchDisplayController.searchResultsTableView];
-			[self.searchDisplayController.searchResultsTableView performSelector:@selector(reloadData) withObject:nil afterDelay:1.0f / searchString.length];
-		});
-	});
+				   ^{
+					   [self filterContentForSearchText:searchString inScope:nil];
+					   dispatch_async(dispatch_get_main_queue(),
+									  ^{
+										  [NSObject cancelPreviousPerformRequestsWithTarget:self.searchDisplayController.searchResultsTableView];
+										  [self.searchDisplayController.searchResultsTableView performSelector:@selector(reloadData) withObject:nil afterDelay:1.0f / searchString.length];
+									  });
+				   });
 	
 	return NO;
 }
