@@ -196,7 +196,12 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 - (NSUInteger)numberOfServings
 {
 	if (!_numberOfServings)
-		_numberOfServings				= [self.recipeDictionary[kYummlyRecipeServingsKey] integerValue];
+	{
+		if (self.recipeDictionary[kYummlyRecipeServingsKey])
+			_numberOfServings			= [self.recipeDictionary[kYummlyRecipeServingsKey] integerValue];
+		else
+			_numberOfServings			= 0;
+	}
 	
 	return _numberOfServings;
 }
@@ -209,7 +214,12 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 - (CGFloat)rating
 {
 	if (!_rating)
-		_rating							= [self.recipeDictionary[kYummlyRecipeRatingKey] floatValue];
+	{
+		if (self.recipeDictionary[kYummlyRecipeRatingKey])
+			_rating						= [self.recipeDictionary[kYummlyRecipeRatingKey] floatValue];
+		else
+			_rating						= 0;
+	}
 	
 	return _rating;
 }
@@ -296,7 +306,12 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 - (NSUInteger)totalCookTime
 {
 	if (!_totalCookTime)
-		_totalCookTime					= [self.recipeDictionary[kYummlyRecipeTotalCookTimeKey] integerValue];
+	{
+		if ([self.recipeDictionary[kYummlyRecipeTotalCookTimeKey] respondsToSelector:@selector(integerValue)])
+			_totalCookTime				= [self.recipeDictionary[kYummlyRecipeTotalCookTimeKey] integerValue];
+		else
+			_totalCookTime				= 0;
+	}
 	
 	return _totalCookTime;
 }

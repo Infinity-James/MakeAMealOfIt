@@ -204,8 +204,6 @@
 {	
 	[self.recipeDetailsView recipeDictionaryHasLoaded];
 	
-	[self updateRecipeDetailsViewFrame];
-	
 	//	notify the right view controller that the attribution dictionary has been loaded
 	if (self.attributionDictionaryLoaded)
 		self.attributionDictionaryLoaded(self.recipe.attributionDictionary);
@@ -400,7 +398,7 @@
  */
 - (NSDictionary *)viewsDictionary
 {
-	return @{	@"scrollView"	: self.scrollView	};
+	return @{@"scrollView"	: self.scrollView	};
 }
 
 #pragma mark - Slide Navigation Controller Lifecycle
@@ -413,30 +411,6 @@
 	self.recipeDetailsView.canShowLoading	= YES;
 }
 
-/**
- *	Notifies the view controller that the parent slideNavigationController has open a side view.
- */
-- (void)slideNavigationControllerDidOpen
-{
-	
-}
-
-/**
- *	Notifies the view controller that the parent slideNavigationController will close all side views.
- */
-- (void)slideNavigationControllerWillClose
-{
-	
-}
-
-/**
- *	Notifies the view controller that the parent slideNavigationController will open a side view.
- */
-- (void)slideNavigationControllerWillOpen
-{
-	
-}
-
 #pragma mark - View Lifecycle
 
 /**
@@ -447,7 +421,6 @@
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
-	[self updateRecipeDetailsViewFrame];
 	[self addToolbarItemsAnimated:NO];
 }
 

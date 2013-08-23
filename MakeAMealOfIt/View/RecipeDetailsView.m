@@ -197,7 +197,11 @@ static CGFloat const kImageHeight		= 200.0f;
 	{
 		self.loading					= NO;
 		self.viewRecipeButton.hidden	= NO;
-		self.cookTimeLabel.hidden		= NO;
+		
+		if (self.recipe.numberOfServings > 0)
+			self.servingsLabel.hidden	= NO;
+		if (self.recipe.totalCookTime > 0)
+			self.cookTimeLabel.hidden	= NO;
 	}
 }
 
@@ -353,6 +357,7 @@ static CGFloat const kImageHeight		= 200.0f;
 	{
 		_servingsLabel					= [[UILabel alloc] init];
 		_servingsLabel.font				= kYummlyFontWithSize(FontSizeForTextStyle(UIFontTextStyleCaption2));
+		_servingsLabel.hidden			= YES;
 		_servingsLabel.numberOfLines	= 0;
 		_servingsLabel.textAlignment	= NSTextAlignmentCenter;
 		_servingsLabel.textColor		= [[UIColor alloc] initWithRed:046.0f / 255.0f green:136.0f / 255.0f blue:128.0f / 255.0f alpha:1.0f];
