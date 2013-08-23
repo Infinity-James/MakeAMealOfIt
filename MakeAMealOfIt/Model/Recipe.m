@@ -215,7 +215,7 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 {
 	if (!_rating)
 	{
-		if (self.recipeDictionary[kYummlyRecipeRatingKey])
+		if ([self.recipeDictionary[kYummlyRecipeRatingKey] respondsToSelector:@selector(floatValue)])
 			_rating						= [self.recipeDictionary[kYummlyRecipeRatingKey] floatValue];
 		else
 			_rating						= 0;
