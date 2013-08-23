@@ -197,7 +197,7 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 {
 	if (!_numberOfServings)
 	{
-		if (self.recipeDictionary[kYummlyRecipeServingsKey])
+		if ([self.recipeDictionary[kYummlyRecipeServingsKey] respondsToSelector:@selector(integerValue)])
 			_numberOfServings			= [self.recipeDictionary[kYummlyRecipeServingsKey] integerValue];
 		else
 			_numberOfServings			= 0;
