@@ -36,6 +36,7 @@
 		1A70C0B317535F55004FEEF6 /* YummlyMetadata.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A70C0B217535F55004FEEF6 /* YummlyMetadata.m */; };
 		1A70C0B91754FAAE004FEEF6 /* RecipeDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A70C0B81754FAAE004FEEF6 /* RecipeDetailsViewController.m */; };
 		1A70C0BC175500FF004FEEF6 /* RecipeDetailsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A70C0BB175500FF004FEEF6 /* RecipeDetailsView.m */; };
+		1A7906B017C7B0F500E4285A /* FavouriteRecipesStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7906AF17C7B0F500E4285A /* FavouriteRecipesStore.m */; };
 		1A7C1A4D17578CD80075AF2D /* UIImageView+Animation.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7C1A4C17578CD80075AF2D /* UIImageView+Animation.m */; };
 		1A7C1A50175792210075AF2D /* UICentreViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7C1A4F175792210075AF2D /* UICentreViewController.m */; };
 		1A7C1A531757ADA50075AF2D /* Recipe.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7C1A521757ADA50075AF2D /* Recipe.m */; };
@@ -137,6 +138,8 @@
 		1A70C0BA175500FF004FEEF6 /* RecipeDetailsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecipeDetailsView.h; path = View/RecipeDetailsView.h; sourceTree = "<group>"; };
 		1A70C0BB175500FF004FEEF6 /* RecipeDetailsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecipeDetailsView.m; path = View/RecipeDetailsView.m; sourceTree = "<group>"; };
 		1A70C0C01755DF45004FEEF6 /* LeftControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LeftControllerDelegate.h; path = Controller/LeftControllerDelegate.h; sourceTree = "<group>"; };
+		1A7906AE17C7B0F500E4285A /* FavouriteRecipesStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FavouriteRecipesStore.h; path = Model/FavouriteRecipesStore.h; sourceTree = "<group>"; };
+		1A7906AF17C7B0F500E4285A /* FavouriteRecipesStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FavouriteRecipesStore.m; path = Model/FavouriteRecipesStore.m; sourceTree = "<group>"; };
 		1A7C1A4B17578CD80075AF2D /* UIImageView+Animation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImageView+Animation.h"; path = "Categories/UIImageView+Animation.h"; sourceTree = "<group>"; };
 		1A7C1A4C17578CD80075AF2D /* UIImageView+Animation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImageView+Animation.m"; path = "Categories/UIImageView+Animation.m"; sourceTree = "<group>"; };
 		1A7C1A4E175792210075AF2D /* UICentreViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UICentreViewController.h; path = Controller/UICentreViewController.h; sourceTree = "<group>"; };
@@ -579,6 +582,8 @@
 		1AEE006217427E3400B6FC43 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				1A7906AE17C7B0F500E4285A /* FavouriteRecipesStore.h */,
+				1A7906AF17C7B0F500E4285A /* FavouriteRecipesStore.m */,
 				1A5BA15C17BBDAAA00D2B4E4 /* MakeAMealOfItIntroduction.h */,
 				1A5BA15D17BBDAAA00D2B4E4 /* MakeAMealOfItIntroduction.m */,
 				1A7C1A511757ADA50075AF2D /* Recipe.h */,
@@ -772,6 +777,7 @@
 				1AEE00E017460EA500B6FC43 /* RecipeSearchView.m in Sources */,
 				1AEE006F1745314F00B6FC43 /* RecipeSearchViewController.m in Sources */,
 				1A9C84A61742348A006B8664 /* RecipesViewController.m in Sources */,
+				1A7906B017C7B0F500E4285A /* FavouriteRecipesStore.m in Sources */,
 				1ADB9C3617AFBD5200421CC9 /* TransparentToolbar.m in Sources */,
 				1A46523D1770A08A00049B4D /* ResultManagementCell.m in Sources */,
 				1A6D117D174B4A4200E0B000 /* RotaryWheel.m in Sources */,
