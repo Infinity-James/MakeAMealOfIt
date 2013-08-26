@@ -57,7 +57,8 @@ static NSString *const kYummlyRecipeTotalCookTimeKey						= @"totalTimeInSeconds
 
 static NSString *const kYummlyRecipeYieldKey								= @"yield";
 
-
+/**	The key for encoding and decoding the recipe dictionary.	*/
+static NSString *const kCodingRecipeDictionaryKey							= @"recipeDictionary";
 
 #pragma mark - Recipe Private Class Extension
 
@@ -77,6 +78,8 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 @property (nonatomic, readwrite, assign)	CGFloat			rating;
 /**	The dictionary holding all of the properties of this recipe in a raw form.	*/
 @property (nonatomic, strong)				NSDictionary	*recipeDictionary;
+/**	The ID of the recipe being displayed.	*/
+@property (nonatomic, readwrite, strong)	NSString		*recipeID;
 /**	A large image associated with this recipe.	*/
 @property (nonatomic, readwrite, strong)	UIImage			*recipeImage;
 /**	The name of this recipe.	*/
@@ -101,11 +104,30 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
  */
 - (void)basicInitialisation:(NSString *)recipeID
 {
+	self.recipeID						= recipeID;
+	
 	//	store the recipe dictionary results
 	[YummlyAPI asynchronousGetRecipeCallForRecipeID:recipeID withCompletionHandler:^(BOOL success, NSDictionary *results)
 	{
 		self.recipeDictionary		= results;
 	}];
+}
+
+/**
+ *	Returns an object initialized from data in a given unarchiver.
+ *
+ *	@param	aDecoder					An unarchiver object.
+ *
+ *	@return	self, initialized using the data in decoder.
+ */
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
+{
+	if (self = [super init])
+	{
+		self.recipeDictionary			= [aDecoder decodeObjectForKey:@"recipeDictionary"];
+	}
+	
+	return self;
 }
 
 /**
@@ -145,6 +167,18 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 	}
 	
 	return self;
+}
+
+#pragma mark - NSCoding Methods
+
+/**
+ *	allows the encoding of objects when saving
+ *
+ *	@param	aCoder						the object used to encode our properties
+ */
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+	[aCoder encodeObject:self.recipeDictionary forKey:@"recipeDictionary"];
 }
 
 #pragma mark - Setter & Getter Methods

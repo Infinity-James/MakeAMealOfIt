@@ -100,7 +100,7 @@
 }
 
 
-#pragma mark - Setter & Getter Methods
+#pragma mark - Property Accessor Methods - Getters
 
 /**
  *	The view that will contain the recipe title and source name.
@@ -149,6 +149,27 @@
 {
 	return @{	@"recipeDetails"	: self.recipeDetails,
 				@"thumbnail"		: self.thumbnailView};
+}
+
+#pragma mark - Property Accessor Methods - Setters
+
+/**
+ *	A convenient way to get the correct background colour for a certain index.
+ *
+ *	@param	index						The index of the cell for which to return the colour.
+ */
+- (void)setBackgroundColourForIndex:(NSUInteger)index
+{
+	UIColor *backgroundColour;
+	
+	if (index % 3 == 0)
+		backgroundColour				= [[UIColor alloc] initWithRed:011.0f / 255.0f green:156.0f / 255.0f blue:218.0f / 255.0f alpha:1.0f];
+	else if (index % 3 == 2)
+		backgroundColour				= kYummlyColourMain;
+	else
+		backgroundColour				= kLightGreyColour;
+	
+	self.backgroundColor				= backgroundColour;
 }
 
 #pragma mark - UICollectionReusableView Methods

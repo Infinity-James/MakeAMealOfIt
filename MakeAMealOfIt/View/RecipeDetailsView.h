@@ -6,9 +6,9 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
-#import "Recipe.h"
+#import "Recipe+FavouriteState.h"
 
-#pragma mark - 
+#pragma mark - Recipe Detail View Delegate Protocol
 
 @protocol RecipeDetailsViewDelegate <NSObject>
 

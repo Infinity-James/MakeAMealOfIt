@@ -110,23 +110,6 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 #pragma mark - Convenience & Helper Methods
 
 /**
- *	A convenient way to get the correct background colour for a certain index.
- *
- *	@param	index						The index of the cell for which to return the colour.
- *
- *	@return	An appropriate colour for the given index.
- */
-- (UIColor *)colourForIndex:(NSUInteger)index
-{
-	if (index % 3 == 0)
-		return [[UIColor alloc] initWithRed:011.0f / 255.0f green:156.0f / 255.0f blue:218.0f / 255.0f alpha:1.0f];
-	else if (index % 3 == 2)
-		return kYummlyColourMain;
-	
-	return kLightGreyColour;
-}
-
-/**
  *	Adds this view controller as an observer of the appropriate notifications.
  */
 - (void)registerForNotifications
@@ -386,7 +369,7 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 	
 	RecipeCollectionViewCell *cell		= [collectionView dequeueReusableCellWithReuseIdentifier:kCellIdentifier forIndexPath:indexPath];
 	
-	cell.backgroundColor				= [self colourForIndex:indexPath.item];
+	[cell setBackgroundColourForIndex:indexPath.item];
 	cell.recipeDetails.mainLabel.text	= self.recipes[indexPath.row][kYummlyMatchRecipeNameKey];
 	cell.recipeDetails.detailLabel.text	= self.recipes[indexPath.row][kYummlyMatchSourceDisplayNameKey];
 	

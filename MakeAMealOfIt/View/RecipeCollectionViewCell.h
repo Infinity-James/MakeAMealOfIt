@@ -21,4 +21,13 @@
 /**	The image view used to hold a thumbnail of the recipe being displayed.	*/
 @property (nonatomic, strong)	UIImageView		*thumbnailView;
 
+#pragma mark - Public Methods
+
+/**
+ *	A convenient way to get the correct background colour for a certain index.
+ *
+ *	@param	index						The index of the cell for which to return the colour.
+ */
+- (void)setBackgroundColourForIndex:(NSUInteger)index;
+
 @end

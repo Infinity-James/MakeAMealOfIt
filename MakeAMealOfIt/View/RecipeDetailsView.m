@@ -27,6 +27,8 @@ static CGFloat const kImageHeight		= 200.0f;
 @property (nonatomic, strong)				UIActivityIndicatorView		*activityIndicatorView;
 /**	A label used to display the length of time required to cook this recipe.	*/
 @property (nonatomic, strong)				TimerLabel					*cookTimeLabel;
+/**	The button the user can press to favourite or unfavourite the diplayed recipe.	*/
+@property (nonatomic, strong)				UIButton					*favouriteButton;
 /**	A table view that will display the ingredients required for the recipe being displayed.	*/
 @property (nonatomic, strong)				UITableView					*ingredientsTableView;
 /**	If YES the view should indicate loading as soon as possible.	*/
@@ -51,6 +53,14 @@ static CGFloat const kImageHeight		= 200.0f;
 @implementation RecipeDetailsView {}
 
 #pragma mark - Action & Selector Methods
+
+/**
+ *
+ */
+- (void)favouriteSelected
+{
+
+}
 
 /**
  *	Called when user has tapped the button to view the recipe.
@@ -279,6 +289,23 @@ static CGFloat const kImageHeight		= 200.0f;
 	}
 	
 	return _cookTimeLabel;
+}
+
+/**
+ *	The button the user can press to favourite or unfavourite the diplayed recipe.
+ *
+ *	@return	An initalised UIButton targeted to allow the user favourite or unfavourite this recipe.
+ */
+- (UIButton *)favouriteButton
+{
+	if (!_favouriteButton)
+	{
+		_favouriteButton				= [[UIButton alloc] init];
+		[_favouriteButton setImage:[UIImage imageNamed:@"button_main_normal_favourite"] forState:UIControlStateNormal];
+		[_favouriteButton setImage:[UIImage imageNamed:@"button_main_selected_favourite"] forState:UIControlStateSelected];
+	}
+	
+	return _favouriteButton;
 }
 
 /**

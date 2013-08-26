@@ -48,7 +48,7 @@ extern NSString *const kYummlyRecipeSourceWebsiteURLKey;
 
 #pragma mark - Recipe Public Interface
 
-@interface Recipe : NSObject {}
+@interface Recipe : NSObject <NSCoding> {}
 
 #pragma mark - Public Properties
 
@@ -62,6 +62,8 @@ extern NSString *const kYummlyRecipeSourceWebsiteURLKey;
 @property (nonatomic, readonly, assign)	NSUInteger		numberOfServings;
 /**	The rating out of five for this recipe.	*/
 @property (nonatomic, readonly, assign)	CGFloat			rating;
+/**	The ID of the recipe being displayed.	*/
+@property (nonatomic, readonly, strong)	NSString		*recipeID;
 /**	A large image associated with this recipe.	*/
 @property (nonatomic, readonly, strong)	UIImage			*recipeImage;
 /**	The name of this recipe.	*/

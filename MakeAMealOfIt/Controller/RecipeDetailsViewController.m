@@ -175,6 +175,26 @@
 }
 
 /**
+ *	Implemented by subclasses to initialize a new object (the receiver) immediately after memory for it has been allocated.
+ *
+ *	@return	An initialized object.
+ */
+- (instancetype)initWithRecipe:(Recipe *)recipe;
+{
+	if (self = [super init])
+	{
+		self.internetConnectionExists	= YES;
+		self.recipe						= recipe;
+		self.recipe.delegate			= self;
+		self.recipeName					= self.recipe.recipeName;
+		
+		[self registerForNotifications];
+	}
+	
+	return self;
+}
+
+/**
  *	Called to initialise an instance of this class with an ID of a recipe to present as well as it's name.
  *
  *	@param	recipeID					The ID of the recipe this view controller will show through it's views.
