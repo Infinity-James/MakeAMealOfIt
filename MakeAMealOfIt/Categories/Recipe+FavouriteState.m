@@ -14,19 +14,25 @@
 #pragma mark - Favourite Management
 
 /**
- *	Adds this recipe to favourites.
+ *	Adds this recipe to favourites asynchronously.
  */
 - (void)favourite
 {
-	[FavouriteRecipesStore addRecipe:self];
+	dispatch_async(dispatch_queue_create("Favourite Recipe", NULL),
+	^{
+		[FavouriteRecipesStore addRecipe:self];
+	});
 }
 
 /**
- *	Removes this recipe from the user's favourites.
+ *	Removes this recipe from the user's favourites asynchronously.
  */
 - (void)unfavourite
 {
-	[FavouriteRecipesStore removeRecipe:self];
+	dispatch_async(dispatch_queue_create("Unfavourite Recipe", NULL),
+	^{
+		[FavouriteRecipesStore removeRecipe:self];
+	});
 }
 
 #pragma mark - Property Accessor Methods - Getters

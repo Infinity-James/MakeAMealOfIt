@@ -13,6 +13,8 @@
 
 @interface RecipeSearchView () <UITextFieldDelegate> {}
 
+/**	Allows the user to open their list of favourites.	*/
+@property (nonatomic, strong)	UIButton		*favouritesButton;
 /**	A button allowing the user to execute the search.	*/
 @property (nonatomic, strong)	UIButton		*searchButton;
 /**	A boolean value indicating whether a search is currently loading.	*/
@@ -154,7 +156,19 @@
 #pragma mark - Property Accessor Methods - Getters
 
 /**
- *	an array of example foods for the placeholder of the search field
+ *
+ *
+ *	@return
+ */
+- (UIButton *)favouritesButton
+{
+	
+}
+
+/**
+ *	An array of example foods for the placeholder of the search field.
+ *
+ *	@return	An array of NSStrings.
  */
 - (NSArray *)foods
 {

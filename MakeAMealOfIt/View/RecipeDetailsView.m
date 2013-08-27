@@ -55,11 +55,20 @@ static CGFloat const kImageHeight		= 200.0f;
 #pragma mark - Action & Selector Methods
 
 /**
- *
+ *	The user has either favourite or unfavourited this recipe.
  */
 - (void)favouriteSelected
 {
-
+	if (self.recipe.isFavourited)
+	{
+		self.favouriteButton.selected	= NO;
+		[self.recipe unfavourite];
+	}
+	else
+	{
+		self.favouriteButton.selected	= YES;
+		[self.recipe favourite];
+	}
 }
 
 /**
@@ -203,8 +212,36 @@ static CGFloat const kImageHeight		= 200.0f;
 													multiplier:1.0f
 													  constant:0.0f]];
 	
+	[self.favouriteButton addConstraint:[NSLayoutConstraint constraintWithItem:self.favouriteButton
+																	 attribute:NSLayoutAttributeHeight
+																	 relatedBy:NSLayoutRelationEqual
+																		toItem:nil
+																	 attribute:NSLayoutAttributeNotAnAttribute
+																	multiplier:1.0f
+																	  constant:32.0f]];
+	[self.favouriteButton addConstraint:[NSLayoutConstraint constraintWithItem:self.favouriteButton
+																	 attribute:NSLayoutAttributeWidth
+																	 relatedBy:NSLayoutRelationEqual
+																		toItem:self.favouriteButton
+																	 attribute:NSLayoutAttributeHeight
+																	multiplier:1.0f
+																	  constant:0.0f]];
+	[self addConstraint:[NSLayoutConstraint constraintWithItem:self.favouriteButton
+													 attribute:NSLayoutAttributeCenterY
+													 relatedBy:NSLayoutRelationEqual
+														toItem:self.viewRecipeButton
+													 attribute:NSLayoutAttributeCenterY
+													multiplier:1.0f
+													  constant:0.0f]];
+	
+	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(25)-[favouriteButton]"
+																 options:kNilOptions
+																 metrics:nil
+																   views:self.viewsDictionary]];
+	
 	if (self.loading)
 	{
+		self.favouriteButton.hidden		= NO;
 		self.loading					= NO;
 		self.viewRecipeButton.hidden	= NO;
 		
@@ -301,8 +338,15 @@ static CGFloat const kImageHeight		= 200.0f;
 	if (!_favouriteButton)
 	{
 		_favouriteButton				= [[UIButton alloc] init];
+		
+		_favouriteButton.hidden			= YES;
+		
 		[_favouriteButton setImage:[UIImage imageNamed:@"button_main_normal_favourite"] forState:UIControlStateNormal];
 		[_favouriteButton setImage:[UIImage imageNamed:@"button_main_selected_favourite"] forState:UIControlStateSelected];
+		[_favouriteButton addTarget:self action:@selector(favouriteSelected) forControlEvents:UIControlEventTouchUpInside];
+		
+		_favouriteButton.translatesAutoresizingMaskIntoConstraints	= NO;
+		[self addSubview:_favouriteButton];
 	}
 	
 	return _favouriteButton;
@@ -449,6 +493,7 @@ static CGFloat const kImageHeight		= 200.0f;
 {
 	return @{	@"activityIndicator"	: self.activityIndicatorView,
 				@"cookTimeLabel"		: self.cookTimeLabel,
+				@"favouriteButton"		: self.favouriteButton,
 				@"recipeImageView"		: self.recipeImageView,
 				@"servingsLabel"		: self.servingsLabel,
 				@"starRating"			: self.starRatingView,

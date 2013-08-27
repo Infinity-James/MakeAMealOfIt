@@ -38,7 +38,8 @@ static NSString *const kFavouriteRecipesFile		= @"favourite-recipes";
 	
 	NSString *recipeID					= recipe.recipeID;
 	
-	favouriteRecipes[recipeID]			= recipe;
+	NSData *recipeData					= [NSKeyedArchiver archivedDataWithRootObject:recipe];
+	favouriteRecipes[recipeID]			= recipeData;
 	[self addRecipeID:recipeID];
 	
 	[favouriteRecipes writeToFile:self.favouriteRecipesPath atomically:YES];
@@ -52,9 +53,9 @@ static NSString *const kFavouriteRecipesFile		= @"favourite-recipes";
 + (void)addRecipeID:(NSString *)recipeID
 {
 	NSUserDefaults *userDefaults		= [NSUserDefaults standardUserDefaults];
-	NSMutableSet *favouriteRecipeIDs	= [[userDefaults objectForKey:kFavouriteRecipesFile] mutableCopy];
+	NSMutableSet *favouriteRecipeIDs	= [[NSMutableSet alloc] initWithArray:[userDefaults objectForKey:kFavouriteRecipesFile]];
 	[favouriteRecipeIDs addObject:recipeID];
-	[userDefaults setObject:kFavouriteRecipesFile forKey:kFavouriteRecipesFile];
+	[userDefaults setObject:[favouriteRecipeIDs allObjects] forKey:kFavouriteRecipesFile];
 	[userDefaults synchronize];
 }
 
@@ -68,8 +69,12 @@ static NSString *const kFavouriteRecipesFile		= @"favourite-recipes";
 + (BOOL)isRecipeIDFavourited:(NSString *)recipeID
 {
 	NSUserDefaults *userDefaults		= [NSUserDefaults standardUserDefaults];
-	NSSet *favouriteRecipeIDs			= [userDefaults objectForKey:kFavouriteRecipesFile];
-	return [favouriteRecipeIDs containsObject:recipeID];
+	NSArray *favouriteRecipeIDs			= [userDefaults objectForKey:kFavouriteRecipesFile];
+	
+	if (!favouriteRecipeIDs || favouriteRecipeIDs.count == 0)
+		return NO;
+	else
+		return [favouriteRecipeIDs containsObject:recipeID];
 }
 
 /**
@@ -97,9 +102,9 @@ static NSString *const kFavouriteRecipesFile		= @"favourite-recipes";
 + (void)removeRecipeID:(NSString *)recipeID
 {
 	NSUserDefaults *userDefaults		= [NSUserDefaults standardUserDefaults];
-	NSMutableSet *favouriteRecipeIDs	= [[userDefaults objectForKey:kFavouriteRecipesFile] mutableCopy];
+	NSMutableSet *favouriteRecipeIDs	= [[NSMutableSet alloc] initWithArray:[userDefaults objectForKey:kFavouriteRecipesFile]];
 	[favouriteRecipeIDs removeObject:recipeID];
-	[userDefaults setObject:kFavouriteRecipesFile forKey:kFavouriteRecipesFile];
+	[userDefaults setObject:[favouriteRecipeIDs allObjects] forKey:kFavouriteRecipesFile];
 	[userDefaults synchronize];
 }
 
@@ -112,7 +117,15 @@ static NSString *const kFavouriteRecipesFile		= @"favourite-recipes";
  */
 + (NSArray *)favouriteRecipes
 {
-	return [self.favouriteRecipesDictionary keysSortedByValueUsingComparator:^NSComparisonResult(Recipe *recipeA, Recipe *recipeB)
+	NSDictionary *favouriteRecipesDictionary	= self.favouriteRecipesDictionary;
+	NSMutableArray *favouriteRecipes			= [[NSMutableArray alloc] initWithCapacity:favouriteRecipesDictionary.count];
+	
+	for (NSData *recipeData in favouriteRecipesDictionary.allValues)
+	{
+		[favouriteRecipes addObject:[NSKeyedUnarchiver unarchiveObjectWithData:recipeData]];
+	}
+	
+	return [favouriteRecipes sortedArrayUsingComparator:^NSComparisonResult(Recipe *recipeA, Recipe *recipeB)
 	{
 		return [recipeA.recipeName compare:recipeB.recipeName];
 	}];
@@ -125,7 +138,7 @@ static NSString *const kFavouriteRecipesFile		= @"favourite-recipes";
  */
 + (NSDictionary *)favouriteRecipesDictionary
 {
-	if ([self.fileManager fileExistsAtPath:self.favouriteRecipesPath])
+	if (![self.fileManager fileExistsAtPath:self.favouriteRecipesPath])
 		return nil;
 	
 	return [[NSDictionary alloc] initWithContentsOfFile:self.favouriteRecipesPath];
