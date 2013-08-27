@@ -59,6 +59,8 @@ static NSString *const kYummlyRecipeYieldKey								= @"yield";
 
 /**	The key for encoding and decoding the recipe dictionary.	*/
 static NSString *const kCodingRecipeDictionaryKey							= @"recipeDictionary";
+/**	The key for encoding and decoding the recipe ID.	*/
+static NSString *const kCodingRecipeIDKey									= @"recipeID";
 
 #pragma mark - Recipe Private Class Extension
 
@@ -124,7 +126,8 @@ static NSString *const kCodingRecipeDictionaryKey							= @"recipeDictionary";
 {
 	if (self = [super init])
 	{
-		self.recipeDictionary			= [aDecoder decodeObjectForKey:@"recipeDictionary"];
+		self.recipeDictionary			= [aDecoder decodeObjectForKey:kCodingRecipeDictionaryKey];
+		self.recipeID					= [aDecoder decodeObjectForKey:kCodingRecipeIDKey];
 	}
 	
 	return self;
@@ -178,7 +181,8 @@ static NSString *const kCodingRecipeDictionaryKey							= @"recipeDictionary";
  */
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
-	[aCoder encodeObject:self.recipeDictionary forKey:@"recipeDictionary"];
+	[aCoder encodeObject:self.recipeDictionary forKey:kCodingRecipeDictionaryKey];
+	[aCoder encodeObject:self.recipeID forKey:kCodingRecipeIDKey];
 }
 
 #pragma mark - Setter & Getter Methods

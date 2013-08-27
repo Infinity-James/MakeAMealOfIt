@@ -8,6 +8,7 @@
 
 #import "CupboardViewController.h"
 #import "IngredientTableViewCell.h"
+#import "OverlayActivityIndicator.h"
 #import "YummlyMetadata.h"
 
 @import QuartzCore;
@@ -23,6 +24,8 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 
 #pragma mark - Private Properties
 
+/**	Used to show that the recipe image is loading.	*/
+@property (nonatomic, strong)	OverlayActivityIndicator	*activityIndicatorView;
 /**	An array of ingredient dictionaries filtered by the user's search.	*/
 @property (nonatomic, strong)	NSArray						*filteredIngredients;
 /**	An array of all of ingredient dictionaries.	*/
@@ -37,8 +40,6 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 @property (nonatomic, strong)	UITapGestureRecognizer		*resignGestureRecogniser;
 /**	This search bar will be used to search the ingredients table view.	*/
 @property (nonatomic, strong)	UISearchBar					*searchBar;
-/**	The constraints used to set the search bar on top of the table view.	*/
-@property (nonatomic, strong)	NSArray						*searchBarConstraints;
 /**	This is the controller, handling presentation of results from the user's search. */
 @property (nonatomic, strong)	UISearchDisplayController	*searchDisplay;
 /**	An array of the titles to be used for the sections in the table view.	*/
@@ -94,18 +95,50 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 	//	remove all constraints
 	[self.view removeConstraints:self.view.constraints];
 	
-	NSArray *constraints;
-	NSLayoutConstraint *constraint;
+	CGSize activityIndicatorSize		= self.activityIndicatorView.intrinsicContentSize;
 	
 	//	add the table view to cover the whole main view except for the search bar
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[tableView]-(Panel)-|" options:kNilOptions metrics:@{@"Panel": @(kPanelWidth)} views:self.viewsDictionary];
-	[self.view addConstraints:constraints];
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[tableView]-(Panel)-|"
+																	  options:kNilOptions
+																	  metrics:@{@"Panel": @(kPanelWidth)}
+																		views:self.viewsDictionary]];
 	
-	constraint							= [NSLayoutConstraint constraintWithItem:self.searchBar attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.tableView attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0.0f];
-	[self.view addConstraint:constraint];
+	[self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.searchBar
+														  attribute:NSLayoutAttributeWidth
+														  relatedBy:NSLayoutRelationEqual
+															 toItem:self.tableView
+														  attribute:NSLayoutAttributeWidth
+														 multiplier:1.0f
+														   constant:0.0f]];
 	
-	self.searchBarConstraints			= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[searchBar][tableView]|" options:NSLayoutFormatAlignAllCenterX metrics:nil views:self.viewsDictionary];
-	[self.view addConstraints:self.searchBarConstraints];
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[searchBar][tableView]|"
+																	  options:NSLayoutFormatAlignAllCenterX
+																	  metrics:nil
+																		views:self.viewsDictionary]];
+	
+	[self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.activityIndicatorView
+														  attribute:NSLayoutAttributeCenterX
+														  relatedBy:NSLayoutRelationEqual
+															 toItem:self.view
+														  attribute:NSLayoutAttributeCenterX
+														 multiplier:1.0f
+														   constant:0.0f]];
+	[self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.activityIndicatorView
+														  attribute:NSLayoutAttributeCenterY
+														  relatedBy:NSLayoutRelationEqual
+															 toItem:self.view
+														  attribute:NSLayoutAttributeCenterY
+														 multiplier:1.0f
+														   constant:0.0f]];
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[activityView(==height)]"
+																	  options:kNilOptions
+																	  metrics:@{@"height": @(activityIndicatorSize.height)}
+																		views:self.viewsDictionary]];
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[activityView(==width)]"
+																	  options:kNilOptions
+																	  metrics:@{@"width": @(activityIndicatorSize.width)}
+																		views:self.viewsDictionary]];
+	
 }
 
 #pragma mark - Convenience & Helper Methods
@@ -185,6 +218,7 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 	_searchDisplay.searchResultsDelegate	= self;
 	_searchDisplay.searchResultsTableView.allowsMultipleSelection	= YES;
 	[_searchDisplay.searchResultsTableView registerClass:[IngredientTableViewCell class] forCellReuseIdentifier:kCellIdentifier];
+	[self.view bringSubviewToFront:self.activityIndicatorView];
 }
 
 #pragma mark - IngredientTableViewCellDelegate Methods
@@ -395,7 +429,27 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 				   });
 }
 
-#pragma mark - Setter & Getter Methods
+#pragma mark - Property Accessor Methods - Getters
+
+/**
+ *	The view that shows the user that the recipe image is loading.
+ *
+ *	@return	A UIActivityIndicatorView representing loading.
+ */
+- (OverlayActivityIndicator *)activityIndicatorView
+{
+	if (!_activityIndicatorView)
+	{
+		_activityIndicatorView			= [[OverlayActivityIndicator alloc] init];
+		_activityIndicatorView.activityBackgroundColour	= kDarkGreyColourWithAlpha(0.5f);
+		_activityIndicatorView.activityIndicatorColour	= [UIColor whiteColor];
+		
+		_activityIndicatorView.translatesAutoresizingMaskIntoConstraints	= NO;
+		[self.view addSubview:_activityIndicatorView];
+	}
+	
+	return _activityIndicatorView;
+}
 
 /**
  *	An array of the ingredients filtered according to the search for the user.
@@ -578,59 +632,6 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 }
 
 /**
- *	Set the array of dictionaries each holding an ingredient object.
- *
- *	@param	ingredientsMetadata		The array of ingredient dictionaries.
- */
-- (void)setIngredientsMetadata:(NSArray *)ingredientsMetadata
-{
-	//	sort the ingredients dictionary before adding them
-	_ingredientsMetadata			= [ingredientsMetadata sortedArrayUsingComparator:self.prioritiseLettersInDictionaryComparator];
-}
-
-/**
- *	Called when our left controller delegate is set.
- *
- *	@param	leftDelegate			An NSObject adhering to our LeftControllerDelegate protocol interested in our updates.
- */
-- (void)setLeftDelegate:(id<LeftControllerDelegate>)leftDelegate
-{
-	_leftDelegate					= leftDelegate;
-	
-	//	get a weak pointer to our self to be used in the block
-	__weak CupboardViewController *weakSelf	= self;
-	
-	//	if a valid left delegate was set we send it the block to execute if it modifies any of our data
-	if (_leftDelegate)
-		[_leftDelegate blockToExecuteWhenDataModified:^(NSDictionary *modifiedIngredient)
-		 {
-			 dispatch_async(dispatch_queue_create("Modifying Selections", NULL),
-							^{
-								NSIndexPath *indexPath			= [weakSelf indexPathForIngredientDictionary:modifiedIngredient
-																						  inTableView:weakSelf.tableView];
-								IngredientTableViewCell *cell	= (IngredientTableViewCell *)[weakSelf.tableView cellForRowAtIndexPath:indexPath];
-								
-								if (!cell)
-									cell						= (IngredientTableViewCell *)[weakSelf tableView:weakSelf.tableView
-																		 cellForRowAtIndexPath:indexPath];
-								
-								dispatch_async(dispatch_get_main_queue(),
-											   ^{
-												   [self.searchDisplayController setActive:NO animated:YES];
-												   
-												   if (cell.excluded)
-													   [cell setExcluded:NO updated:YES animated:NO];
-												   else if (cell.included)
-													   [cell setIncluded:NO updated:YES animated:NO];
-												   
-												   [self.tableView reloadRowsAtIndexPaths:@[indexPath]
-																		 withRowAnimation:UITableViewRowAnimationAutomatic];
-											   });
-							});
-		 }];
-}
-
-/**
  *	The table view used to display all of the ingredients.
  *
  *	@return	A fully initialised table view added as a subview.
@@ -660,8 +661,64 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
  */
 - (NSDictionary *)viewsDictionary
 {
-	return @{	@"searchBar"	: self.searchBar,
-				@"tableView"	: self.tableView};
+	return @{@"activityView"	: self.activityIndicatorView,
+			 @"searchBar"		: self.searchBar,
+			 @"tableView"		: self.tableView};
+}
+
+#pragma mark - Property Accessor Methods - Setters
+
+/**
+ *	Set the array of dictionaries each holding an ingredient object.
+ *
+ *	@param	ingredientsMetadata		The array of ingredient dictionaries.
+ */
+- (void)setIngredientsMetadata:(NSArray *)ingredientsMetadata
+{
+	//	sort the ingredients dictionary before adding them
+	_ingredientsMetadata			= [ingredientsMetadata sortedArrayUsingComparator:self.prioritiseLettersInDictionaryComparator];
+}
+
+/**
+ *	Called when our left controller delegate is set.
+ *
+ *	@param	leftDelegate			An NSObject adhering to our LeftControllerDelegate protocol interested in our updates.
+ */
+- (void)setLeftDelegate:(id<LeftControllerDelegate>)leftDelegate
+{
+	_leftDelegate					= leftDelegate;
+	
+	//	get a weak pointer to our self to be used in the block
+	__weak CupboardViewController *weakSelf	= self;
+	
+	//	if a valid left delegate was set we send it the block to execute if it modifies any of our data
+	if (_leftDelegate)
+		[_leftDelegate blockToExecuteWhenDataModified:^(NSDictionary *modifiedIngredient)
+		{
+			dispatch_async(dispatch_queue_create("Modifying Selections", NULL),
+			^{
+				NSIndexPath *indexPath			= [weakSelf indexPathForIngredientDictionary:modifiedIngredient
+																		  inTableView:weakSelf.tableView];
+				IngredientTableViewCell *cell	= (IngredientTableViewCell *)[weakSelf.tableView cellForRowAtIndexPath:indexPath];
+								
+				if (!cell)
+					cell						= (IngredientTableViewCell *)[weakSelf tableView:weakSelf.tableView
+														 cellForRowAtIndexPath:indexPath];
+						
+				dispatch_async(dispatch_get_main_queue(),
+				^{
+					[self.searchDisplayController setActive:NO animated:YES];
+												   
+					if (cell.excluded)
+						[cell setExcluded:NO updated:YES animated:NO];
+					else if (cell.included)
+						[cell setIncluded:NO updated:YES animated:NO];
+												   
+					[self.tableView reloadRowsAtIndexPaths:@[indexPath]
+										  withRowAnimation:UITableViewRowAnimationAutomatic];
+				});
+			});
+		}];
 }
 
 #pragma mark - UISearchBarDelegate Methods
@@ -674,6 +731,8 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar
 {
 	[searchBar becomeFirstResponder];
+	
+	[self.activityIndicatorView startAnimating];
 	
 	[self sortOutSearchDisplayControllerTableView];
 	
@@ -717,17 +776,20 @@ shouldReloadTableForSearchScope:(NSInteger)searchOption
 - (BOOL) searchDisplayController:(UISearchDisplayController *)controller
 shouldReloadTableForSearchString:(NSString *)searchString
 {
-	
-	
 	dispatch_async(dispatch_queue_create("Filtering", NULL),
-				   ^{
-					   [self filterContentForSearchText:searchString inScope:nil];
-					   dispatch_async(dispatch_get_main_queue(),
-									  ^{
-										  [NSObject cancelPreviousPerformRequestsWithTarget:self.searchDisplayController.searchResultsTableView];
-										  [self.searchDisplayController.searchResultsTableView performSelector:@selector(reloadData) withObject:nil afterDelay:1.0f / searchString.length];
-									  });
-				   });
+	^{
+		[self filterContentForSearchText:searchString inScope:nil];
+		dispatch_async(dispatch_get_main_queue(),
+		^{
+			CGFloat delay				= 1.0f / searchString.length;
+			[NSObject cancelPreviousPerformRequestsWithTarget:self.searchDisplayController.searchResultsTableView];
+			[NSObject cancelPreviousPerformRequestsWithTarget:self.activityIndicatorView];
+			[self.searchDisplayController.searchResultsTableView performSelector:@selector(reloadData)
+																	  withObject:nil
+																	  afterDelay:delay];
+			[self.activityIndicatorView performSelector:@selector(stopAnimating) withObject:nil afterDelay:delay];
+		});
+	});
 	
 	return NO;
 }

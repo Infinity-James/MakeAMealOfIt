@@ -340,6 +340,7 @@ static CGFloat const kImageHeight		= 200.0f;
 		_favouriteButton				= [[UIButton alloc] init];
 		
 		_favouriteButton.hidden			= YES;
+		_favouriteButton.selected		= self.recipe.isFavourited;
 		
 		[_favouriteButton setImage:[UIImage imageNamed:@"button_main_normal_favourite"] forState:UIControlStateNormal];
 		[_favouriteButton setImage:[UIImage imageNamed:@"button_main_selected_favourite"] forState:UIControlStateSelected];

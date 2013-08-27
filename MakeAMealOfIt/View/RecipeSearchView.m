@@ -13,8 +13,6 @@
 
 @interface RecipeSearchView () <UITextFieldDelegate> {}
 
-/**	Allows the user to open their list of favourites.	*/
-@property (nonatomic, strong)	UIButton		*favouritesButton;
 /**	A button allowing the user to execute the search.	*/
 @property (nonatomic, strong)	UIButton		*searchButton;
 /**	A boolean value indicating whether a search is currently loading.	*/
@@ -156,16 +154,6 @@
 #pragma mark - Property Accessor Methods - Getters
 
 /**
- *
- *
- *	@return
- */
-- (UIButton *)favouritesButton
-{
-	
-}
-
-/**
  *	An array of example foods for the placeholder of the search field.
  *
  *	@return	An array of NSStrings.
@@ -176,7 +164,9 @@
 }
 
 /**
- *	this button when tapped will execute the search
+ *	This button when tapped will execute the search.
+ *
+ *	@return	This button when tapped will execute the search.
  */
 - (UIButton *)searchButton
 {
@@ -225,12 +215,14 @@
 }
 
 /**
- *	this is the dictionary of view to apply constraint to
+ *	A dictionary to used when creating visual constraints for this view controller.
+ *
+ *	@return	A dictionary with of views and appropriate keys.
  */
 - (NSDictionary *)viewsDictionary
 {
-	return @{	@"searchField"			: self.searchPhraseField,
-				@"searchButton"			: self.searchButton};
+	return @{@"searchField"		: self.searchPhraseField,
+			 @"searchButton"	: self.searchButton};
 }
 
 #pragma mark - UIResponder Methods

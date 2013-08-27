@@ -179,7 +179,7 @@
  *
  *	@return	An initialized object.
  */
-- (instancetype)initWithRecipe:(Recipe *)recipe;
+- (instancetype)initWithRecipe:(Recipe *)recipe
 {
 	if (self = [super init])
 	{

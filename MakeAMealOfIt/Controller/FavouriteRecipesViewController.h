@@ -6,9 +6,11 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
+#import "UICentreViewController.h"
+
 #pragma mark - Favourite Recipes View Controller Public Interface
 
-@interface FavouriteRecipesViewController : UIViewController {}
+@interface FavouriteRecipesViewController : UICentreViewController {}
 
 #pragma mark - Public Properties
 

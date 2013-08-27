@@ -10,6 +10,9 @@
 #import "FavouriteRecipesStore.h"
 #import "FavouriteRecipesViewController.h"
 #import "RecipeCollectionViewCell.h"
+#import "RecipeDetailsViewController.h"
+#import "UIImageView+Animation.h"
+#import "YummlyAttributionViewController.h"
 
 #pragma mark - Constants & Static Variables
 
@@ -17,7 +20,7 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 
 #pragma mark - Favourite Recipes View Controller Private Class Extension
 
-@interface FavouriteRecipesViewController () <UICollectionViewDelegate> {}
+@interface FavouriteRecipesViewController () <UICollectionViewDelegate, UICollectionViewDelegateFlowLayout> {}
 
 #pragma mark - Private Properties
 
@@ -27,6 +30,8 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 @property (nonatomic, strong)	UICollectionView	*collectionView;
 /**	The array of recipes that have been favourited by the user.	*/
 @property (nonatomic, strong)	NSMutableArray		*favouriteRecipes;
+/**	The cache used to store thumbnail images for the recipes.	*/
+@property (nonatomic, strong)	NSCache				*thumbnailCache;
 
 @end
 
@@ -106,13 +111,25 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 			cell.recipeDetails.detailLabel.text	= recipe.sourceDictionary[kYummlyRecipeSourceDisplayNameKey];
 			[cell setBackgroundColourForIndex:[self.favouriteRecipes indexOfObject:recipe]];
 			
+			UIImage *cachedImage		= [self.thumbnailCache objectForKey:recipe.recipeID];
+			
+			if (cachedImage)
+			{
+				[cell.thumbnailView setImage:cachedImage animated:YES];
+				return;
+			}
+			
+			__weak FavouriteRecipesViewController *weakSelf	= self;
+			
 			dispatch_async(dispatch_queue_create("Recipe Image Fetcher", NULL),
 			^{
 				UIImage *recipeImage	= recipe.recipeImage;
 				
 				dispatch_async(dispatch_get_main_queue(),
 				^{
-					cell.thumbnailView	= [[UIImageView alloc] initWithImage:recipeImage];
+					[cell.thumbnailView setImage:recipeImage animated:YES];
+					[weakSelf.thumbnailCache setObject:recipeImage forKey:recipe.recipeID];
+					
 				});
 			});
 		}];
@@ -149,6 +166,21 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 }
 
 /**
+ *	The cache used to store thumbnail images for the recipes.
+ *
+ *	@return	A cache to be used to store and retrieve thumbnails.
+ */
+- (NSCache *)thumbnailCache
+{
+	if (!_thumbnailCache)
+	{
+		_thumbnailCache					= [[NSCache alloc] init];
+	}
+	
+	return _thumbnailCache;
+}
+
+/**
  *	A dictionary to used when creating visual constraints for this view controller.
  *
  *	@return	A dictionary with of views and appropriate keys.
@@ -156,6 +188,82 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 - (NSDictionary *)viewsDictionary
 {
 	return @{@"collectionView"	: self.collectionView};
+}
+
+#pragma mark - UICollectionViewDelegate Methods
+
+/**
+ *	Tells the delegate that the item at the specified index path was selected.
+ *
+ *	@param	collectionview				The collection view object that is notifying you of the selection change.
+ *	@param	indexPath					The index path of the cell that was selected.
+ */
+- (void)  collectionView:(UICollectionView *)collectionView
+didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+	RecipeDetailsViewController *recipeVC	= [[RecipeDetailsViewController alloc] initWithRecipe:self.favouriteRecipes[indexPath.row]];
+	
+	YummlyAttributionViewController *attributionVC	= [[YummlyAttributionViewController alloc] init];
+	
+	[self.slideNavigationController pushCentreViewController:recipeVC
+									 withRightViewController:attributionVC
+													animated:YES];
+}
+
+#pragma mark - UICollectionViewDelegateFlowLayout Methods
+
+/**
+ *	Asks the delegate for the spacing between successive items in the rows or columns of a section.
+ *
+ *	@param	collectionView				The collection view object displaying the flow layout.
+ *	@param	collectionViewLayout		The layout object requesting the information.
+ *	@param	section						The index number of the section whose inter-item spacing is needed.
+ *
+ *	@return	The minimum space (measured in points) to apply between successive items in the lines of a section.
+ */
+- (CGFloat)				  collectionView:(UICollectionView *)collectionView
+						 layout:(UICollectionViewLayout *)collectionViewLayout
+minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
+{
+	return 5.0f;
+}
+
+/**
+ *	Asks the delegate for the size of the specified item’s cell.
+ *
+ *	@param	collectionView				The collection view object displaying the flow layout.
+ *	@param	collectionViewLayout		The layout object requesting the information.
+ *	@param	indexPath					The index path of the item.
+ *
+ *	@return	The width and height of the specified item. Both values must be greater than 0.
+ */
+- (CGSize)collectionView:(UICollectionView *)collectionView
+				  layout:(UICollectionViewLayout *)collectionViewLayout
+  sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+	return CGSizeMake(280.0f, 280.0f);
+	
+	if (isFourInchDevice)
+		return CGSizeMake(250.0f, 250.0f);
+	else
+		return CGSizeMake(210.0f, 210.0f);
+}
+
+#pragma mark - View Lifecycle
+
+/**
+ *	Sent to the view controller when the app receives a memory warning.
+ */
+- (void)didReceiveMemoryWarning
+{
+	if (!self.view.window)
+	{
+		
+	}
+	
+	self.thumbnailCache				= nil;
+	
+	[super didReceiveMemoryWarning];
 }
 
 @end

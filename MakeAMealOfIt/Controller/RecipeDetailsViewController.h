@@ -9,6 +9,8 @@
 #import "RightControllerDelegate.h"
 #import "UICentreViewController.h"
 
+@class Recipe;
+
 #pragma mark - Recipe Details VC Public Interface
 
 @interface RecipeDetailsViewController : UICentreViewController <RightControllerDelegate> {}
@@ -23,5 +25,11 @@
  */
 - (instancetype)initWithRecipeID:(NSString *)recipeID
 				   andRecipeName:(NSString *)recipeName;
+/**
+ *	Implemented by subclasses to initialize a new object (the receiver) immediately after memory for it has been allocated.
+ *
+ *	@return	An initialized object.
+ */
+- (instancetype)initWithRecipe:(Recipe *)recipe;
 
 @end
