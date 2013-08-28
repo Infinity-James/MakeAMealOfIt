@@ -776,11 +776,13 @@ shouldReloadTableForSearchString:(NSString *)searchString
 {
 	NSUInteger length					= searchString.length;
 	
-	if (length == 1)
-		[self.view bringSubviewToFront:self.activityIndicatorView],
-		[self.activityIndicatorView startAnimating];
 	if (length == 0)
 		[self.activityIndicatorView stopAnimating];
+	else if (length == 1)
+		[self.view bringSubviewToFront:self.activityIndicatorView],
+		[self.activityIndicatorView startAnimating];
+	else
+		[self.activityIndicatorView startAnimating];
 	
 	dispatch_async(dispatch_queue_create("Filtering", NULL),
 	^{

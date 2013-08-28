@@ -40,6 +40,7 @@
 		1A7906B317CB354900E4285A /* FavouriteRecipesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7906B217CB354900E4285A /* FavouriteRecipesViewController.m */; };
 		1A7906B717CB36A900E4285A /* ArrayDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7906B617CB36A900E4285A /* ArrayDataSource.m */; };
 		1A7906BA17CB6B4200E4285A /* Recipe+FavouriteState.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7906B917CB6B4200E4285A /* Recipe+FavouriteState.m */; };
+		1A7906BD17CDF80000E4285A /* BiggerButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7906BC17CDF80000E4285A /* BiggerButton.m */; };
 		1A7C1A4D17578CD80075AF2D /* UIImageView+Animation.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7C1A4C17578CD80075AF2D /* UIImageView+Animation.m */; };
 		1A7C1A50175792210075AF2D /* UICentreViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7C1A4F175792210075AF2D /* UICentreViewController.m */; };
 		1A7C1A531757ADA50075AF2D /* Recipe.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7C1A521757ADA50075AF2D /* Recipe.m */; };
@@ -149,6 +150,8 @@
 		1A7906B617CB36A900E4285A /* ArrayDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ArrayDataSource.m; path = Model/ArrayDataSource.m; sourceTree = "<group>"; };
 		1A7906B817CB6B4200E4285A /* Recipe+FavouriteState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Recipe+FavouriteState.h"; path = "Categories/Recipe+FavouriteState.h"; sourceTree = "<group>"; };
 		1A7906B917CB6B4200E4285A /* Recipe+FavouriteState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "Recipe+FavouriteState.m"; path = "Categories/Recipe+FavouriteState.m"; sourceTree = "<group>"; };
+		1A7906BB17CDF80000E4285A /* BiggerButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BiggerButton.h; path = View/BiggerButton.h; sourceTree = "<group>"; };
+		1A7906BC17CDF80000E4285A /* BiggerButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BiggerButton.m; path = View/BiggerButton.m; sourceTree = "<group>"; };
 		1A7C1A4B17578CD80075AF2D /* UIImageView+Animation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImageView+Animation.h"; path = "Categories/UIImageView+Animation.h"; sourceTree = "<group>"; };
 		1A7C1A4C17578CD80075AF2D /* UIImageView+Animation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImageView+Animation.m"; path = "Categories/UIImageView+Animation.m"; sourceTree = "<group>"; };
 		1A7C1A4E175792210075AF2D /* UICentreViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UICentreViewController.h; path = Controller/UICentreViewController.h; sourceTree = "<group>"; };
@@ -445,6 +448,8 @@
 		1ACBD2D417C37155007FB073 /* Controls & General Use Views */ = {
 			isa = PBXGroup;
 			children = (
+				1A7906BB17CDF80000E4285A /* BiggerButton.h */,
+				1A7906BC17CDF80000E4285A /* BiggerButton.m */,
 				1ACBD2DB17C5FE6D007FB073 /* TimerLabel.h */,
 				1ACBD2DC17C5FE6D007FB073 /* TimerLabel.m */,
 				1ADB9C3117AFADE300421CC9 /* BlurView.h */,
@@ -780,6 +785,7 @@
 				1AE89C84177AF4F6001C356A /* MetadataCell.m in Sources */,
 				1A84A59E1765BE1200E1F818 /* NetworkActivityIndicator.m in Sources */,
 				1ADFC56517B2B31800CFA246 /* SafariActivity.m in Sources */,
+				1A7906BD17CDF80000E4285A /* BiggerButton.m in Sources */,
 				1A36943417B3D6EC00EBA0E9 /* AudioManager.m in Sources */,
 				1A6D1189174B6ACE00E0B000 /* ParameterPageViewController.m in Sources */,
 				1ACBD2DD17C5FE6D007FB073 /* TimerLabel.m in Sources */,
@@ -922,7 +928,7 @@
 				INFOPLIST_FILE = "MakeAMealOfIt/MakeAMealOfIt-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "EA5D9071-5BB6-4FE7-AFB4-BE2F83F800EF";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -947,7 +953,7 @@
 				INFOPLIST_FILE = "MakeAMealOfIt/MakeAMealOfIt-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "EA5D9071-5BB6-4FE7-AFB4-BE2F83F800EF";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};

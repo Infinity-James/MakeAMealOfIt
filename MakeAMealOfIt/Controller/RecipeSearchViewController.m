@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "BiggerButton.h"
 #import "FavouriteRecipesViewController.h"
 #import "MakeAMealOfItIntroduction.h"
 #import "OverlayActivityIndicator.h"
@@ -43,7 +44,7 @@ enum SectionIndex
 /**	The image to be used for the slide cues.	*/
 @property (nonatomic, strong)	UIImage						*cueImage;
 /**	Allows the user to open their list of favourites.	*/
-@property (nonatomic, strong)	UIButton					*favouritesButton;
+@property (nonatomic, strong)	BiggerButton				*favouritesButton;
 /**	A view configured to display helpful text to the user.	*/
 @property (nonatomic, strong)	RecipeSearchHelpView		*helpView;
 /**	Keeps track of whether there is an internet connection or not.	*/
@@ -86,7 +87,7 @@ enum SectionIndex
 #pragma mark - Action & Selector Methods
 
 /**
- *	The user has tapped the button to view their favourite recipes.
+ *	The user has tapped the button to view their favourite recipes.Á
  */
 - (void)favouritesTapped
 {
@@ -261,7 +262,7 @@ enum SectionIndex
 																	  options:kNilOptions
 																	  metrics:nil
 																		views:self.viewsDictionary]];
-	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[tutorialButton]-(20)-[favourites]"
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[tutorialButton]-(32)-[favourites]"
 																	  options:NSLayoutFormatAlignAllCenterY
 																	  metrics:nil
 																		views:self.viewsDictionary]];
@@ -718,11 +719,11 @@ enum SectionIndex
  *
  *	@return	A UIButton that allows the user to open their list of favourites.
  */
-- (UIButton *)favouritesButton
+- (BiggerButton *)favouritesButton
 {
 	if (!_favouritesButton)
 	{
-		_favouritesButton				= [[UIButton alloc] init];
+		_favouritesButton				= [[BiggerButton alloc] init];
 		
 		[_favouritesButton setImage:[UIImage imageNamed:@"button_main_selected_favourite"] forState:UIControlStateNormal];
 		[_favouritesButton setImage:[UIImage imageNamed:@"button_main_normal_favourite"] forState:UIControlStateHighlighted];
