@@ -206,7 +206,8 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 {
 	searchDisplayTableView.dataSource	= self;
 	searchDisplayTableView.delegate		= self;
-	searchDisplayTableView.frame		= self.tableView.bounds;
+	CGRect frame						= CGRectMake(0.0f, 0.0f, self.tableView.bounds.size.width, self.tableView.bounds.size.height);
+	searchDisplayTableView.frame		= frame;
 	[searchDisplayTableView registerClass:[IngredientTableViewCell class]
 				   forCellReuseIdentifier:kCellIdentifier];
 	
