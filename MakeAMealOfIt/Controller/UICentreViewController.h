@@ -16,6 +16,8 @@
 
 #pragma mark - Public Properties
 
+/**	Whether this view controller is currently the centre controller or not.	*/
+@property (nonatomic, assign)	BOOL						currentlyCentre;
 /**	A bool indicating whether this centre view has been slid at least once.	*/
 @property (nonatomic, assign)	BOOL						hasBeenSlid;
 /**	The nearest ancestor in the view controller hierarchy that's a slide navigation controller.	*/

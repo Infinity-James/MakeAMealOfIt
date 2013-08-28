@@ -30,6 +30,8 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 @property (nonatomic, strong)	UICollectionView	*collectionView;
 /**	The array of recipes that have been favourited by the user.	*/
 @property (nonatomic, strong)	NSMutableArray		*favouriteRecipes;
+/**		*/
+@property (nonatomic, assign)	NSUInteger			indexOfRemovedRecipe;
 /**	The cache used to store thumbnail images for the recipes.	*/
 @property (nonatomic, strong)	NSCache				*thumbnailCache;
 
@@ -38,6 +40,33 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 #pragma mark - Favourite Recipes View Controller Implementation
 
 @implementation FavouriteRecipesViewController {}
+
+#pragma mark - Action & Selector Methods
+
+/**
+ *	Called when a recipe has been added as a favourite.
+ *
+ *	@param	notification				The object containing a name, an object, and an optional dictionary.
+ */
+- (void)recipeAdded:(NSNotification *)notification
+{
+	self.indexOfRemovedRecipe			= NSUIntegerMax;
+}
+
+/**
+ *	Called when a recipe has been removed as a favourite.
+ *
+ *	@param	notification				The object containing a name, an object, and an optional dictionary.
+ */
+- (void)recipeRemoved:(NSNotification *)notification
+{
+	dispatch_async(dispatch_queue_create("Calculate Recipe Removal", NULL),
+	^{
+		Recipe *recipe					= (Recipe *)notification.object;
+		
+		self.indexOfRemovedRecipe		= [self.favouriteRecipes indexOfObject:recipe];
+	});
+}
 
 #pragma mark - Autolayout Methods
 
@@ -66,6 +95,9 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
  */
 - (void)basicInitialisation
 {
+	self.indexOfRemovedRecipe			= NSUIntegerMax;
+	[self registerForNotifications];
+	
 	dispatch_async(dispatch_queue_create("Fetch Favourites", NULL),
 	^{
 		self.favouriteRecipes			= [[NSMutableArray alloc] initWithArray:[FavouriteRecipesStore favouriteRecipes]];
@@ -91,6 +123,21 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 	}
 	
 	return self;
+}
+
+/**
+ *	Adds this view controller as an observer of the appropriate notifications.
+ */
+- (void)registerForNotifications
+{
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(recipeAdded:)
+												 name:FavouriteRecipesStoreNotificationFavouriteRecipeAdded
+											   object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(recipeRemoved:)
+												 name:FavouriteRecipesStoreNotificationFavouriteRecipeRemoved
+											   object:nil];
 }
 
 #pragma mark - Property Accessor Methods - Getters
@@ -188,6 +235,37 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 - (NSDictionary *)viewsDictionary
 {
 	return @{@"collectionView"	: self.collectionView};
+}
+
+#pragma mark - Slide Navigation Controller Lifecycle
+
+/**
+ *	Notifies the view controller that the parent slideNavigationController will close all side views.
+ */
+- (void)slideNavigationControllerWillClose
+{
+	if (self.indexOfRemovedRecipe != NSUIntegerMax)
+	{
+		dispatch_async(dispatch_queue_create("Fetch Favourites", NULL),
+		^{
+			self.favouriteRecipes			= [[NSMutableArray alloc] initWithArray:[FavouriteRecipesStore favouriteRecipes]];
+			[self.arrayDataSource updateWithItems:self.favouriteRecipes];
+			NSIndexPath *indexPath			= [NSIndexPath indexPathForItem:self.indexOfRemovedRecipe inSection:0];
+			self.indexOfRemovedRecipe		= NSUIntegerMax;
+						   
+			dispatch_async(dispatch_get_main_queue(),
+			^{
+				@try
+				{
+					[self.collectionView deleteItemsAtIndexPaths:@[indexPath]];
+				}
+				@catch (NSException *except)
+				{
+					NSLog(@"DEBUG: failure to batch update.  %@", except.description);
+				}
+			});
+		});
+	}
 }
 
 #pragma mark - UICollectionViewDelegate Methods

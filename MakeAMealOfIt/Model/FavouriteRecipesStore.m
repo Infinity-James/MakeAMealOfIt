@@ -12,6 +12,10 @@
 
 /**	The name of the favourite recipes file.	*/
 static NSString *const kFavouriteRecipesFile		= @"favourite-recipes";
+/**	The notification triggered when a favourite recipe has been added.	*/
+NSString *const FavouriteRecipesStoreNotificationFavouriteRecipeAdded	= @"NotificationFavouriteAdded";
+/**	The notification triggered when a favourite recipe has been removed.	*/
+NSString *const FavouriteRecipesStoreNotificationFavouriteRecipeRemoved	= @"NotificationFavouriteRemoved";
 
 #pragma mark - Favourite Recipes Store Private Class Extension
 
@@ -34,6 +38,8 @@ static NSString *const kFavouriteRecipesFile		= @"favourite-recipes";
  */
 + (void)addRecipe:(Recipe *)recipe
 {
+	[[NSNotificationCenter defaultCenter] postNotificationName:FavouriteRecipesStoreNotificationFavouriteRecipeAdded object:recipe];
+	
 	NSMutableDictionary *favouriteRecipes	= [[NSMutableDictionary alloc] initWithDictionary:self.favouriteRecipesDictionary];
 	
 	NSString *recipeID					= recipe.recipeID;
@@ -84,6 +90,8 @@ static NSString *const kFavouriteRecipesFile		= @"favourite-recipes";
  */
 + (void)removeRecipe:(Recipe *)recipe
 {
+	[[NSNotificationCenter defaultCenter] postNotificationName:FavouriteRecipesStoreNotificationFavouriteRecipeRemoved object:recipe];
+	
 	NSMutableDictionary *favouriteRecipes	= [[NSMutableDictionary alloc] initWithDictionary:self.favouriteRecipesDictionary];
 	
 	NSString *recipeID					= recipe.recipeID;

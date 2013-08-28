@@ -43,5 +43,11 @@ typedef void (^TableViewCellConfigureBlock)(id cell, id item);
  *	@return	The appropriate item for a given index path.
  */
 - (id)itemForRowAtIndexPath:(NSIndexPath *)indexPath;
+/**
+ *	Updates this array data source with recently edited items.
+ *
+ *	@param	items						The array of items to be used as the data source.
+ */
+- (void)updateWithItems:(NSArray *)items;
 
 @end

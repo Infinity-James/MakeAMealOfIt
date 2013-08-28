@@ -208,6 +208,7 @@
 		[self addChildViewController:_pageViewController];
 		[_pageViewController didMoveToParentViewController:self];
 	}
+	
 	return _pageViewController;
 }
 

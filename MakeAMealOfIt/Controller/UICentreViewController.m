@@ -27,7 +27,8 @@
  */
 - (void)slideNavigationStateEventOccured:(NSNotification *)notification
 {
-	if (!self.slideNavigationController)			return;
+	if (!self.slideNavigationController || !self.currentlyCentre)
+		return;
 	
 	NSDictionary *userInfo				= notification.userInfo;
 	SlideNavigationStateEvent event		= [(NSNumber *)userInfo[SlideNavigationStateEventTypeKey] integerValue];

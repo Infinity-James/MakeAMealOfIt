@@ -1102,6 +1102,7 @@ NSString *const SlideNavigationStateEventTypeKey			= @"eventType";
 	//	if this view controller is not nil this will handle removing it correctly
 	[self removeOurChildViewController:_centreViewController];
 	[_centreViewController.slideNavigationItem removeDelegate];
+	_centreViewController.currentlyCentre	= NO;
 	
 	_centreViewController				= centreViewController;
 	
@@ -1118,6 +1119,9 @@ NSString *const SlideNavigationStateEventTypeKey			= @"eventType";
 	
 	//	set ourselves as it's slide navigation controller
 	_centreViewController.slideNavigationController	= self;
+	
+	//	this new centre view controller has centred
+	_centreViewController.currentlyCentre	= YES;
 	
 	//	add the slide navigation bar to the centre view
 	[_centreViewController.view addSubview:self.slideNavigationBar];

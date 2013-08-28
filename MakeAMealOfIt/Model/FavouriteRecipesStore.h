@@ -8,6 +8,13 @@
 
 #import "Recipe.h"
 
+#pragma mark - Constants & Static Variables
+
+/**	The notification triggered when a favourite recipe has been added.	*/
+extern NSString *const FavouriteRecipesStoreNotificationFavouriteRecipeAdded;
+/**	The notification triggered when a favourite recipe has been removed.	*/
+extern NSString *const FavouriteRecipesStoreNotificationFavouriteRecipeRemoved;
+
 #pragma mark - Favourite Recipes Store Public Interface
 
 @interface FavouriteRecipesStore : NSObject {}

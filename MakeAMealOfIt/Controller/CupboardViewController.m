@@ -96,6 +96,7 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 	[self.view removeConstraints:self.view.constraints];
 	
 	CGSize activityIndicatorSize		= self.activityIndicatorView.intrinsicContentSize;
+	CGFloat activityMargin				= (self.view.bounds.size.width - activityIndicatorSize.width - kPanelWidth) / 2.0f;
 	
 	//	add the table view to cover the whole main view except for the search bar
 	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[tableView]-(Panel)-|"
@@ -116,27 +117,14 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 																	  metrics:nil
 																		views:self.viewsDictionary]];
 	
-	[self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.activityIndicatorView
-														  attribute:NSLayoutAttributeCenterX
-														  relatedBy:NSLayoutRelationEqual
-															 toItem:self.view
-														  attribute:NSLayoutAttributeCenterX
-														 multiplier:1.0f
-														   constant:0.0f]];
-	[self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.activityIndicatorView
-														  attribute:NSLayoutAttributeCenterY
-														  relatedBy:NSLayoutRelationEqual
-															 toItem:self.view
-														  attribute:NSLayoutAttributeCenterY
-														 multiplier:1.0f
-														   constant:0.0f]];
-	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[activityView(==height)]"
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(128)-[activityView(==height)]"
 																	  options:kNilOptions
 																	  metrics:@{@"height": @(activityIndicatorSize.height)}
 																		views:self.viewsDictionary]];
-	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[activityView(==width)]"
+	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(margin)-[activityView(==width)]"
 																	  options:kNilOptions
-																	  metrics:@{@"width": @(activityIndicatorSize.width)}
+																	  metrics:@{@"margin"	: @(activityMargin),
+																				@"width"	: @(activityIndicatorSize.width)}
 																		views:self.viewsDictionary]];
 	
 }
@@ -211,14 +199,17 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 
 /**
  *	Sets the the search display controller's table view properties.
+ *
+ *	@param	searchDisplayTableView		The table view displayed by the UISearchDisplayController.
  */
-- (void)sortOutSearchDisplayControllerTableView
+- (void)sortOutSearchDisplayControllerTableView:(UITableView *)searchDisplayTableView
 {
-	_searchDisplay.searchResultsDataSource	= self;
-	_searchDisplay.searchResultsDelegate	= self;
-	_searchDisplay.searchResultsTableView.allowsMultipleSelection	= YES;
-	[_searchDisplay.searchResultsTableView registerClass:[IngredientTableViewCell class] forCellReuseIdentifier:kCellIdentifier];
-	[self.view bringSubviewToFront:self.activityIndicatorView];
+	searchDisplayTableView.dataSource	= self;
+	searchDisplayTableView.delegate		= self;
+	searchDisplayTableView.frame		= self.tableView.bounds;
+	[searchDisplayTableView registerClass:[IngredientTableViewCell class]
+				   forCellReuseIdentifier:kCellIdentifier];
+	
 }
 
 #pragma mark - IngredientTableViewCellDelegate Methods
@@ -602,7 +593,6 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 	{
 		_searchDisplay					= [[UISearchDisplayController alloc] initWithSearchBar:self.searchBar contentsController:self];
 		_searchDisplay.delegate			= self;
-		[self sortOutSearchDisplayControllerTableView];
 	}
 	
 	return _searchDisplay;
@@ -732,10 +722,6 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 {
 	[searchBar becomeFirstResponder];
 	
-	[self.activityIndicatorView startAnimating];
-	
-	[self sortOutSearchDisplayControllerTableView];
-	
 	[self.searchDisplay.searchResultsTableView addGestureRecognizer:self.resignGestureRecogniser];
 	[self.tableView addGestureRecognizer:self.resignGestureRecogniser];
 }
@@ -754,6 +740,18 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 }
 
 #pragma mark - UISearchDisplayDelegate Methods
+
+/**
+ *	Tells the delegate that the controller is about to display its table view.
+ *
+ *	@param	controller					The search display controller for which the receiver is the delegate.
+ *	@param	tableView					The search display controller’s table view.
+ */
+- (void)searchDisplayController:(UISearchDisplayController *)controller
+ willShowSearchResultsTableView:(UITableView *)tableView
+{
+	[self sortOutSearchDisplayControllerTableView:tableView];
+}
 
 /**
  *	Asks the delegate if the table view should be reloaded for a given scope.
@@ -776,12 +774,20 @@ shouldReloadTableForSearchScope:(NSInteger)searchOption
 - (BOOL) searchDisplayController:(UISearchDisplayController *)controller
 shouldReloadTableForSearchString:(NSString *)searchString
 {
+	NSUInteger length					= searchString.length;
+	
+	if (length == 1)
+		[self.view bringSubviewToFront:self.activityIndicatorView],
+		[self.activityIndicatorView startAnimating];
+	if (length == 0)
+		[self.activityIndicatorView stopAnimating];
+	
 	dispatch_async(dispatch_queue_create("Filtering", NULL),
 	^{
 		[self filterContentForSearchText:searchString inScope:nil];
 		dispatch_async(dispatch_get_main_queue(),
 		^{
-			CGFloat delay				= 1.0f / searchString.length;
+			CGFloat delay				= 1.0f / length;
 			[NSObject cancelPreviousPerformRequestsWithTarget:self.searchDisplayController.searchResultsTableView];
 			[NSObject cancelPreviousPerformRequestsWithTarget:self.activityIndicatorView];
 			[self.searchDisplayController.searchResultsTableView performSelector:@selector(reloadData)

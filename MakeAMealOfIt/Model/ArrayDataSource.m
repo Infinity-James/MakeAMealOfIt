@@ -27,6 +27,18 @@
 
 @implementation ArrayDataSource {}
 
+#pragma mark - Array Handling
+
+/**
+ *	Updates this array data source with recently edited items.
+ *
+ *	@param	items						The array of items to be used as the data source.
+ */
+- (void)updateWithItems:(NSArray *)items
+{
+	self.items							= items;
+}
+
 #pragma mark - Convenience & Helper Methods
 
 /**
