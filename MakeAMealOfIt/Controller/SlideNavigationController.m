@@ -686,7 +686,7 @@ NSString *const SlideNavigationStateEventTypeKey			= @"eventType";
 	
 	//	create a frame for the side view to imitate the centre view
 	CGRect newCentreFrame				= kCentreViewFrame;
-	newCentreFrame.origin.y				= -10.0f;
+	newCentreFrame.origin.y				= -30.0f;
 	
 	[UIView animateWithDuration:animationDuration
 					 animations:
@@ -1141,7 +1141,6 @@ NSString *const SlideNavigationStateEventTypeKey			= @"eventType";
 	^{
 		 _centreViewController.view.frame	= kCentreViewFrame;
 		self.slideNavigationBar.alpha		= 1.0f;
-		
 	}];
 	
 	//	this parallax effect is specific to the centre view

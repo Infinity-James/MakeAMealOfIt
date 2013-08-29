@@ -152,6 +152,24 @@ NSString *const FavouriteRecipesStoreNotificationFavouriteRecipeRemoved	= @"Noti
 	return [[NSDictionary alloc] initWithContentsOfFile:self.favouriteRecipesPath];
 }
 
+/**
+ *	Returns a recipe for a given recipe ID.
+ *
+ *	@param	recipeID					The ID for which to return the recipe.
+ *
+ *	@return	Returns a recipe for the given recipe ID.
+ */
++ (Recipe *)getRecipeForRecipeID:(NSString *)recipeID
+{
+	NSDictionary *favouriteRecipes		= self.favouriteRecipesDictionary;
+	
+	NSData *recipeData					= favouriteRecipes[recipeID];
+	
+	if (!recipeData)					return nil;
+	
+	return [NSKeyedUnarchiver unarchiveObjectWithData:recipeData];
+}
+
 #pragma mark - Utility Methods - Document & File Management
 
 /**

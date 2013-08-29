@@ -14,7 +14,8 @@
 
 #pragma mark - Private Properties
 
-@property (nonatomic, strong)	NSDictionary	*viewsDictionary;
+/**	A largely translucent gradient to be used as tha background of this view.	*/
+@property (nonatomic, strong)	CAGradientLayer	*backgroundGradient;
 
 @end
 
@@ -22,14 +23,12 @@
 
 @implementation TextBackingView {}
 
-#pragma mark - Synthesise Properties
-
-@synthesize mainLabel					= _mainLabel;
-
 #pragma mark - Auto Layout Methods
 
 /**
- *	returns whether the receiver depends on the constraint-based layout system
+ *	Returns whether the receiver depends on the constraint-based layout system.
+ *
+ *	@return	YES if the view must be in a window using constraint-based layout to function properly, NO otherwise.
  */
 + (BOOL)requiresConstraintBasedLayout
 {
@@ -37,7 +36,7 @@
 }
 
 /**
- *	update constraints for the view
+ *	Update constraints for the view.
  */
 - (void)updateConstraints
 {
@@ -60,10 +59,47 @@
 	[self addConstraints:constraints];
 }
 
+/**
+ *	Implemented by subclasses to initialize a new object (the receiver) immediately after memory for it has been allocated.
+ *
+ *	@return	An initialized object.
+ */
+- (instancetype)init
+{
+	if (self = [super init])
+	{
+		[self.layer insertSublayer:self.backgroundGradient atIndex:0];
+	}
+	
+	return self;
+}
+
 #pragma mark - Property Accessor Methods - Getters
 
 /**
- *	the subtitle of this view
+ *	A largely translucent gradient to be used as tha background of this view.
+ *
+ *	@return	An initialised CAGradientLayer to be used as the background of this view.
+ */
+- (CAGradientLayer *)backgroundGradient
+{
+	if (!_backgroundGradient)
+	{
+		NSArray *colours				= @[(id)kLightGreyColourWithAlpha(0.1f).CGColor, (id)kDarkGreyColourWithAlpha(0.5f).CGColor];
+		NSArray *locations				= @[@(0.0f), @(1.0f)];
+		
+		_backgroundGradient				= [[CAGradientLayer alloc] init];
+		_backgroundGradient.colors		= colours;
+		_backgroundGradient.locations	= locations;
+	}
+	
+	return _backgroundGradient;
+}
+
+/**
+ *	The subtitle of this view.
+ *
+ *	@return	An initialised UILabel to be used as the subtitle.
  */
 - (UILabel *)detailLabel
 {
@@ -83,7 +119,9 @@
 }
 
 /**
- *	the main title of this view, it can be multi-line to a certain extent
+ *	The main title of this view, it can be multi-line to a certain extent.
+ *
+ *	@return	An initialised UILabel to be used as the main title.
  */
 - (UILabel *)mainLabel
 {
@@ -106,7 +144,9 @@
 }
 
 /**
- *	this dictionary is used when laying out constraints
+ *	A dictionary to used when creating visual constraints for this view controller.
+ *
+ *	@return	A dictionary with of views and appropriate keys.
  */
 - (NSDictionary *)viewsDictionary
 {
@@ -117,10 +157,10 @@
 #pragma mark - UIView Methods
 
 /**
- *	draws the receiver’s image within the passed-in rectangle
+ *	Draws the receiver’s image within the passed-in rectangle.
  *
- *	@param	rect						portion of the view’s bounds that needs to be updated
- */
+ *	@param	rect						The portion of the view’s bounds that needs to be updated.
+ *
 - (void)drawRect:(CGRect)rect
 {
 	//	get the context
@@ -133,17 +173,26 @@
 	
 	//	set fill colour and then fill the rect
 	[UtilityMethodsCG drawLinearGradientInContext:context withRect:rect startColour:startColour.CGColor andEndColour:endColour.CGColor];
+}*/
+
+/**
+ *	Lays out subviews.
+ */
+- (void)layoutSubviews
+{
+	[super layoutSubviews];
+	self.backgroundGradient.frame		= self.bounds;
+	
 }
 
 #pragma mark - View-Related Observation Methods
 
 /**
- *	tells the view that its superview changed
+ *	Tells the view that its superview changed.
  */
 - (void)didMoveToSuperview
 {
 	[super didMoveToSuperview];
-	self.backgroundColor				= [UIColor clearColor];
 }
 
 @end

@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
+#import "FavouriteRecipesStore.h"
 #import "OverlayActivityIndicator.h"
 #import "RecipeDetailsViewController.h"
 #import "RecipeDetailsView.h"
@@ -407,8 +408,13 @@
 	
 	_recipeID							= recipeID;
 	
-	//	initialise the recipe object with the given ID
-	self.recipe							= [[Recipe alloc] initWithRecipeID:_recipeID andDelegate:self];
+	//	if this recipe has been favourited we fetch it without contacting the server
+	self.recipe							= [FavouriteRecipesStore getRecipeForRecipeID:_recipeID];
+	self.recipe.delegate				= self;
+	
+	//	initialise the recipe object with the given ID if it has not been favourited
+	if (!self.recipe)
+		self.recipe						= [[Recipe alloc] initWithRecipeID:_recipeID andDelegate:self];
 }
 
 /**

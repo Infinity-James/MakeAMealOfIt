@@ -9,6 +9,8 @@
 #ifndef Defines_h
 #define Defines_h
 
+#define DEBUG							1
+
 //	customisation defines
 #define	FULLSCREENCENTRE
 

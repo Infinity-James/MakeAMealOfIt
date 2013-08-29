@@ -129,32 +129,6 @@
 }
 
 /**
- *	Asks the delegate whether the app’s saved state information should be restored.
- *
- *	@param	The delegating application object.
- *	@param	The keyed archiver containing the app’s previously saved state information.
- *
- *	@return	YES if the app’s state should be restored or NO if it should not.
- */
-- (BOOL)application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder
-{
-	return NO;
-}
-
-/**
- *	Asks the delegate whether the app’s state should be preserved.
- *
- *	@param	application					The delegating application object.
- *	@param	coder						The keyed archiver into which you can put high-level state information.
- *
- *	@return	YES if the app’s state should be preserved or NO if it should not.
- */
-- (BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder
-{
-	return NO;
-}
-
-/**
  *	Tells the delegate that the application has become active.
  *
  *	@param	application					The singleton application instance.

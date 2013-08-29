@@ -34,6 +34,14 @@ extern NSString *const FavouriteRecipesStoreNotificationFavouriteRecipeRemoved;
  */
 + (NSArray *)favouriteRecipes;
 /**
+ *	Returns a recipe for a given recipe ID.
+ *
+ *	@param	recipeID					The ID for which to return the recipe.
+ *
+ *	@return	Returns a recipe for the given recipe ID.
+ */
++ (Recipe *)getRecipeForRecipeID:(NSString *)recipeID;
+/**
  *	Checks if the recipe with the given ID has been favourited.
  *
  *	@param	recipeID					The ID to check.
