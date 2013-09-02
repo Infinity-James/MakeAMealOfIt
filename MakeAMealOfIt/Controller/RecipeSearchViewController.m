@@ -339,6 +339,18 @@ enum SectionIndex
 #pragma mark - Convenience & Helper Methods
 
 /**
+ *	Flips the slide cues to face the opposite direction.
+ */
+- (void)flipSlideCues
+{
+	[UIView animateWithDuration:0.2f animations:
+	 ^{
+		 self.slideCueLeft.transform		= CGAffineTransformRotate(self.slideCueLeft.transform, M_PI);
+		 self.slideCueRight.transform	= CGAffineTransformRotate(self.slideCueRight.transform, M_PI);
+	 }];
+}
+
+/**
  *	Conveniently returns the correcr array for the given section.
  *
  *	@param	section						The section of a table or collection view requesting an array.
@@ -725,6 +737,8 @@ enum SectionIndex
 	{
 		_favouritesButton				= [[BiggerButton alloc] init];
 		
+		_favouritesButton.opaque		= YES;
+		
 		[_favouritesButton setImage:[UIImage imageNamed:@"button_main_selected_favourite"] forState:UIControlStateNormal];
 		[_favouritesButton setImage:[UIImage imageNamed:@"button_main_normal_favourite"] forState:UIControlStateHighlighted];
 		
@@ -747,6 +761,8 @@ enum SectionIndex
 	if (!_helpView)
 	{
 		_helpView						= [[RecipeSearchHelpView alloc] init];
+		
+		_helpView.opaque				= YES;
 		
 		_helpView.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self.view addSubview:_helpView];
@@ -882,6 +898,21 @@ enum SectionIndex
 }
 
 /**
+ *	A constraint used to centre the sliding cues in the view.
+ *
+ *	@return	An initialised NSLayoutConstraint to centre the cues.
+ */
+- (NSArray *)shiftedCueConstraints
+{
+	if (!_shiftedCueConstraints)
+		_shiftedCueConstraints				= [NSLayoutConstraint constraintsWithVisualFormat:@"V:[cueLeft]-(20)-[tableView]"
+																			options:kNilOptions
+																			metrics:nil
+																			  views:self.viewsDictionary];
+	return _shiftedCueConstraints;
+}
+
+/**
  *	A cue to the left of the view that indicates it can be slid right.
  *
  *	@return	An initialised UIImageView with an image acting as a cue.
@@ -899,21 +930,6 @@ enum SectionIndex
 	}
 	
 	return _slideCueLeft;
-}
-
-/**
- *	A constraint used to centre the sliding cues in the view.
- *
- *	@return	An initialised NSLayoutConstraint to centre the cues.
- */
-- (NSArray *)shiftedCueConstraints
-{
-	if (!_shiftedCueConstraints)
-		_shiftedCueConstraints				= [NSLayoutConstraint constraintsWithVisualFormat:@"V:[cueLeft]-(20)-[tableView]"
-																			options:kNilOptions
-																			metrics:nil
-																			  views:self.viewsDictionary];
-	return _shiftedCueConstraints;
 }
 
 /**
@@ -1009,6 +1025,20 @@ enum SectionIndex
 }
 
 #pragma mark - Slide Navigation Controller Lifecycle
+
+/**
+ *	Notifies the view controller that the parent slideNavigationController has closed all side views.
+ */
+- (void)slideNavigationControllerDidClose
+{
+}
+
+/**
+ *	Notifies the view controller that the parent slideNavigationController has open a side view.
+ */
+- (void)slideNavigationControllerDidOpen
+{
+}
 
 /**
  *	Notifies the view controller that the parent slideNavigationController will close all side views.
@@ -1279,6 +1309,17 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 }
 
 #pragma mark - View Lifecycle
+
+/**
+ *	Notifies the view controller that its view is about to be added to a view hierarchy.
+ *
+ *	@param	animated					If YES, the view is being added to the window using an animation.
+ */
+- (void)viewWillAppear:(BOOL)animated
+{
+	[super viewWillAppear:animated];
+	self.view.opaque					= YES;
+}
 
 /**
  *	Notifies the view controller that its view was added to a view hierarchy.

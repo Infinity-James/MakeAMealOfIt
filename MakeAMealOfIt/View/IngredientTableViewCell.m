@@ -266,6 +266,9 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 		self.clipsToBounds				= NO;
 		for (UIView *subview in self.subviews)
 			subview.clipsToBounds		= NO;
+		self.layer.borderWidth			= 1.0f;
+		self.layer.borderColor			= kDarkGreyColourWithAlpha(0.1f).CGColor;
+		self.opaque						= YES;
 		self.selectionStyle				= UITableViewCellSelectionStyleNone;
 		self.textLabel.backgroundColor	= [UIColor clearColor];
 	}
@@ -585,7 +588,7 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
  */
 + (CGFloat)desiredHeightForCell
 {
-	return 25.0f;
+	return 30.0f;
 }
 
 @end

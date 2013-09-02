@@ -27,7 +27,7 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 /**	Used to show that the recipe image is loading.	*/
 @property (nonatomic, strong)	OverlayActivityIndicator	*activityIndicatorView;
 /**	An array of ingredient dictionaries filtered by the user's search.	*/
-@property (nonatomic, strong)	NSArray						*filteredIngredients;
+@property (atomic, strong)		NSArray						*filteredIngredients;
 /**	An array of all of ingredient dictionaries.	*/
 @property (nonatomic, strong)	NSArray						*ingredientsMetadata;
 /**	A dictionary of all of the ingredients, with each one under a key of it's first letter.	*/
@@ -173,7 +173,7 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 {
 	NSDictionary *ingredientDictionary;
 	
-	if (tableView == self.searchDisplay.searchResultsTableView)
+	if (tableView == self.searchDisplay.searchResultsTableView && self.filteredIngredients.count >= indexPath.row)
 		ingredientDictionary			= self.filteredIngredients[indexPath.row];
 	else
 		ingredientDictionary			= self.ingredientsForTableView[self.sectionTitles[indexPath.section]][indexPath.row];
@@ -195,6 +195,32 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 	//	define the predicate according to the search of the user
 	NSPredicate *predicate				= [NSPredicate predicateWithFormat:@"SELF.%@ CONTAINS[cd] %@", kYummlyMetadataDescriptionKey, searchText];
 	self.filteredIngredients			= [self.ingredientsMetadata filteredArrayUsingPredicate:predicate];
+}
+
+/**
+ *	Called when the searchDisplayController's tableView should be reloaded.
+ */
+- (void)reloadSearchTableView
+{
+	[self.searchDisplayController.searchResultsTableView reloadData];
+	[self.activityIndicatorView stopAnimating];
+	
+	[NSObject cancelPreviousPerformRequestsWithTarget:self
+											 selector:@selector(scrollToTopOfTableView:)
+											   object:self.searchDisplayController.searchResultsTableView];
+	[self performSelector:@selector(scrollToTopOfTableView:)
+			   withObject:self.searchDisplayController.searchResultsTableView
+			   afterDelay:0.5];
+}
+
+/**
+ *	Scrolls to the top of the given table view.
+ *
+ *	@param	tableView					The table view to scroll to the top of.
+ */
+- (void)scrollToTopOfTableView:(UITableView *)tableView
+{
+	tableView.contentOffset				= CGPointZero;
 }
 
 /**
@@ -316,11 +342,11 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 - (void)getIngredientsDictionaries
 {
 	dispatch_async(dispatch_queue_create("Ingredients Fetcher", NULL),
-				   ^{
-					   self.ingredientsMetadata	= [YummlyMetadata allMetadata][kYummlyMetadataIngredients];
-					   [self setupTableViewIndex];
-					   [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
-				   });
+	^{
+		self.ingredientsMetadata	= [YummlyMetadata allMetadata][kYummlyMetadataIngredients];
+		[self setupTableViewIndex];
+		[self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+	});
 }
 
 /**
@@ -444,19 +470,6 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 }
 
 /**
- *	An array of the ingredients filtered according to the search for the user.
- *
- *	@return	An initialised and empty array to be used to hold the user's search results.
- */
-- (NSArray *)filteredIngredients
-{
-	if (!_filteredIngredients)
-		_filteredIngredients			= @[];
-	
-	return _filteredIngredients;
-}
-
-/**
  *	This dictionary will hold the sections and the objects pertaining to that section.
  *
  *	@return	A dictionary of all of the ingredients, with each one under a key of it's first letter.
@@ -567,6 +580,7 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 	{
 		_searchBar						= [[UISearchBar alloc] init];
 		_searchBar.delegate				= self;
+		_searchBar.opaque				= YES;
 		_searchBar.placeholder			= [[NSString alloc] initWithFormat:@"%@...", self.placeholders[arc4random() % self.placeholders.count]];
 		_searchBar.searchBarStyle		= UISearchBarIconSearch;
 		_searchBar.showsScopeBar		= NO;
@@ -635,11 +649,12 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 		_tableView.allowsSelection		= NO;
 		_tableView.dataSource			= self;
 		_tableView.delegate				= self;
-		[self.view addSubview:_tableView];
+		_tableView.opaque				= YES;
 		
 		[_tableView registerClass:[IngredientTableViewCell class] forCellReuseIdentifier:kCellIdentifier];
 		
 		_tableView.translatesAutoresizingMaskIntoConstraints	= NO;
+		[self.view addSubview:_tableView];
 	}
 	
 	return _tableView;
@@ -791,12 +806,9 @@ shouldReloadTableForSearchString:(NSString *)searchString
 		dispatch_async(dispatch_get_main_queue(),
 		^{
 			CGFloat delay				= 1.0f / length;
-			[NSObject cancelPreviousPerformRequestsWithTarget:self.searchDisplayController.searchResultsTableView];
+			[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(reloadSearchTableView) object:nil];
 			[NSObject cancelPreviousPerformRequestsWithTarget:self.activityIndicatorView];
-			[self.searchDisplayController.searchResultsTableView performSelector:@selector(reloadData)
-																	  withObject:nil
-																	  afterDelay:delay];
-			[self.activityIndicatorView performSelector:@selector(stopAnimating) withObject:nil afterDelay:delay];
+			[self performSelector:@selector(reloadSearchTableView) withObject:nil afterDelay:delay];
 		});
 	});
 	
@@ -919,6 +931,22 @@ forRowAtIndexPath:(NSIndexPath *)indexPath
 }
 
 #pragma mark - UITableViewDelegate Methods
+
+/**
+ *	Asks the delegate for the height to use for the header of a particular section.
+ *
+ *	@param	tableView					The table-view object requesting this information.
+ *	@param	section						An index number identifying a section of tableView .
+ *
+ *	@return	A floating-point value that specifies the height (in points) of the header for section.
+ */
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+	if (tableView == self.searchDisplay.searchResultsTableView)
+		return 0.0f;
+	
+	return 20.0f;
+}
 
 /**
  *	Asks the delegate for the height to use for a row in a specified location.

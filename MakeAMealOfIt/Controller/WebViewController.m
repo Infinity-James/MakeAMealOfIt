@@ -17,6 +17,8 @@
 
 #pragma mark - Private Properties
 
+/**	A number to keep track of the amount of web laods currently occuring.	*/
+@property (nonatomic, assign)	NSUInteger				currentLoads;
 /**	The button that allows the user to dismiss this view controller.	*/
 @property (nonatomic, strong)	UIBarButtonItem			*doneButton;
 /**	An item that separate the UIBarButtonItems neatly.	*/
@@ -348,9 +350,10 @@
  */
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
 {
+	self.currentLoads--;
+	
 	[NetworkActivityIndicator stop];
 	[self updateToolbarButtons];
-	//[self.pullToRefreshView endRefresh];
 }
 
 /**
@@ -360,23 +363,32 @@
  */
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
+	self.currentLoads--;
+	
 	[NetworkActivityIndicator stop];
 	[self updateToolbarButtons];
-	[self.pullToRefreshView endRefresh];
+	
+	[NSObject cancelPreviousPerformRequestsWithTarget:self.pullToRefreshView];
+	
+	if (self.currentLoads == 0)
+		[self.pullToRefreshView performSelector:@selector(endRefresh) withObject:nil afterDelay:0.5f];
 }
 
 /**
  *	Sent after a web view starts loading a frame.
  *
  *	@param	webView						The web view that has begun loading a new frame.
-
  */
 - (void)webViewDidStartLoad:(UIWebView *)webView
 {
+	self.currentLoads++;
+	
 	[NetworkActivityIndicator start];
 	[self updateToolbarButtons];
 	
-	if (self.pullToRefreshView.state != PullToRefreshStateLoading)
+	[NSObject cancelPreviousPerformRequestsWithTarget:self.pullToRefreshView];
+	
+	if (self.pullToRefreshView.state != PullToRefreshStateLoading && self.currentLoads == 1)
 		self.pullToRefreshView.state	= PullToRefreshStateLoading;
 }
 

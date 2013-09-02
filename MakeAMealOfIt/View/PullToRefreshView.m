@@ -256,8 +256,6 @@ static CGFloat const kRegisterRefreshYOffset				= 60.00f;
 		_arrowLabel						= [[UILabel alloc] init];
 		_arrowLabel.backgroundColor		= [UIColor clearColor];
 		_arrowLabel.font				= kYummlyFontWithSize(FontSizeForTextStyle(UIFontTextStyleBody));
-		_arrowLabel.shadowColor			= [[UIColor alloc] initWithWhite:0.9f alpha:1.0f];
-		_arrowLabel.shadowOffset		= CGSizeMake(0.0f, 1.0f);
 		_arrowLabel.text				= @"↑";
 		_arrowLabel.textAlignment		= NSTextAlignmentCenter;
 		_arrowLabel.textColor			= [UIColor whiteColor];
@@ -281,8 +279,6 @@ static CGFloat const kRegisterRefreshYOffset				= 60.00f;
 		_lastUpdatedLabel					= [[UILabel alloc] init];
 		_lastUpdatedLabel.backgroundColor	= [UIColor clearColor];
 		_lastUpdatedLabel.font				= kYummlyFontWithSize(FontSizeForTextStyle(UIFontTextStyleBody));
-		_lastUpdatedLabel.shadowColor		= [[UIColor alloc] initWithWhite:0.9f alpha:1.0f];
-		_lastUpdatedLabel.shadowOffset		= CGSizeMake(0.0f, 1.0f);
 		_lastUpdatedLabel.textAlignment		= NSTextAlignmentCenter;
 		_lastUpdatedLabel.textColor			= [UIColor whiteColor];
 		
@@ -306,8 +302,6 @@ static CGFloat const kRegisterRefreshYOffset				= 60.00f;
 		_statusLabel					= [[UILabel alloc] init];
 		_statusLabel.backgroundColor	= [UIColor clearColor];
 		_statusLabel.font				= kYummlyFontWithSize(FontSizeForTextStyle(UIFontTextStyleBody));
-		_statusLabel.shadowColor		= [[UIColor alloc] initWithWhite:0.9f alpha:1.0f];
-		_statusLabel.shadowOffset		= CGSizeMake(0.0f, 1.0f);
 		_statusLabel.textAlignment		= NSTextAlignmentCenter;
 		_statusLabel.textColor			= [UIColor whiteColor];
 		

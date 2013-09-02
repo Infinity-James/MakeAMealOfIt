@@ -808,6 +808,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	[super viewWillAppear:animated];
 	[self.view setNeedsUpdateConstraints];
+	self.view.opaque					= YES;
 }
 
 @end

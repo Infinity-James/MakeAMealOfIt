@@ -70,6 +70,8 @@
 		1AD55FFF171AF33200AE5FED /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AD55FFE171AF33200AE5FED /* Default-568h@2x.png */; };
 		1AD8C914178C003500E56DCA /* SlideNavigationItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD8C913178C003500E56DCA /* SlideNavigationItem.m */; };
 		1AD8C918178C1FDF00E56DCA /* SlideNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD8C917178C1FDF00E56DCA /* SlideNavigationBar.m */; };
+		1ADA691017D4E39A006D11F2 /* pop.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1ADA690E17D4E39A006D11F2 /* pop.wav */; };
+		1ADA691117D4E39A006D11F2 /* psst1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1ADA690F17D4E39A006D11F2 /* psst1.wav */; };
 		1ADB9C3317AFADE300421CC9 /* BlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ADB9C3217AFADE300421CC9 /* BlurView.m */; };
 		1ADB9C3617AFBD5200421CC9 /* TransparentToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ADB9C3517AFBD5200421CC9 /* TransparentToolbar.m */; };
 		1ADFC56517B2B31800CFA246 /* SafariActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ADFC56417B2B31800CFA246 /* SafariActivity.m */; };
@@ -207,6 +209,8 @@
 		1AD8C915178C0D1B00E56DCA /* SlideNavigationItemDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SlideNavigationItemDelegate.h; path = Model/SlideNavigationItemDelegate.h; sourceTree = "<group>"; };
 		1AD8C916178C1FDF00E56DCA /* SlideNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SlideNavigationBar.h; path = View/SlideNavigationBar.h; sourceTree = "<group>"; };
 		1AD8C917178C1FDF00E56DCA /* SlideNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SlideNavigationBar.m; path = View/SlideNavigationBar.m; sourceTree = "<group>"; };
+		1ADA690E17D4E39A006D11F2 /* pop.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = pop.wav; sourceTree = "<group>"; };
+		1ADA690F17D4E39A006D11F2 /* psst1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = psst1.wav; sourceTree = "<group>"; };
 		1ADB9C3117AFADE300421CC9 /* BlurView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlurView.h; path = View/BlurView.h; sourceTree = "<group>"; };
 		1ADB9C3217AFADE300421CC9 /* BlurView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BlurView.m; path = View/BlurView.m; sourceTree = "<group>"; };
 		1ADB9C3417AFBD5200421CC9 /* TransparentToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TransparentToolbar.h; path = View/TransparentToolbar.h; sourceTree = "<group>"; };
@@ -584,6 +588,15 @@
 			name = Controllers;
 			sourceTree = "<group>";
 		};
+		1ADA690D17D4E39A006D11F2 /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				1ADA690E17D4E39A006D11F2 /* pop.wav */,
+				1ADA690F17D4E39A006D11F2 /* psst1.wav */,
+			);
+			path = Sounds;
+			sourceTree = "<group>";
+		};
 		1AEE005E17425BC700B6FC43 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
@@ -637,6 +650,7 @@
 		1AEE00691744BE9F00B6FC43 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1ADA690D17D4E39A006D11F2 /* Sounds */,
 				1A8EC535174E6DCD00553857 /* Images */,
 				1A5BA16017BBEB1000D2B4E4 /* Other */,
 				1AEE007A1745423100B6FC43 /* Themes */,
@@ -736,7 +750,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1ADA691017D4E39A006D11F2 /* pop.wav in Resources */,
 				1AD55FF3171AF33200AE5FED /* InfoPlist.strings in Resources */,
+				1ADA691117D4E39A006D11F2 /* psst1.wav in Resources */,
 				1A16806E179993DB0020F947 /* HockeySDKResources.bundle in Resources */,
 				1AD55FFB171AF33200AE5FED /* Default.png in Resources */,
 				1A46523F1772E89100049B4D /* Icons.xcassets in Resources */,

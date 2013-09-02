@@ -132,8 +132,7 @@
 	switch (controlState)
 	{
 		case UIControlStateNormal:
-			return [[UIImage imageNamed:@"button_background_normal_yummly"] resizableImageWithCapInsets:UIEdgeInsetsMake(10.0f, 21.0f, 10.0f, 21.0f)
-																			 resizingMode:UIImageResizingModeStretch];
+			return nil;
 			break;
 		case UIControlStateHighlighted:
 			return nil;

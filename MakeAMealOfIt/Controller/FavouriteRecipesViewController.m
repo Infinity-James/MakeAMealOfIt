@@ -240,9 +240,9 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 #pragma mark - Slide Navigation Controller Lifecycle
 
 /**
- *	Notifies the view controller that the parent slideNavigationController will close all side views.
+ *	Notifies the view controller that the parent slideNavigationController did close all side views.
  */
-- (void)slideNavigationControllerWillClose
+- (void)slideNavigationControllerDidClose
 {
 	if (self.indexOfRemovedRecipe != NSUIntegerMax)
 	{
@@ -255,14 +255,7 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 						   
 			dispatch_async(dispatch_get_main_queue(),
 			^{
-				@try
-				{
-					[self.collectionView deleteItemsAtIndexPaths:@[indexPath]];
-				}
-				@catch (NSException *except)
-				{
-					NSLog(@"DEBUG: failure to batch update.  %@", except.description);
-				}
+				[self.collectionView deleteItemsAtIndexPaths:@[indexPath]];
 			});
 		});
 	}
