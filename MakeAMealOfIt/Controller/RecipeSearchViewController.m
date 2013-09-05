@@ -76,7 +76,7 @@ enum SectionIndex
 /**	This is the main view that allows the user to search.	*/
 @property (nonatomic, strong)	RecipeSearchView			*recipeSearchView;
 /**	A button that allows the user to see the tutorial again.	*/
-@property (nonatomic, strong)	UIButton					*tutorialButton;
+@property (nonatomic, strong)	BiggerButton					*tutorialButton;
 
 @end
 
@@ -91,6 +91,10 @@ enum SectionIndex
  */
 - (void)favouritesTapped
 {
+	if (!self.currentlyCentre || self.slideNavigationController.controllerState != SlideNavigationSideControllerClosed)
+		return;
+	
+	self.favouritesButton.enabled				= NO;
 	FavouriteRecipesViewController *favourites	= [[FavouriteRecipesViewController alloc] init];
 	[self.slideNavigationController pushCentreViewController:favourites withRightViewController:nil animated:YES];
 }
@@ -615,6 +619,7 @@ enum SectionIndex
 {
 	if (!self.internetConnectionExists)
 	{
+		[self.activityIndicatorView performSelectorOnMainThread:@selector(stopAnimating) withObject:nil waitUntilDone:NO];
 		[[[UIAlertView alloc] initWithTitle:@"No Internet Connection"
 									message:@"The search could not be executed due to a lack of internet juice.\nApologies."
 								   delegate:self
@@ -729,7 +734,7 @@ enum SectionIndex
 /**
  *	Allows the user to open their list of favourites.
  *
- *	@return	A UIButton that allows the user to open their list of favourites.
+ *	@return	A BiggerButton that allows the user to open their list of favourites.
  */
 - (BiggerButton *)favouritesButton
 {
@@ -954,13 +959,13 @@ enum SectionIndex
 /**
  *	A button that, when tapped, shows the user the intro tutorial.
  *
- *	@return
+ *	@return	An initialised BiggerButton to show the user the tutorial when tapped.
  */
-- (UIButton *)tutorialButton
+- (BiggerButton *)tutorialButton
 {
 	if (!_tutorialButton)
 	{
-		_tutorialButton					= [[UIButton alloc] init];
+		_tutorialButton					= [[BiggerButton alloc] init];
 		[_tutorialButton setTitle:@"?" forState:UIControlStateNormal];
 		[_tutorialButton setTitleColor:kYummlyColourMain forState:UIControlStateNormal];
 		[_tutorialButton setTitleColor:kYummlyColourShadow forState:UIControlStateHighlighted];
@@ -1027,6 +1032,14 @@ enum SectionIndex
 #pragma mark - Slide Navigation Controller Lifecycle
 
 /**
+ *	Called when this view controller has been made the main centreViewController of the slideNavigationController.
+ */
+- (void)centreViewControllerMadeCentre
+{
+	self.favouritesButton.enabled		= YES;
+}
+
+/**
  *	Notifies the view controller that the parent slideNavigationController has closed all side views.
  */
 - (void)slideNavigationControllerDidClose
@@ -1045,7 +1058,6 @@ enum SectionIndex
  */
 - (void)slideNavigationControllerWillClose
 {
-	self.tutorialButton.enabled			= YES;
 }
 
 /**

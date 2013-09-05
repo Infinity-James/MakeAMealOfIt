@@ -30,8 +30,10 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 @property (nonatomic, strong)	UICollectionView	*collectionView;
 /**	The array of recipes that have been favourited by the user.	*/
 @property (nonatomic, strong)	NSMutableArray		*favouriteRecipes;
-/**		*/
+/**	The index of a recipe to be removed from the view.	*/
 @property (nonatomic, assign)	NSUInteger			indexOfRemovedRecipe;
+/**	Tapped on to allow the user to edit the current favourites.	*/
+@property (nonatomic, strong)	UIBarButtonItem		*editButton;
 /**	The cache used to store thumbnail images for the recipes.	*/
 @property (nonatomic, strong)	NSCache				*thumbnailCache;
 
@@ -172,6 +174,7 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 			^{
 				UIImage *recipeImage	= recipe.recipeImage;
 				
+				if (!recipeImage)		return;
 				dispatch_async(dispatch_get_main_queue(),
 				^{
 					[cell.thumbnailView setImage:recipeImage animated:YES];

@@ -34,6 +34,10 @@
  */
 - (void)addToolbarItemsAnimated:(BOOL)animated;
 /**
+ *	Called when this view controller has been made the main centreViewController of the slideNavigationController.
+ */
+- (void)centreViewControllerMadeCentre;
+/**
  *	Notifies the view controller that the parent slideNavigationController has closed all side views.
  */
 - (void)slideNavigationControllerDidClose;

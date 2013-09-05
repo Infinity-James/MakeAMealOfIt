@@ -157,25 +157,6 @@
 #pragma mark - UIView Methods
 
 /**
- *	Draws the receiver’s image within the passed-in rectangle.
- *
- *	@param	rect						The portion of the view’s bounds that needs to be updated.
- *
-- (void)drawRect:(CGRect)rect
-{
-	//	get the context
-	CGContextRef context				= UIGraphicsGetCurrentContext();
-	
-	UIColor *endColour					= kDarkGreyColourWithAlpha(0.5f);
-	UIColor *startColour				= kLightGreyColourWithAlpha(0.1f);
-	
-	//	----	fiil the rect with a background colour first of all	----
-	
-	//	set fill colour and then fill the rect
-	[UtilityMethodsCG drawLinearGradientInContext:context withRect:rect startColour:startColour.CGColor andEndColour:endColour.CGColor];
-}*/
-
-/**
  *	Lays out subviews.
  */
 - (void)layoutSubviews

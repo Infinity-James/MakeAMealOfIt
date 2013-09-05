@@ -104,6 +104,21 @@
 #pragma mark - Property Accessor Methods - Setters
 
 /**
+ *	Sets whether this centre view controller is the current centre view controller for the slideNavigationController.
+ *
+ *	@param	currentlyCentre				YES if this is currently the centreViewController, NO if it is not being displayed or is to the left.
+ */
+- (void)setCurrentlyCentre:(BOOL)currentlyCentre
+{
+	if (_currentlyCentre == currentlyCentre)
+		return;
+	_currentlyCentre					= currentlyCentre;
+	
+	if (_currentlyCentre)
+		[self centreViewControllerMadeCentre];
+}
+
+/**
  *	The setter for the slideNavigationController of this UICentreViewController.
  *
  *	@param	slideNavigationController	The nearest ancestor in the view controller hierarchy that's a slide navigation controller.
@@ -116,6 +131,14 @@
 }
 
 #pragma mark - Slide Navigation Controller Lifecycle
+
+/**
+ *	Called when this view controller has been made the main centreViewController of the slideNavigationController.
+ */
+- (void)centreViewControllerMadeCentre
+{
+	
+}
 
 /**
  *	Notifies the view controller that the parent slideNavigationController has closed all side views.

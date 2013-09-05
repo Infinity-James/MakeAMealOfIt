@@ -85,6 +85,8 @@
  *
  *	@param	application					The delegating application object.
  *	@param	launchOptions				A dictionary indicating the reason the application was launched (if any).
+ *
+ *	@return	NO if the application cannot handle the URL resource, otherwise return YES.
  */
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {

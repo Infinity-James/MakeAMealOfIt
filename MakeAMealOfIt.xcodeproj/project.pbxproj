@@ -31,7 +31,6 @@
 		1A6D117D174B4A4200E0B000 /* RotaryWheel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6D117A174B4A4200E0B000 /* RotaryWheel.m */; };
 		1A6D117E174B4A4200E0B000 /* Sector.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6D117C174B4A4200E0B000 /* Sector.m */; };
 		1A6D1181174B552B00E0B000 /* SegmentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6D1180174B552B00E0B000 /* SegmentView.m */; };
-		1A6D1185174B55E900E0B000 /* UtilityMethodsCG.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6D1184174B55E900E0B000 /* UtilityMethodsCG.m */; };
 		1A6D1189174B6ACE00E0B000 /* ParameterPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6D1188174B6ACE00E0B000 /* ParameterPageViewController.m */; };
 		1A70C0B317535F55004FEEF6 /* YummlyMetadata.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A70C0B217535F55004FEEF6 /* YummlyMetadata.m */; };
 		1A70C0B91754FAAE004FEEF6 /* RecipeDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A70C0B81754FAAE004FEEF6 /* RecipeDetailsViewController.m */; };
@@ -132,8 +131,6 @@
 		1A6D117C174B4A4200E0B000 /* Sector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Sector.m; path = View/Sector.m; sourceTree = "<group>"; };
 		1A6D117F174B552B00E0B000 /* SegmentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SegmentView.h; path = View/SegmentView.h; sourceTree = "<group>"; };
 		1A6D1180174B552B00E0B000 /* SegmentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SegmentView.m; path = View/SegmentView.m; sourceTree = "<group>"; };
-		1A6D1183174B55E900E0B000 /* UtilityMethodsCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UtilityMethodsCG.h; sourceTree = "<group>"; };
-		1A6D1184174B55E900E0B000 /* UtilityMethodsCG.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UtilityMethodsCG.m; sourceTree = "<group>"; };
 		1A6D1186174B55F400E0B000 /* Defines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Defines.h; path = Utilities/Defines.h; sourceTree = "<group>"; };
 		1A6D1187174B6ACE00E0B000 /* ParameterPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParameterPageViewController.h; path = Controller/ParameterPageViewController.h; sourceTree = "<group>"; };
 		1A6D1188174B6ACE00E0B000 /* ParameterPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ParameterPageViewController.m; path = Controller/ParameterPageViewController.m; sourceTree = "<group>"; };
@@ -317,16 +314,6 @@
 				1A5BA16117BBEB7F00D2B4E4 /* IntroductionPanels.plist */,
 			);
 			name = Other;
-			sourceTree = "<group>";
-		};
-		1A6D1182174B55E900E0B000 /* Core Graphics */ = {
-			isa = PBXGroup;
-			children = (
-				1A6D1183174B55E900E0B000 /* UtilityMethodsCG.h */,
-				1A6D1184174B55E900E0B000 /* UtilityMethodsCG.m */,
-			);
-			name = "Core Graphics";
-			path = "Utilities/Core Graphics";
 			sourceTree = "<group>";
 		};
 		1A6D118A174B738100E0B000 /* Yummly API */ = {
@@ -601,7 +588,6 @@
 			isa = PBXGroup;
 			children = (
 				1A36943517B3D6F100EBA0E9 /* Audio Manager */,
-				1A6D1182174B55E900E0B000 /* Core Graphics */,
 				1A4652401773254F00049B4D /* Definitions */,
 				1A84A59B1765BE1200E1F818 /* Network Activity Indicator */,
 				1AEE007017453D8700B6FC43 /* Theme Manager */,
@@ -837,7 +823,6 @@
 				1A84A5B01765F8CE00E1F818 /* UIRightViewController.m in Sources */,
 				1A5BA16B17BCD72E00D2B4E4 /* IntroductionPanelView.m in Sources */,
 				1A0A853D1765B66C00D45971 /* UIView+AlphaControl.m in Sources */,
-				1A6D1185174B55E900E0B000 /* UtilityMethodsCG.m in Sources */,
 				1A64725217946A96004E2F9D /* WebViewController.m in Sources */,
 				1A5DB82D1782E7E90027B9B0 /* IngredientTableViewCell.m in Sources */,
 				1A5BA15E17BBDAAA00D2B4E4 /* MakeAMealOfItIntroduction.m in Sources */,
