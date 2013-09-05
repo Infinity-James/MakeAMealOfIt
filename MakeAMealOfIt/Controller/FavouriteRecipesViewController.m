@@ -122,6 +122,8 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 	if (self = [super init])
 	{
 		[self basicInitialisation];
+		
+		uimen
 	}
 	
 	return self;
