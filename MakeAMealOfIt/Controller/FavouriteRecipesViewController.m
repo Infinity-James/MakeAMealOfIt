@@ -18,6 +18,9 @@
 
 static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 
+static CGFloat const kEditModeSelectedAlpha		= 01.00f;
+static CGFloat const kEditModeUnselectedAlpha	= 00.50f;
+
 #pragma mark - Favourite Recipes View Controller Private Class Extension
 
 @interface FavouriteRecipesViewController () <UICollectionViewDelegate, UICollectionViewDelegateFlowLayout> {}
@@ -26,14 +29,20 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 
 /**	The convenient data source to be used for the collectionView.	*/
 @property (nonatomic, strong)	ArrayDataSource		*arrayDataSource;
+/**	Cancels out of edit mode.	*/
+@property (nonatomic, strong)	UIBarButtonItem		*cancelButton;
 /**	The collection view that displays the favourite recipes.	*/
 @property (nonatomic, strong)	UICollectionView	*collectionView;
+/**	Tapped on to allow the user to edit the current favourites.	*/
+@property (nonatomic, strong)	UIBarButtonItem		*editButton;
+/**	When in edit mode the user can select favourited recipes and remove them.	*/
+@property (nonatomic, assign)	BOOL				editMode;
 /**	The array of recipes that have been favourited by the user.	*/
 @property (nonatomic, strong)	NSMutableArray		*favouriteRecipes;
 /**	The index of a recipe to be removed from the view.	*/
 @property (nonatomic, assign)	NSUInteger			indexOfRemovedRecipe;
-/**	Tapped on to allow the user to edit the current favourites.	*/
-@property (nonatomic, strong)	UIBarButtonItem		*editButton;
+/**	An array of selected index paths.	*/
+@property (nonatomic, strong)	NSMutableSet		*indexPathsOfSelectedItems;
 /**	The cache used to store thumbnail images for the recipes.	*/
 @property (nonatomic, strong)	NSCache				*thumbnailCache;
 
@@ -44,6 +53,19 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 @implementation FavouriteRecipesViewController {}
 
 #pragma mark - Action & Selector Methods
+
+/**
+ *	The user has switched into or out of the edit mode.
+ */
+- (void)editModeChanged
+{
+	if (self.editMode)
+		[self.slideNavigationItem setRightBarButtonItem:self.editButton];
+	else
+		[self.slideNavigationItem setRightBarButtonItem:self.cancelButton];
+	
+	self.editMode						= !self.editMode;
+}
 
 /**
  *	Called when a recipe has been added as a favourite.
@@ -93,6 +115,16 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 #pragma mark - Initialisation
 
 /**
+ *	Adds toolbar items to our toolbar.
+ *
+ *	@param	animated					Whether or not the toolbar items should be an animated fashion.
+ */
+- (void)addToolbarItemsAnimated:(BOOL)animated
+{
+	[self.slideNavigationItem setRightBarButtonItem:self.editButton];
+}
+
+/**
  *	The basic intialisation required for this object.
  */
 - (void)basicInitialisation
@@ -122,8 +154,6 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 	if (self = [super init])
 	{
 		[self basicInitialisation];
-		
-		uimen
 	}
 	
 	return self;
@@ -154,13 +184,38 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 - (ArrayDataSource *)arrayDataSource
 {
 	if (!_arrayDataSource)
+	{
+		__weak FavouriteRecipesViewController *weakSelf	= self;
+		
 		_arrayDataSource				= [[ArrayDataSource alloc] initWithItems:self.favouriteRecipes
 													  cellIdentifier:kCellIdentifier
-											   andConfigureCellBlock:^(RecipeCollectionViewCell *cell, Recipe *recipe)
+											   andConfigureCellBlock:^(RecipeCollectionViewCell *cell, Recipe *recipe, NSIndexPath *indexPath)
 		{
+			if (weakSelf.editMode)
+			{
+				if ([self.indexPathsOfSelectedItems containsObject:indexPath])
+					cell.alpha			= kEditModeSelectedAlpha,
+					cell.highlighted	= YES;
+				else
+					cell.alpha			= kEditModeUnselectedAlpha,
+					cell.highlighted	= NO;
+			}
+			else
+				cell.alpha				= 1.0f;
+			
+			if (!weakSelf.editMode)
+			{
+				cell.recipeDetails.detailLabel		= nil;
+				cell.recipeDetails.mainLabel		= nil;
+				cell.recipeDetails.detailLabel.text	= recipe.sourceDictionary[kYummlyRecipeSourceDisplayNameKey];
+			}
+			else
+			{
+				cell.recipeDetails.mainLabel.font	= [UIFont fontWithName:cell.recipeDetails.mainLabel.font.fontName size:8.0f];
+			}
 			cell.recipeDetails.mainLabel.text	= recipe.recipeName;
-			cell.recipeDetails.detailLabel.text	= recipe.sourceDictionary[kYummlyRecipeSourceDisplayNameKey];
-			[cell setBackgroundColourForIndex:[self.favouriteRecipes indexOfObject:recipe]];
+			
+			[cell setBackgroundColourForIndex:indexPath.item];
 			
 			UIImage *cachedImage		= [self.thumbnailCache objectForKey:recipe.recipeID];
 			
@@ -169,8 +224,6 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 				[cell.thumbnailView setImage:cachedImage animated:YES];
 				return;
 			}
-			
-			__weak FavouriteRecipesViewController *weakSelf	= self;
 			
 			dispatch_async(dispatch_queue_create("Recipe Image Fetcher", NULL),
 			^{
@@ -185,8 +238,25 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 				});
 			});
 		}];
+	}
 	
 	return _arrayDataSource;
+}
+
+/**
+ *	A button that allows a user to cancel out of edit mode.
+ *
+ *	@return	An intialised UIBarButtonItem that allows the user to enter edit mode.
+ */
+- (UIBarButtonItem *)cancelButton
+{
+	if (!_cancelButton)
+		_cancelButton						= [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
+															  style:UIBarButtonItemStylePlain
+															 target:self
+															 action:@selector(editModeChanged)];
+	
+	return _cancelButton;
 }
 
 /**
@@ -200,7 +270,7 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 	{
 		//	create a layout and set the insets appropriately
 		UICollectionViewFlowLayout *layout	= [[UICollectionViewFlowLayout alloc] init];
-		layout.sectionInset					= UIEdgeInsetsMake(60.0f, 20.0f, 20.0f, 20.0f);
+		layout.sectionInset					= UIEdgeInsetsMake(70.0f, 20.0f, 20.0f, 20.0f);
 		//	inialised the collection view, sets this controller as it's datasource and delegate and sets a white background colour
 		_collectionView						= [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
 		_collectionView.backgroundColor		= [UIColor whiteColor];
@@ -218,6 +288,35 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 }
 
 /**
+ *	A button that allows a user to edit their favourite recipes.
+ *
+ *	@return	An intialised UIBarButtonItem that allows the user to enter edit mode.
+ */
+- (UIBarButtonItem *)editButton
+{
+	if (!_editButton)
+		_editButton							= [[UIBarButtonItem alloc] initWithTitle:@"Edit"
+															 style:UIBarButtonItemStylePlain
+															target:self
+															action:@selector(editModeChanged)];
+	
+	return _editButton;
+}
+
+/**
+ *	An array of selected index paths.
+ *
+ *	@return	An array of selected index paths.
+ */
+- (NSMutableSet *)indexPathsOfSelectedItems
+{
+	if (!_indexPathsOfSelectedItems)
+		_indexPathsOfSelectedItems			= [[NSMutableSet alloc] init];
+	
+	return _indexPathsOfSelectedItems;
+}
+
+/**
  *	The cache used to store thumbnail images for the recipes.
  *
  *	@return	A cache to be used to store and retrieve thumbnails.
@@ -225,9 +324,8 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 - (NSCache *)thumbnailCache
 {
 	if (!_thumbnailCache)
-	{
-		_thumbnailCache					= [[NSCache alloc] init];
-	}
+		_thumbnailCache						= [[NSCache alloc] init];
+	
 	
 	return _thumbnailCache;
 }
@@ -240,6 +338,50 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 - (NSDictionary *)viewsDictionary
 {
 	return @{@"collectionView"	: self.collectionView};
+}
+
+#pragma mark - Property Accessor Methods - Setters
+
+/**
+ *	Sets whether the user can edit the favourited recipes.
+ *
+ *	@param	editMode					If YES the user can select favourited recipes and remove them.
+ */
+- (void)setEditMode:(BOOL)editMode
+{
+	if (_editMode == editMode)			return;
+	
+	_editMode							= editMode;
+	
+	[UIView animateWithDuration:0.5f
+					 animations:
+	^{
+		[self.collectionView.collectionViewLayout invalidateLayout];
+	}
+					 completion:^(BOOL finished)
+	{
+		[self.collectionView reloadItemsAtIndexPaths:self.collectionView.indexPathsForVisibleItems];
+	}];
+	
+	
+	
+	if (_editMode)
+	{
+		self.collectionView.allowsMultipleSelection	= YES;
+		
+		for (UICollectionViewCell *cell in self.collectionView.visibleCells)
+			cell.alpha					= kEditModeUnselectedAlpha;
+	}
+	else
+	{
+		self.collectionView.allowsMultipleSelection	= NO;
+		self.collectionView.allowsSelection			= YES;
+		
+		[self.indexPathsOfSelectedItems removeAllObjects];
+		
+		for (UICollectionViewCell *cell in self.collectionView.visibleCells)
+			cell.alpha					= 1.0f;
+	}
 }
 
 #pragma mark - Slide Navigation Controller Lifecycle
@@ -269,21 +411,49 @@ static NSString *const kCellIdentifier	= @"FavouriteRecipeCell";
 #pragma mark - UICollectionViewDelegate Methods
 
 /**
+ *	Tells the delegate that the item at the specified path was deselected.
+ *
+ *	@param	collectionView			The collection view object that is notifying you of the selection change.
+ *	@param	indexPath				The index path of the cell that was deselected.
+ */
+- (void)	collectionView:(UICollectionView *)collectionView
+didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+	[self.indexPathsOfSelectedItems removeObject:indexPath];
+	UICollectionViewCell *cell		= [collectionView cellForItemAtIndexPath:indexPath];
+	cell.alpha						= kEditModeUnselectedAlpha;
+	cell.highlighted				= NO;
+}
+
+/**
  *	Tells the delegate that the item at the specified index path was selected.
  *
- *	@param	collectionview				The collection view object that is notifying you of the selection change.
- *	@param	indexPath					The index path of the cell that was selected.
+ *	@param	collectionview			The collection view object that is notifying you of the selection change.
+ *	@param	indexPath				The index path of the cell that was selected.
  */
 - (void)  collectionView:(UICollectionView *)collectionView
 didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-	RecipeDetailsViewController *recipeVC	= [[RecipeDetailsViewController alloc] initWithRecipe:self.favouriteRecipes[indexPath.row]];
+	if (self.editMode)
+	{
+		[self.indexPathsOfSelectedItems addObject:indexPath];
+		UICollectionViewCell *cell	= [collectionView cellForItemAtIndexPath:indexPath];
+		cell.alpha					= kEditModeSelectedAlpha;
+		cell.highlighted			= YES;
+	}
 	
-	YummlyAttributionViewController *attributionVC	= [[YummlyAttributionViewController alloc] init];
-	
-	[self.slideNavigationController pushCentreViewController:recipeVC
-									 withRightViewController:attributionVC
-													animated:YES];
+	else
+	{
+		[collectionView deselectItemAtIndexPath:indexPath animated:NO];
+		
+		RecipeDetailsViewController *recipeVC	= [[RecipeDetailsViewController alloc] initWithRecipe:self.favouriteRecipes[indexPath.row]];
+		
+		YummlyAttributionViewController *attributionVC	= [[YummlyAttributionViewController alloc] init];
+		
+		[self.slideNavigationController pushCentreViewController:recipeVC
+										 withRightViewController:attributionVC
+														animated:YES];
+	}
 }
 
 #pragma mark - UICollectionViewDelegateFlowLayout Methods
@@ -317,6 +487,9 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 				  layout:(UICollectionViewLayout *)collectionViewLayout
   sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
+	if (self.editMode)
+		return CGSizeMake(120.0f, 120.0f);
+	
 	return CGSizeMake(280.0f, 280.0f);
 	
 	if (isFourInchDevice)

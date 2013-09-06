@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
+#import "AppDelegate.h"
 #import "UICentreViewController.h"
 
 #pragma mark - Centre View Controller Private Class Extension
@@ -87,6 +88,16 @@
 }
 
 #pragma mark - Property Accessor Methods - Getters
+
+/**
+ *	Keeps track of whether there is an internet connection or not.
+ *
+ *	@return	YES if the internet connection exists, or NO.
+ */
+- (BOOL)internetConnectionExists
+{
+	return appDelegate.internetConnectionExists;
+}
 
 /**
  *	The slide navigation item used to represent the view controller in a parent’s toolbar.

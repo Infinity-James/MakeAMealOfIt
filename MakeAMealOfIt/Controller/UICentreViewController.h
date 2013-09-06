@@ -20,6 +20,8 @@
 @property (nonatomic, assign)	BOOL						currentlyCentre;
 /**	A bool indicating whether this centre view has been slid at least once.	*/
 @property (nonatomic, assign)	BOOL						hasBeenSlid;
+/**	Keeps track of whether there is an internet connection or not.	*/
+@property (nonatomic, readonly, assign)	BOOL				internetConnectionExists;
 /**	The nearest ancestor in the view controller hierarchy that's a slide navigation controller.	*/
 @property (nonatomic, weak)		SlideNavigationController	*slideNavigationController;
 /** The slide navigation item used to represent the view controller in a parent’s toolbar.	*/

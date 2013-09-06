@@ -522,7 +522,7 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 		self.included					= NO;
 }
 
-#pragma mark - UIGestureRecognizer Methods
+#pragma mark - UIGestureRecognizerDelegate Methods
 
 /**
  *	Asks the view if the gesture recognizer should be allowed to continue tracking touch events.
@@ -538,7 +538,7 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 		CGPoint translation					= [(UIPanGestureRecognizer *)gestureRecognizer translationInView:self.superview];
 		
 		//	check for horizontal gesture
-		if (fabsf(translation.x) > fabsf(translation.y))
+		if (fabsf(translation.x) >= fabsf(translation.y))
 			return YES;
 	}
 	

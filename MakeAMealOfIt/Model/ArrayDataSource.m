@@ -107,7 +107,7 @@
 																			 forIndexPath:indexPath];
 	
 	id item								= [self itemForItemAtIndexPath:indexPath];
-	self.configureCellBlock(cell, item);
+	self.configureCellBlock(cell, item, indexPath);
 	
 	return cell;
 }
@@ -142,7 +142,7 @@
 	UITableViewCell *cell				= [tableView dequeueReusableCellWithIdentifier:self.cellIdentifier forIndexPath:indexPath];
 	
 	id item								= [self itemForRowAtIndexPath:indexPath];
-	self.configureCellBlock(cell, item);
+	self.configureCellBlock(cell, item, indexPath);
 	
 	return cell;
 }

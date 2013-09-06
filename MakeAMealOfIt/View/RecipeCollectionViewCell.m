@@ -14,6 +14,9 @@
 
 #pragma mark - Private Properties
 
+/**	A label that indicates that this cell is currently highlighted.	*/
+@property (nonatomic, strong)	UIImageView		*highlightedIndicator;
+
 @end
 
 #pragma mark - Recipe Collection View Cell Implementation
@@ -45,7 +48,7 @@
 	NSLayoutConstraint *constraint;
 	NSArray *constraints;
 	
-	NSDictionary *layoutMetrics			= @{@"margin": @14.0f};
+	NSDictionary *layoutMetrics			= @{@"margin": @(self.contentView.bounds.size.height / 20.0f)};
 	
 	constraint							= [NSLayoutConstraint constraintWithItem:self.recipeDetails
 													attribute:NSLayoutAttributeHeight
@@ -81,6 +84,15 @@
 																metrics:layoutMetrics
 																  views:self.viewsDictionary];
 	[self.contentView addConstraints:constraints];
+	
+	[self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[highlightedIndicator]-|"
+																			 options:kNilOptions
+																			 metrics:nil
+																			   views:self.viewsDictionary]];
+	[self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[highlightedIndicator]"
+																			 options:kNilOptions
+																			 metrics:nil
+																			   views:self.viewsDictionary]];
 }
 
 #pragma mark - Initialisation
@@ -103,6 +115,33 @@
 #pragma mark - Property Accessor Methods - Getters
 
 /**
+ *	A label containing a tick that shows this cell has been selected.
+ *
+ *	@return	An initialised UILabel to be used on a highlighted cell.
+ */
+- (UIImageView *)highlightedIndicator
+{
+	if (!_highlightedIndicator)
+	{
+		UIImage *image								= [UIImage imageNamed:@"image_checkmark"];
+		image										= [[UIImage alloc] initWithCGImage:image.CGImage scale:image.scale * 2.0f orientation:image.imageOrientation];
+		
+		_highlightedIndicator						= [[UIImageView alloc] initWithImage:image];
+		
+		_highlightedIndicator.backgroundColor		= [UIColor whiteColor];
+		_highlightedIndicator.hidden				= !self.highlighted;
+		_highlightedIndicator.layer.borderColor		= [UIColor blackColor].CGColor;
+		_highlightedIndicator.layer.borderWidth		= 2.0f;
+		_highlightedIndicator.layer.cornerRadius	= image.size.height / 2.0f;
+		
+		_highlightedIndicator.translatesAutoresizingMaskIntoConstraints	= NO;
+		[self.contentView addSubview:_highlightedIndicator];
+	}
+	
+	return _highlightedIndicator;
+}
+
+/**
  *	The view that will contain the recipe title and source name.
  *
  *	@return	An initialised view specifically for holding the recipe details.
@@ -112,6 +151,7 @@
 	if (!_recipeDetails)
 	{
 		_recipeDetails					= [[TextBackingView alloc] init];
+		_recipeDetails.clipsToBounds	= YES;
 		
 		_recipeDetails.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self.contentView addSubview:_recipeDetails];
@@ -147,7 +187,8 @@
  */
 - (NSDictionary *)viewsDictionary
 {
-	return @{	@"recipeDetails"	: self.recipeDetails,
+	return @{	@"highlightedIndicator"	: self.highlightedIndicator,
+				@"recipeDetails"	: self.recipeDetails,
 				@"thumbnail"		: self.thumbnailView};
 }
 
@@ -170,6 +211,18 @@
 		backgroundColour				= kLightGreyColour;
 	
 	self.backgroundColor				= backgroundColour;
+}
+
+/**
+ *	The highlight state of the cell.
+ *
+ *	@param	highlighted					The desired highlight state of the cell.
+ */
+- (void)setHighlighted:(BOOL)highlighted
+{
+	self.highlightedIndicator.hidden		= highlighted ? NO : YES;
+	
+	[super setHighlighted:highlighted];
 }
 
 #pragma mark - UICollectionReusableView Methods

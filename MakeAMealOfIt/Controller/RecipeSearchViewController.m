@@ -47,8 +47,6 @@ enum SectionIndex
 @property (nonatomic, strong)	BiggerButton				*favouritesButton;
 /**	A view configured to display helpful text to the user.	*/
 @property (nonatomic, strong)	RecipeSearchHelpView		*helpView;
-/**	Keeps track of whether there is an internet connection or not.	*/
-@property (nonatomic, assign)	BOOL						internetConnectionExists;
 /**	Whether or not the table view should simply be reloaded, or if NO it can be updated in an animated fashion.	*/
 @property (nonatomic, assign)	BOOL						justReload;
 /**	The left toolbar button used to slide in the left view.	*/
@@ -97,26 +95,6 @@ enum SectionIndex
 	self.favouritesButton.enabled				= NO;
 	FavouriteRecipesViewController *favourites	= [[FavouriteRecipesViewController alloc] init];
 	[self.slideNavigationController pushCentreViewController:favourites withRightViewController:nil animated:YES];
-}
-
-/**
- *	This message has been sent because the internet connection has been lost.
- *
- *	@param	notification				The object containing a name, an object, and an optional dictionary.
- */
-- (void)internetConnectionLost:(NSNotification *)notification
-{
-	self.internetConnectionExists		= NO;
-}
-
-/**
- *	This message has been sent if the once lost internet connection has been recovered.
- *
- *	@param	notification				The object containing a name, an object, and an optional dictionary.
- */
-- (void)internetConnectionRecovered:(NSNotification *)notification
-{
-	self.internetConnectionExists		= YES;
 }
 
 /**
@@ -387,14 +365,6 @@ enum SectionIndex
 											 selector:@selector(yummlyRequestIsEmpty:)
 												 name:kNotificationYummlyRequestEmpty
 											   object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(internetConnectionLost:)
-												 name:kNotificationInternetConnectionLost
-											   object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(internetConnectionRecovered:)
-												 name:kNotificationInternetReconnected
-											   object:nil];
 }
 
 #pragma mark - Initialisation
@@ -422,7 +392,6 @@ enum SectionIndex
 	if (self = [super init])
 	{
 		[self registerForNotifications];
-		self.internetConnectionExists	= YES;
 	}
 	
 	return self;

@@ -12,7 +12,7 @@
 #pragma mark - Constants & Static Variables
 
 static NSString *const kCompanyURLString	= @"http://james.dontexist.net/AndBeyond/";
-static NSString *const kDeveloperURLString	= @"http://andbeyond.co";
+static NSString *const kDeveloperURLString	= @"http://infinityjames.com";
 
 #pragma mark - Yummly Attribution VC Private Class Extension
 
@@ -72,7 +72,7 @@ static NSString *const kDeveloperURLString	= @"http://andbeyond.co";
 	NSString *urlString;
 	
 	if (gestureRecogniser.view == self.companyLabel)
-		urlString						= kCompanyURLString;
+		return;//urlString						= kCompanyURLString;
 	else if (gestureRecogniser.view == self.developerLabel)
 		urlString						= kDeveloperURLString;
 		

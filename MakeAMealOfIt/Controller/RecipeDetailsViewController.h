@@ -15,7 +15,7 @@
 
 @interface RecipeDetailsViewController : UICentreViewController <RightControllerDelegate> {}
 
-#pragma mark - Public Properties
+#pragma mark - Public Methods
 
 /**
  *	Called to initialise an instance of this class with an ID of a recipe to present as well as it's name.

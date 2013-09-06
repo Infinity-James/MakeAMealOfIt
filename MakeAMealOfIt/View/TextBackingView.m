@@ -53,9 +53,9 @@
 	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==8)-[mainLabel(>=40)]-(==8)-[detailLabel]" options:NSLayoutFormatAlignAllCenterX metrics:nil views:self.viewsDictionary];
 	[self addConstraints:constraints];
 	
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=20)-[mainLabel]-(>=20)-|" options:kNilOptions metrics:nil views:self.viewsDictionary];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=10)-[mainLabel]-(>=10)-|" options:kNilOptions metrics:nil views:self.viewsDictionary];
 	[self addConstraints:constraints];
-	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=20)-[detailLabel]-(>=20)-|" options:kNilOptions metrics:nil views:self.viewsDictionary];
+	constraints							= [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(>=10)-[detailLabel]-(>=10)-|" options:kNilOptions metrics:nil views:self.viewsDictionary];
 	[self addConstraints:constraints];
 }
 

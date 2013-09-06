@@ -27,8 +27,6 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 
 #pragma mark - Private Properties
 
-/**	Whether this device currently has internet access or not.	*/
-@property (nonatomic, assign)	BOOL					internetAccess;
 /**	Whether there are more results available to be loaded or not.*/
 @property (nonatomic, assign)	BOOL					moreResultsAvailable;
 /**	The main view that will show the recipes in an elegant way.	*/
@@ -49,26 +47,6 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 @synthesize searchPhrase				= _searchPhrase;
 
 #pragma mark - Action & Selector Methods
-
-/**
- *	This message has been sent because the internet connection has been lost.
- *
- *	@param	notification				The object containing a name, an object, and an optional dictionary.
- */
-- (void)internetConnectionLost:(NSNotification *)notification
-{
-	self.internetAccess					= NO;
-}
-
-/**
- *	This message has been sent if the once lost internet connection has been recovered.
- *
- *	@param	notification				The object containing a name, an object, and an optional dictionary.
- */
-- (void)internetConnectionRecovered:(NSNotification *)notification
-{
-	self.internetAccess					= YES;
-}
 
 /**
  *	Called when the button in the toolbar for the right panel is tapped.
@@ -107,23 +85,6 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 	[self.view addConstraints:constraints];
 }
 
-#pragma mark - Convenience & Helper Methods
-
-/**
- *	Adds this view controller as an observer of the appropriate notifications.
- */
-- (void)registerForNotifications
-{
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(internetConnectionLost:)
-												 name:kNotificationInternetConnectionLost
-											   object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(internetConnectionLost:)
-												 name:kNotificationInternetConnectionLost
-											   object:nil];
-}
-
 #pragma mark - Initialisation
 
 /**
@@ -146,9 +107,7 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 {
 	if (self = [super init])
 	{
-		self.internetAccess				= YES;
 		self.moreResultsAvailable		= YES;
-		[self registerForNotifications];
 	}
 	
 	return self;
@@ -421,7 +380,7 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 - (void)  collectionView:(UICollectionView *)collectionView
 didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-	if (!self.internetAccess)
+	if (!self.internetConnectionExists)
 	{
 		[[[UIAlertView alloc] initWithTitle:@"Not Going To Happen"
 									message:@"Unfortunately you do not have the internet access required to view this recipe."

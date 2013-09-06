@@ -42,7 +42,7 @@
 	shadow.shadowColor					= [UIColor clearColor];//[[UIColor alloc] initWithRed:0.2f green:0.2f blue:0.2f alpha:1.0f];
 	shadow.shadowOffset					= CGSizeMake(0.0f, 0.0f);
 	
-	return @{	NSFontAttributeName				: kYummlyFontWithSize(16.0f),
+	return @{	NSFontAttributeName				: kYummlyFontWithSize(18.0f),
 				NSForegroundColorAttributeName	: kYummlyColourMain,
 				NSShadowAttributeName			: shadow};
 }

@@ -23,8 +23,6 @@
 @property (nonatomic, strong)	OverlayActivityIndicator	*activityIndicatorView;
 /**	A block to call when the recipe's attribution view controller has loaded.	*/
 @property (nonatomic, copy)		AttributionDictionaryLoaded	attributionDictionaryLoaded;
-/**	Keeps track of whether there is an internet connection or not.	*/
-@property (nonatomic, assign)	BOOL						internetConnectionExists;
 /**	The object representing the recipe to be shown by this view controller.	*/
 @property (nonatomic, strong)	Recipe						*recipe;
 /**	The main view that will display the details of the recipe.	*/
@@ -45,26 +43,6 @@
 @implementation RecipeDetailsViewController {}
 
 #pragma mark - Action & Selector Methods
-
-/**
- *	This message has been sent because the internet connection has been lost.
- *
- *	@param	notification				The object containing a name, an object, and an optional dictionary.
- */
-- (void)internetConnectionLost:(NSNotification *)notification
-{
-	self.internetConnectionExists		= NO;
-}
-
-/**
- *	This message has been sent if the once lost internet connection has been recovered.
- *
- *	@param	notification				The object containing a name, an object, and an optional dictionary.
- */
-- (void)internetConnectionRecovered:(NSNotification *)notification
-{
-	self.internetConnectionExists		= YES;
-}
 
 /**
  *	Called when the button in the toolbar for the right panel is tapped.
@@ -135,20 +113,7 @@
 
 #pragma mark - Convenience & Helper Methods
 
-/**
- *	Adds this view controller as an observer of the appropriate notifications.
- */
-- (void)registerForNotifications
-{
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(internetConnectionLost:)
-												 name:kNotificationInternetConnectionLost
-											   object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(internetConnectionLost:)
-												 name:kNotificationInternetConnectionLost
-											   object:nil];
-}
+
 
 /**
  *	Updates the frame of the recipeDetailsView.
@@ -184,12 +149,9 @@
 {
 	if (self = [super init])
 	{
-		self.internetConnectionExists	= YES;
 		self.recipe						= recipe;
 		self.recipe.delegate			= self;
 		self.recipeName					= self.recipe.recipeName;
-		
-		[self registerForNotifications];
 	}
 	
 	return self;
@@ -206,11 +168,9 @@
 {
 	if (self = [super init])
 	{
-		self.internetConnectionExists	= YES;
 		self.recipeID					= recipeID;
 		self.recipeName					= recipeName;
-		
-		[self registerForNotifications];
+
 	}
 	
 	return self;
@@ -237,6 +197,16 @@
  */
 - (void)openRecipeWebsite
 {
+	if (!self.internetConnectionExists)
+	{
+		[[[UIAlertView alloc] initWithTitle:@"Can't Open Recipe Website"
+									message:@"Due to a lack of internet connection the website for this recipe cannot be opened."
+								   delegate:self
+						  cancelButtonTitle:@"Understood"
+						  otherButtonTitles:nil] show];
+		return;
+	}
+	
 	[self.activityIndicatorView startAnimating];
 	
 	NSString *recipeURLString			= self.recipe.sourceDictionary[kYummlyRecipeSourceRecipeURLKey];

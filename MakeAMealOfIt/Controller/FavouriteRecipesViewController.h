@@ -12,6 +12,4 @@
 
 @interface FavouriteRecipesViewController : UICentreViewController {}
 
-#pragma mark - Public Properties
-
 @end

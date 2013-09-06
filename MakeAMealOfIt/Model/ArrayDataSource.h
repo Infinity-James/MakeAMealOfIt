@@ -9,7 +9,7 @@
 #pragma mark - Type Definitions
 
 /**	A block to be used when configuring a cell with a given item.	*/
-typedef void (^TableViewCellConfigureBlock)(id cell, id item);
+typedef void (^TableViewCellConfigureBlock)(id cell, id item, NSIndexPath *indexPath);
 
 #pragma mark - Array Data Source Public Interface
 

@@ -22,6 +22,9 @@
 
 @interface AppDelegate () <BITCrashManagerDelegate, BITFeedbackComposeViewControllerDelegate, BITHockeyManagerDelegate, BITUpdateManagerDelegate> {}
 
+/**	Keeps track of whether there is an internet connection or not.	*/
+@property (nonatomic, readwrite, assign)	BOOL				internetConnectionExists;
+
 @end
 
 #pragma mark - App Delegate Implementation
@@ -51,11 +54,13 @@
     if (reachability.isReachable)
     {
 		[[NSNotificationCenter defaultCenter] postNotificationName:kNotificationInternetReconnected object:reachability];
+		self.internetConnectionExists	= YES;
     }
 	
     else
     {
 		[[NSNotificationCenter defaultCenter] postNotificationName:kNotificationInternetConnectionLost object:reachability];
+		self.internetConnectionExists	= NO;
     }
 }
 
@@ -116,6 +121,8 @@
 	[ThemeManager setSharedTheme:[[YummlyTheme alloc] init]];
 	
 	[self.window makeKeyAndVisible];
+	
+	self.internetConnectionExists		= YES;
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(preferredTextSizeChanged)
