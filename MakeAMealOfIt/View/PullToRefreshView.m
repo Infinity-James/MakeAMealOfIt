@@ -357,21 +357,21 @@ static CGFloat const kRegisterRefreshYOffset				= 60.00f;
 	switch (state)
 	{
 		case PullToRefreshStateLoading:
-			self.statusLabel.text		= @"Loading...";
+			self.statusLabel.text		= NSLocalizedString(@"Loading...", @"the view is loading");
 			[self showActivity:YES animated:YES];
 			[self setArrowFlipped:NO];
 			self.scrollView.contentInset= UIEdgeInsetsMake(kDefaultViewHeight, 0.0f, 0.0f, 0.0f);
 			break;
 			
 		case PullToRefreshStateNormal:
-			self.statusLabel.text		= @"Pull Down to Refresh";
+			self.statusLabel.text		= NSLocalizedString(@"Pull Down to Refresh", @"keep pulling the view down to refresh");
 			[self showActivity:NO animated:NO];
 			[self setArrowFlipped:NO];
 			self.scrollView.contentInset= self.startingContentInset;
 			break;
 			
 		case PullToRefreshStateReady:
-			self.statusLabel.text		= @"Release to Refresh";
+			self.statusLabel.text		= NSLocalizedString(@"Release to Refresh", @"let go of the view to refresh it");
 			[self showActivity:NO animated:NO];
 			[self setArrowFlipped:YES];
 			self.scrollView.contentInset= self.startingContentInset;
@@ -413,7 +413,7 @@ static CGFloat const kRegisterRefreshYOffset				= 60.00f;
 	dateFormatter.locale				= [NSLocale currentLocale];
 	dateFormatter.timeStyle				= NSDateFormatterMediumStyle;
 	
-	self.lastUpdatedLabel.text			= [[NSString alloc] initWithFormat:@"Last Updated: %@", [dateFormatter stringFromDate:updatedDate]];
+	self.lastUpdatedLabel.text			= [[NSString alloc] initWithFormat:NSLocalizedString(@"Last Updated: %@", @"when the view was last updated"), [dateFormatter stringFromDate:updatedDate]];
 }
 
 #pragma mark - User Interface

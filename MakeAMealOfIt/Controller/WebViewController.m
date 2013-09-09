@@ -177,7 +177,7 @@
 {
 	if (!_doneButton)
 	{
-		_doneButton						= [[UIBarButtonItem alloc] initWithTitle:@"Done"
+		_doneButton						= [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Done", @"close website")
 															style:UIBarButtonItemStylePlain
 														   target:self
 														   action:@selector(doneTapped)];

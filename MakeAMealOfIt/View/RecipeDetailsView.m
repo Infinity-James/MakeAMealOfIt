@@ -472,7 +472,7 @@ static CGFloat const kImageHeight		= 200.0f;
 		_viewRecipeButton					= [UIButton buttonWithType:UIButtonTypeCustom];
 		_viewRecipeButton.hidden			= YES;
 		_viewRecipeButton.titleLabel.font	= kYummlyBolderFontWithSize(FontSizeForTextStyle(UIFontTextStyleBody));
-		[_viewRecipeButton setTitle:@"View Recipe" forState:UIControlStateNormal];
+		[_viewRecipeButton setTitle:NSLocalizedString(@"View Recipe", @"view the recipe instructions") forState:UIControlStateNormal];
 		[_viewRecipeButton setTitleColor:kYummlyColourMain forState:UIControlStateNormal];
 		[_viewRecipeButton setTitleColor:kYummlyColourShadow forState:UIControlStateHighlighted];
 		
@@ -524,7 +524,7 @@ static CGFloat const kImageHeight		= 200.0f;
  */
 - (void)setRecipeServings:(NSUInteger)servings
 {
-	self.servingsLabel.text				= [[NSString alloc] initWithFormat:@"Serves\n%u", servings];
+	self.servingsLabel.text				= [[NSString alloc] initWithFormat:NSLocalizedString(@"Serves\n%u", @"the amount of servings the recipe provides"), servings];
 }
 
 /**

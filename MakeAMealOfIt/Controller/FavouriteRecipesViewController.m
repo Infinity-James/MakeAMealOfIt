@@ -160,7 +160,7 @@ static CGFloat const kEditModeUnselectedAlpha	= 00.50f;
  */
 - (void)basicInitialisation
 {
-	self.slideNavigationItem.title		= @"Favourites";
+	self.slideNavigationItem.title		= NSLocalizedString(@"Favourites", @"Favourites Title");
 	self.indexOfRemovedRecipe			= NSUIntegerMax;
 	[self registerForNotifications];
 	
@@ -283,7 +283,7 @@ static CGFloat const kEditModeUnselectedAlpha	= 00.50f;
 - (UIBarButtonItem *)cancelButton
 {
 	if (!_cancelButton)
-		_cancelButton						= [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
+		_cancelButton						= [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Cancel", @"cancel editing button")
 															  style:UIBarButtonItemStylePlain
 															 target:self
 															 action:@selector(editModeChanged)];
@@ -327,7 +327,7 @@ static CGFloat const kEditModeUnselectedAlpha	= 00.50f;
 - (UIBarButtonItem *)editButton
 {
 	if (!_editButton)
-		_editButton							= [[UIBarButtonItem alloc] initWithTitle:@"Edit"
+		_editButton							= [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Edit", @"start editing")
 															 style:UIBarButtonItemStylePlain
 															target:self
 															action:@selector(editModeChanged)];

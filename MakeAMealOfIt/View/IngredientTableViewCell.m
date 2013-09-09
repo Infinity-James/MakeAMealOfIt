@@ -289,7 +289,7 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 	{
 		_excludeLabel					= [self createCueLabel];
 		_excludeLabel.hidden			= self.excluded;
-		_excludeLabel.text				= @"exclude";
+		_excludeLabel.text				= NSLocalizedString(@"exclude", @"exclude ingredients");
 		_excludeLabel.textAlignment		= NSTextAlignmentLeft;
 		
 		[self addSubview:_excludeLabel];
@@ -328,7 +328,7 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 	{
 		_includeLabel					= [self createCueLabel];
 		_includeLabel.hidden			= self.included;
-		_includeLabel.text				= @"include";
+		_includeLabel.text				= NSLocalizedString(@"include", @"include ingredient");
 		_includeLabel.textAlignment		= NSTextAlignmentRight;
 		
 		[self addSubview:_includeLabel];
@@ -546,17 +546,6 @@ static NSTimeInterval const kSelectionDuration	= 00.50f;
 		return YES;
 	
 	return NO;
-}
-
-#pragma mark - UITableViewCell Methods
-
-/**
- *	Prepares a reusable cell for reuse by the table view's delegate.
- */
-- (void)prepareForReuse
-{
-	[super prepareForReuse];
-	NSLog(@"Ingredient reused.");
 }
 
 #pragma mark - UIView Methods

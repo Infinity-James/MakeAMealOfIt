@@ -116,9 +116,9 @@ enum SectionIndex
 		return;
 	
 	//	we make sure that they meant to do this
-	[[[UIActionSheet alloc] initWithTitle:@"Reset Entire Search?"
-								 delegate:self cancelButtonTitle:@"Cancel"
-				   destructiveButtonTitle:@"Reset Search"
+	[[[UIActionSheet alloc] initWithTitle:NSLocalizedString(@"Reset Entire Search?", @"reset the search parameters")
+								 delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel", @"cancel reset")
+				   destructiveButtonTitle:NSLocalizedString(@"Reset Search", @"reset the search")
 						otherButtonTitles:nil] showFromRect:self.clearSearchButton.frame inView:self.view animated:YES];
 }
 
@@ -376,7 +376,7 @@ enum SectionIndex
  */
 - (void)addToolbarItemsAnimated:(BOOL)animated
 {
-	[self.slideNavigationItem setTitle:@"Make A Meal Of It" animated:YES];
+	[self.slideNavigationItem setTitle:NSLocalizedString(@"Make A Meal Of It", @"Make A Meal Of It") animated:YES];
 	[self.slideNavigationItem setLeftBarButtonItem:self.leftButton animated:YES];
 	[self.slideNavigationItem setRightBarButtonItem:self.rightButton animated:YES];
 	
@@ -589,10 +589,10 @@ enum SectionIndex
 	if (!self.internetConnectionExists)
 	{
 		[self.activityIndicatorView performSelectorOnMainThread:@selector(stopAnimating) withObject:nil waitUntilDone:NO];
-		[[[UIAlertView alloc] initWithTitle:@"No Internet Connection"
-									message:@"The search could not be executed due to a lack of internet juice.\nApologies."
+		[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Cannot Connect to the Internet", @"internet is missing")
+									message:NSLocalizedString(@"The search could not be executed due to a lack of internet juice.\nApologies.", @"internet warning")
 								   delegate:self
-						  cancelButtonTitle:@"Understood"
+						  cancelButtonTitle:NSLocalizedString(@"Understood", @"okay")
 						  otherButtonTitles:nil] show];
 		
 		return;
@@ -668,7 +668,7 @@ enum SectionIndex
 		_clearSearchButton.enabled					= NO;
 		_clearSearchButton.titleLabel.font			= kYummlyBolderFontWithSize(16.0f);
 		_clearSearchButton.titleLabel.textAlignment	= NSTextAlignmentCenter;
-		[_clearSearchButton setTitle:@"Reset Search" forState:UIControlStateNormal];
+		[_clearSearchButton setTitle:NSLocalizedString(@"Reset Search", @"reset the search") forState:UIControlStateNormal];
 		[_clearSearchButton setTitleColor:[UIColor colorWithRed:0.8f green:0.3f blue:0.3f alpha:1.0f] forState:UIControlStateNormal];
 		[_clearSearchButton setTitleColor:[UIColor colorWithRed:0.5f green:0.0f blue:0.0f alpha:0.3f] forState:UIControlStateDisabled];
 		_clearSearchButton.opaque					= YES;
@@ -1268,7 +1268,7 @@ viewForHeaderInSection:(NSInteger)section
 	if (!headerView)
 		headerView							= [[UITableViewHeaderFooterView alloc] initWithReuseIdentifier:kHeaderIdentifier];
 	
-	headerView.textLabel.text				= section == kSectionExcludedIndex ? @"Excluded" : @"Required";
+	headerView.textLabel.text				= section == kSectionExcludedIndex ? NSLocalizedString(@"Excluded", @"ingredients that have been excluded") : NSLocalizedString(@"Required", @"ingredients that have been required");
 	headerView.contentView.backgroundColor	= [[UIColor alloc] initWithRed:0.2f green:0.2f blue:0.2f alpha:1.0f];
 	headerView.textLabel.textColor			= [UIColor whiteColor];
 	

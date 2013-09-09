@@ -83,7 +83,7 @@
 {
 	if (!_helpText)
 	{
-		_helpText					= @"Remember to swipe right for ingredients, or left to filter with allergies, diets, or more.";
+		_helpText					= NSLocalizedString(@"Remember to swipe right for ingredients, or left to filter with allergies, diets, or more.", @"reminder how to swipe right for ingredients view and left for metadata view");
 	}
 	
 	return _helpText;

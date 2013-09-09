@@ -243,7 +243,7 @@ static NSString *const kDeveloperURLString	= @"http://infinityjames.com";
 		_appName.font					= kYummlyBolderFontWithSize(FontSizeForTextStyle(UIFontTextStyleHeadline));
 		_appName.lineBreakMode			= NSLineBreakByWordWrapping;
 		_appName.numberOfLines			= 0;
-		_appName.text					= @"Make A Meal Of It";
+		_appName.text					= NSLocalizedString(@"Make A Meal Of It", @"Make A Meal Of It");
 		_appName.textAlignment			= NSTextAlignmentCenter;
 		_appName.textColor				= kYummlyColourMain;
 		

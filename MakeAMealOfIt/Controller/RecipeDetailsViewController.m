@@ -258,10 +258,10 @@
 {
 	if (!self.internetConnectionExists)
 	{
-		[[[UIAlertView alloc] initWithTitle:@"Cannot Connect to the Internet"
-									message:@"Due to a possible implosion of the internet, or perhaps a loss of connection, we cannot open the web page.\nSorry for the inconvenience."
+		[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Cannot Connect to the Internet", @"internet is missing")
+									message:NSLocalizedString(@"Due to a possible implosion of the internet, or perhaps a loss of connection, we cannot open the web page.\nSorry for the inconvenience.", @"internet warning")
 								   delegate:self
-						  cancelButtonTitle:@"Understood"
+						  cancelButtonTitle:NSLocalizedString(@"Understood", @"okay")
 						  otherButtonTitles:nil] show];
 		[self.activityIndicatorView stopAnimating];
 		return;

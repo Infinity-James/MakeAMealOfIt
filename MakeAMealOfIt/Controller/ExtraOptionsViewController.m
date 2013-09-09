@@ -790,7 +790,7 @@ heightForRowAtIndexPath:(NSIndexPath *)indexPath
 	UITableViewHeaderFooterView *headerView		= [self.tableView dequeueReusableHeaderFooterViewWithIdentifier:kHeaderIdentifier];
 	if (!headerView)
 		headerView						= [[UITableViewHeaderFooterView alloc] initWithReuseIdentifier:kHeaderIdentifier];
-	headerView.textLabel.text			= section == 0 ? @"Excluded" : @"Required";
+	headerView.textLabel.text			= section == 0 ? NSLocalizedString(@"Excluded", @"excluded metadata") : NSLocalizedString(@"Required", @"required metadata");
 	headerView.contentView.backgroundColor	= [[UIColor alloc] initWithRed:0.2f green:0.2f blue:0.2f alpha:1.0f];
 	headerView.textLabel.textColor			= [UIColor whiteColor];
 	

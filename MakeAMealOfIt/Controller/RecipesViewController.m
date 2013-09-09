@@ -317,7 +317,7 @@ static NSString *const kSpecialCellIdentifier	= @"ResultManagementCellIdentifier
 		
 		//	if there were no results found, we tell the user
 		if (!self.recipes.count)
-			[resultCell setInstructionLabelText:@"No Results Were Found"];
+			[resultCell setInstructionLabelText:NSLocalizedString(@"No Results Were Found", @"no results found for a search")];
 		//	if we are at the end of the results 
 		else
 			[resultCell startLoading],
@@ -382,10 +382,10 @@ didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
 	if (!self.internetConnectionExists)
 	{
-		[[[UIAlertView alloc] initWithTitle:@"Not Going To Happen"
-									message:@"Unfortunately you do not have the internet access required to view this recipe."
+		[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Cannot Connect to the Internet", @"internet is missing")
+									message:NSLocalizedString(@"Unfortunately you do not have the internet access required to view this recipe.", @"recipe can't be viewed because there is no internet")
 								   delegate:self
-						  cancelButtonTitle:@"Understood"
+						  cancelButtonTitle:NSLocalizedString(@"Understood", @"okay")
 						  otherButtonTitles:nil] show];
 		return;
 	}

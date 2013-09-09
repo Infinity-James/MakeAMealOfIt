@@ -175,7 +175,7 @@
 		_searchButton					= [[UIButton alloc] init];
 		_searchButton.contentEdgeInsets	= UIEdgeInsetsMake(0.0f, 14.0f, 0.0f, 14.0f);
 		_searchButton.opaque			= YES;
-		[_searchButton setTitle:@"Search" forState:UIControlStateNormal];
+		[_searchButton setTitle:NSLocalizedString(@"Search", @"execute the search") forState:UIControlStateNormal];
 		[_searchButton setTitleColor:kYummlyColourMain forState:UIControlStateNormal];
 		[_searchButton setTitleColor:kYummlyColourShadow forState:UIControlStateHighlighted];
 		[_searchButton addTarget:self action:@selector(searchButtonTapped) forControlEvents:UIControlEventTouchUpInside];

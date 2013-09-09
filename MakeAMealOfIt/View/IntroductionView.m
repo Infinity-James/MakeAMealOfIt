@@ -316,7 +316,7 @@ static NSTimeInterval const kAnimationDurationPresent		= 0.5f;
 	{
 		_skipButton						= [[UIButton alloc] init];
 		[_skipButton addTarget:self action:@selector(skipButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-		[_skipButton setTitle:@"Skip" forState:UIControlStateNormal];
+		[_skipButton setTitle:NSLocalizedString(@"Skip", @"skip the tutorial") forState:UIControlStateNormal];
 		[_skipButton setTitleColor:kYummlyColourMain
 						  forState:UIControlStateNormal];
 		[_skipButton setTitleColor:[UIColor whiteColor]
