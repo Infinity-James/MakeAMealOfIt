@@ -34,5 +34,13 @@
 		<key>Title</key>
 		<string>Define Allergies and Diets. Filter Courses, Cuisines and Holidays</string>
 	</dict>
+	<dict>
+		<key>Image</key>
+		<string>introductionimage_panel5</string>
+		<key>Description</key>
+		<string>Recipes can be favourited and then viewed later.</string>
+		<key>Title</key>
+		<string>Favourite Recipes &amp; View the Details Offline</string>
+	</dict>
 </array>
 </plist>

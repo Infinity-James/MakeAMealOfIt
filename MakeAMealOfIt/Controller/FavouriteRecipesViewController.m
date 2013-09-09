@@ -9,6 +9,7 @@
 #import "ArrayDataSource.h"
 #import "FavouriteRecipesStore.h"
 #import "FavouriteRecipesViewController.h"
+#import "Recipe+FavouriteState.h"
 #import "RecipeCollectionViewCell.h"
 #import "RecipeDetailsViewController.h"
 #import "UIImageView+Animation.h"
@@ -35,6 +36,8 @@ static CGFloat const kEditModeUnselectedAlpha	= 00.50f;
 @property (nonatomic, strong)	UICollectionView	*collectionView;
 /**	Tapped on to allow the user to edit the current favourites.	*/
 @property (nonatomic, strong)	UIBarButtonItem		*editButton;
+/**	The buttons fisplayed whilst a user is editing their favourites.	*/
+@property (nonatomic, strong)	NSArray				*editingToolButtons;
 /**	When in edit mode the user can select favourited recipes and remove them.	*/
 @property (nonatomic, assign)	BOOL				editMode;
 /**	The array of recipes that have been favourited by the user.	*/
@@ -45,6 +48,8 @@ static CGFloat const kEditModeUnselectedAlpha	= 00.50f;
 @property (nonatomic, strong)	NSMutableSet		*indexPathsOfSelectedItems;
 /**	The cache used to store thumbnail images for the recipes.	*/
 @property (nonatomic, strong)	NSCache				*thumbnailCache;
+/**	A button used to unfavourite any selected recipes.	*/
+@property (nonatomic, strong)	UIBarButtonItem		*unfavouriteButton;
 
 @end
 
@@ -60,9 +65,9 @@ static CGFloat const kEditModeUnselectedAlpha	= 00.50f;
 - (void)editModeChanged
 {
 	if (self.editMode)
-		[self.slideNavigationItem setRightBarButtonItem:self.editButton];
+		[self.slideNavigationItem setRightBarButtonItems:@[self.editButton] animated:YES];
 	else
-		[self.slideNavigationItem setRightBarButtonItem:self.cancelButton];
+		[self.slideNavigationItem setRightBarButtonItems:self.editingToolButtons animated:YES];
 	
 	self.editMode						= !self.editMode;
 }
@@ -90,6 +95,32 @@ static CGFloat const kEditModeUnselectedAlpha	= 00.50f;
 		
 		self.indexOfRemovedRecipe		= [self.favouriteRecipes indexOfObject:recipe];
 	});
+}
+
+/**
+ *	Unfavourites all currently selected recipes.
+ */
+- (void)unfavouriteSelectedRecipes
+{
+	//	if we're not in edit mode this method shouldn't have been called
+	NSAssert(self.editMode, @"Unfavouriting recipes called when not in edit mode.");
+	
+	for (NSIndexPath *indexPath in self.indexPathsOfSelectedItems)
+	{
+		Recipe *recipe					= self.favouriteRecipes[indexPath.item];
+		[recipe unfavourite];
+		[self.favouriteRecipes removeObjectAtIndex:indexPath.item];
+		[self.arrayDataSource updateWithItems:self.favouriteRecipes];
+	}
+	
+	[self.collectionView deleteItemsAtIndexPaths:self.indexPathsOfSelectedItems.allObjects];
+	
+	[self.collectionView.visibleCells enumerateObjectsUsingBlock:^(UICollectionViewCell *cell, NSUInteger index, BOOL *stop)
+	{
+		cell.alpha						= kEditModeUnselectedAlpha;
+	}];
+	
+	[self.indexPathsOfSelectedItems removeAllObjects];
 }
 
 #pragma mark - Autolayout Methods
@@ -129,6 +160,7 @@ static CGFloat const kEditModeUnselectedAlpha	= 00.50f;
  */
 - (void)basicInitialisation
 {
+	self.slideNavigationItem.title		= @"Favourites";
 	self.indexOfRemovedRecipe			= NSUIntegerMax;
 	[self registerForNotifications];
 	
@@ -304,6 +336,19 @@ static CGFloat const kEditModeUnselectedAlpha	= 00.50f;
 }
 
 /**
+ *	The buttons fisplayed whilst a user is editing their favourites.
+ *
+ *	@return	An NSArray with unfavourite and cancel UIBarButtonItems.
+ */
+- (NSArray *)editingToolButtons
+{
+	if (!_editingToolButtons)
+		_editingToolButtons					= @[self.unfavouriteButton, [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil], self.cancelButton];
+	
+	return _editingToolButtons;
+}
+
+/**
  *	An array of selected index paths.
  *
  *	@return	An array of selected index paths.
@@ -328,6 +373,19 @@ static CGFloat const kEditModeUnselectedAlpha	= 00.50f;
 	
 	
 	return _thumbnailCache;
+}
+
+/**
+ *	A button used to unfavourite any selected recipes.
+ *
+ *	@return	An initialised UIBarButtonItem allowing the user to unfavourite recipes.
+ */
+- (UIBarButtonItem *)unfavouriteButton
+{
+	if (!_unfavouriteButton)
+		_unfavouriteButton					= [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"barbuttonitem_main_normal_unfavourite_yummly"] style:UIBarButtonItemStylePlain target:self action:@selector(unfavouriteSelectedRecipes)];
+	
+	return _unfavouriteButton;
 }
 
 /**

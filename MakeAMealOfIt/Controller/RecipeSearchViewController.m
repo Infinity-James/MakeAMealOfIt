@@ -1027,6 +1027,7 @@ enum SectionIndex
  */
 - (void)slideNavigationControllerWillClose
 {
+	self.tutorialButton.enabled			= YES;
 }
 
 /**

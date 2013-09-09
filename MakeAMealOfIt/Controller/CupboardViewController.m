@@ -173,7 +173,7 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 {
 	NSDictionary *ingredientDictionary;
 	
-	if (tableView == self.searchDisplay.searchResultsTableView && self.filteredIngredients.count >= indexPath.row)
+	if (tableView == self.searchDisplay.searchResultsTableView && self.filteredIngredients.count > indexPath.row)
 		ingredientDictionary			= self.filteredIngredients[indexPath.row];
 	else
 		ingredientDictionary			= self.ingredientsForTableView[self.sectionTitles[indexPath.section]][indexPath.row];
@@ -194,7 +194,12 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 	
 	//	define the predicate according to the search of the user
 	NSPredicate *predicate				= [NSPredicate predicateWithFormat:@"SELF.%@ CONTAINS[cd] %@", kYummlyMetadataDescriptionKey, searchText];
-	self.filteredIngredients			= [self.ingredientsMetadata filteredArrayUsingPredicate:predicate];
+	NSArray *filtered					= [self.ingredientsMetadata filteredArrayUsingPredicate:predicate];
+	
+	dispatch_sync(dispatch_get_main_queue(),
+	^{
+		self.filteredIngredients		= filtered;
+	});
 }
 
 /**

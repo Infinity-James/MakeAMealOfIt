@@ -85,11 +85,11 @@
 																  views:self.viewsDictionary];
 	[self.contentView addConstraints:constraints];
 	
-	[self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[highlightedIndicator]-|"
+	[self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[highlightedIndicator]-(8)-|"
 																			 options:kNilOptions
 																			 metrics:nil
 																			   views:self.viewsDictionary]];
-	[self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[highlightedIndicator]"
+	[self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(8)-[highlightedIndicator]"
 																			 options:kNilOptions
 																			 metrics:nil
 																			   views:self.viewsDictionary]];
@@ -130,8 +130,8 @@
 		
 		_highlightedIndicator.backgroundColor		= [UIColor whiteColor];
 		_highlightedIndicator.hidden				= !self.highlighted;
-		_highlightedIndicator.layer.borderColor		= [UIColor blackColor].CGColor;
-		_highlightedIndicator.layer.borderWidth		= 2.0f;
+		_highlightedIndicator.layer.borderColor		= kDarkGreyColour.CGColor;
+		_highlightedIndicator.layer.borderWidth		= 1.0f;
 		_highlightedIndicator.layer.cornerRadius	= image.size.height / 2.0f;
 		
 		_highlightedIndicator.translatesAutoresizingMaskIntoConstraints	= NO;
