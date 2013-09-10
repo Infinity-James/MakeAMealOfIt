@@ -225,16 +225,6 @@
 	[super setHighlighted:highlighted];
 }
 
-#pragma mark - UICollectionReusableView Methods
-
-/**
- *	Performs any clean up necessary to prepare the view for use again.
- */
-- (void)prepareForReuse
-{
-	NSLog(@"Working");
-}
-
 #pragma mark - UIView Methods
 
 /**

@@ -144,7 +144,6 @@ static NSString *const kYummlyBaseAPIURL				= @"https://api.yummly.com/v1/api";
 		[NetworkActivityIndicator stop];
 		//	if it failed we log as much
 		if (error)						NSLog(@"Yummly Request Failed: %@\n With Response: %@", error.localizedDescription, response);
-		NSLog(@"Response: %@", response);
 		
 		//	get a dictionary of results from the returned json
 		NSDictionary *results			= jsonData ? [NSJSONSerialization JSONObjectWithData:jsonData

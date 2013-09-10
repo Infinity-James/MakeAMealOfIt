@@ -211,9 +211,9 @@
 		1AE89C83177AF4F6001C356A /* MetadataCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MetadataCell.m; path = View/MetadataCell.m; sourceTree = "<group>"; };
 		1AE8DB7C176B2281008C5D36 /* YummlyThemeImages.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = YummlyThemeImages.xcassets; path = Yummly/YummlyThemeImages.xcassets; sourceTree = "<group>"; };
 		1AED242D17DE20B40099FD18 /* en-US */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-US"; path = "en-US.lproj/Localizable.strings"; sourceTree = "<group>"; };
-		1AED242F17DE20FC0099FD18 /* en */ = {isa = PBXFileReference; lastKnownFileType = file; name = en; path = en.lproj/IntroductionPanels.plist; sourceTree = "<group>"; };
-		1AED243117DE21010099FD18 /* en-US */ = {isa = PBXFileReference; lastKnownFileType = file; name = "en-US"; path = "en-US.lproj/IntroductionPanels.plist"; sourceTree = "<group>"; };
-		1AED243217DE239E0099FD18 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = file; name = "en-GB"; path = "en-GB.lproj/IntroductionPanels.plist"; sourceTree = "<group>"; };
+		1AED242F17DE20FC0099FD18 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = en; path = en.lproj/IntroductionPanels.plist; sourceTree = "<group>"; };
+		1AED243117DE21010099FD18 /* en-US */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "en-US"; path = "en-US.lproj/IntroductionPanels.plist"; sourceTree = "<group>"; };
+		1AED243217DE239E0099FD18 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "en-GB"; path = "en-GB.lproj/IntroductionPanels.plist"; sourceTree = "<group>"; };
 		1AED243317DE239E0099FD18 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		1AED243417DE239E0099FD18 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		1AEE005517424E2E00B6FC43 /* CupboardViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CupboardViewController.h; path = Controller/CupboardViewController.h; sourceTree = "<group>"; };
