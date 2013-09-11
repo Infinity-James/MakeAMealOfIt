@@ -74,12 +74,7 @@
  *	@return	Return the device UDID which is required for beta testing, should return nil for app store configuration.
  */
 - (NSString *)customDeviceIdentifierForUpdateManager:(BITUpdateManager *)updateManager
-{
-#ifndef CONFIGURATION_AppStore
-	if ([[UIDevice currentDevice] respondsToSelector:@selector(uniqueIdentifier)])
-		return [[UIDevice currentDevice] performSelector:@selector(uniqueIdentifier)];
-#endif
-	
+{	
 	return nil;
 }
 

@@ -89,6 +89,8 @@ static CGFloat const kEditModeUnselectedAlpha	= 00.50f;
  */
 - (void)recipeRemoved:(NSNotification *)notification
 {
+	if (self.editMode)					return;
+	
 	dispatch_async(dispatch_queue_create("Calculate Recipe Removal", NULL),
 	^{
 		Recipe *recipe					= (Recipe *)notification.object;
