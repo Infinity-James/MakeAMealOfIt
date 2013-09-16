@@ -229,10 +229,10 @@ static CGFloat const kEditModeUnselectedAlpha	= 00.50f;
 			{
 				if ([self.indexPathsOfSelectedItems containsObject:indexPath])
 					cell.alpha			= kEditModeSelectedAlpha,
-					cell.highlighted	= YES;
+					cell.selectedToEdit	= YES;
 				else
 					cell.alpha			= kEditModeUnselectedAlpha,
-					cell.highlighted	= NO;
+					cell.selectedToEdit	= NO;
 			}
 			else
 				cell.alpha				= 1.0f;
@@ -482,7 +482,7 @@ didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
 	[self.indexPathsOfSelectedItems removeObject:indexPath];
 	UICollectionViewCell *cell		= [collectionView cellForItemAtIndexPath:indexPath];
 	cell.alpha						= kEditModeUnselectedAlpha;
-	cell.highlighted				= NO;
+	((RecipeCollectionViewCell *)cell).selectedToEdit	= NO;
 }
 
 /**
@@ -499,7 +499,7 @@ didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 		[self.indexPathsOfSelectedItems addObject:indexPath];
 		UICollectionViewCell *cell	= [collectionView cellForItemAtIndexPath:indexPath];
 		cell.alpha					= kEditModeSelectedAlpha;
-		cell.highlighted			= YES;
+		((RecipeCollectionViewCell *)cell).selectedToEdit	= YES;
 	}
 	
 	else

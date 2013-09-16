@@ -18,6 +18,8 @@
 @property (nonatomic, strong)	NSString		*imageURL;
 /**	A view used to display the name and details of the recipe being displayed.	*/
 @property (nonatomic, strong)	TextBackingView	*recipeDetails;
+/**	Whether this cell is currently being edited.	*/
+@property (nonatomic, assign)	BOOL			selectedToEdit;
 /**	The image view used to hold a thumbnail of the recipe being displayed.	*/
 @property (nonatomic, strong)	UIImageView		*thumbnailView;
 

@@ -220,9 +220,24 @@
  */
 - (void)setHighlighted:(BOOL)highlighted
 {
-	self.highlightedIndicator.hidden		= highlighted ? NO : YES;
+	self.highlightedIndicator.hidden	= highlighted ? NO : YES;
 	
 	[super setHighlighted:highlighted];
+}
+
+/**
+ *	Sets whether this cell is currently being edited.
+ *
+ *	@param	selectedToEdit				YES if this cell is being edited, NO otherwise.
+ */
+- (void)setSelectedToEdit:(BOOL)selectedToEdit
+{
+	if (_selectedToEdit == selectedToEdit)
+		return;
+	
+	_selectedToEdit						= selectedToEdit;
+	
+	self.highlightedIndicator.hidden	= _selectedToEdit ? NO : YES;
 }
 
 #pragma mark - UIView Methods
