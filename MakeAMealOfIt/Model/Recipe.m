@@ -19,6 +19,7 @@ NSString *const kYummlyRecipeAttributionURLKey								= @"url";
 
 static NSString *const kYummlyRecipeIDKey									= @"id";
 
+static NSString *const kYummlyRecipeImagesBySizeURLKey						= @"imageUrlsBySize";
 static NSString *const kYummlyRecipeImagesKey								= @"images";
 static NSString *const kYummlyRecipeImagesLargeURLKey						= @"hostedLargeUrl";
 
@@ -275,9 +276,21 @@ static NSString *const kCodingRecipeImageKey								= @"recipeImage";
 {
 	if (!_recipeImage)
 	{
-		NSString *imageURLString		= self.recipeDictionary[kYummlyRecipeImagesKey][0][kYummlyRecipeImagesLargeURLKey];
-		imageURLString					= [imageURLString stringByReplacingOccurrencesOfString:@".l." withString:@".xl."];
-		if (!imageURLString)			return nil;
+		NSDictionary *images			= self.recipeDictionary[kYummlyRecipeImagesKey][0];
+		NSString *imageURLString		= images[kYummlyRecipeImagesLargeURLKey];
+		
+		if ([imageURLString isKindOfClass:[NSNull class]])
+		{
+			images						= images[kYummlyRecipeImagesBySizeURLKey];
+			if ([images isKindOfClass:[NSDictionary class]])
+				imageURLString			= [images allValues][0];
+		}
+		else
+			imageURLString				= [imageURLString stringByReplacingOccurrencesOfString:@".l." withString:@".xl."];
+		
+		if (!imageURLString || [imageURLString isKindOfClass:[NSNull class]])
+			return nil;
+		
 		[NetworkActivityIndicator start];
 		NSData *imageData				= [[NSData alloc] initWithContentsOfURL:[[NSURL alloc] initWithString:imageURLString]];
 		[NetworkActivityIndicator stop];

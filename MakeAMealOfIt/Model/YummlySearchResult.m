@@ -37,6 +37,7 @@ NSString *const kYummlyMatchesArrayKey					= @"matches";
 NSString *const kYummlyMatchAttributesKey				= @"attributes";
 NSString *const kYummlyMatchFlavoursKey					= @"flavors";
 NSString *const kYummlyMatchIDKey						= @"id";
+NSString *const kYummlyMatchImagesBySize				= @"imageUrlsBySize";
 NSString *const kYummlyMatchIngredientsArrayKey			= @"ingredients";
 NSString *const kYummlyMatchRatingKey					= @"rating";
 NSString *const kYummlyMatchRecipeNameKey				= @"recipeName";

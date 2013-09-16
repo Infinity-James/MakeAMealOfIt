@@ -601,7 +601,10 @@ enum SectionIndex
 	//	set up the next centre view controller with the recipes it needs to display
 	RecipesViewController *recipesVC	= [[RecipesViewController alloc] init];
 	recipesVC.recipes					= results[kYummlyMatchesArrayKey];
-	recipesVC.searchPhrase				= [results[@"criteria"][@"terms"] lastObject];
+	
+	NSArray *searchTerms				= results[@"criteria"][@"terms"];
+	if ([searchTerms respondsToSelector:@selector(lastObject)])
+		recipesVC.searchPhrase			= [searchTerms lastObject];
 	
 	//	set up the next right view controller with the attributions it needs to display
 	YummlyAttributionViewController *yummlyAttribution	= [[YummlyAttributionViewController alloc] initWithAttributionDictionary:results[kYummlyAttributionDictionaryKey]];

@@ -35,6 +35,7 @@ extern NSString *const kYummlyMatchesArrayKey;
 extern NSString *const kYummlyMatchAttributesKey;
 extern NSString *const kYummlyMatchFlavoursKey;
 extern NSString *const kYummlyMatchIDKey;
+NSString *const kYummlyMatchImagesBySize;
 extern NSString *const kYummlyMatchIngredientsArrayKey;
 extern NSString *const kYummlyMatchRatingKey;
 extern NSString *const kYummlyMatchRecipeNameKey;
