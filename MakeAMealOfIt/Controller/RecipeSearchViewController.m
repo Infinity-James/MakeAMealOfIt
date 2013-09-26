@@ -602,6 +602,8 @@ enum SectionIndex
 	RecipesViewController *recipesVC	= [[RecipesViewController alloc] init];
 	recipesVC.recipes					= results[kYummlyMatchesArrayKey];
 	
+	NSLog(@"Results: %@", results[kYummlyMatchesArrayKey]);
+	
 	NSArray *searchTerms				= results[@"criteria"][@"terms"];
 	if ([searchTerms respondsToSelector:@selector(lastObject)])
 		recipesVC.searchPhrase			= [searchTerms lastObject];

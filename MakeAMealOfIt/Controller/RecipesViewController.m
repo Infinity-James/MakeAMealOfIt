@@ -454,6 +454,8 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 	recipeCell.thumbnailView.image		= nil;
 	[recipeCell.thumbnailView stopAnimating];
 	
+	BOOL imageBySizeUsed				= NO;
+	
 	NSDictionary *recipe				= self.recipes[indexPath.row];
 	
 	NSString *smallThumbnailURLString	= ((NSArray *)recipe[kYummlyMatchSmallImageURLsArrayKey]).lastObject;
@@ -462,6 +464,7 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 	{
 		NSDictionary *images			= recipe[kYummlyMatchImagesBySize];
 		smallThumbnailURLString			= [images allValues][0];
+		imageBySizeUsed					= YES;
 	}
 	
 	UIImage *cachedThumbnail			= [self.thumbnailCache objectForKey:smallThumbnailURLString];
@@ -478,7 +481,13 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 			if (![recipeCell.imageURL isEqualToString:smallThumbnailURLString])
 				return;
 			
-			NSString *thumbnailURLString= [smallThumbnailURLString stringByReplacingOccurrencesOfString:@".s." withString:@".l."];
+			NSString *thumbnailURLString;
+			
+			if (!imageBySizeUsed)
+				thumbnailURLString		= [smallThumbnailURLString stringByReplacingOccurrencesOfString:@".s." withString:@".l."];
+			else
+				thumbnailURLString		= [smallThumbnailURLString stringByReplacingOccurrencesOfString:@"s90-c" withString:@"s480-c"];
+			
 			NSURL *thumbnailURL			= [[NSURL alloc] initWithString:thumbnailURLString];
 			
 			if (!thumbnailURL)

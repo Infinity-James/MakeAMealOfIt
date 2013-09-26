@@ -103,7 +103,7 @@
 	
 	[items addObject:self.flexibleSpace];
 	
-	if (self.title)
+	if (self.title && ![self.title isKindOfClass:[NSNull class]])
 	{
 		//	this label will be used as the title in the toolbar
 		UILabel *title					= [[UILabel alloc] init];
