@@ -6,26 +6,44 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
+#import <objc/runtime.h>
 #import "CupboardViewController.h"
 #import "IngredientTableViewCell.h"
 #import "OverlayActivityIndicator.h"
+#import "UIView+AutolayoutHelper.h"
 #import "YummlyMetadata.h"
 
 @import QuartzCore;
 
 #pragma mark - Constants & Static Variables
 
-static NSString *const kCellIdentifier	= @"CupboardCellIdentifier";
-static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
+static NSString *const kCellIdentifier						= @"CupboardCellIdentifier";
+static NSString *const kHeaderIdentifier					= @"HeaderViewIdentifier";
+/**	Key to get the action block from an alert view.	*/
+static void *const AlertViewActionBlockKey					= "AlertViewActionBlock";
+/**	Height for the exclude all view.	*/
+static CGFloat const ExcludeViewHeight						= 20.0f;
+/**	Duration for the animation of fading in and out the exclude all view.	*/
+static NSTimeInterval const AnimationDurationExcludeView	= 0.2f;
+/**	A type of block which a accepts a modified ingredient and uses it in some way.	*/
+typedef void(^ModifiedIngredientBlock)(NSDictionary *modifiedIngredient);
 
 #pragma mark - Cupboard View Controller Private Class Extension
 
-@interface CupboardViewController () <IngredientTableViewCellDelegate, UISearchBarDelegate, UISearchDisplayDelegate, UITableViewDataSource, UITableViewDelegate> {}
+@interface CupboardViewController () <IngredientTableViewCellDelegate, UIAlertViewDelegate, UISearchBarDelegate, UISearchDisplayDelegate, UITableViewDataSource, UITableViewDelegate> {}
 
 #pragma mark - Private Properties
 
 /**	Used to show that the recipe image is loading.	*/
 @property (nonatomic, strong)	OverlayActivityIndicator	*activityIndicatorView;
+/**	A block called when an ingredient has been deselected.	*/
+@property (nonatomic, copy)		ModifiedIngredientBlock		deselectIngredientBlock;
+/**	A view presenting an option to the user to exclude all filtered ingredients.	*/
+@property (nonatomic, strong)	UIView						*excludeAll;
+/**	The constraints to insert the exclude all view.	*/
+@property (nonatomic, strong)	NSArray						*excludeViewAddConstraints;
+/**	The constraints to remove the exclude all view.	*/
+@property (nonatomic, strong)	NSArray						*excludeViewRemoveConstraints;
 /**	An array of ingredient dictionaries filtered by the user's search.	*/
 @property (atomic, strong)		NSArray						*filteredIngredients;
 /**	An array of all of ingredient dictionaries.	*/
@@ -46,6 +64,8 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 @property (nonatomic, strong)	NSArray						*sectionTitles;
 /**	An array of currently selected ingredient dictioanries, either included or excluded.	*/
 @property (nonatomic, strong)	NSMutableDictionary			*selectedIngredients;
+/**	Whether or not the exclude view should be shown.	*/
+@property (nonatomic, assign)	BOOL						shouldShowExcludeAllView;
 /**	The table view used to display all of the ingredients.	*/
 @property (nonatomic, strong)	UITableView					*tableView;
 
@@ -58,6 +78,63 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 #pragma mark - Action & Selector Methods
 
 /**
+ *	Called when the user has tapped the 'exclude all' button.
+ *
+ *	@param	excludeButton				The button associated with calling this method.
+ */
+- (void)excludeAllButtonTapped:(UIButton *)excludeButton
+{
+	NSUInteger ingredientsCount			= self.filteredIngredients.count;
+	
+	if (ingredientsCount > 0)
+	{
+		NSString *message				= [[NSString alloc] initWithFormat:@"You are about to exclude %u ingredients. %@",
+										   ingredientsCount,
+										   ingredientsCount > 20 ? @"That's quite a lot of ingredients, are you sure about this?" :
+																	@"I know it's not that many ingredients, but are you sure?"];
+		UIAlertView *alertView			= [[UIAlertView alloc] initWithTitle:@"Exclude All Presented Ingredients?"
+																	message:message
+																   delegate:self
+														  cancelButtonTitle:@"Nope"
+														  otherButtonTitles:@"Definitely", nil];
+		
+		__weak CupboardViewController *weakSelf	= self;
+		
+		void (^actionBlock)(NSInteger)	= ^(NSInteger buttonIndex)
+		{
+			if (buttonIndex == alertView.cancelButtonIndex)
+				return;
+			else
+				[weakSelf excludeAllFilteredIngredients],
+				[weakSelf performSelectorOnMainThread:@selector(appropriatelyHideOrShowExcludeView) withObject:nil waitUntilDone:NO];
+		};
+		
+		//	attach the action block to the alert view
+		objc_setAssociatedObject(alertView, AlertViewActionBlockKey, actionBlock, OBJC_ASSOCIATION_COPY);
+		
+		[alertView show];
+	}
+}
+
+/**
+ *	The user has tapped the view for excluding the filtered ingredients.
+ *
+ *	@param	pressGesture				The gesture recogniser responsible for sending this message.
+ */
+- (void)excludeAllViewPressed:(UILongPressGestureRecognizer *)pressGesture
+{
+	UIButton *excludeButton				= pressGesture.view.subviews[0];
+	
+	if (pressGesture.state == UIGestureRecognizerStateBegan)
+		excludeButton.highlighted		= YES;
+	else if (pressGesture.state == UIGestureRecognizerStateEnded)
+	{
+		[self excludeAllButtonTapped:excludeButton];
+		excludeButton.highlighted		= NO;
+	}
+}
+
+/**
  *	The user has updated their choice of text size.
  */
 - (void)textSizeChanged
@@ -68,11 +145,13 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 /**
  *	Called when the global Yummly Request object has been reset.
  *
- *	@param	notification			The object containing a name, an object, and an optional dictionary.
+ *	@param	notification				The object containing a name, an object, and an optional dictionary.
  */
 - (void)yummlyRequestHasBeenReset:(NSNotification *)notification
 {
-	[self.searchDisplayController setActive:NO animated:YES];
+	if (self.searchDisplay.isActive)
+		[self.searchDisplay setActive:NO animated:YES];
+		
 	
 	for (NSIndexPath *selectedIndexPath in self.tableView.indexPathsForSelectedRows)
 	{
@@ -104,18 +183,10 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 																	  metrics:@{@"Panel": @(kPanelWidth)}
 																		views:self.viewsDictionary]];
 	
-	[self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.searchBar
-														  attribute:NSLayoutAttributeWidth
-														  relatedBy:NSLayoutRelationEqual
-															 toItem:self.tableView
-														  attribute:NSLayoutAttributeWidth
-														 multiplier:1.0f
-														   constant:0.0f]];
-	
-	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[searchBar][tableView]|"
-																	  options:NSLayoutFormatAlignAllCenterX
-																	  metrics:nil
-																		views:self.viewsDictionary]];
+	if (self.shouldShowExcludeAllView)
+			[self.view addConstraints:self.excludeViewAddConstraints];
+	else
+			[self.view addConstraints:self.excludeViewRemoveConstraints];
 	
 	[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(128)-[activityView(==height)]"
 																	  options:kNilOptions
@@ -181,6 +252,27 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 	return ingredientDictionary;
 }
 
+#pragma mark - Searching Management
+
+/**
+ *	Excludes all ingredients currently in the filteredIngredients array.
+ */
+- (void)excludeAllFilteredIngredients
+{
+	dispatch_async(dispatch_queue_create("Excluding Ingredients", NULL),
+	^{
+		NSArray *excludedIngredients		= self.selectedIngredients[kExcludedSelections];
+		self.selectedIngredients[kExcludedSelections] = [excludedIngredients arrayByAddingObjectsFromArray:self.filteredIngredients];
+		[self tableView:self.searchDisplay.searchResultsTableView selected:YES ingredientDictionaries:self.filteredIngredients forSection:kExcludedSelections];
+					   
+		dispatch_async(dispatch_get_main_queue(),
+		^{
+			[self.searchDisplay.searchResultsTableView reloadRowsAtIndexPaths:self.searchDisplay.searchResultsTableView.indexPathsForVisibleRows
+															 withRowAnimation:UITableViewRowAnimationAutomatic];
+		});
+	});
+}
+
 /**
  *	Filters the contents of the table view according to the search of the user.
  *
@@ -207,14 +299,14 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
  */
 - (void)reloadSearchTableView
 {
-	[self.searchDisplayController.searchResultsTableView reloadData];
+	[self.searchDisplay.searchResultsTableView reloadData];
 	[self.activityIndicatorView stopAnimating];
 	
 	[NSObject cancelPreviousPerformRequestsWithTarget:self
 											 selector:@selector(scrollToTopOfTableView:)
-											   object:self.searchDisplayController.searchResultsTableView];
+											   object:self.searchDisplay.searchResultsTableView];
 	[self performSelector:@selector(scrollToTopOfTableView:)
-			   withObject:self.searchDisplayController.searchResultsTableView
+			   withObject:self.searchDisplay.searchResultsTableView
 			   afterDelay:0.5];
 }
 
@@ -229,6 +321,51 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 }
 
 /**
+ *	Will hide or show the exclude view depending on what should be done.
+ */
+- (void)appropriatelyHideOrShowExcludeView
+{
+	if (!self.shouldShowExcludeAllView && !self.excludeAll.superview)
+		return;
+	else if (self.shouldShowExcludeAllView)
+	{
+		[self.view addSubviewForAutoLayout:self.excludeAll];
+		[self.view bringSubviewToFront:self.excludeAll];
+		[self.view removeConstraints:self.excludeViewRemoveConstraints];
+		[self.view addConstraints:self.excludeViewAddConstraints];
+		
+		CGRect frame					= CGRectMake(0.0f, ExcludeViewHeight, self.tableView.bounds.size.width, self.tableView.bounds.size.height);
+		
+		[UIView animateWithDuration:AnimationDurationExcludeView
+						 animations:
+		^{
+			self.excludeAll.alpha		= 1.0f;
+			[self.view layoutIfNeeded];
+			self.searchDisplay.searchResultsTableView.frame	= frame;
+		}];
+	}
+	else
+	{
+		[self.view removeConstraints:self.excludeViewAddConstraints];
+		[self.view addConstraints:self.excludeViewRemoveConstraints];
+		
+		CGRect frame					= CGRectMake(0.0f, 0.0f, self.tableView.bounds.size.width, self.tableView.bounds.size.height);
+		
+		[UIView animateWithDuration:AnimationDurationExcludeView
+						 animations:
+		^{
+			self.excludeAll.alpha		= 0.0f;
+			[self.view layoutIfNeeded];
+			self.searchDisplay.searchResultsTableView.frame	= frame;
+		}
+						completion:^(BOOL finished)
+		{
+			[self.excludeAll removeFromSuperview];
+		}];
+	}
+}
+
+/**
  *	Sets the the search display controller's table view properties.
  *
  *	@param	searchDisplayTableView		The table view displayed by the UISearchDisplayController.
@@ -237,11 +374,22 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 {
 	searchDisplayTableView.dataSource	= self;
 	searchDisplayTableView.delegate		= self;
+	[self appropriatelyHideOrShowExcludeView];
 	CGRect frame						= CGRectMake(0.0f, 0.0f, self.tableView.bounds.size.width, self.tableView.bounds.size.height);
 	searchDisplayTableView.frame		= frame;
 	[searchDisplayTableView registerClass:[IngredientTableViewCell class]
 				   forCellReuseIdentifier:kCellIdentifier];
 	
+}
+
+/**
+ *	Unloads the search display controller's table view's accesory views and so forth.
+ *
+ *	@param	searchDisplayTableView		The table view displayed by the UISearchDisplayController.
+ */
+- (void)unloadSearchDisplayControllerTableView:(UITableView *)searchDisplayTableView
+{
+	[self appropriatelyHideOrShowExcludeView];
 }
 
 #pragma mark - IngredientTableViewCellDelegate Methods
@@ -267,75 +415,75 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 	
 	//	asynchronously update everything to keep work off main thread
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
-				   ^{
-					   if (ingredientTableViewCell.included && ![included containsObject:ingredientTableViewCell.ingredientDictionary])
-					   {
-						   //	add the selection to the dictionary
-						   [included addObject:ingredientTableViewCell.ingredientDictionary];
-						   
-						   //	specify the ingredient was selected
-						   selected					= YES;
-						   
-						   //	flag that this ingredient's included status was updated
-						   includedUpdate				= YES;
-					   }
-					   
-					   else if (!ingredientTableViewCell.included && [included containsObject:ingredientTableViewCell.ingredientDictionary])
-					   {
-						   //	remove the selection from the dictionary
-						   [included removeObject:ingredientTableViewCell.ingredientDictionary];
-						   
-						   //	specify the ingredient was removed
-						   selected					= NO;
-						   
-						   //	flag that this ingredient's included status was updated
-						   includedUpdate				= YES;
-					   }
-					   
-					   //	update the dictionary with the new inclusions
-					   self.selectedIngredients[kIncludedSelections]	= included;
-					   
-					   if (includedUpdate)
-						   //	update the left controller with the selected / unselected ingredient dictionary
-						   [self tableView:tableView
-								  selected:selected
-					  ingredientDictionary:ingredientTableViewCell.ingredientDictionary
-								forSection:kIncludedSelections];
-					   
-					   if (ingredientTableViewCell.excluded && ![excluded containsObject:ingredientTableViewCell.ingredientDictionary])
-					   {
-						   //	add the selection to the dictionary
-						   [excluded addObject:ingredientTableViewCell.ingredientDictionary];
-						   
-						   //	specify the ingredient was selected
-						   selected					= YES;
-						   
-						   //	flag that this ingredient's excluded status was updated
-						   excludedUpdate				= YES;
-					   }
-					   
-					   else if (!ingredientTableViewCell.excluded && [excluded containsObject:ingredientTableViewCell.ingredientDictionary])
-					   {
-						   //	remove the selection from the dictionary
-						   [excluded removeObject:ingredientTableViewCell.ingredientDictionary];
-						   
-						   //	specify the ingredient was removed
-						   selected					= NO;
-						   
-						   //	flag that this ingredient's excluded status was updated
-						   excludedUpdate				= YES;
-					   }
-					   
-					   //	update the dictionary with the new exclusions
-					   self.selectedIngredients[kExcludedSelections]	= excluded;
-					   
-					   if (excludedUpdate)
-						   //	update the left controller with the selected / unselected ingredient dictionary
-						   [self tableView:tableView
-								  selected:selected
-					  ingredientDictionary:ingredientTableViewCell.ingredientDictionary
-								forSection:kExcludedSelections];
-				   });
+	^{
+		if (ingredientTableViewCell.included && ![included containsObject:ingredientTableViewCell.ingredientDictionary])
+		{
+			//	add the selection to the dictionary
+			[included addObject:ingredientTableViewCell.ingredientDictionary];
+		   
+			//	specify the ingredient was selected
+			selected					= YES;
+		   
+			//	flag that this ingredient's included status was updated
+			includedUpdate				= YES;
+		}
+	   
+		else if (!ingredientTableViewCell.included && [included containsObject:ingredientTableViewCell.ingredientDictionary])
+		{
+			//	remove the selection from the dictionary
+			[included removeObject:ingredientTableViewCell.ingredientDictionary];
+		   
+			//	specify the ingredient was removed
+			selected					= NO;
+		   
+			//	flag that this ingredient's included status was updated
+			includedUpdate				= YES;
+		}
+	   
+		//	update the dictionary with the new inclusions
+		self.selectedIngredients[kIncludedSelections]	= included;
+	   
+		if (includedUpdate)
+			//	update the left controller with the selected / unselected ingredient dictionary
+			[self tableView:tableView
+				   selected:selected
+	   ingredientDictionary:ingredientTableViewCell.ingredientDictionary
+				 forSection:kIncludedSelections];
+	   
+		if (ingredientTableViewCell.excluded && ![excluded containsObject:ingredientTableViewCell.ingredientDictionary])
+		{
+			//	add the selection to the dictionary
+			[excluded addObject:ingredientTableViewCell.ingredientDictionary];
+		   
+			//	specify the ingredient was selected
+			selected					= YES;
+		   
+			//	flag that this ingredient's excluded status was updated
+			excludedUpdate				= YES;
+		}
+	   
+		else if (!ingredientTableViewCell.excluded && [excluded containsObject:ingredientTableViewCell.ingredientDictionary])
+		{
+			//	remove the selection from the dictionary
+			[excluded removeObject:ingredientTableViewCell.ingredientDictionary];
+		   
+			//	specify the ingredient was removed
+			selected					= NO;
+		   
+			//	flag that this ingredient's excluded status was updated
+			excludedUpdate				= YES;
+		}
+	   
+		//	update the dictionary with the new exclusions
+		self.selectedIngredients[kExcludedSelections]	= excluded;
+		
+		if (excludedUpdate)
+			//	update the left controller with the selected / unselected ingredient dictionary
+			[self tableView:tableView
+				   selected:selected
+	   ingredientDictionary:ingredientTableViewCell.ingredientDictionary
+				 forSection:kExcludedSelections];
+	});
 	
 }
 
@@ -411,6 +559,22 @@ static NSString *const kHeaderIdentifier= @"HeaderViewIdentifier";
 ingredientDictionary:(NSDictionary *)ingredientDictionary
 		  forSection:(NSString *)inclusionExclusionKey
 {
+	[self tableView:tableView selected:isSelected ingredientDictionaries:@[ingredientDictionary] forSection:inclusionExclusionKey];
+}
+
+/**
+ *	Called when ingredient dictionaries are selected in the table view for one key.
+ *
+ *	@param	tableView					The table view object wherein the ingredient dictionary was selected.
+ *	@param	isSelected					Whether the ingredient dictionary was selected or deselected.
+ *	@param	ingredientDictionary		The ingredient dictionary that was either selected or deselected.
+ *	@param	inclusionExclusionKey		Either kExcludedSelections to exclude the dictionary, or kIncludedSelections to include it.
+ */
+- (void)     tableView:(UITableView *)tableView
+   			  selected:(BOOL)isSelected
+ingredientDictionaries:(NSArray *)ingredientDictionaries
+ 		    forSection:(NSString *)inclusionExclusionKey
+{
 	//	initialise arrays to hold every selected ingredient, included or excluded
 	NSMutableArray *allExcluded			= [[NSMutableArray alloc] init];
 	NSMutableArray *allIncluded			= [[NSMutableArray alloc] init];
@@ -420,7 +584,7 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 	for (NSDictionary *ingredientDictionary in self.selectedIngredients[kIncludedSelections])
 		[allIncluded addObject:ingredientDictionary];
 	
-	NSArray *update						= @[ingredientDictionary];
+	NSArray *update						= ingredientDictionaries;
 	
 	NSMutableDictionary *addedSelections		= [@{kExcludedSelections	: @[],
 													 kIncludedSelections	: @[]} mutableCopy];
@@ -447,9 +611,9 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 	
 	//	make sure this is performed on the main thread
 	dispatch_async(dispatch_get_main_queue(),
-				   ^{
-					   [self.leftDelegate leftController:self updatedWithSelections:updates];
-				   });
+	^{
+		[self.leftDelegate leftController:self updatedWithSelections:updates];
+	});
 }
 
 #pragma mark - Property Accessor Methods - Getters
@@ -472,6 +636,126 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 	}
 	
 	return _activityIndicatorView;
+}
+
+/**
+ *	A block called when an ingredient has been deselected.
+ *
+ *	@return	A block called when an ingredient has been deselected.
+ */
+- (ModifiedIngredientBlock)deselectIngredientBlock
+{
+	if (!_deselectIngredientBlock)
+	{
+		//	get a weak pointer to our self to be used in the block
+		__weak CupboardViewController *weakSelf	= self;
+		
+		_deselectIngredientBlock		= ^(NSDictionary *deselectedIngredient)
+		{
+			dispatch_async(dispatch_queue_create("Modifying Selections", NULL),
+			^{
+				NSIndexPath *indexPath			= [weakSelf indexPathForIngredientDictionary:deselectedIngredient
+																		  inTableView:weakSelf.tableView];
+				IngredientTableViewCell *cell	= (IngredientTableViewCell *)[weakSelf.tableView cellForRowAtIndexPath:indexPath];
+							   
+				if (!cell)
+					cell						= (IngredientTableViewCell *)[weakSelf tableView:weakSelf.tableView
+														 cellForRowAtIndexPath:indexPath];
+							   
+				dispatch_async(dispatch_get_main_queue(),
+				^{
+					[weakSelf.searchDisplayController setActive:NO animated:YES];
+												  
+					if (cell.excluded)
+						[cell setExcluded:NO updated:YES animated:NO];
+					else if (cell.included)
+						[cell setIncluded:NO updated:YES animated:NO];
+												  
+					[weakSelf.tableView reloadRowsAtIndexPaths:@[indexPath]
+											  withRowAnimation:UITableViewRowAnimationAutomatic];
+				});
+			});
+		};
+	}
+	
+	return _deselectIngredientBlock;
+}
+
+/**
+ *	A view presenting an option to the user to exclude all filtered ingredients.
+ *
+ *	@return	A view presenting an option to the user to exclude all filtered ingredients.
+ */
+- (UIView *)excludeAll
+{
+	if (!_excludeAll)
+	{
+		_excludeAll						= [[UIView alloc] init];
+		_excludeAll.alpha				= 0.0f;
+		_excludeAll.backgroundColor		= kYummlyColourMainWithAlpha(0.9f);
+		
+		UIButton *excludeAllButton		= [[UIButton alloc] init];
+		excludeAllButton.backgroundColor= [UIColor clearColor];
+		excludeAllButton.titleLabel.font= kYummlyBolderFontWithSize(FontSizeForTextStyle(UIFontTextStyleCaption1));
+		[excludeAllButton setTitle:@"Exclude All" forState:UIControlStateNormal];
+		[excludeAllButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+		[excludeAllButton setTitleColor:[[UIColor alloc] initWithWhite:0.9f alpha:0.7f] forState:UIControlStateHighlighted];
+		excludeAllButton.userInteractionEnabled	= NO;
+		
+		UILongPressGestureRecognizer *longGesture	= [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(excludeAllViewPressed:)];
+		longGesture.minimumPressDuration= 0.0f;
+		[_excludeAll addGestureRecognizer:longGesture];
+		
+		[_excludeAll addSubviewForAutoLayout:excludeAllButton];
+		
+		[_excludeAll addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(15)-[excludeButton]"
+																			options:kNilOptions
+																			metrics:nil
+																			  views:@{@"excludeButton": excludeAllButton}]];
+		[_excludeAll addConstraint:[NSLayoutConstraint constraintWithItem:excludeAllButton
+																attribute:NSLayoutAttributeCenterY
+																relatedBy:NSLayoutRelationEqual
+																   toItem:_excludeAll
+																attribute:NSLayoutAttributeCenterY
+															   multiplier:1.0f
+																 constant:0.0f]];
+		
+		[_excludeAll bringSubviewToFront:excludeAllButton];
+	}
+	
+	return _excludeAll;
+}
+
+/**
+ *	The constraints to insert the exclude all view.
+ *
+ *	@return	The constraints to insert the exclude all view.
+ */
+- (NSArray *)excludeViewAddConstraints
+{
+	if (!_excludeViewAddConstraints)
+		_excludeViewAddConstraints		= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[searchBar][excludeAll(height)][tableView]|"
+																			  options:NSLayoutFormatAlignAllLeft | NSLayoutFormatAlignAllRight
+																			  metrics:@{@"height" : @(ExcludeViewHeight)}
+																				views:self.viewsDictionary];
+	
+	return _excludeViewAddConstraints;
+}
+
+/**
+ *	The constraints to remove the exclude all view.
+ *
+ *	@return	The constraints to remove the exclude all view.
+ */
+- (NSArray *)excludeViewRemoveConstraints
+{
+	if (!_excludeViewRemoveConstraints)
+		_excludeViewRemoveConstraints	= [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[searchBar][tableView]|"
+																				options:NSLayoutFormatAlignAllLeft | NSLayoutFormatAlignAllRight
+																				metrics:nil
+																				  views:self.viewsDictionary];
+	
+	return _excludeViewRemoveConstraints;
 }
 
 /**
@@ -635,10 +919,27 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 - (NSMutableDictionary *)selectedIngredients
 {
 	if (!_selectedIngredients)
-		_selectedIngredients				= [@{ kExcludedSelections	: @[],
-												  kIncludedSelections	: @[]} mutableCopy];
+		_selectedIngredients			= [@{ kExcludedSelections	: @[],
+											  kIncludedSelections	: @[]} mutableCopy];
 	
 	return _selectedIngredients;
+}
+
+/**
+ *	Whether or not the exclude view should be shown.
+ *
+ *	@return	YES if  the exclude view should be shown, NO otherwise.
+ */
+- (BOOL)shouldShowExcludeAllView
+{
+	NSUInteger selectedIngredientsCount	= self.filteredIngredients.count;
+	for (NSArray *selectedIngredient in [self.selectedIngredients allValues])
+		selectedIngredientsCount		+= selectedIngredient.count;
+	
+	if (self.searchDisplay.isActive && selectedIngredientsCount < 100 && self.filteredIngredients.count > 1)
+		return YES;
+	
+	return NO;
 }
 
 /**
@@ -673,6 +974,7 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 - (NSDictionary *)viewsDictionary
 {
 	return @{@"activityView"	: self.activityIndicatorView,
+			 @"excludeAll"		: self.excludeAll,
 			 @"searchBar"		: self.searchBar,
 			 @"tableView"		: self.tableView};
 }
@@ -697,39 +999,30 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
  */
 - (void)setLeftDelegate:(id<LeftControllerDelegate>)leftDelegate
 {
-	_leftDelegate					= leftDelegate;
+	if (_leftDelegate == leftDelegate)
+		return;
 	
-	//	get a weak pointer to our self to be used in the block
-	__weak CupboardViewController *weakSelf	= self;
+	_leftDelegate					= leftDelegate;
 	
 	//	if a valid left delegate was set we send it the block to execute if it modifies any of our data
 	if (_leftDelegate)
-		[_leftDelegate blockToExecuteWhenDataModified:^(NSDictionary *modifiedIngredient)
-		{
-			dispatch_async(dispatch_queue_create("Modifying Selections", NULL),
-			^{
-				NSIndexPath *indexPath			= [weakSelf indexPathForIngredientDictionary:modifiedIngredient
-																		  inTableView:weakSelf.tableView];
-				IngredientTableViewCell *cell	= (IngredientTableViewCell *)[weakSelf.tableView cellForRowAtIndexPath:indexPath];
-								
-				if (!cell)
-					cell						= (IngredientTableViewCell *)[weakSelf tableView:weakSelf.tableView
-														 cellForRowAtIndexPath:indexPath];
-						
-				dispatch_async(dispatch_get_main_queue(),
-				^{
-					[self.searchDisplayController setActive:NO animated:YES];
-												   
-					if (cell.excluded)
-						[cell setExcluded:NO updated:YES animated:NO];
-					else if (cell.included)
-						[cell setIncluded:NO updated:YES animated:NO];
-												   
-					[self.tableView reloadRowsAtIndexPaths:@[indexPath]
-										  withRowAnimation:UITableViewRowAnimationAutomatic];
-				});
-			});
-		}];
+		[_leftDelegate blockToExecuteWhenDataModified:self.deselectIngredientBlock];
+}
+
+#pragma mark - UIAlertViewDelegate Methods
+
+/**
+ *	Sent to the delegate when the user clicks a button on an alert view.
+ *
+ *	@param	alertView					The alert view containing the button.
+ *	@param	buttonIndex					The index of the button that was clicked. The button indices start at 0.
+ */
+- (void)   alertView:(UIAlertView *)alertView
+clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+	//	get the action block from the alert view and call it
+	void (^actionBlock)(NSInteger)		= objc_getAssociatedObject(alertView, AlertViewActionBlockKey);
+	actionBlock(buttonIndex);
 }
 
 #pragma mark - UISearchBarDelegate Methods
@@ -775,6 +1068,18 @@ ingredientDictionary:(NSDictionary *)ingredientDictionary
 }
 
 /**
+ *	Tells the delegate that the controller just hid its table view.
+ *
+ *	@param	controller					The search display controller for which the receiver is the delegate.
+ *	@param	tableView					The search display controller’s table view.
+ */
+- (void)searchDisplayController:(UISearchDisplayController *)controller
+  didHideSearchResultsTableView:(UITableView *)tableView
+{
+	[self unloadSearchDisplayControllerTableView:tableView];
+}
+
+/**
  *	Asks the delegate if the table view should be reloaded for a given scope.
  *
  *	@param	controller					The search display controller for which the receiver is the delegate.
@@ -814,6 +1119,7 @@ shouldReloadTableForSearchString:(NSString *)searchString
 			[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(reloadSearchTableView) object:nil];
 			[NSObject cancelPreviousPerformRequestsWithTarget:self.activityIndicatorView];
 			[self performSelector:@selector(reloadSearchTableView) withObject:nil afterDelay:delay];
+			[self appropriatelyHideOrShowExcludeView];
 		});
 	});
 	

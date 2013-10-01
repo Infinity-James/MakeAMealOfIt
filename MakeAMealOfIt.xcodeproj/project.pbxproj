@@ -50,6 +50,7 @@
 		1A8EC544174F4CCA00553857 /* RecipeCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A8EC543174F4CCA00553857 /* RecipeCollectionViewCell.m */; };
 		1A8EC547174F756A00553857 /* TextBackingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A8EC546174F756A00553857 /* TextBackingView.m */; };
 		1A926F9F17967E5500F7568D /* RecipeDetailsIngredientCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A926F9E17967E5500F7568D /* RecipeDetailsIngredientCell.m */; };
+		1A959D7D17F952F3002DB54B /* UIView+AutolayoutHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A959D7C17F952F3002DB54B /* UIView+AutolayoutHelper.m */; };
 		1A9C84A61742348A006B8664 /* RecipesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9C84A51742348A006B8664 /* RecipesViewController.m */; };
 		1A9C84B417423DFD006B8664 /* SlideNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9C84B317423DFD006B8664 /* SlideNavigationController.m */; };
 		1A9FCF8D1758CE7E00D74485 /* StarRatingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FCF8C1758CE7E00D74485 /* StarRatingView.m */; };
@@ -171,6 +172,8 @@
 		1A8EC546174F756A00553857 /* TextBackingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TextBackingView.m; path = View/TextBackingView.m; sourceTree = "<group>"; };
 		1A926F9D17967E5500F7568D /* RecipeDetailsIngredientCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecipeDetailsIngredientCell.h; path = View/RecipeDetailsIngredientCell.h; sourceTree = "<group>"; };
 		1A926F9E17967E5500F7568D /* RecipeDetailsIngredientCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecipeDetailsIngredientCell.m; path = View/RecipeDetailsIngredientCell.m; sourceTree = "<group>"; };
+		1A959D7B17F952F3002DB54B /* UIView+AutolayoutHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIView+AutolayoutHelper.h"; path = "Categories/UIView+AutolayoutHelper.h"; sourceTree = "<group>"; };
+		1A959D7C17F952F3002DB54B /* UIView+AutolayoutHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIView+AutolayoutHelper.m"; path = "Categories/UIView+AutolayoutHelper.m"; sourceTree = "<group>"; };
 		1A9C84A41742348A006B8664 /* RecipesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecipesViewController.h; path = Controller/RecipesViewController.h; sourceTree = "<group>"; };
 		1A9C84A51742348A006B8664 /* RecipesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecipesViewController.m; path = Controller/RecipesViewController.m; sourceTree = "<group>"; };
 		1A9C84B217423DF4006B8664 /* SlideNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SlideNavigationController.h; path = Controller/SlideNavigationController.h; sourceTree = "<group>"; };
@@ -327,6 +330,8 @@
 		1A84A59A1765BDE800E1F818 /* Categories */ = {
 			isa = PBXGroup;
 			children = (
+				1A959D7B17F952F3002DB54B /* UIView+AutolayoutHelper.h */,
+				1A959D7C17F952F3002DB54B /* UIView+AutolayoutHelper.m */,
 				1A7906B817CB6B4200E4285A /* Recipe+FavouriteState.h */,
 				1A7906B917CB6B4200E4285A /* Recipe+FavouriteState.m */,
 				1A7C1A4B17578CD80075AF2D /* UIImageView+Animation.h */,
@@ -800,6 +805,7 @@
 				1A7906B017C7B0F500E4285A /* FavouriteRecipesStore.m in Sources */,
 				1ADB9C3617AFBD5200421CC9 /* TransparentToolbar.m in Sources */,
 				1A46523D1770A08A00049B4D /* ResultManagementCell.m in Sources */,
+				1A959D7D17F952F3002DB54B /* UIView+AutolayoutHelper.m in Sources */,
 				1A6D117D174B4A4200E0B000 /* RotaryWheel.m in Sources */,
 				1A6D117E174B4A4200E0B000 /* Sector.m in Sources */,
 				1A5BA16517BCB88800D2B4E4 /* IntroductionView.m in Sources */,
@@ -946,7 +952,7 @@
 				INFOPLIST_FILE = "MakeAMealOfIt/MakeAMealOfIt-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "71E4FADA-34EB-489E-B6C8-F37D9AEC342F";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -971,7 +977,7 @@
 				INFOPLIST_FILE = "MakeAMealOfIt/MakeAMealOfIt-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "71E4FADA-34EB-489E-B6C8-F37D9AEC342F";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};

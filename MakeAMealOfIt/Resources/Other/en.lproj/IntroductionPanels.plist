@@ -42,5 +42,13 @@
 		<key>Title</key>
 		<string>Favorite Recipes &amp; View the Details Offline</string>
 	</dict>
+	<dict>
+		<key>Image</key>
+		<string>logo_makeamealofit</string>
+		<key>Description</key>
+		<string>Developer &amp; Designer:\nJames Valaitis\n\nTesters:\nLex Friedman\nMyke Hurley\nMichael Simmons\nBrett Tersptra\nFederico Viticci\nThanks to all of you.\n\nSpecial Thanks to Matt Llang.</string>
+		<key>Title</key>
+		<string>Credit</string>
+	</dict>
 </array>
 </plist>

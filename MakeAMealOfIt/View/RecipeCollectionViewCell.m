@@ -214,18 +214,6 @@
 }
 
 /**
- *	The highlight state of the cell.
- *
- *	@param	highlighted					The desired highlight state of the cell.
- */
-- (void)setHighlighted:(BOOL)highlighted
-{
-	self.highlightedIndicator.hidden	= highlighted ? NO : YES;
-	
-	[super setHighlighted:highlighted];
-}
-
-/**
  *	Sets whether this cell is currently being edited.
  *
  *	@param	selectedToEdit				YES if this cell is being edited, NO otherwise.

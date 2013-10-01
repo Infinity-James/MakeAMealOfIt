@@ -61,7 +61,7 @@
 																 options:kNilOptions
 																 metrics:nil
 																   views:self.viewsDictionary]];
-	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[imageView(==imageHeight)]-(15)-[title]-(10)-[description]"
+	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[imageView(==imageHeight)]-(15)-[title]-(10)-[description]-|"
 																 options:NSLayoutFormatAlignAllLeft | NSLayoutFormatAlignAllRight
 																 metrics:@{@"imageHeight"	: @(imageHeight)	}
 																   views:self.viewsDictionary]];
@@ -105,10 +105,10 @@
 		_descriptionTextView.backgroundColor	= [UIColor clearColor];
 		_descriptionTextView.editable			= NO;
 		_descriptionTextView.font				= kYummlyFontWithSize(FontSizeForTextStyle(UIFontTextStyleBody));
-		_descriptionTextView.scrollEnabled		= NO;
+		_descriptionTextView.scrollEnabled		= YES;
 		_descriptionTextView.textAlignment		= NSTextAlignmentCenter;
 		_descriptionTextView.textColor			= [UIColor whiteColor];
-		_descriptionTextView.userInteractionEnabled	= NO;
+		_descriptionTextView.userInteractionEnabled	= YES;
 		
 		_descriptionTextView.translatesAutoresizingMaskIntoConstraints	= NO;
 		[self addSubview:_descriptionTextView];

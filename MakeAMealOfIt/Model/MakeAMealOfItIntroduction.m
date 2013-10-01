@@ -34,9 +34,11 @@ static NSString *const kPanelTitleKey				= @"Title";
 	
 	for (NSDictionary *panelDefinition in panelDefinitions)
 	{
-		NSString *description			= panelDefinition[kPanelDescriptionKey];
+		NSString *description			= [panelDefinition[kPanelDescriptionKey] stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
 		UIImage *image					= [UIImage imageNamed:panelDefinition[kPanelImageNameKey]];
 		NSString *title					= panelDefinition[kPanelTitleKey];
+		
+		NSLog(@"DESCRIPTION: %@", description);
 		
 		IntroductionPanelView *panel	= [[IntroductionPanelView alloc] initWithTitle:title description:description andImage:image];
 		[panels addObject:panel];

@@ -514,7 +514,7 @@ enum SectionIndex
 					[self.tableView deleteRowsAtIndexPaths:indexPathsToDelete withRowAnimation:UITableViewRowAnimationLeft];
 				if (indexPathsToInsert.count > 0)
 					[self.tableView insertRowsAtIndexPaths:indexPathsToInsert withRowAnimation:UITableViewRowAnimationRight];
-					[self.tableView endUpdates];
+				[self.tableView endUpdates];
 			}
 						
 			//	however, if the index path updates are no longer accurate we just reload the whole table view
@@ -601,8 +601,6 @@ enum SectionIndex
 	//	set up the next centre view controller with the recipes it needs to display
 	RecipesViewController *recipesVC	= [[RecipesViewController alloc] init];
 	recipesVC.recipes					= results[kYummlyMatchesArrayKey];
-	
-	NSLog(@"Results: %@", results[kYummlyMatchesArrayKey]);
 	
 	NSArray *searchTerms				= results[@"criteria"][@"terms"];
 	if ([searchTerms respondsToSelector:@selector(lastObject)])
