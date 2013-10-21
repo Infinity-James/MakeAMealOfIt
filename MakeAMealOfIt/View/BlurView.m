@@ -25,37 +25,6 @@
 
 @implementation BlurView {}
 
-#pragma mark - Auto Layout Methods
-
-/**
- *	Returns whether the receiver depends on the constraint-based layout system.
- *
- *	@return	YES if the view must be in a window using constraint-based layout to function properly, NO otherwise.
- */
-+ (BOOL)requiresConstraintBasedLayout
-{
-	return YES;
-}
-
-/**
- *	Update constraints for the view.
- */
-- (void)updateConstraints
-{
-	[super updateConstraints];
-	
-	[self removeConstraints:self.constraints];
-	
-	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[blurView]|"
-																 options:kNilOptions
-																 metrics:nil
-																   views:self.viewsDictionary]];
-	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(-1)-[blurView]-(-1)-|"
-																 options:kNilOptions
-																 metrics:nil
-																   views:self.viewsDictionary]];
-}
-
 #pragma mark - Initialisation
 
 /**
@@ -64,6 +33,8 @@
 - (void)basicInitialisation
 {
 	self.backgroundColor				= [UIColor clearColor];
+	self.clipsToBounds					= YES;
+	[self.layer insertSublayer:self.toolbar.layer atIndex:0];
 }
 
 /**
@@ -118,42 +89,6 @@
 #pragma mark - Property Accessor Methods - Getters
 
 /**
- *	The layer to be used blur this view.
- *
- *	@return	A CALayer configured to look slightly translucent.
- */
-- (CALayer *)blurLayer
-{
-	if (!_blurLayer)
-	{
-		_blurLayer						= self.toolbar.layer;
-	}
-	
-	return _blurLayer;
-}
-
-/**
- *	The subview which is responsible for blurring the entirety of this view.
- *
- *	@return	An initialised UIView used to blur this view.
- */
-- (UIView *)blurView
-{
-	if (!_blurView)
-	{
-		_blurView						= [[UIView alloc] init];
-		_blurView.userInteractionEnabled= NO;
-		
-		[_blurView.layer addSublayer:self.blurLayer];
-		
-		_blurView.translatesAutoresizingMaskIntoConstraints	= NO;
-		[self addSubview:_blurView];
-	}
-	
-	return _blurView;
-}
-
-/**
  *	The toolbar that will be used purely for it's blur layer.
  *
  *	@return	An initialised UIToolbar with a frame filling the whole bounds.
@@ -161,19 +96,51 @@
 - (UIToolbar *)toolbar
 {
 	if (!_toolbar)
+	{
 		_toolbar						= [[UIToolbar alloc] initWithFrame:self.bounds];
+		_toolbar.barTintColor			= kYummlyColourMain;
+	}
 	
 	return _toolbar;
 }
 
+#pragma mark - Property Accessor Methods - Setters
+
 /**
- *	A dictionary to used when creating visual constraints for this view controller.
  *
- *	@return	A dictionary with of views and appropriate keys.
+ *
+ *	@param
  */
-- (NSDictionary *)viewsDictionary
+- (void)setBlurTintColour:(UIColor *)blurTintColour
 {
-	return @{	@"blurView"		: self.blurView};
+	if (_blurTintColour == blurTintColour)
+		return;
+	
+	_blurTintColour				= blurTintColour;
+	
+	self.toolbar.barTintColor	= _blurTintColour;
+}
+
+/**
+ *
+ *
+ *	@param
+ */
+- (void)setFrame:(CGRect)frame
+{
+	[super setFrame:frame];
+	[self updateFrame];
+}
+
+#pragma mark - Size Updating
+
+/**
+ *	Update the frame.
+ */
+- (void)updateFrame
+{
+	self.toolbar				= nil;
+	[self basicInitialisation];
 }
 
 @end

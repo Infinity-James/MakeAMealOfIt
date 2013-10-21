@@ -92,7 +92,8 @@
 {
     self.window							= [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.backgroundColor			= [UIColor whiteColor];
-	self.window.tintColor				= kYummlyColourMain;
+	self.window.tintColor				= [UIColor whiteColor];
+	[UIApplication sharedApplication].statusBarStyle	= UIStatusBarStyleLightContent;
 	
 	//	set up shared cache for url requests
 	NSArray *directories				= [[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask];

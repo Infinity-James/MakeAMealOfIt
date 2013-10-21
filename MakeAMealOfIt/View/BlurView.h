@@ -10,4 +10,9 @@
 
 @interface BlurView : UIView {}
 
+#pragma mark - Public Properties
+
+/**	Set the tint of the blur.	*/
+@property (nonatomic, strong)		UIColor		*blurTintColour;
+
 @end

@@ -10,8 +10,10 @@
 #import "SlideNavigationBar.h"
 #import "TransparentToolbar.h"
 
+/**	The correct frame for the toolbar sub-element.	*/
 #define kCorrectToolbarFrame			CGRectMake(self.bounds.origin.x, self.bounds.size.height - self.toolbarHeight,	\
 													self.bounds.size.width, self.toolbarHeight)
+/**	The correct frame for the entirety of this slide navigation bar.	*/
 #define kCorrectSlideBarFrame			CGRectMake(self.superview.bounds.origin.x, self.superview.bounds.origin.y,	\
 													self.superview.bounds.size.width, self.slideBarHeight)
 
@@ -19,13 +21,9 @@
 
 @interface SlideNavigationBar () {}
 
-/**	*/
-@property (nonatomic, strong)	CALayer				*blurLayer;
-/**	*/
+/**	The blur view to blend in with the toolbar.	*/
 @property (nonatomic, strong)	BlurView			*blurView;
-/**	*/
-@property (nonatomic, strong)	UIBarButtonItem		*flexibleSpace;
-/**	*/
+/**	The toolbar element of this slide navigation bar.	*/
 @property (nonatomic, strong)	TransparentToolbar	*toolbar;
 
 @end
@@ -104,6 +102,7 @@
 	if (!_blurView)
 	{
 		_blurView						= [[BlurView alloc] initWithFrame:self.bounds];
+		_blurView.blurTintColour		= kYummlyColourMain;
 		[self addSubview:_blurView];
 	}
 	

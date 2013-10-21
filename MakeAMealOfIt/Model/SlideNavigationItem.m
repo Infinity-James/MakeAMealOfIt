@@ -122,7 +122,7 @@
 		title.font						= kYummlyBolderFontWithSize(FontSizeForTextStyle(UIFontTextStyleHeadline));
 		title.text						= self.title;
 		title.textAlignment				= NSTextAlignmentCenter;
-		title.textColor					= kYummlyColourMain;
+		title.textColor					= [UIColor whiteColor];
 		
 		[title sizeToFit];
 		UIBarButtonItem *titleItem		= [[UIBarButtonItem alloc] initWithCustomView:title];

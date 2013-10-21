@@ -350,6 +350,19 @@ NSString *const SlideNavigationStateEventTypeKey			= @"eventType";
 	}
 }
 
+#pragma mark - Configure View Layout
+
+/**
+ *	The preferred status bar style for the view controller.
+ *
+ *	@return	A UIStatusBarStyle key indicating your preferred status bar style for the view controller.
+ */
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+	return UIStatusBarStyleLightContent;
+}
+
+
 #pragma mark - Gesture Handling Callbacks
 
 /**
