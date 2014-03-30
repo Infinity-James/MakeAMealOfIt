@@ -841,13 +841,13 @@ NSString *const kYummlyMinimumKey			= @"min";
 				[searchParameters appendFormat:@"allowedDiet[]=%@&", dietDictionary[kYummlyMetadataSearchValueKey]];
 	
 	if (self.maximumCookTime)
-		[searchParameters appendFormat:@"maxTotalTimeInSeconds=%u&", self.maximumCookTime];
+		[searchParameters appendFormat:@"maxTotalTimeInSeconds=%@&", @(self.maximumCookTime)];
 	if (self.numberOfResults)
-		[searchParameters appendFormat:@"maxResult=%u&", self.numberOfResults];
+		[searchParameters appendFormat:@"maxResult=%@&", @(self.numberOfResults)];
 	if (self.requirePictures)
 		[searchParameters appendString:@"requirePictures=true&"];
 	if (self.startIndexForResults)
-		[searchParameters appendFormat:@"start=%u&", self.startIndexForResults];
+		[searchParameters appendFormat:@"start=%@&", @(self.startIndexForResults)];
 
 	[searchParameters appendFormat:@"q=%@&", self.searchPhrase ? self.searchPhrase : @""];
 	

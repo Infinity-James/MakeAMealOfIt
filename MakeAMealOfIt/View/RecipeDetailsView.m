@@ -512,7 +512,7 @@ static CGFloat const kImageHeight		= 200.0f;
 - (void)setCookTime:(NSUInteger)cookTime
 {
 	NSUInteger cookMinutes				= cookTime / 60;
-	self.cookTimeLabel.text				= [[NSString alloc] initWithFormat:@"%u", cookMinutes];
+	self.cookTimeLabel.text				= [[NSString alloc] initWithFormat:@"%@", @(cookMinutes)];
 	if (cookMinutes > 100)
 		self.cookTimeLabel.font			= kYummlyBolderFontWithSize(FontSizeForTextStyle(UIFontTextStyleCaption2) * 0.8f);
 }

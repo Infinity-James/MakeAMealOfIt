@@ -88,8 +88,8 @@ typedef void(^ModifiedIngredientBlock)(NSDictionary *modifiedIngredient);
 	
 	if (ingredientsCount > 0)
 	{
-		NSString *message				= [[NSString alloc] initWithFormat:@"You are about to exclude %u ingredients. %@",
-										   ingredientsCount,
+		NSString *message				= [[NSString alloc] initWithFormat:@"You are about to exclude %@ ingredients. %@",
+										   @(ingredientsCount),
 										   ingredientsCount > 20 ? @"That's quite a lot of ingredients, are you sure about this?" :
 																	@"I know it's not that many ingredients, but are you sure?"];
 		UIAlertView *alertView			= [[UIAlertView alloc] initWithTitle:@"Exclude All Presented Ingredients?"

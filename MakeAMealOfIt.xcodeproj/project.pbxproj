@@ -11,14 +11,14 @@
 		1A0FD25717BBB86F003D7319 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0FD25617BBB86F003D7319 /* Reachability.m */; };
 		1A16806417998C860020F947 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A16806317998C860020F947 /* CoreText.framework */; };
 		1A16806617998CA70020F947 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A16806517998CA70020F947 /* SystemConfiguration.framework */; };
-		1A16806C179993DB0020F947 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A168068179993DB0020F947 /* HockeySDK.framework */; };
-		1A16806E179993DB0020F947 /* HockeySDKResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1A16806B179993DB0020F947 /* HockeySDKResources.bundle */; };
 		1A2DC92517BE9F8C00BFA035 /* RecipeSearchHelpView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A2DC92417BE9F8C00BFA035 /* RecipeSearchHelpView.m */; };
 		1A347614177837B100E723CD /* IncludeExcludeControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A347613177837B100E723CD /* IncludeExcludeControl.m */; };
 		1A36943117B3B0BB00EBA0E9 /* PullToRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A36943017B3B0BB00EBA0E9 /* PullToRefreshView.m */; };
 		1A36943417B3D6EC00EBA0E9 /* AudioManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A36943317B3D6EC00EBA0E9 /* AudioManager.m */; };
 		1A46523D1770A08A00049B4D /* ResultManagementCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A46523C1770A08A00049B4D /* ResultManagementCell.m */; };
 		1A46523F1772E89100049B4D /* Icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A46523E1772E89100049B4D /* Icons.xcassets */; };
+		1A4FB428181519CB00DE00C4 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4FB427181519CB00DE00C4 /* StoreKit.framework */; };
+		1A4FB42B18151A0700DE00C4 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4FB42A18151A0700DE00C4 /* NSData+Base64.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		1A5BA15E17BBDAAA00D2B4E4 /* MakeAMealOfItIntroduction.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5BA15D17BBDAAA00D2B4E4 /* MakeAMealOfItIntroduction.m */; };
 		1A5BA16517BCB88800D2B4E4 /* IntroductionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5BA16417BCB88800D2B4E4 /* IntroductionView.m */; };
 		1A5BA16817BCC82800D2B4E4 /* IntroductionHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5BA16717BCC82800D2B4E4 /* IntroductionHeaderView.m */; };
@@ -92,9 +92,6 @@
 		1A0FD25617BBB86F003D7319 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		1A16806317998C860020F947 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		1A16806517998CA70020F947 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		1A168068179993DB0020F947 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = HockeySDK.framework; sourceTree = "<group>"; };
-		1A16806A179993DB0020F947 /* HockeySDK.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = HockeySDK.xcconfig; sourceTree = "<group>"; };
-		1A16806B179993DB0020F947 /* HockeySDKResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = HockeySDKResources.bundle; sourceTree = "<group>"; };
 		1A2DC92317BE9F8C00BFA035 /* RecipeSearchHelpView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecipeSearchHelpView.h; path = View/RecipeSearchHelpView.h; sourceTree = "<group>"; };
 		1A2DC92417BE9F8C00BFA035 /* RecipeSearchHelpView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecipeSearchHelpView.m; path = View/RecipeSearchHelpView.m; sourceTree = "<group>"; };
 		1A347612177837B100E723CD /* IncludeExcludeControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IncludeExcludeControl.h; path = View/IncludeExcludeControl.h; sourceTree = "<group>"; };
@@ -106,6 +103,9 @@
 		1A46523B1770A08A00049B4D /* ResultManagementCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResultManagementCell.h; path = View/ResultManagementCell.h; sourceTree = "<group>"; };
 		1A46523C1770A08A00049B4D /* ResultManagementCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ResultManagementCell.m; path = View/ResultManagementCell.m; sourceTree = "<group>"; };
 		1A46523E1772E89100049B4D /* Icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Icons.xcassets; sourceTree = "<group>"; };
+		1A4FB427181519CB00DE00C4 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		1A4FB42918151A0700DE00C4 /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+Base64.h"; path = "Categories/NSData+Base64.h"; sourceTree = "<group>"; };
+		1A4FB42A18151A0700DE00C4 /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSData+Base64.m"; path = "Categories/NSData+Base64.m"; sourceTree = "<group>"; };
 		1A5BA15C17BBDAAA00D2B4E4 /* MakeAMealOfItIntroduction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MakeAMealOfItIntroduction.h; path = Model/MakeAMealOfItIntroduction.h; sourceTree = "<group>"; };
 		1A5BA15D17BBDAAA00D2B4E4 /* MakeAMealOfItIntroduction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MakeAMealOfItIntroduction.m; path = Model/MakeAMealOfItIntroduction.m; sourceTree = "<group>"; };
 		1A5BA16317BCB88800D2B4E4 /* IntroductionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IntroductionView.h; path = View/IntroductionView.h; sourceTree = "<group>"; };
@@ -244,13 +244,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A16806617998CA70020F947 /* SystemConfiguration.framework in Frameworks */,
-				1A16806417998C860020F947 /* CoreText.framework in Frameworks */,
 				1AD55FED171AF33200AE5FED /* CoreGraphics.framework in Frameworks */,
+				1A16806417998C860020F947 /* CoreText.framework in Frameworks */,
 				1AD55FEB171AF33200AE5FED /* Foundation.framework in Frameworks */,
 				1AEE00DD1745424E00B6FC43 /* QuartzCore.framework in Frameworks */,
+				1A4FB428181519CB00DE00C4 /* StoreKit.framework in Frameworks */,
+				1A16806617998CA70020F947 /* SystemConfiguration.framework in Frameworks */,
 				1AD55FE9171AF33200AE5FED /* UIKit.framework in Frameworks */,
-				1A16806C179993DB0020F947 /* HockeySDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -266,29 +266,10 @@
 			path = Reachability;
 			sourceTree = "<group>";
 		};
-		1A168067179993DB0020F947 /* HockeySDK.embeddedframework */ = {
-			isa = PBXGroup;
-			children = (
-				1A168068179993DB0020F947 /* HockeySDK.framework */,
-				1A168069179993DB0020F947 /* Resources */,
-			);
-			path = HockeySDK.embeddedframework;
-			sourceTree = "<group>";
-		};
-		1A168069179993DB0020F947 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				1A16806A179993DB0020F947 /* HockeySDK.xcconfig */,
-				1A16806B179993DB0020F947 /* HockeySDKResources.bundle */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
 		1A16806F1799A2F80020F947 /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
 				1A0FD25417BBB86F003D7319 /* Reachability */,
-				1A168067179993DB0020F947 /* HockeySDK.embeddedframework */,
 			);
 			name = Vendor;
 			sourceTree = "<group>";
@@ -330,14 +311,16 @@
 		1A84A59A1765BDE800E1F818 /* Categories */ = {
 			isa = PBXGroup;
 			children = (
-				1A959D7B17F952F3002DB54B /* UIView+AutolayoutHelper.h */,
-				1A959D7C17F952F3002DB54B /* UIView+AutolayoutHelper.m */,
+				1A4FB42918151A0700DE00C4 /* NSData+Base64.h */,
+				1A4FB42A18151A0700DE00C4 /* NSData+Base64.m */,
 				1A7906B817CB6B4200E4285A /* Recipe+FavouriteState.h */,
 				1A7906B917CB6B4200E4285A /* Recipe+FavouriteState.m */,
 				1A7C1A4B17578CD80075AF2D /* UIImageView+Animation.h */,
 				1A7C1A4C17578CD80075AF2D /* UIImageView+Animation.m */,
 				1A0A853B1765B66C00D45971 /* UIView+AlphaControl.h */,
 				1A0A853C1765B66C00D45971 /* UIView+AlphaControl.m */,
+				1A959D7B17F952F3002DB54B /* UIView+AutolayoutHelper.h */,
+				1A959D7C17F952F3002DB54B /* UIView+AutolayoutHelper.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -518,6 +501,7 @@
 		1AD55FE7171AF33200AE5FED /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1A4FB427181519CB00DE00C4 /* StoreKit.framework */,
 				1A16806517998CA70020F947 /* SystemConfiguration.framework */,
 				1A16806317998C860020F947 /* CoreText.framework */,
 				1AD55FEC171AF33200AE5FED /* CoreGraphics.framework */,
@@ -636,9 +620,9 @@
 		1AEE00691744BE9F00B6FC43 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				1ADA690D17D4E39A006D11F2 /* Sounds */,
 				1A8EC535174E6DCD00553857 /* Images */,
 				1A5BA16017BBEB1000D2B4E4 /* Other */,
+				1ADA690D17D4E39A006D11F2 /* Sounds */,
 				1AEE007A1745423100B6FC43 /* Themes */,
 			);
 			path = Resources;
@@ -741,7 +725,6 @@
 				1ADA691017D4E39A006D11F2 /* pop.wav in Resources */,
 				1AD55FF3171AF33200AE5FED /* InfoPlist.strings in Resources */,
 				1ADA691117D4E39A006D11F2 /* psst1.wav in Resources */,
-				1A16806E179993DB0020F947 /* HockeySDKResources.bundle in Resources */,
 				1A46523F1772E89100049B4D /* Icons.xcassets in Resources */,
 				1A620FFB17DE1765003700E4 /* Localizable.strings in Resources */,
 				1AE8DB7D176B2281008C5D36 /* YummlyThemeImages.xcassets in Resources */,
@@ -816,6 +799,7 @@
 				1A9FCF8D1758CE7E00D74485 /* StarRatingView.m in Sources */,
 				1A8EC547174F756A00553857 /* TextBackingView.m in Sources */,
 				1AEE007617453D8700B6FC43 /* ThemeManager.m in Sources */,
+				1A4FB42B18151A0700DE00C4 /* NSData+Base64.m in Sources */,
 				1A7C1A50175792210075AF2D /* UICentreViewController.m in Sources */,
 				1A7C1A4D17578CD80075AF2D /* UIImageView+Animation.m in Sources */,
 				1A84A5B31766299800E1F818 /* UILeftViewController.m in Sources */,
@@ -875,7 +859,6 @@
 /* Begin XCBuildConfiguration section */
 		1AD56000171AF33200AE5FED /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1A16806A179993DB0020F947 /* HockeySDK.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -908,7 +891,6 @@
 		};
 		1AD56001171AF33200AE5FED /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1A16806A179993DB0020F947 /* HockeySDK.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -935,7 +917,6 @@
 		};
 		1AD56003171AF33200AE5FED /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1A16806A179993DB0020F947 /* HockeySDK.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -945,6 +926,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/HockeySDK.embeddedframework",
+					"/Users/James/Developer/Beyond-Apps/MakeAMealOfIt/HockeySDK.embeddedframework",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MakeAMealOfIt/MakeAMealOfIt-Prefix.pch";
@@ -960,7 +942,6 @@
 		};
 		1AD56004171AF33200AE5FED /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1A16806A179993DB0020F947 /* HockeySDK.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -970,6 +951,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/HockeySDK.embeddedframework",
+					"/Users/James/Developer/Beyond-Apps/MakeAMealOfIt/HockeySDK.embeddedframework",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MakeAMealOfIt/MakeAMealOfIt-Prefix.pch";

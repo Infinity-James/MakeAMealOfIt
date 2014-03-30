@@ -6,9 +6,6 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
-//	crash reporting and testing
-#import <HockeySDK/HockeySDK.h>
-
 //	other imports
 #import "AppDelegate.h"
 #import "CupboardViewController.h"
@@ -20,7 +17,7 @@
 
 #pragma mark - App Delegate Private Class Extension
 
-@interface AppDelegate () <BITCrashManagerDelegate, BITFeedbackComposeViewControllerDelegate, BITHockeyManagerDelegate, BITUpdateManagerDelegate> {}
+@interface AppDelegate () {}
 
 /**	Keeps track of whether there is an internet connection or not.	*/
 @property (nonatomic, readwrite, assign)	BOOL				internetConnectionExists;
@@ -64,18 +61,17 @@
     }
 }
 
-#pragma mark - BITUpdateManager Methods
+#pragma mark - Customisation
 
 /**
- *	Sent to the delegate to get the device identifier.
- *
- *	@param	updateManager				The BITUpdateManager instance invoking this delegate.
- *
- *	@return	Return the device UDID which is required for beta testing, should return nil for app store configuration.
+ *	Customises objects app wide.
  */
-- (NSString *)customDeviceIdentifierForUpdateManager:(BITUpdateManager *)updateManager
-{	
-	return nil;
+- (void)customiseApp
+{
+	UINavigationBar *navigationBar		= [UINavigationBar appearance];
+	navigationBar.barTintColor			= kYummlyColourMain;
+	UIToolbar *toolbar					= [UIToolbar appearance];
+	toolbar.barTintColor				= kYummlyColourMain;
 }
 
 #pragma mark - UIApplicationDelegate Methods
@@ -116,6 +112,7 @@
 	
 	[ThemeManager setSharedTheme:[[YummlyTheme alloc] init]];
 	
+	[self customiseApp];
 	[self.window makeKeyAndVisible];
 	
 	self.internetConnectionExists		= YES;
@@ -126,9 +123,6 @@
 											   object:nil];
 	
 	self.yummlyRequest					= [[YummlyRequest alloc] init];
-	
-	[[BITHockeyManager sharedHockeyManager] configureWithIdentifier:@"4bcab055c4b96cfd9451cfc6afacde49" delegate:self];
-	[[BITHockeyManager sharedHockeyManager] startManager];
 	
     return YES;
 }

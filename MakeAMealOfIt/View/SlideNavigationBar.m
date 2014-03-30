@@ -43,6 +43,7 @@
 	self.frame							= kCorrectSlideBarFrame;
 	self.blurView.frame					= self.bounds;
 	self.toolbar.frame					= kCorrectToolbarFrame;
+	self.backgroundColor = kYummlyColourMain;
 	[self bringSubviewToFront:self.toolbar];
 }
 

@@ -38,8 +38,8 @@
  */
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"Sector %i: Min(%f), Mid(%f), Max(%f)",
-			self.sectorID, self.minimumValue, self.middleValue, self.maxiumValue];
+	return [NSString stringWithFormat:@"Sector %@: Min(%@), Mid(%@), Max(%@)",
+			@(self.sectorID), @(self.minimumValue), @(self.middleValue), @(self.maxiumValue)];
 }
 
 @end
