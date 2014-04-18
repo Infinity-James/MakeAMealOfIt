@@ -25,33 +25,6 @@
 
 @implementation BlurView {}
 
-#pragma mark - Initialisation
-
-/**
- *	The initialisation that needs to be done for this blur view.
- */
-- (void)basicInitialisation
-{
-	self.backgroundColor				= [UIColor clearColor];
-	self.clipsToBounds					= YES;
-	[self.layer insertSublayer:self.toolbar.layer atIndex:0];
-}
-
-/**
- *	Implemented by subclasses to initialize a new object (the receiver) immediately after memory for it has been allocated.
- *
- *	@return	An initialized object.
- */
-- (instancetype)init
-{
-	if (self = [super init])
-	{
-		[self basicInitialisation];
-	}
-	
-	return self;
-}
-
 /**
  *	Returns an object initialized from data in a given unarchiver.
  *
@@ -61,12 +34,12 @@
  */
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
-	if (self = [super initWithCoder:aDecoder])
+    if (self = [super initWithCoder:aDecoder])
 	{
-		[self basicInitialisation];
-	}
+        [self basicInitialisation];
+    }
 	
-	return self;
+    return self;
 }
 
 /**
@@ -80,67 +53,62 @@
 {
     if (self = [super initWithFrame:frame])
 	{
-		[self basicInitialisation];
+        [self basicInitialisation];
     }
 	
     return self;
 }
 
-#pragma mark - Property Accessor Methods - Getters
-
 /**
- *	The toolbar that will be used purely for it's blur layer.
+ *	Implemented by subclasses to initialize a new object (the receiver) immediately after memory for it has been allocated.
  *
- *	@return	An initialised UIToolbar with a frame filling the whole bounds.
+ *	@return	An initialized object.
  */
-- (UIToolbar *)toolbar
+- (instancetype)init
 {
-	if (!_toolbar)
+	if (self = [super init])
 	{
-		_toolbar						= [[UIToolbar alloc] initWithFrame:self.bounds];
-		_toolbar.barTintColor			= kYummlyColourMain;
-	}
+        [self basicInitialisation];
+    }
 	
-	return _toolbar;
-}
-
-#pragma mark - Property Accessor Methods - Setters
-
-/**
- *
- *
- *	@param
- */
-- (void)setBlurTintColour:(UIColor *)blurTintColour
-{
-	if (_blurTintColour == blurTintColour)
-		return;
-	
-	_blurTintColour				= blurTintColour;
-	
-	self.toolbar.barTintColor	= _blurTintColour;
+    return self;
 }
 
 /**
- *
- *
- *	@param
+ *	The basic and fundamental initialisation required for this class.
  */
-- (void)setFrame:(CGRect)frame
+- (void)basicInitialisation
 {
-	[super setFrame:frame];
-	[self updateFrame];
+    //	if we don't clip to bounds the toolbar draws a thin shadow on top
+	self.clipsToBounds = YES;
+    
+    if (!self.toolbar) {
+		
+        self.toolbar = [[UIToolbar alloc] initWithFrame:[self bounds]];
+		self.toolbar.translucent = YES;
+        self.toolbar.translatesAutoresizingMaskIntoConstraints = NO;
+        [self insertSubview:[self toolbar] atIndex:0];
+        
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_toolbar]|"
+                                                                     options:kNilOptions
+                                                                     metrics:nil
+                                                                       views:NSDictionaryOfVariableBindings(_toolbar)]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_toolbar]|"
+                                                                     options:kNilOptions
+                                                                     metrics:nil
+                                                                       views:NSDictionaryOfVariableBindings(_toolbar)]];
+    }
 }
 
-#pragma mark - Size Updating
-
 /**
- *	Update the frame.
+ *	The tint colour of this blurred view. Set it to nil to reset.
+ *
+ *	@param	blurTintColor				The tint colour of this blurred view. Set it to nil to reset.
  */
-- (void)updateFrame
+- (void)setBlurTintColor:(UIColor *)blurTintColor
 {
-	self.toolbar				= nil;
-	[self basicInitialisation];
+	self.toolbar.barTintColor = blurTintColor;
+	self.toolbar.translucent = YES;
 }
 
 @end

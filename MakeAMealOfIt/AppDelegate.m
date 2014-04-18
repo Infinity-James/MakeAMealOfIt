@@ -74,6 +74,28 @@
 	toolbar.barTintColor				= kYummlyColourMain;
 }
 
+#pragma mark - Reveal
+
+#import <dlfcn.h>
+- (void)loadReveal
+{
+    NSString *revealLibName = @"libReveal";
+    NSString *revealLibExtension = @"dylib";
+    NSString *dyLibPath = [[NSBundle mainBundle] pathForResource:revealLibName ofType:revealLibExtension];
+    NSLog(@"Loading dynamic library: %@", dyLibPath);
+	
+    void *revealLib = NULL;
+    revealLib = dlopen([dyLibPath cStringUsingEncoding:NSUTF8StringEncoding], RTLD_NOW);
+	
+    if (revealLib == NULL)
+    {
+        char *error = dlerror();
+        NSLog(@"dlopen error: %s", error);
+        NSString *message = [NSString stringWithFormat:@"%@.%@ failed to load with error: %s", revealLibName, revealLibExtension, error];
+        [[[UIAlertView alloc] initWithTitle:@"Reveal library could not be loaded" message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+    }
+}
+
 #pragma mark - UIApplicationDelegate Methods
 
 /**
@@ -123,6 +145,8 @@
 											   object:nil];
 	
 	self.yummlyRequest					= [[YummlyRequest alloc] init];
+	
+	[self loadReveal];
 	
     return YES;
 }

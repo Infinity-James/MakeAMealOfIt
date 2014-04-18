@@ -32,6 +32,8 @@
 		1A6D117E174B4A4200E0B000 /* Sector.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6D117C174B4A4200E0B000 /* Sector.m */; };
 		1A6D1181174B552B00E0B000 /* SegmentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6D1180174B552B00E0B000 /* SegmentView.m */; };
 		1A6D1189174B6ACE00E0B000 /* ParameterPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6D1188174B6ACE00E0B000 /* ParameterPageViewController.m */; };
+		1A6D7C3A1901658D0068CB01 /* libReveal.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 1A6D7C39190165620068CB01 /* libReveal.dylib */; };
+		1A6D7C3C190165B20068CB01 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A6D7C3B190165B20068CB01 /* CFNetwork.framework */; };
 		1A70C0B317535F55004FEEF6 /* YummlyMetadata.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A70C0B217535F55004FEEF6 /* YummlyMetadata.m */; };
 		1A70C0B91754FAAE004FEEF6 /* RecipeDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A70C0B81754FAAE004FEEF6 /* RecipeDetailsViewController.m */; };
 		1A70C0BC175500FF004FEEF6 /* RecipeDetailsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A70C0BB175500FF004FEEF6 /* RecipeDetailsView.m */; };
@@ -133,6 +135,8 @@
 		1A6D1186174B55F400E0B000 /* Defines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Defines.h; path = Utilities/Defines.h; sourceTree = "<group>"; };
 		1A6D1187174B6ACE00E0B000 /* ParameterPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParameterPageViewController.h; path = Controller/ParameterPageViewController.h; sourceTree = "<group>"; };
 		1A6D1188174B6ACE00E0B000 /* ParameterPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ParameterPageViewController.m; path = Controller/ParameterPageViewController.m; sourceTree = "<group>"; };
+		1A6D7C39190165620068CB01 /* libReveal.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libReveal.dylib; sourceTree = "<group>"; };
+		1A6D7C3B190165B20068CB01 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		1A70C0B117535F55004FEEF6 /* YummlyMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YummlyMetadata.h; path = Model/YummlyMetadata.h; sourceTree = "<group>"; };
 		1A70C0B217535F55004FEEF6 /* YummlyMetadata.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YummlyMetadata.m; path = Model/YummlyMetadata.m; sourceTree = "<group>"; };
 		1A70C0B71754FAAE004FEEF6 /* RecipeDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecipeDetailsViewController.h; path = Controller/RecipeDetailsViewController.h; sourceTree = "<group>"; };
@@ -244,6 +248,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A6D7C3C190165B20068CB01 /* CFNetwork.framework in Frameworks */,
 				1AD55FED171AF33200AE5FED /* CoreGraphics.framework in Frameworks */,
 				1A16806417998C860020F947 /* CoreText.framework in Frameworks */,
 				1AD55FEB171AF33200AE5FED /* Foundation.framework in Frameworks */,
@@ -501,6 +506,8 @@
 		1AD55FE7171AF33200AE5FED /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1A6D7C3B190165B20068CB01 /* CFNetwork.framework */,
+				1A6D7C39190165620068CB01 /* libReveal.dylib */,
 				1A4FB427181519CB00DE00C4 /* StoreKit.framework */,
 				1A16806517998CA70020F947 /* SystemConfiguration.framework */,
 				1A16806317998C860020F947 /* CoreText.framework */,
@@ -722,6 +729,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A6D7C3A1901658D0068CB01 /* libReveal.dylib in Resources */,
 				1ADA691017D4E39A006D11F2 /* pop.wav in Resources */,
 				1AD55FF3171AF33200AE5FED /* InfoPlist.strings in Resources */,
 				1ADA691117D4E39A006D11F2 /* psst1.wav in Resources */,

@@ -39,12 +39,13 @@
  */
 - (void)adjustFrames
 {
-	self.backgroundColor				= [UIColor clearColor];
-	self.frame							= kCorrectSlideBarFrame;
-	self.blurView.frame					= self.bounds;
-	self.toolbar.frame					= kCorrectToolbarFrame;
-	self.backgroundColor = kYummlyColourMain;
+	self.backgroundColor = [UIColor clearColor];
+	self.frame = kCorrectSlideBarFrame;
+	self.blurView.frame = self.bounds;
+	self.toolbar.frame = kCorrectToolbarFrame;
 	[self bringSubviewToFront:self.toolbar];
+	NSLog(@"Bar Frame: %@", NSStringFromCGRect(self.frame));
+	NSLog(@"Blur View Frame: %@", NSStringFromCGRect(self.blurView.frame));
 }
 
 #pragma mark - Initialisation
