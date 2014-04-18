@@ -137,6 +137,7 @@
 		1A6D1188174B6ACE00E0B000 /* ParameterPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ParameterPageViewController.m; path = Controller/ParameterPageViewController.m; sourceTree = "<group>"; };
 		1A6D7C39190165620068CB01 /* libReveal.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libReveal.dylib; sourceTree = "<group>"; };
 		1A6D7C3B190165B20068CB01 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		1A6D7C3D19016ABF0068CB01 /* YummlyAPIKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YummlyAPIKeys.h; sourceTree = "<group>"; };
 		1A70C0B117535F55004FEEF6 /* YummlyMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YummlyMetadata.h; path = Model/YummlyMetadata.h; sourceTree = "<group>"; };
 		1A70C0B217535F55004FEEF6 /* YummlyMetadata.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YummlyMetadata.m; path = Model/YummlyMetadata.m; sourceTree = "<group>"; };
 		1A70C0B71754FAAE004FEEF6 /* RecipeDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecipeDetailsViewController.h; path = Controller/RecipeDetailsViewController.h; sourceTree = "<group>"; };
@@ -307,6 +308,7 @@
 		1A6D118A174B738100E0B000 /* Yummly API */ = {
 			isa = PBXGroup;
 			children = (
+				1A6D7C3D19016ABF0068CB01 /* YummlyAPIKeys.h */,
 				1AEE005B17425BC100B6FC43 /* YummlyAPI.h */,
 				1AEE005C17425BC100B6FC43 /* YummlyAPI.m */,
 			);
