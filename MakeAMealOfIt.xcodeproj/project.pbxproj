@@ -94,6 +94,8 @@
 		1A0FD25617BBB86F003D7319 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		1A16806317998C860020F947 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		1A16806517998CA70020F947 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		1A1D854A19166CFA002A182D /* RotaryWheelDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RotaryWheelDelegate.h; path = View/RotaryWheelDelegate.h; sourceTree = "<group>"; };
+		1A1D854B19166D36002A182D /* RotaryWheelDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RotaryWheelDataSource.h; path = View/RotaryWheelDataSource.h; sourceTree = "<group>"; };
 		1A2DC92317BE9F8C00BFA035 /* RecipeSearchHelpView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecipeSearchHelpView.h; path = View/RecipeSearchHelpView.h; sourceTree = "<group>"; };
 		1A2DC92417BE9F8C00BFA035 /* RecipeSearchHelpView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecipeSearchHelpView.m; path = View/RecipeSearchHelpView.m; sourceTree = "<group>"; };
 		1A347612177837B100E723CD /* IncludeExcludeControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IncludeExcludeControl.h; path = View/IncludeExcludeControl.h; sourceTree = "<group>"; };
@@ -431,6 +433,8 @@
 		1ACBD2D417C37155007FB073 /* Controls & General Use Views */ = {
 			isa = PBXGroup;
 			children = (
+				1A1D854A19166CFA002A182D /* RotaryWheelDelegate.h */,
+				1A1D854B19166D36002A182D /* RotaryWheelDataSource.h */,
 				1A7906BB17CDF80000E4285A /* BiggerButton.h */,
 				1A7906BC17CDF80000E4285A /* BiggerButton.m */,
 				1ACBD2DB17C5FE6D007FB073 /* TimerLabel.h */,

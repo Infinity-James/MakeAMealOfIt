@@ -33,17 +33,17 @@
 {
 	if (!_segmentLabel)
 	{
-		_segmentLabel					= [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 10.0f,
-																	self.bounds.size.width - 10.0f, self.bounds.size.height - 40.0f)];
-		_segmentLabel.alpha				= 0.0f;
-		_segmentLabel.backgroundColor	= kDarkGreyColourWithAlpha(0.8f);
-		_segmentLabel.font				= kYummlyBolderFontWithSize(FontSizeForTextStyle(UIFontTextStyleCaption2));
-		_segmentLabel.lineBreakMode		= NSLineBreakByWordWrapping;
-		_segmentLabel.numberOfLines		= 0;
-		_segmentLabel.text				= self.segmentTitle;
-		_segmentLabel.textAlignment		= NSTextAlignmentCenter;
-		_segmentLabel.textColor			= [UIColor colorWithRed:1.0f green:1.0f blue:1.0f alpha:1.0f];
-		_segmentLabel.transform			= CGAffineTransformMakeRotation(-self.angleOfSegment / 2.0f);
+		_segmentLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 10.0f,
+																  self.bounds.size.width - 10.0f, self.bounds.size.height - 40.0f)];
+		_segmentLabel.alpha = 0.0f;
+		_segmentLabel.backgroundColor = kDarkGreyColourWithAlpha(0.8f);
+		_segmentLabel.font = kYummlyBolderFontWithSize(FontSizeForTextStyle(UIFontTextStyleCaption2));
+		_segmentLabel.lineBreakMode = NSLineBreakByWordWrapping;
+		_segmentLabel.numberOfLines = 0;
+		_segmentLabel.text = self.segmentTitle;
+		_segmentLabel.textAlignment = NSTextAlignmentCenter;
+		_segmentLabel.textColor = [UIColor colorWithRed:1.0f green:1.0f blue:1.0f alpha:1.0f];
+		_segmentLabel.transform = CGAffineTransformMakeRotation(-self.angleOfSegment / 2.0f);
 		
 		[_segmentLabel sizeToFit];
 		
@@ -60,11 +60,9 @@
  */
 - (void)setSelected:(BOOL)selected
 {
-	_selected							= selected;
-	if (selected)
-		self.segmentLabel.alpha				= 1.0f;
-	else
-		self.segmentLabel.alpha				= 0.0f;
+	_selected = selected;
+	
+	self.segmentLabel.alpha = _selected ? 1.0f : 0.0f;
 }
 
 #pragma mark - UIView Methods

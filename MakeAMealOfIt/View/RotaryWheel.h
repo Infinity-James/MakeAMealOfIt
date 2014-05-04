@@ -6,32 +6,21 @@
 //  Copyright (c) 2013 &Beyond. All rights reserved.
 //
 
-#pragma mark - RotaryProtocol Declaration
+#import "RotaryWheelDataSource.h"
+#import "RotaryWheelDelegate.h"
 
-@protocol RotaryProtocol <NSObject>
-
-#pragma mark - Required Methods
-
-@required
-
-/**
- *	The rotary wheel's value has changed.
- *
- *	@param	newValue					The selected value in the wheel.
- */
-- (void)wheelDidChangeValue:(NSUInteger)newValue;
-
-@end
-
-#pragma mark - RotaryWheel Public Interface
+#pragma mark - Rotary Wheel Public Interface
 
 @interface RotaryWheel : UIControl {}
 
 #pragma mark - Public Properties
 
-@property (nonatomic, weak)		id <RotaryProtocol>	delegate;
+/**	An object which will provide the required data for this wheel.	*/
+@property (nonatomic, weak)		id <RotaryWheelDataSource>	dataSource;
+/**	The object that will receive updates on the state of this wheel.	*/
+@property (nonatomic, weak)		id <RotaryWheelDelegate>	delegate;
 @property (nonatomic, assign)	BOOL				drawnWheel;
-@property (nonatomic, assign)	NSInteger			numberOfSections;
+@property (nonatomic, assign)	NSInteger			numberOfSegments;
 @property (nonatomic, strong)	NSArray				*segmentTitles;
 
 #pragma mark - Private Method Declarations
@@ -42,7 +31,7 @@
  *	@param	delegate					The delegate wanting to receive notifications from this wheel.
  *	@param	sectionsNumber				The number of sections that this wheel should have.
  */
-- (id)initWithDelegate:(id<RotaryProtocol>)delegate
+- (id)initWithDelegate:(id<RotaryWheelDelegate>)delegate
 		  withSections:(NSInteger)sectionsNumber;
 /**
  *	Initializes and returns a newly allocated view object with the specified frame rectangle.
@@ -52,7 +41,7 @@
  *	@param	sectionsNumber				Number of sections for the rotary wheel control.
  */
 - (id)initWithFrame:(CGRect)frame
-		andDelegate:(id<RotaryProtocol>)delegate
+		andDelegate:(id<RotaryWheelDelegate>)delegate
 	   withSections:(NSInteger)sectionsNumber;
 
 @end

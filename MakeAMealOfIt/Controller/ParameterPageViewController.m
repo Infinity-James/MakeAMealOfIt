@@ -13,7 +13,7 @@
 
 #pragma mark - Parameters Page View Controller Private Class Extension
 
-@interface ParameterPageViewController () <IncludeExcludeDelegate, RotaryProtocol> {}
+@interface ParameterPageViewController () <IncludeExcludeDelegate, RotaryWheelDelegate> {}
 
 /**	Which option is currently highlighted.	*/
 @property (nonatomic, assign)	NSUInteger				highlightedOptionIndex;
@@ -138,17 +138,18 @@
 		[self animateSelectedLabel];
 }
 
-#pragma mark - RotaryProtocol Methods
+#pragma mark - RotaryWheelDelegate Methods
 
 /**
- *	The rotary wheel's value has changed.
+ *	Sent to the delegate when a new segment has been selected.
  *
- *	@param	newValue					The selected value in the wheel.
+ *	@param	rotaryWheel					The RotaryWheel object sending this message.
+ *	@param	index						The new index of the selected segment.
  */
-- (void)wheelDidChangeValue:(NSUInteger)newValue
+- (void)rotaryWheel:(RotaryWheel *)rotaryWheel didSelectSegmentAtIndex:(NSUInteger)index
 {
-	self.includeExcludeControl.optionText	= self.optionTitles[newValue];
-	self.highlightedOptionIndex				= newValue;
+	self.includeExcludeControl.optionText	= self.optionTitles[index];
+	self.highlightedOptionIndex				= index;
 }
 
 #pragma mark - Setter & Getter Methods
