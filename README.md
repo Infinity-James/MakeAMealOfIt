@@ -19,14 +19,14 @@ As I say, I need to point out that I am aware of 99% of the places where I went 
 - Clone the project or download it as a .zip. 
 - Create an app at [Yummly’s Developer website](https://developer.yummly.com)
 - In the file YummlyAPIKeys.h declare you unique ID’s like so:
-```
+```objc
 //	this should be the app ID you get from developer.yummly.com when you register your app
 static NSString *const kYummlyAppID = @“HERE”;
 //	this should be the app key you get from developer.yummly.com when you register your app
 static NSString *const kYummlyAppKey = @“HERE”;
 //	unfortunately, because I did this poorly, you need to put the app ID and app key here as well
 static NSString *const kYummlyAuthorisationURLExtension	= @"_app_id=YOUR_APP_ID_HERE&_app_key=YOUR_APP_KEY_”HERE
-``` objc
+```
 - You will then be able to run the app on any iPhone device running iOS 7 and above.
 
 ## Contributing
